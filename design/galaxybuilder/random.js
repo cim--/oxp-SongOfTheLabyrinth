@@ -1,8 +1,9 @@
 /**
  * Stop-start seed implementation of Ranrot
  * ranrot.seed(int)
- * ranrot.fill(likely number of numbers needed)
+ * ranrot.fill(high prime number)
  * ranrot.setStart(place to start in sequence)
+ * ranrot.getPlace() - place in sequence, for debugging
  * ranrot.rand(max) // int from sequence position
  * ranrot.randf()   // float 0..1 from sequence position
  */
@@ -31,10 +32,8 @@
 	};
 
 	var $obtain = function() {
-		if (_seqptr >= _seqctr) {
-			throw "Out of random numbers";
-		}
-		var val = _sequence[Math.floor(_seqptr/_seqBlockSize)][_seqptr%_seqBlockSize];
+		var ptr = _seqptr % _seqctr;
+		var val = _sequence[Math.floor(ptr/_seqBlockSize)][ptr%_seqBlockSize];
 		_seqptr++;
 		return val;
 	};
@@ -71,12 +70,11 @@
 
 	random.setStart = function(start) {
 		_seqptr = start;
-		if (_seqptr >= _seqctr)
-		{
-			throw "Out of random numbers";
-		}
 	};
 
+	random.getPlace = function() {
+		return _seqptr;
+	}
 
 	module.exports = random;
 

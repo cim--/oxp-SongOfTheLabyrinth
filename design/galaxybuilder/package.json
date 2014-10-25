@@ -1,0 +1,15 @@
+{
+  "name": "galaxybuilder",
+  "version": "1.0.0",
+  "description": "Galaxy builder for Song of the Witch",
+  "main": "galaxybuilder.js",
+  "dependencies": {
+    "uint32": "^0.2.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "cim",
+  "license": "Song of the Witch license"
+}
