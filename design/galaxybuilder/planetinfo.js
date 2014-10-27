@@ -2,6 +2,16 @@
  * Methods so far: 
  * set(galaxy,system,property,value)
  * get(galaxy,system,property)
+ * distance (galaxy,system,system)
+ * ensureConnectivity() - moves disconnected systems closer to centre
+ * dump() - prints plist
+ *
+ * foundColony(gal,sys,speciesArr,stage,tl)
+ * advanceColonyStage(gal,sys[,terraform]) - increase colony stage by 1 if possible
+ * reduceColonyStage(gal,sys) - reduce colony stage by 1 if not outpost, update TL
+ * advanceColonyTech(gal,sys,amount) - increase TL if possible
+ * TODO: the above block should add to a colony history log for descriptions
+ *
  *
  * Lots more methods will be needed later
  *
@@ -11,6 +21,8 @@
 (function() {
 
 	var planetdata = [[],[],[],[],[],[],[],[]];
+
+	var cused = [{},{},{},{},{},{},{},{}];
 
 	var $plist = function(k,v) {
 		console.log("\t\""+k+"\" = \""+v+"\";");
@@ -30,6 +42,9 @@
 	planetinfo.systems = 256;
 
 	planetinfo.set = function(g,s,p,v) {
+		if (p == "coordinates") {
+			cused[g][v[0]+" "+v[1]] = 1;
+		}
 		planetdata[g][s][p] = v;
 	};
 
@@ -37,23 +52,21 @@
 		return planetdata[g][s][p];
 	};
 
+	planetinfo.distance = function(g,s1,s2) {
+		var dx = planetdata[g][s1].coordinates[0] - planetdata[g][s2].coordinates[0];
+		var dy = Math.floor((planetdata[g][s1].coordinates[1] - planetdata[g][s2].coordinates[1])/2);
+		return (Math.floor(Math.sqrt((dx*dx)+(dy*dy)))*0.4);
+	}
+
 
 	var $buildConnectivity = function(g) {
-		var distance = function(s1,s2) {
-			var dx = planetdata[g][s1].coordinates[0] - planetdata[g][s2].coordinates[0];
-			var dy = Math.floor((planetdata[g][s1].coordinates[1] - planetdata[g][s2].coordinates[1])/2);
-			if ((dx*dx)+(dy*dy) < 324) {
-				return true;
-			}
-			return false;
-		}
 		var connectivity = [];
 		for (var i=0;i<planetinfo.systems;i++) {
 			connectivity.push([]);
 		}
 		for (i=0;i<planetinfo.systems;i++) {
 			for (var j=i+1;j<planetinfo.systems;j++) {
-				if (distance(i,j)) {
+				if (planetinfo.distance(g,i,j) <= 7) {
 					connectivity[i].push(j)
 					connectivity[j].push(i);
 				}
@@ -97,6 +110,12 @@
 //				console.error("Galaxy "+g+": Moving system "+i+" for connectivity");
 				planetdata[g][i].coordinates[0] = Math.floor((128+planetdata[g][i].coordinates[0])/2);
 				planetdata[g][i].coordinates[1] = Math.floor((128+planetdata[g][i].coordinates[1])/2);
+				while (cused[g][planetdata[g][i].coordinates[0]+" "+planetdata[g][i].coordinates[1]]) {
+//					console.error("Moved onto a conflict...");
+					planetdata[g][i].coordinates[0]++;
+					planetdata[g][i].coordinates[1]--;
+				}
+
 				found = true;
 			}
 		}
@@ -104,8 +123,80 @@
 			// need to rebuild connectivity map
 			connectivity = $buildConnectivity(g);
 		}
+	};
+
+
+	planetinfo.foundColony = function(gal,sys,specs,stage,tl) {
+		var colony = planetinfo.get(gal,sys,"colony");
+		var i;
+		for (i=0;i<specs.length;i++) {
+			if (colony.species.indexOf(specs[i]) == -1) {
+				colony.species.push(specs[i]);
+			}
+		}
+		for (i=colony.stage;i<stage;i++) {
+			// founding a colony never requires terraforming
+			planetinfo.advanceColonyStage(gal,sys);
+		}
+		if (colony.stage != stage) {
+			console.error("Colony habitation failed "+JSON.stringify(colony)+" for "+gal+","+sys+" "+specs+" ("+stage+","+tl+")");
+		}
+		planetinfo.advanceColonyTech(gal,sys,tl-colony.techLevel);
 	}
 
+	planetinfo.advanceColonyStage = function(g,s,terraforming) {
+		var ter;
+		if (!terraforming) { ter = 70; } else { ter = 60; }
+		var colony = planetinfo.get(g,s,"colony");
+		var planet = planetinfo.get(g,s,"planet");
+		if (colony.stage >= 6) { return; } // at max
+		var hab = planetinfo.get(g,s,"habitability");
+		var hmax = 0;
+		for (var i=0;i<colony.species.length;i++) {
+			if (hab[colony.species[i]] > hmax) {
+				hmax = hab[colony.species[i]];
+			}
+		}
+		// to get to stage 5 requires hab >= 90
+		if (colony.stage >= 5 && hmax < 90) { return; }
+		// to get to stage 4 requires hab >= 80
+		if (colony.stage >= 4 && hmax < 80) { return; }
+		// to get to stage 3 requires hab >= ter
+		if (colony.stage >= 3 && hmax < ter) { return; }
+		// to get to stage 2 requires hab >= ter || high mineral wealth and hab >= 40
+		if (colony.stage >= 2 && 
+			(hmax < 40 || 
+			 (planet.mineralWealth < 0.6 && hmax < ter))) { return; } 
+		// to get to stage 1 requires hab >= ter || medium mineral wealth and hab >= 10
+		if (colony.stage >= 1 && 
+			(hmax < 10 || 
+			 (planet.mineralWealth < 0.3 && hmax < ter))) { return; } 
+		
+		// okay, can advance
+		colony.stage++;
+	};
+
+	planetinfo.reduceColonyStage = function(g,s) {
+		var colony = planetinfo.get(g,s,"colony");
+		if (colony.stage > 1) {
+			colony.stage--;
+		}
+		planetinfo.advanceColonyTech(g,s,0);
+	};
+
+	planetinfo.advanceColonyTech = function(g,s,a) {
+		var colony = planetinfo.get(g,s,"colony");
+		colony.techLevel += a;
+		if (colony.stage == 0 && colony.techLevel > 1) {
+			colony.techLevel = 1; // uninhabited max
+		} else if (colony.stage == 1 && colony.techLevel > 5) {
+			colony.techLevel = 5; // outpost max
+		} else if (colony.stage == 2 && colony.techLevel > 9) {
+			colony.techLevel = 9; // stage 1 colony max
+		} else if (colony.stage == 3 && colony.techLevel > 13) {
+			colony.techLevel = 13; // stage 2 colony max
+		}
+	}
 
 	planetinfo.dump = function(g,s) {
 		var fix = function(a,b) {
@@ -142,6 +233,14 @@
 		$plist("polar_sea_color",color(info.planet.polarSeaColour));
 		$plist("cloud_color",color(info.planet.cloudColour));
 		$plist("polar_cloud_color",color(info.planet.polarCloudColour));
+
+		$plist("population",info.colony.stage*10); // temp
+		if (info.colony.stage > 0) { 
+			$plist("inhabitants",info.colony.species.join(", "));
+		} else {
+			$plist("inhabitants","Uninhabited");
+		}
+		$plist("techlevel",info.colony.techLevel-1); 
 
 		if (this.$debug) {
 			$plist("mineral_wealth",fix(info.planet.mineralWealth,2));

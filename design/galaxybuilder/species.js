@@ -93,6 +93,31 @@
 		return Object.keys(speciesInfo);
 	}
 
+	species.getNearestOrder = function(g) {
+		var cycle = ["Lizard","Insect","Lobster","Bird","Frog","Feline","Rodent","Human"];
+		// fall-through is deliberate, and makes most sense read bottom-up
+		switch (g) {
+		case 1:
+			// G2 and G3 are the same as there's no G3 species
+		case 2:
+			cycle.push(cycle.shift()); // move Rodents last for G3
+		case 3:
+			cycle.push(cycle.shift()); // move Felines last for G4
+		case 4:
+			cycle.push(cycle.shift()); // move Birds last for G5
+			cycle.push(cycle.shift()); // move Frogs last for G5
+		case 5:
+			cycle.push(cycle.shift()); // move Lobsters last for G6
+		case 6:
+			cycle.push(cycle.shift()); // move Insects last for G7
+		case 7:
+			cycle.push(cycle.shift()); // move Lizards last for G8
+		case 0:
+			// do nothing
+		}
+		return cycle;
+	}
+
 	species.getHabitability = function(planet) {
 		var habs = {};
 		var ht = 0;

@@ -9,7 +9,8 @@ random.seed(7693175); // may need to change this depending on results
 random.fill(1299827); // prime
 // it'll loop around the fill when it hits the limit, so prime is necessary
 
-var i,j,k; //iterators
+var i,j,k; //iteration indices
+// tend to use i for galaxy iteration, j for system iteration, and k for other stuff
 
 /* Stage 1
 Randomly set system coordinates
@@ -19,6 +20,7 @@ Randomly set main planet range from star, depending on type of star
 Calculate main planet temperature. Main planet is the most habitable in the system, so the range above should be set to make at least 1/3 possibly habitable rather than ice, mostly-airless rock balls, or Venus-like hells.
 Calculate main planet ocean %
 Calculate per-species habitability %
+Mark species homeworlds
 */
 
 random.setStart(0); // for clarity
@@ -29,22 +31,30 @@ random.setStart(0); // for clarity
 // random numbers in later
 (function () {
 	for (i=0;i<$.galaxies;i++) {
+		var cused = {};
 		for (j=0;j<$.systems;j++) {
 			if (j == 0) {
 				// always centre system 0
 				// makes connectivity enforcement easier
 				$.set(i,j,"coordinates",[128,128]);
+				cused["128 128"] = 1;
 			} else {
-				$.set(i,j,"coordinates",[random.rand(256),random.rand(256)]);
+				var coords = [random.rand(256),random.rand(256)];
+				while (cused[coords[0]+" "+coords[1]]) {
+					// don't have zero-distance doubles
+//					console.error("Rerolling "+i+" " +j);
+					coords = [random.rand(256),random.rand(256)];
+				}
+				$.set(i,j,"coordinates",coords);
+				cused[coords[0]+" "+coords[1]] = 1;
 			}
-			$.set(i,j,"name","SW "+i+"-"+j); // placeholder
 		}
 		$.ensureConnectivity(i);
 	}
 }());
 
 
-random.setStart(4096); // allows reducing of $.galaxies for testing
+random.setStart(6000); // allows reducing of $.galaxies for testing, allows plenty of twin breaking
 
 // 7 rands per star so far
 (function () {
@@ -137,7 +147,7 @@ random.setStart(4096); // allows reducing of $.galaxies for testing
 }());
 
 
-random.setStart(35000); // guess ~14 total above random numbers max
+random.setStart(35000); // guess ~13 total above random numbers max
 
 // 18 rands per system so far
 (function () {
@@ -259,6 +269,18 @@ random.setStart(75000); // guess ~20 total above random numbers max
 // not itself random, but generates planet colouring which is
 // 15 rands per system
 (function () {
+	var initialColonyState = function() {
+		return {
+			stage: 0, // uninhabited
+			population: 0,
+			species: [],
+			techLevel: 0,
+			homeWorld: 0,
+			contested: 0,
+			independentHub: 0
+		}
+	};
+
 	for (i=0;i<$.galaxies;i++) {
 		for (j=0;j<$.systems;j++) {
 			var planet = $.get(i,j,"planet");
@@ -437,14 +459,410 @@ random.setStart(75000); // guess ~20 total above random numbers max
 
 			}
 
-
 			$.set(i,j,"habitability",habitability);
 			$.set(i,j,"planet",planet);
+
+
+			$.set(i,j,"colony",initialColonyState());
 		}
 	}
 }());
 
 random.setStart(150000); // guess ~35 total above random numbers max (may need more colours)
+
+// list of key worlds (homeworlds, initial human worlds, United bases)
+var keyWorlds = {};
+
+(function() {
+	var setHomeWorld = function(g,s) {
+		var edging = 30;
+		var best = 0; var max = 0;
+		for(j=0;j<$.systems;j++) {
+			var pos = $.get(g,j,"coordinates");
+			var hab = $.get(g,j,"habitability");
+			if (max < hab[s] && pos[0] < 255-edging && pos[0] > edging && pos[1] < 255-(2*edging) && pos[1] > 2 * edging) { 
+				if (s == "Bird") {
+					var fdist = $.distance(g,keyWorlds["Frog"][1],j);
+					if (fdist < 25) {
+						continue;
+					}
+				}
+				max = hab[s];
+				best = j;
+			}
+		}
+		var cinfo = $.get(g,best,"colony");
+		cinfo.stage = 6; // stage 5
+		cinfo.homeWorld = 1;
+		cinfo.techLevel = 5;
+		cinfo.species.push(s);
+		$.set(g,best,"name",s+" Homeworld"); // temp
+		$.set(g,best,"colony",cinfo);
+		keyWorlds[s] = [g,best];
+		/* Reversing cause and effect here of course - we place them
+		 * there because it's the best system, but actualy it's the
+		 * best system because they evolved there. */
+		console.error(s+" homeworld is "+g+" "+best);
+	}
+	setHomeWorld(0,"Lizard");
+	setHomeWorld(3,"Rodent");
+	setHomeWorld(4,"Feline");
+	setHomeWorld(5,"Frog");
+	setHomeWorld(5,"Bird");
+	setHomeWorld(6,"Lobster");
+	setHomeWorld(7,"Insect");
+	// special case for human worlds
+	var foundReach = -1;
+	var reachPos = [-1,-1];
+	var edge = 0;
+	var planet, hab, pos;
+	do {
+		var candidates = [];
+		for (j=0;j<$.systems;j++) {
+			pos = $.get(1,j,"coordinates");
+			if (pos[1] <= edge || pos[1] >= 255-edge) {
+				planet = $.get(1,j,"planet");
+				hab = $.get(1,j,"habitability");
+				if (planet.mineralWealth < 0.4 && hab.Human < 70) {
+					candidates.push(j);
+				}
+			}
+		}
+		if (candidates.length > 0) {
+			foundReach = candidates[random.rand(candidates.length)];
+			reachPos = $.get(1,foundReach,"coordinates");
+		} else {
+			edge++;
+		}
+	} while (foundReach == -1);
+
+	var foundHope = -1;
+	var foundLanding = -1;
+	var hdist = 100;
+	var ldist = 100;
+	for (j=0;j<$.systems;j++) {
+		if (j==foundReach) { continue; }
+		hab = $.get(1,j,"habitability");
+		if (hab.Human < 70) { continue; }
+		pos = $.get(1,j,"coordinates");
+		var dist = $.distance(1,j,foundReach);
+		if (dist < hdist) {
+			if (foundHope != -1) {
+				foundLanding = foundHope;
+				ldist = hdist;
+			}
+			foundHope = j;
+			hdist = dist;
+		} else if (dist < ldist) {
+			foundLanding = j;
+			ldist = dist;
+		}
+	}
+
+	var hab1 = $.get(1,foundHope,"habitability");
+	var hab2 = $.get(1,foundLanding,"habitability");
+	if (hab1.Human < hab2.Human) {
+		var tmp = foundHope;
+		foundHope = foundLanding;
+		foundLanding = tmp;
+	}
+
+	var cinfo = $.get(1,foundReach,"colony");
+	cinfo.stage = 1; // outpost
+	cinfo.species.push("Human");
+	cinfo.techLevel = 2;
+	$.set(1,foundReach,"colony",cinfo);
+	$.set(1,foundReach,"name","Biya's Reach");
+	keyWorlds["Reach"] = [1,foundReach];
+
+	cinfo = $.get(1,foundHope,"colony");
+	cinfo.stage = 3;
+	cinfo.species.push("Human");
+	cinfo.homeWorld = 1;
+	cinfo.techLevel = 4;
+	$.set(1,foundHope,"colony",cinfo);
+	$.set(1,foundHope,"name","Dramani's Hope");
+	keyWorlds["Hope"] = [1,foundHope];
+
+	cinfo = $.get(1,foundLanding,"colony");
+	cinfo.stage = 2;
+	cinfo.species.push("Human");
+	cinfo.homeWorld = 1;
+	cinfo.techLevel = 3;
+	$.set(1,foundLanding,"colony",cinfo);
+	$.set(1,foundLanding,"name","Aquino's Landing");
+	keyWorlds["Landing"] = [1,foundLanding];
+
+}());
+
+random.setStart(150010); // the above should be fairly deterministic
+
+/*
+ * Stage 2: initial colonisation, colonies get TL=stage
+Non-human: 
+Find all systems with habitability > 70% within 30 LY, give them stage 2 colonies
+Find all systems with high mineral wealth within 30 LY, give them stage 1 colonies (or outposts, if too uninhabitable)
+If any world in range is at least 70% habitable by both Frog and Bird, and in G6, and not within 10LY of a homeworld, give it both species. Do the same for high mineral wealth worlds but only those closer to both homeworlds than the homeworlds are to each other.
+Human: 
+Find system on long edge of chart with extreme Y coordinate, low habitability and mineral wealth. This is Biya's Reach – the entry system. Give it an outpost.
+Find two nearest systems with >70% habitability. These are Dramani's Hope and Aquino's Landing. Set them to stage 3/2 colony levels and mark as TL4/3 homeworlds. (The one with the higher mineral wealth is Aquino's Landing)
+Then find nearby good habitation or mineral systems within 20 LY of Biya's Reach and set them up as stage 1 colonies (or outposts, if too uninhabitable)
+*/
+
+(function() {
+	var earlyColonies = function(g,s,r) {
+		var c = keyWorlds[s];
+		if (s == "Human") {
+			// humans spread out from Biya's Reach at this stage
+			c = keyWorlds["Reach"];
+		}
+		for (j=0;j<$.systems;j++) {
+			if ($.distance(g,c[1],j) <= r) {
+				var hab = $.get(g,j,"habitability");
+				var colony = $.get(g,j,"colony");
+				var planet = $.get(g,j,"planet");
+				if (colony.stage == 0) {
+					if (hab[s] >= 70) {
+						$.foundColony(g,j,[s],3,2);
+					} else if (planet.mineralWealth > 0.6) {
+						if (hab[s] >= 10) {
+							$.foundColony(g,j,[s],2,1);
+						} else {
+							$.foundColony(g,j,[s],1,1);
+						}
+					}
+				}
+			}			
+		}
+	};
+
+	earlyColonies(0,"Lizard",30);
+	earlyColonies(1,"Human",20);
+	earlyColonies(3,"Rodent",30);
+	earlyColonies(4,"Feline",30);
+	earlyColonies(6,"Lobster",30);
+	earlyColonies(7,"Insect",30);
+
+	// special case for G6
+	var bh = keyWorlds["Bird"];
+	var fh = keyWorlds["Frog"];
+	var r = 30;
+	var g = 5;
+	for (j=0;j<$.systems;j++) {
+		var bdist = $.distance(g,bh[1],j);
+		var fdist = $.distance(g,fh[1],j);
+		var hdist = $.distance(g,bh[1],fh[1]);
+		var hab = $.get(g,j,"habitability");
+		var colony = $.get(g,j,"colony");
+		var planet = $.get(g,j,"planet");
+		if (colony.stage == 0) {
+			if (bdist < 30 || fdist < 30) {
+				if (hab["Bird"] >= 70 && hab["Frog"] >= 70) {
+					// joint colony
+					$.foundColony(g,j,["Bird","Frog"],3,2);
+				} else if (bdist < 30 && hab["Bird"] >= 70) {
+					$.foundColony(g,j,["Bird"],3,2);
+				} else if (fdist < 30 && hab["Frog"] >= 70) {
+					$.foundColony(g,j,["Frog"],3,2);
+				} else if (planet.mineralWealth > 0.6) {
+					if (bdist < hdist && fdist < hdist) {
+						// joint mining
+						if (hab["Bird"] >= 10 || hab["Frog"] >= 10) {
+							$.foundColony(g,j,["Bird","Frog"],2,1);
+						} else {
+							$.foundColony(g,j,["Bird","Frog"],1,1);
+						}
+					} else if (bdist < fdist) {
+						if (hab["Bird"] >= 10) {
+							$.foundColony(g,j,["Bird"],2,1);
+						} else {
+							$.foundColony(g,j,["Bird"],1,1);
+						}
+					} else {
+						if (hab["Frog"] >= 10) {
+							$.foundColony(g,j,["Frog"],2,1);
+						} else {
+							$.foundColony(g,j,["Frog"],1,1);
+						}
+					}
+				}
+			}
+		}
+	}
+
+}());
+
+random.setStart(150100); // the above is currently deterministic
+
+/* Stage 3: second-wave colonisation */
+
+(function() {
+	var nativeSpecies = [["Lizard"],["Human"],[],["Rodent"],["Feline"],["Frog","Bird"],["Lobster"],["Insect"]];
+	
+	for (i=0;i<$.galaxies;i++) {
+		if (i==2) { continue; } // G3 still uninhabited
+		for (j=0;j<$.systems;j++) {
+			var colony = $.get(i,j,"colony");
+			var hab = $.get(i,j,"habitability");
+			var planet = $.get(i,j,"planet");
+			// upgrade existing colonies first
+			if (colony.homeWorld) {
+				$.advanceColonyTech(i,j,2);
+			} else if (colony.stage > 0) {
+				if (random.randf() < 0.75) {
+					$.advanceColonyStage(i,j);
+				} else if (random.randf() < 0.05) {
+					$.reduceColonyStage(i,j);
+				} 
+				$.advanceColonyTech(i,j,random.rand(4));
+			} else {
+				// add new colonies
+				for (k=0;k<nativeSpecies[i].length;k++) {
+					if (hab[nativeSpecies[i][k]] >= 90) {
+						$.foundColony(i,j,[nativeSpecies[i][k]],2,3);
+					} 
+				}
+				// add new mining operations
+				if (planet.mineralWealth >= 0.6 && colony.stage == 0) {
+					$.foundColony(i,j,nativeSpecies[i],1,1);
+				}
+				// add outposts near homeworlds
+				if (colony.stage == 0) {
+					for (var keyw in keyWorlds) {
+						var w = keyWorlds[keyw];
+						if (w[0] == i && $.distance(i,j,w[1]) <= 15) {
+							$.foundColony(i,j,nativeSpecies[i],1,1);
+							break;
+						}
+					}
+				}
+			}
+		}
+		
+
+	}
+
+}());
+
+random.setStart(155000); // at most 3 rolls per system, generally far less
+
+
+/* Stage 4: initial inter-galactic colonisation, united systems treaties 
+
+New colonies get TL = stage + 3, add 2+d3 but no more than stage to TL of existing colonies, 3 to homeworlds. Human homeworlds increase to max stage for their habitability.
+50% chance each colony increases by one stage if possible. 15% chance it decreases by one stage if not already an outpost.
+The system with the highest minimum habitability for all species (hopefully >60%) in chart 3 becomes the United Capital. This starts as a stage 4 colony of all species and counts as a Homeworld for future calculations. 
+The non-homeworld system with the highest minimum habitability in other charts becomes the United Embassy for that chart (stage 3 colony of all species, counts as an independent hub for future calculations), will take over inhabited systems (going to stage 4 if it was already stage 2 or 3)
+The best uninhabited system for each species in chart 3 gets a stage 3 colony of that species (start with Humans, and cycle backwards to Rodents)
+Any uninhabited or outpost system with >90% habitability in any chart gets a stage 1 colony of the most suited species. (again, cycle backwards so nearest species gets first go)
+*/
+(function() {
+	var hab, colony, planet;
+	// upgrade existing colonies first
+	for( i=0;i<$.galaxies;i++) {
+		if (i==2) { continue; } // G3 still uninhabited
+		for (j=0;j<$.systems;j++) {
+			colony = $.get(i,j,"colony");
+			hab = $.get(i,j,"habitability");
+			planet = $.get(i,j,"planet");
+			// upgrade existing colonies first
+			if (colony.homeWorld) {
+				if (colony.stage != 6) { // Human
+					for (k=colony.stage;k<6;k++) {
+						$.advanceColonyStage(i,j);
+					}
+				}
+				$.advanceColonyTech(i,j,3);
+			} else if (colony.stage > 0) {
+				if (random.randf() < 0.5) {
+					$.advanceColonyStage(i,j);
+				} else if (random.randf() < 0.15) {
+					$.reduceColonyStage(i,j);
+				} 
+				var upg = 2+random.rand(3);
+				if (upg < colony.stage) {
+					upg = colony.stage
+				}
+				$.advanceColonyTech(i,j,upg);
+			}
+		}
+	}
+	// populate galaxy 3 (United Capital, initial colonies)
+	var bestworst = 0; var founduc = -1;
+	for (j=0;j<$.systems;j++) {
+		hab = $.get(2,j,"habitability");
+		if (hab.worst > bestworst) {
+			bestworst = hab.worst;
+			founduc = j;
+		}
+	}
+	console.error("United Capital is 2 "+founduc);
+	$.foundColony(2,founduc,species.list(),5,7);
+	$.set(2,founduc,"name","United Capital");
+	colony = $.get(2,founduc,"colony");
+	colony.homeWorld = 1; // close enough
+	keyWorlds["Capital"] = [2,founduc];
+
+	var order = species.getNearestOrder(2);
+	for (k=0;k<order.length;k++) {
+		var bestempty = -1;
+		var bestspec = 0;
+		var spec = order[k];
+		// find best uninhabited system in G3
+		for (j=0;j<$.systems;j++) {
+			hab = $.get(2,j,"habitability");
+			colony = $.get(2,j,"colony");
+			if (colony.stage == 0 && hab[spec] > bestspec) {
+				bestspec = hab[spec];
+				bestempty = j;
+			}
+		}
+		// stage 3 colony
+		$.foundColony(2,bestempty,[spec],4,6);
+	}
+
+	for (i=0;i<$.galaxies;i++) {
+		// populate united embassy colonies
+		if (i != 2) {
+			// none in G3
+			bestworst = 0; founduc = -1;
+			for (j=0;j<$.systems;j++) {
+				hab = $.get(i,j,"habitability");
+				colony = $.get(i,j,"colony");
+				if (colony.homeWorld == 0 && hab.worst > bestworst) {
+					bestworst = hab.worst;
+					founduc = j;
+				}
+			}
+			// stage 3 embassy
+			colony = $.get(i,founduc,"colony");
+			if (colony.stage <= 2) {
+				$.foundColony(i,founduc,species.list(),4,6);
+			} else {
+				// if taking over somewhere established, boost to stage 4
+				$.foundColony(i,founduc,species.list(),5,7);
+			}
+			colony.independentHub = 1;
+			$.set(i,founduc,"name","United Embassy "+(i+1));
+			console.error("United Embassy at "+i+" "+founduc);
+		}
+		
+		// populate super-habitable
+		order = species.getNearestOrder(i);
+		for (k=0;k<order.length;k++) {		
+			var spec = order[k];
+			for (j=0;j<$.systems;j++) {
+				hab = $.get(i,j,"habitability");
+				colony = $.get(i,j,"colony");
+				if (hab[spec] >= 90 && colony.stage <= 1) {
+					$.foundColony(i,j,[spec],2,4);
+				}
+			}
+		}
+	}
+
+}());
+
 
 
 
@@ -454,6 +872,16 @@ $.$debug = 1;
 console.log("{");
 for (i=0;i<$.galaxies;i++) {
 	for (j=0;j<$.systems;j++) {
+		if (!$.get(i,j,"name")) {
+			var colony = $.get(i,j,"colony");
+			if (colony.stage > 1) {
+				$.set(i,j,"name","C"+(colony.stage-1)+" "+i+"-"+j);
+			} else if (colony.stage == 1) {
+				$.set(i,j,"name","O "+i+"-"+j);
+			} else {
+				$.set(i,j,"name","S "+i+"-"+j);
+			}
+		}
 		$.dump(i,j);
 	}
 }
