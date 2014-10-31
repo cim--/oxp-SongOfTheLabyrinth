@@ -4,6 +4,7 @@
 var random = require("./random");
 var species = require("./species");
 var $ = require("./planetinfo");
+var fs = require("fs");
 
 random.seed(7693175); // may need to change this depending on results
 random.fill(1299827); // prime
@@ -220,7 +221,7 @@ random.setStart(35000); // guess ~13 total above random numbers max
 			// surface radiation levels (star.instability, etc.)
 			// anything above 1 is extremely rare, most habitable worlds should be
 			// < 0.1
-			var rad = (10*(1-pcloud)*(1-calpha)*(1.5-planet.habZoneRange)*star.instability);
+			var rad = (10*(1-pcloud)*(2.4-calpha)*(1.5-planet.habZoneRange)*star.instability);
 			if (rad < 0) { rad = 0; }
 			planet.surfaceRadiation = rad;
 
@@ -277,7 +278,10 @@ random.setStart(75000); // guess ~20 total above random numbers max
 			techLevel: 0,
 			homeWorld: 0,
 			contested: 0,
-			independentHub: 0
+			independentHub: 0,
+			attacked: 0,
+			destroyed: 0,
+			militaryBase: 0
 		}
 	};
 
@@ -492,7 +496,7 @@ var keyWorlds = {};
 			}
 		}
 		var cinfo = $.get(g,best,"colony");
-		cinfo.stage = 6; // stage 5
+		cinfo.stage = 7; // stage 6
 		cinfo.homeWorld = 1;
 		cinfo.techLevel = 5;
 		cinfo.species.push(s);
@@ -523,7 +527,7 @@ var keyWorlds = {};
 			if (pos[1] <= edge || pos[1] >= 255-edge) {
 				planet = $.get(1,j,"planet");
 				hab = $.get(1,j,"habitability");
-				if (planet.mineralWealth < 0.4 && hab.Human < 70) {
+				if (planet.mineralWealth < 0.4 && hab.best < 70) {
 					candidates.push(j);
 				}
 			}
@@ -630,7 +634,7 @@ Then find nearby good habitation or mineral systems within 20 LY of Biya's Reach
 						} else {
 							$.foundColony(g,j,[s],1,1);
 						}
-					}
+					} 
 				}
 			}			
 		}
@@ -709,9 +713,9 @@ random.setStart(150100); // the above is currently deterministic
 			if (colony.homeWorld) {
 				$.advanceColonyTech(i,j,2);
 			} else if (colony.stage > 0) {
-				if (random.randf() < 0.75) {
+				if (random.randf() < 0.75/colony.stage) {
 					$.advanceColonyStage(i,j);
-				} else if (random.randf() < 0.05) {
+				} else if (random.randf() < 0.2) { // 5% / 75%
 					$.reduceColonyStage(i,j);
 				} 
 				$.advanceColonyTech(i,j,random.rand(4));
@@ -767,20 +771,20 @@ Any uninhabited or outpost system with >90% habitability in any chart gets a sta
 			planet = $.get(i,j,"planet");
 			// upgrade existing colonies first
 			if (colony.homeWorld) {
-				if (colony.stage != 6) { // Human
+				if (colony.stage != 7) { // Human
 					for (k=colony.stage;k<6;k++) {
 						$.advanceColonyStage(i,j);
 					}
 				}
-				$.advanceColonyTech(i,j,3);
+				$.advanceColonyTech(i,j,2);
 			} else if (colony.stage > 0) {
-				if (random.randf() < 0.5) {
+				if (random.randf() < 0.5/colony.stage) {
 					$.advanceColonyStage(i,j);
-				} else if (random.randf() < 0.15) {
+				} else if (random.randf() < 0.3) { // 15% / 50%
 					$.reduceColonyStage(i,j);
 				} 
 				var upg = 2+random.rand(3);
-				if (upg < colony.stage) {
+				if (upg > colony.stage) {
 					upg = colony.stage
 				}
 				$.advanceColonyTech(i,j,upg);
@@ -863,26 +867,515 @@ Any uninhabited or outpost system with >90% habitability in any chart gets a sta
 
 }());
 
+/* Stage 5, 6, 7: cooperative colonisation [may need to adjust number of passes]
+New colonies get TL = stage + 3, add 1 to TL of existing stage 2+ colonies (50% chance) and homeworlds (75% chance)
+50% chance each colony increases by one stage if possible, 15% chance it decreases by one stage if not already an outpost
+Any system that is no more than a stage 2 colony, with >70% habitability for a species not currently on it has a 20% chance of gaining that species (increasing a stage if possible). Uninhabited and outpost systems both go to stage 1 colonies.
+Any system with high mineral wealth, still at outpost stage, has a 10% chance of being inhabited by an extra species and increasing to stage 1
+*/
 
-
-
-
-
-$.$debug = 1;
-console.log("{");
-for (i=0;i<$.galaxies;i++) {
-	for (j=0;j<$.systems;j++) {
-		if (!$.get(i,j,"name")) {
-			var colony = $.get(i,j,"colony");
-			if (colony.stage > 1) {
-				$.set(i,j,"name","C"+(colony.stage-1)+" "+i+"-"+j);
-			} else if (colony.stage == 1) {
-				$.set(i,j,"name","O "+i+"-"+j);
-			} else {
-				$.set(i,j,"name","S "+i+"-"+j);
+for (var cocostage = 5; cocostage <= 7; cocostage++) {
+	// 10000 per pass seems to be plenty
+	random.setStart(110000 + (10000*cocostage));
+	(function() {
+		var hab, colony, planet;
+		var speclist = species.list();
+		for( i=0;i<$.galaxies;i++) {
+			for (j=0;j<$.systems;j++) {
+				colony = $.get(i,j,"colony");
+				// upgrade colonies
+				if (colony.stage > 0) {
+					if (!colony.homeWorld) {
+						if (random.randf() < 0.5/colony.stage) {
+							$.advanceColonyStage(i,j);
+						} else if (random.randf() < 0.3) { // 15% / 50%
+							$.reduceColonyStage(i,j);
+						}
+					}
+					if (colony.stage >= 3) {
+						if (random.randf() < colony.homeWorld ? 0.25 : 0.5) {
+							$.advanceColonyTech(i,j,1);
+						}
+					}
+				}
+				// extra colonists settle
+				if (colony.stage <= 3) {
+					hab = $.get(i,j,"habitability");
+					for (k=0;k<speclist.length;k++) {
+						if (colony.species.indexOf(speclist[k]) == -1 && 
+							((hab[speclist[k]] >= 70 && random.randf() < 0.2))) {
+							if (colony.stage > 0) {
+								colony.species.push(speclist[k]);
+								if (colony.stage <= 4) {
+									// extra species won't increase above stage 3 colony
+									$.advanceColonyStage(i,j);
+								}
+								$.advanceColonyTech(i,j,1);
+							} else {
+								$.foundColony(i,j,[speclist[k]],2,4);
+							}
+						}
+					}
+				}
+				planet = $.get(i,j,"planet");
+				// expand mining outposts collaboratively
+				if (planet.mineralWealth >= 0.6 && colony.stage == 1) {
+					colony.species.push(speclist[random.rand(speclist.length)]);
+					$.advanceColonyStage(i,j);
+					$.advanceColonyTech(i,j,1);
+				}
+				// outsider settlements - low tech outposts
+				if (colony.stage == 0 && random.randf() < 0.01) {
+					$.foundColony(i,j,[speclist[random.rand(speclist.length)]],1,1);
+				}
 			}
 		}
-		$.dump(i,j);
-	}
+	}());
 }
-console.log("}");
+
+random.setStart(190000);
+
+/*
+Stage 8: terraforming
+New colonies get TL = stage + 4, add 1 to TL of existing systems (stage/6 chance)
+50% chance each colony increases by one stage if possible, 15% chance it decreases by one stage if not already an outpost
+Any system with no non-outpost population and 60% habitability gets a terraformed stage 2 colony of all species it is at >60%
+All remaining systems with high or medium mineral wealth get a stage 1 colony
+*/
+
+(function() {
+	var hab, colony, planet;
+	var speclist = species.list();
+	for(i=0;i<$.galaxies;i++) {
+		for (j=0;j<$.systems;j++) {
+			// upgrade colonies
+			colony = $.get(i,j,"colony");
+			hab = $.get(i,j,"habitability");
+			planet = $.get(i,j,"planet");
+			if (colony.stage > 0) {
+				if (!colony.homeWorld) {
+					if (random.randf() < 0.5/colony.stage) {
+						$.advanceColonyStage(i,j,true);
+					} else if (random.randf() < 0.3) { // 15% / 50%
+						$.reduceColonyStage(i,j);
+					}
+					if (random.randf() < (colony.stage-1) / 6) {
+						$.advanceColonyTech(i,j,1);
+					}
+				} else {
+					if (colony.stage != 7) { // Human, now can terraform
+						for (k=colony.stage;k<6;k++) {
+							$.advanceColonyStage(i,j,true);
+						}
+					}
+				}
+			}
+			if (colony.stage <= 1) {
+				// search for terraforming candidates
+				if (hab.best >= 60 && hab.worst < 70) {
+					var terrlist = [];
+					for (k=0;k<speclist.length;k++) {
+						if (hab[speclist[k]] > 60) {
+							terrlist.push(speclist[k]);
+						}
+					}
+					$.foundColony(i,j,terrlist,3,6,true);
+					// search for reasonable mining opportunities
+				} else if (planet.mineralWealth > 0.3 && random.randf() < planet.mineralWealth) {
+					if (hab.worst >= 10) {
+						$.foundColony(i,j,[speclist[random.rand(speclist.length)]],2,5);
+					} else {
+						$.foundColony(i,j,[speclist[random.rand(speclist.length)]],1,4);
+					}
+				} 
+			}
+			// outsider settlements - low tech outposts
+			if (colony.stage == 0 && random.randf() < 0.01) {
+				$.foundColony(i,j,[speclist[random.rand(speclist.length)]],1,1);
+			}
+
+		}
+	}
+}());
+
+random.setStart(200000);
+
+/*Stage 9: consolidation
+50% chance each colony increases by one stage if possible, 15% chance it decreases by one stage if not already an outpost
+Add 1 to TL of existing systems (stage/6 chance) */
+(function() {
+	var colony;
+	var speclist = species.list();
+
+	for(i=0;i<$.galaxies;i++) {
+		for (j=0;j<$.systems;j++) {
+			// upgrade colonies
+			colony = $.get(i,j,"colony");
+			if (colony.stage > 0) {
+				if (!colony.homeWorld) {
+					// this one not /colony.stage
+					// consolidation allows higher population growth
+					if (random.randf() < 0.8) {
+						$.advanceColonyStage(i,j,true);
+					} else if (random.randf() < 0.3) { // 15% / 50%
+						$.reduceColonyStage(i,j);
+					}
+					if (random.randf() < (colony.stage-1) / 6) {
+						$.advanceColonyTech(i,j,1);
+					}
+				} else {
+					if (random.randf() < 0.5) {
+						$.advanceColonyTech(i,j,1);
+					}
+				}
+				// still occasional outsider settlements
+			} else if (random.randf() < 0.01) {
+				$.foundColony(i,j,[speclist[random.rand(speclist.length)]],1,1);
+			}
+		}
+	}
+}());
+
+random.setStart(210000);
+
+/* Stage 10: first invasion wave
+20% chance each colony increases by one stage and gets +1 TL; 20% chance it decreases by one stage and gets -d6 TL; 5% chance it is knocked back to outpost (and TL set to d4); 1% chance it is knocked back to uninhabited. Homeworlds are unaffected. 
+Non-homeworld systems at the colony stage cap have a 5% chance of gaining d4 TL and a military base. */
+
+(function() {
+	var colony;
+	for(i=0;i<$.galaxies;i++) {
+		for (j=0;j<$.systems;j++) {
+			// colonies under attack
+			colony = $.get(i,j,"colony");
+			if (colony.homeWorld == 0 && colony.stage > 0) {
+				var choice = random.rand(100);
+				if (choice < 20/colony.stage) {
+					$.advanceColonyStage(i,j,true);
+					$.advanceColonyTech(i,j,1);
+				} else if (choice < 20 || colony.stage == 7) {
+					// nothing
+				} else if (choice < 40) {
+					$.raidColony(i,j,1+random.rand(6)); // 20% of raid
+				} else if (choice < 45) {
+					$.assaultColony(i,j,1+random.rand(4)); // 5% chance of assault - planet is depopulated, some orbital infrastructure remains or rebuilt
+				} else if (choice == 45) {
+					$.destroyColony(i,j); // 1% chance of total destruction
+				}
+				
+				if ($.colonyAtMaxSize(i,j,true)) {
+					if (random.randf() < 0.05) {
+						colony.militaryBase = 1;
+						$.advanceColonyTech(i,j,1+random.rand(4));
+					}
+				}
+			}
+		}
+	}
+}());
+
+random.setStart(220000);
+
+// now at present day
+
+/* Stage 11: set economies */
+(function() {
+	var colony;
+	for(i=0;i<$.galaxies;i++) {
+		for (j=0;j<$.systems;j++) {
+			colony = $.get(i,j,"colony");
+			// need to set colony population, which is finalised at this point
+			// before economic steps
+			var prand = (random.rand(90)+10)/10;
+			var pop, pdesc;
+			switch (colony.stage) {
+			case 0:
+				pop = 1E3 * prand; 
+				pdesc = "No official population";
+				break;
+			case 1:
+				pop = 1E4 * prand; 
+				pdesc = (prand*10).toFixed(0)+" thousand";
+				break;
+			case 2:
+				pop = 1E5 * prand; 
+				pdesc = (prand*100).toFixed(0)+" thousand";
+				break;
+			case 3:
+				pop = 1E6 * prand; 
+				pdesc = (prand).toFixed(1)+" million";
+				break;
+			case 4:
+				pop = 1E7 * prand; 
+				pdesc = (prand*10).toFixed(0)+" million";
+				break;
+			case 5:
+				pop = 1E8 * prand; 
+				pdesc = (prand*100).toFixed(0)+" million";
+				break;
+			case 6:
+			case 7:
+				// a stage 6 colony is just a stage 5 with more influence
+				pop = 1E9 * prand; 
+				pdesc = (prand).toFixed(1)+" billion";
+				break;
+			}
+			colony.population = pop;
+			colony.populationDescription = pdesc;
+			
+			$.economyType(i,j,random.rand(6),random.randf());
+
+		}
+	}
+}());
+
+random.setStart(230000);
+
+/* Stage 12 */
+/*
+Grant the following influence points +d3 to each system on the chart: United Capital 25, Homeworld 12, Stage 6 colony 6, Stage 5 colony 3, Military colony +3 (or 3 if on <= Stage 4 colony), all others including military outposts none.
+In the order Homeworld, Stage 5, any Mil, Stage 4, which is not already in a named region do the following:
+Generate a region ID (Colonials do Dramani's Hope first but influence extended from both counts as the same region)
+For each inhabited system next to the region, do the following until out of influence. If the cost cannot be paid, remove the system from the adjacency list and try again. If the adjacency list is empty, stop even if influence remains. Prioritise systems next to the homeworld:
+If the system is already in a region and not influential, spend its colony stage in influence if possible to mark it as contested between the two. If the system is influential or insufficient influence is available, ignore it. If the system is a cross bottleneck, it can be set to contested for one influence regardless of stage.
+If the system is already contested by two other parties, spend one influence and change its status to “independent hub system”
+If the system is already an independent hub system, spend one influence if possible.
+If the system being included is itself influential, add half its influence value to the region owner, and include it.
+If the system being included is within 3.5 LY and at least stage two, keep influence the same, and include it
+If the system has a Quarantine or Survival economy, include it at no cost, but do not add its adjacent systems to the adjacency list.
+If the system is at least stage one, lose one influence point and include it
+If the system is an outpost, lose two influence points and include it
+If the system is a line bottleneck, do not add the system on the other end to the adjacent list
+If the system is a cross bottleneck, spend two additional influence if possible (else spend all possible) and do not add the systems on the other side to the adjacent list
+*/
+
+(function() {
+	var colony, politics, tcolony, tpolitics, considered, influencer;
+	var regionID = 1;
+
+	var $ignoreSystem = function(adjacents,idx) {
+		considered.push(adjacents[idx]);
+		adjacents.splice(idx,1);
+	};
+
+	var $includeSystem = function(adjacents,idx,influence,needs,includer,extend) {
+		if (needs > influence) {
+			// can't do this one
+			$ignoreSystem(adjacents,idx);
+			return influence;
+		}
+		includer();
+		if (extend) {
+			var tadjacents = $.get(i,adjacents[idx],"connectedSystems");
+			for (j=0;j<tadjacents.length;j++) {
+				if (adjacents.indexOf(tadjacents[j]) == -1 && considered.indexOf(tadjacents[j]) == -1 && $.get(i,tadjacents[j],"colony").stage > 0) {
+					// if not already on the adjacency list and not
+					// already considered and not uninhabited
+					adjacents.push(tadjacents[j]);
+				}
+			}
+		}
+		$ignoreSystem(adjacents,idx); // mark as considered
+		return influence-needs;
+	};
+
+	var $contestSystem = function() {
+		// remove from previous region, mark as contested
+		if (tcolony.contested == 0 && tcolony.independentHub == 0) {
+			tcolony.contested = 1;
+			tpolitics.region = 0;
+			tpolitics.regionName = "Contested System";
+		} else {
+			// or independent hub, if already contested
+			tcolony.contested = 0;
+			tcolony.independentHub = 1;
+			tpolitics.region = 0;
+			tpolitics.regionName = "Independent Hub";
+		}
+	};
+
+	var $joinSystem = function() {
+		tpolitics.region = regionID;
+		tpolitics.regionName = "Region "+regionID; //tmp
+	}
+
+	for (var i=0;i<$.galaxies;i++) {
+		var influencers = [[],[],[],[],[]];
+		// find influential systems
+		for (var j=0;j<$.systems;j++) {
+			colony = $.get(i,j,"colony");
+			politics = {
+				region: 0,
+				regionName: "Chart "+i,
+				regionInfluence: 0,
+				governmentCategory: "",
+				governmentType: ""
+			};
+			if (colony.homeWorld) {
+				if (i==2) {
+					politics.regionInfluence = 25; // united capital
+				} else {
+					politics.regionInfluence = 12;
+				}
+			} else if (colony.stage == 7) {
+				politics.regionInfluence = 9;
+			} else if (colony.stage == 6) {
+				politics.regionInfluence = 6;
+			} else if (colony.stage == 5) {
+				// class 4 colonies have influence for extension of other
+				// groups, and boosts to class 4 military bases
+				// but don't themselves found regions
+				politics.regionInfluence = 4;
+			}
+			if (colony.militaryBase == 1) {
+				politics.regionInfluence += 3;
+			}
+			if (politics.regionInfluence > 0) {
+				if (colony.homeWorld) {
+					influencers[0].push(j);
+				} else if (colony.stage == 7) {
+					influencers[1].push(j);
+				} else if (colony.stage == 6) {
+					influencers[2].push(j);
+				} else if (colony.militaryBase == 1) {
+					influencers[3].push(j);
+				} else {
+				//	influencers[4].push(j);
+				}
+			}
+			$.set(i,j,"politics",politics);
+		}
+		console.error("Influencers for "+i+" are "+influencers[0]+"/"+influencers[1]+"/"+influencers[2]+"/"+influencers[3]+"/"+influencers[4]);
+		// create regions based on influencers
+		for (k=0;k<influencers.length;k++) {
+			// go through influencers of each type in order of type
+			while ((influencer = influencers[k].shift()) !== undefined) {
+				var adjacents = $.get(i,influencer,"connectedSystems").map(function(x) { return x; });
+				considered = [influencer];
+				politics = $.get(i,influencer,"politics");
+				if (politics.region > 0) {
+					// do nothing 
+				} else {
+					// core human worlds are all part of the same region
+					// so join them in now for free
+					var influenceLevel = politics.regionInfluence;
+					politics.region = regionID;
+					politics.regionName = "Capital of region "+regionID; // tmp
+
+					if (i==1) {
+						if (influencer == keyWorlds["Hope"][1]) {
+							console.error("Including Landing in Hope");
+							adjacents.unshift(keyWorlds["Landing"][1]);
+							tpolitics = $.get(i,keyWorlds["Landing"][1],"politics");
+							$includeSystem(adjacents,0,2,1,$joinSystem,true);
+							adjacents.unshift(keyWorlds["Reach"][1]);
+							tpolitics = $.get(i,keyWorlds["Reach"][1],"politics");
+							$includeSystem(adjacents,0,2,1,$joinSystem,true);
+						} else if (influencer == keyWorlds["Landing"][1]) {
+							console.error("Including Hope in Landing");
+							adjacents.unshift(keyWorlds["Hope"][1]);
+							tpolitics = $.get(i,keyWorlds["Hope"][1],"politics");
+							$includeSystem(adjacents,0,2,1,$joinSystem,true);
+							adjacents.unshift(keyWorlds["Reach"][1]);
+							tpolitics = $.get(i,keyWorlds["Landing"][1],"politics");
+							$includeSystem(adjacents,0,2,1,$joinSystem,true);
+						}
+					}
+
+					while (adjacents.length > 0) {
+						// start with nearest to stop regions becoming lines
+						adjacents.sort(function(a,b) {
+							var ad = $.distance(i,influencer,a);
+							var bd = $.distance(i,influencer,b);
+							return ad-bd;
+						});
+						var tryidx = random.rand(Math.min(adjacents.length,3));
+						var trysys = adjacents[tryidx];
+						var bottle = $.bottleneckType(i,trysys);
+						var bottleCost = bottle==2?2:0;
+						tcolony = $.get(i,trysys,"colony");
+						tpolitics = $.get(i,trysys,"politics");
+						var teconomy = $.get(i,trysys,"economy");
+						if (tpolitics.region > 0) {
+							// systems already in regions
+							if (tpolitics.regionInfluence > 0) {
+								// ignore the central systems
+								$ignoreSystem(adjacents,tryidx);
+							} else {
+								if (bottle == 2) {
+									// cross bottlenecks naturally end up contested
+									influenceLevel = $includeSystem(adjacents,tryidx,influenceLevel,1,$contestSystem,false);
+								} else {
+									// others are a little more expensive
+									influenceLevel = $includeSystem(adjacents,tryidx,influenceLevel,2,$contestSystem,false);
+								}
+							}
+						} else if (tcolony.contested == 1 || tcolony.independentHub == 1) {
+							// systems which are already contested
+							influenceLevel = $includeSystem(adjacents,tryidx,influenceLevel,1,$contestSystem,false);
+						} else if (tpolitics.regionInfluence > 0) {
+							// secondary capital joins!
+							influenceLevel = $includeSystem(adjacents,tryidx,influenceLevel,Math.floor(tpolitics.regionInfluence/2),$joinSystem,true);
+						} else if ($.distance(i,influencer,trysys) <= 7) {
+							// nearby decent systems joined free
+							var cCost = (tcolony.stage >= 3)?0:1;
+							influenceLevel = $includeSystem(adjacents,tryidx,influenceLevel,cCost+bottleCost,$joinSystem,bottle==0);
+						} else if (teconomy.type == "Quarantine" || teconomy.type == "Survival") {
+							// it's officially in, but only because no-one wants it
+							influenceLevel = $includeSystem(adjacents,tryidx,influenceLevel,bottleCost,$joinSystem,false);
+						} else if (tcolony.stage >= 2) {
+							// habited planets take some control
+							influenceLevel = $includeSystem(adjacents,tryidx,influenceLevel,bottleCost+1,$joinSystem,bottle==0);
+						} else if (tcolony.stage == 1) {
+							// outposts take more, and are less use for transmitting control
+							influenceLevel = $includeSystem(adjacents,tryidx,influenceLevel,bottleCost+2,$joinSystem,bottle==0);
+						} else {
+							// uninhabited system next to start system
+							$ignoreSystem(adjacents,tryidx);
+						}
+					}
+
+					regionID++;
+				}
+			}
+		}
+	}
+}());
+
+
+random.setStart(240000);
+
+
+
+
+(function() {
+	$.$debug = 1;
+	var planetinfoplist = "{\n";
+	for (i=0;i<$.galaxies;i++) {
+		for (j=0;j<$.systems;j++) {
+			if (!$.get(i,j,"name")) {
+				var colony = $.get(i,j,"colony");
+				if (colony.stage > 1) {
+					$.set(i,j,"name","C"+(colony.stage-1)+" "+i+"-"+j);
+				} else if (colony.stage == 1) {
+					$.set(i,j,"name","O "+i+"-"+j);
+				} else {
+					$.set(i,j,"name","S "+i+"-"+j);
+				}
+			}
+			planetinfoplist += $.dump(i,j);
+		}
+	}
+	planetinfoplist += "}\n";
+	fs.writeFileSync("planetinfo.plist",planetinfoplist);
+
+	var descriptionplist = "{\n";
+	for (i=0;i<$.galaxies;i++) {
+		for (j=0;j<$.systems;j++) {
+			descriptionplist += $.dumpRegion(i,j);
+		}
+	}
+	descriptionplist += "}\n";
+	fs.writeFileSync("descriptions.plist",descriptionplist);
+
+}());
