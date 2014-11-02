@@ -281,7 +281,8 @@ random.setStart(75000); // guess ~20 total above random numbers max
 			independentHub: 0,
 			attacked: 0,
 			destroyed: 0,
-			militaryBase: 0
+			militaryBase: 0,
+			outsiders: 0
 		}
 	};
 
@@ -927,6 +928,7 @@ for (var cocostage = 5; cocostage <= 7; cocostage++) {
 				// outsider settlements - low tech outposts
 				if (colony.stage == 0 && random.randf() < 0.01) {
 					$.foundColony(i,j,[speclist[random.rand(speclist.length)]],1,1);
+					colony.outsiders = 1;
 				}
 			}
 		}
@@ -992,6 +994,7 @@ All remaining systems with high or medium mineral wealth get a stage 1 colony
 			// outsider settlements - low tech outposts
 			if (colony.stage == 0 && random.randf() < 0.01) {
 				$.foundColony(i,j,[speclist[random.rand(speclist.length)]],1,1);
+				colony.outsiders = 1;
 			}
 
 		}
@@ -1031,6 +1034,7 @@ Add 1 to TL of existing systems (stage/6 chance) */
 				// still occasional outsider settlements
 			} else if (random.randf() < 0.01) {
 				$.foundColony(i,j,[speclist[random.rand(speclist.length)]],1,1);
+				colony.outsiders = 1;
 			}
 		}
 	}
@@ -1069,7 +1073,12 @@ Non-homeworld systems at the colony stage cap have a 5% chance of gaining d4 TL 
 						$.advanceColonyTech(i,j,1+random.rand(4));
 					}
 				}
+			} else if (colony.stage == 0 && random.randf() < 0.01) {
+				// refugees
+				$.foundColony(i,j,[speclist[random.rand(speclist.length)]],1,1);
+				colony.outsiders = 1;
 			}
+
 		}
 	}
 }());
@@ -1149,6 +1158,9 @@ If the system is a line bottleneck, do not add the system on the other end to th
 If the system is a cross bottleneck, spend two additional influence if possible (else spend all possible) and do not add the systems on the other side to the adjacent list
 */
 
+var maxRegionID = 0;
+var unitedRegionID = 0;
+
 (function() {
 	var colony, politics, tcolony, tpolitics, considered, influencer;
 	var regionID = 1;
@@ -1209,11 +1221,14 @@ If the system is a cross bottleneck, spend two additional influence if possible 
 				regionName: "Chart "+i,
 				regionInfluence: 0,
 				governmentCategory: "",
-				governmentType: ""
+				governmentType: "",
+				regionAccession: 0,
+				stability: 0
 			};
 			if (colony.homeWorld) {
 				if (i==2) {
 					politics.regionInfluence = 25; // united capital
+					unitedRegionID = regionID;
 				} else {
 					politics.regionInfluence = 12;
 				}
@@ -1256,6 +1271,15 @@ If the system is a cross bottleneck, spend two additional influence if possible 
 				if (politics.region > 0) {
 					// do nothing 
 				} else {
+					var regionInfo = {
+						id: regionID,
+						galaxy: i,
+						influential: [influencer],
+						members: [], // gets filled in later
+						category: "",
+						subCategory: "",
+						name: "Region "+regionID // overwritten later
+					}
 					// core human worlds are all part of the same region
 					// so join them in now for free
 					var influenceLevel = politics.regionInfluence;
@@ -1267,6 +1291,7 @@ If the system is a cross bottleneck, spend two additional influence if possible 
 							console.error("Including Landing in Hope");
 							adjacents.unshift(keyWorlds["Landing"][1]);
 							tpolitics = $.get(i,keyWorlds["Landing"][1],"politics");
+							regionInfo.influential.push(keyWorlds["Landing"][1]);
 							$includeSystem(adjacents,0,2,1,$joinSystem,true);
 							adjacents.unshift(keyWorlds["Reach"][1]);
 							tpolitics = $.get(i,keyWorlds["Reach"][1],"politics");
@@ -1298,8 +1323,9 @@ If the system is a cross bottleneck, spend two additional influence if possible 
 						var teconomy = $.get(i,trysys,"economy");
 						if (tpolitics.region > 0) {
 							// systems already in regions
-							if (tpolitics.regionInfluence > 0) {
+							if (tpolitics.regionInfluence > 0 || tpolitics.region == regionID) {
 								// ignore the central systems
+								// ignore if one from this region ends up listed
 								$ignoreSystem(adjacents,tryidx);
 							} else {
 								if (bottle == 2) {
@@ -1316,6 +1342,8 @@ If the system is a cross bottleneck, spend two additional influence if possible 
 						} else if (tpolitics.regionInfluence > 0) {
 							// secondary capital joins!
 							influenceLevel = $includeSystem(adjacents,tryidx,influenceLevel,Math.floor(tpolitics.regionInfluence/2),$joinSystem,true);
+							// above always succeeds, so no need to check here
+							regionInfo.influential.push(trysys);
 						} else if ($.distance(i,influencer,trysys) <= 7) {
 							// nearby decent systems joined free
 							var cCost = (tcolony.stage >= 3)?0:1;
@@ -1334,7 +1362,8 @@ If the system is a cross bottleneck, spend two additional influence if possible 
 							$ignoreSystem(adjacents,tryidx);
 						}
 					}
-
+					$.setRegion(regionID,regionInfo);
+					maxRegionID = regionID;
 					regionID++;
 				}
 			}
@@ -1345,10 +1374,386 @@ If the system is a cross bottleneck, spend two additional influence if possible 
 
 random.setStart(240000);
 
+// set up species government preferences
+(function() {
+	var speclist = species.list();
+	for (k=0;k<speclist.length;k++) {
+		var basetypes = ["Corporate","Corporate","Democratic","Democratic","Hierarchical","Hierarchical","Collective","Collective","Atypical","Corporate","Corporate","Democratic","Democratic","Hierarchical","Hierarchical","Collective","Collective"];
+		for (i=0;i<10;i++) {
+			// biases towards existing ones
+			basetypes.push(basetypes[random.rand(basetypes.length)]);
+		}
+
+		var cortypes = ["Company Monopoly","Capitalist Plutocracy","Corporate System","Timocracy"];
+		var demtypes = ["Republican Democracy","Federal Democracy","Demarchy","Direct Democracy"];
+		var hietypes = ["Dictatorship","Feudal Realm","Martial Law","Family Clans"];
+		var coltypes = ["Socialist","Communist","Independent Communes","Worker's Cooperative"];
+		var atytypes = ["Isolationist","Anarchist","Transapientism","Social Evolutionists","Cultural Reachers","Precedentarchy","Bureaucracy","Variationist"];
+		for (i=0;i<10;i++) {
+			cortypes.push(cortypes[random.rand(cortypes.length)]);
+			demtypes.push(demtypes[random.rand(demtypes.length)]);
+			hietypes.push(hietypes[random.rand(hietypes.length)]);
+			coltypes.push(coltypes[random.rand(coltypes.length)]);
+			atytypes.push(atytypes[random.rand(atytypes.length)]);
+		}
+		var preferences = [];
+		for (i=0;i<basetypes.length;i++) {
+			if (basetypes[i] == "Corporate") {
+				preferences = preferences.concat(cortypes);
+			} else if (basetypes[i] == "Democratic") {
+				preferences = preferences.concat(demtypes);
+			} else if (basetypes[i] == "Hierarchical") {
+				preferences = preferences.concat(hietypes);
+			} else if (basetypes[i] == "Collective") {
+				preferences = preferences.concat(coltypes);
+			} else if (basetypes[i] == "Atypical") {
+				preferences = preferences.concat(atytypes);
+			}
+		}
+		preferences.sort();
+		species.setGovernmentPreferences(speclist[k],preferences);
+//		console.error(speclist[k]+" has government preferences "+species.describeGovernmentPreferences(speclist[k]));
+	}
+
+}());
+
+random.setStart(245000);
+
+// start applying governments to systems
+(function() {
+	var politics,colony,region,economy;
+	// regional influential governments first
+	for (k=1;k<=maxRegionID;k++) {
+		region = $.getRegion(k);
+		for (j=0;j<region.influential.length;j++) {
+			var sys = region.influential[j];
+			politics = $.get(region.galaxy,sys,"politics");
+			if (k==unitedRegionID) {
+				politics.governmentType = "United Species Coalition";
+			} else {
+				colony = $.get(region.galaxy,sys,"colony");
+				politics.governmentType = species.randomGovernment(colony.species[random.rand(colony.species.length)],random.randf());
+				if (colony.militaryBase) {
+					var makemartial = random.randf();
+					if (colony.stage == 1 
+						|| (colony.stage == 2 && makemartial < 0.6)
+						|| (colony.stage == 3 && makemartial < 0.3)
+						|| (colony.stage == 4 && makemartial < 0.1)) {
+						politics.governmentType = "Martial Law";
+					}
+				}
+			}
+			politics.governmentCategory = $.governmentCategoryFromType(politics.governmentType);
+			region.members.push(j);
+		}
+	}
+	// regional non-influential systems next
+	for (i=0;i<$.galaxies;i++) {
+		for (j=0;j<$.systems;j++) {
+			politics = $.get(i,j,"politics");
+			colony = $.get(i,j,"colony");
+			if (politics.region > 0 && politics.governmentType == "") {
+				region = $.getRegion(politics.region);
+				region.members.push(j);
+				if (region.id == unitedRegionID) {
+					politics.governmentType = "United Species Coalition";
+				} else {
+					economy = $.get(i,j,"economy");
+					if (economy.type == "Survival" || colony.stage == 0) {
+						politics.governmentType = $.randomDisorderedGovernment(random.randf());
+					} else if (economy.type == "Quarantine") {
+						politics.governmentType = "Quarantine";
+					} else if (colony.attacked == 1 && random.randf() < 0.33) {
+						politics.governmentType = $.randomDisorderedGovernment(random.randf());
+					} else if (economy.type.match(/^Research/) && random.randf() < 0.25) {
+						politics.governmentType = "Technocracy";
+					} else if (random.randf() < 0.02) {
+						politics.governmentType = $.randomDisorderedGovernment(random.randf());
+					} else {
+						// no special case.
+						var copyInf = random.randf();
+						if (colony.stage == 1 && copyInf < 0.5
+							|| (colony.stage == 2 && copyInf < 0.7)
+							|| (colony.stage == 3 && copyInf < 0.5)
+							|| (colony.stage == 4 && copyInf < 0.4)) {
+							// copy an influential
+							politics.governmentType = $.get(i,region.influential[random.rand(region.influential.length)],"politics").governmentType;
+						} else if (colony.outsiders == 0) {
+							// species random
+							politics.governmentType = species.randomGovernment(colony.species[random.rand(colony.species.length)],random.randf());
+						} else {
+							do {
+								// outsiders tend to have atypical
+								politics.governmentType = species.randomGovernment(colony.species[random.rand(colony.species.length)],random.randf());
+							} while ($.governmentCategoryFromType(politics.governmentType) != "Atypical");
+						}
+					}
+				}
+				politics.governmentCategory = $.governmentCategoryFromType(politics.governmentType);
+			}
+		}
+	}
+	// now set types of regions
+	for (k=1;k<=maxRegionID;k++) {
+		region = $.getRegion(k);
+		if (k==unitedRegionID) {
+			region.category = "United Species Coalition";
+			region.name = "USC Jointly Administered Systems";
+		}
+		var corp = 0; var demo = 0; var coll = 0; var hier = 0; var atyp = 0; var total = 0;
+		for (j=0;j<region.members.length;j++) {
+			var gcat = $.get(region.galaxy,region.members[j],"politics").governmentCategory;
+			if (gcat == "Corporate") {
+				corp++; total++;
+			} else if (gcat == "Democratic") {
+				demo++; total++;
+			} else if (gcat == "Hierarchical") {
+				hier++; total++;
+			} else if (gcat == "Collective") {
+				coll++; total++;
+			} else if (gcat == "Atypical") {
+				atyp++; total++;
+			}
+		}
+		if (corp >= total*0.8) {
+			region.category = "Strong Political Alliance";
+			region.subCategory = "Corporate";
+		} else if (demo >= total*0.8) {
+			region.category = "Strong Political Alliance";
+			region.subCategory = "Democratic";
+		} else if (hier >= total*0.8) {
+			region.category = "Strong Political Alliance";
+			region.subCategory = "Hierarchical";
+		} else if (coll >= total*0.8) {
+			region.category = "Strong Political Alliance";
+			region.subCategory = "Collective";
+		} else if (corp >= total*0.5) {
+			region.category = "Weak Political Alliance";
+			region.subCategory = "Corporate";
+		} else if (demo >= total*0.5) {
+			region.category = "Weak Political Alliance";
+			region.subCategory = "Democratic";
+		} else if (hier >= total*0.5) {
+			region.category = "Weak Political Alliance";
+			region.subCategory = "Hierarchical";
+		} else if (coll >= total*0.5) {
+			region.category = "Weak Political Alliance";
+			region.subCategory = "Collective";
+		} else if (corp >= total/3 && demo >= total/3) {
+			region.category = "Politically Unstable Region";
+			region.subCategory = "Corporate/Democratic";
+		} else if (corp >= total/3 && hier >= total/3) {
+			region.category = "Politically Unstable Region";
+			region.subCategory = "Corporate/Hierarchical";
+		} else if (corp >= total/3 && coll >= total/3) {
+			region.category = "Politically Unstable Region";
+			region.subCategory = "Corporate/Collective";
+		} else if (demo >= total/3 && hier >= total/3) {
+			region.category = "Politically Unstable Region";
+			region.subCategory = "Democratic/Hierarchical";
+		} else if (demo >= total/3 && coll >= total/3) {
+			region.category = "Politically Unstable Region";
+			region.subCategory = "Democratic/Collective";
+		} else if (hier >= total/3 && coll >= total/3) {
+			region.category = "Politically Unstable Region";
+			region.subCategory = "Hierarchical/Collective";
+		} else if (random.randf() < 0.5) {
+			region.category = "Economic Area";
+		} else {
+			region.category = "Historic Area";
+		}
+	}
+	// now can do the non-regional systems
+	for (i=0;i<$.galaxies;i++) {
+		for (j=0;j<$.systems;j++) {
+			politics = $.get(i,j,"politics");
+			colony = $.get(i,j,"colony");
+			if (politics.region == 0) {
+				economy = $.get(i,j,"economy");
+				if (colony.independentHub == 1) {
+					if ($.get(i,j,"name") && $.get(i,j,"name").match(/Embassy/)) {
+						politics.governmentType = "United Species Coalition";
+					} else {
+						do {
+							// independent hubs end up something conventional
+							politics.governmentType = species.randomGovernment(colony.species[random.rand(colony.species.length)],random.randf());
+						} while ($.governmentCategoryFromType(politics.governmentType) == "Atypical");
+					}
+				} else if (colony.attacked > 0 && random.randf() < 0.66) {
+					// much greater chance of falling to disorder outside
+					// of regional influence
+					politics.governmentType = $.randomDisorderedGovernment(random.randf());
+				} else if (economy.type == "Survival" || colony.stage == 0) {
+					politics.governmentType = $.randomDisorderedGovernment(random.randf());
+				} else if (colony.outsiders == 1) {
+					do {
+						// outsiders tend to have atypical
+						politics.governmentType = species.randomGovernment(colony.species[random.rand(colony.species.length)],random.randf());
+					} while ($.governmentCategoryFromType(politics.governmentType) != "Atypical");
+				} else if (colony.contested) {
+					var choice = random.randf();
+					if (choice < 0.1) {
+						politics.governmentType = species.randomGovernment(colony.species[random.rand(colony.species.length)],random.randf());
+					} else if (choice < 0.3) {
+						politics.governmentType = "Civil War";
+					} else {
+						var adj = $.get(i,j,"connectedSystems");
+						var gcat = "";
+						// select primary government of an adjacent region
+						do {
+							var adjid = adj[random.rand(adj.length)];
+							var reg = $.get(i,adjid,"politics").region;
+							if (reg > 0) {
+								var regInfo = $.getRegion(reg);
+								gcat = $.get(i,regInfo.influential[0],"politics").governmentCategory;
+							}
+						} while (gcat == "");
+						// select random government of that region
+						do {
+							politics.governmentType = species.randomGovernment(colony.species[random.rand(colony.species.length)],random.randf());
+						} while ($.governmentCategoryFromType(politics.governmentType) != gcat);
+					}
+				} else if (economy.type == "Quarantine") {
+					politics.governmentType = "Quarantine";
+				} else if (economy.type.match(/Research/) && random.randf() < 0.25) {
+					politics.governmentType = "Technocracy";
+
+				} else {
+					adj = $.get(i,j,"connectedSystems");
+					reg = $.get(i,adj[0],"politics").region;
+					regInfo = $.getRegion(reg);
+					var surrounded = false;
+					if (reg != 0) {
+						surrounded = true;
+						for (k=1;k<adj.length;k++) {
+							if ($.get(i,adj[k],"politics").region != reg) {
+								surrounded = false;
+								break;
+							}
+						}
+					}
+					if (surrounded && regInfo.category.match(/Political Alliance/)) {
+						choice = random.randf();
+						if (choice < 0.2) {
+							politics.governmentType = "Civil War";
+							politics.regionAccession = 2;
+						} else if (choice < 0.5) {
+							politics.governmentType = species.randomGovernment(colony.species[random.rand(colony.species.length)],random.randf());
+						} else {
+							gcat = $.get(i,regInfo.influential[0],"politics").governmentCategory;
+							do {
+								politics.governmentType = species.randomGovernment(colony.species[random.rand(colony.species.length)],random.randf());
+							} while ($.governmentCategoryFromType(politics.governmentType) != gcat);
+							politics.regionAccession = 1;
+						}						
+					} else {
+						if (random.randf() < 0.05) {
+							politics.governmentType = $.randomDisorderedGovernment(random.randf());
+						} else {
+							politics.governmentType = species.randomGovernment(colony.species[random.rand(colony.species.length)],random.randf());
+						}
+					}
+				}
+
+				politics.governmentCategory = $.governmentCategoryFromType(politics.governmentType);
+			}
+		}
+	}
+
+	// cleanup similar government types
+	for (i=0;i<$.galaxies;i++) {
+		for (j=0;j<$.systems;j++) {
+			politics = $.get(i,j,"politics");
+			colony = $.get(i,j,"colony");
+			economy = $.get(i,j,"economy");
+			if (politics.governmentType == "Dictatorship" && economy.type.match(/Research/)) {
+				politics.governmentType = "Technocracy";
+			} else if (politics.governmentType == "Civil War" && colony.stage <= 1) {
+				politics.governmentType = "War zone";
+			} else if (politics.governmentType == "Fragmented Society" && colony.stage <= 0) {
+				politics.governmentType = "None";
+			} else if (politics.governmentType == "Isolationist" && economy.type == "Quarantine") {
+				politics.governmentType = "Quarantine";
+			}
+		}
+	}
+
+
+}());
+
+
+random.setStart(260000);
+
+// set system stability levels
+(function() {
+	var politics,colony,region,economy;
+
+	for (i=0;i<$.galaxies;i++) {
+		for (j=0;j<$.systems;j++) {
+			politics = $.get(i,j,"politics");
+			colony = $.get(i,j,"colony");
+			economy = $.get(i,j,"economy");
+			if (politics.region > 0) {
+				region = $.getRegion(politics.region);
+			} else {
+				region = null;
+			}
+
+			if (colony.stage == 0 || economy.type == "Survival") {
+				politics.stability = 0;
+			} else if (colony.homeWorld == 1 || colony.militaryBase == 1) {
+				politics.stability = 7;
+			} else {
+				var st = colony.stage;
+				st += random.rand(5)-3;
+				if (colony.independentHub) { st += 2; }
+				if (colony.contested) { st -= 1; }
+				if (politics.region > 0) {
+					if (region.category == "Strong Political Alliance") {
+						st += 3;
+					} else if (region.category == "Weak Political Alliance") {
+						st += 1;
+					} else if (region.category == "Politically Unstable Region") {
+						st -= 1;
+					}
+				}
+				if ($.colonyAtMaxSize(i,j,true)) { st += 1; }
+				if (colony.economy == "Colonisation") { st -= 2; }
+				if (colony.economy == "Research (Mil)") { st += 1; }
+				if (colony.economy == "Shipyard") { st += 1; }
+				if (colony.economy == "Tourism") { st += 1; }
+				if (politics.governmentType == "Martial Law") { st += 2; }
+				else if (politics.governmentCategory == "Hierarchical") { st += 1; }
+				if (politics.governmentCategory == "Disordered") { st -= 2; }
+				// next set stack with the category penalty
+				if (politics.governmentType == "Civil War") { st -= 2; }
+				if (politics.governmentType == "War Zone") { st -= 2; }
+				if (politics.governmentType == "Criminal Rule") { st -= 2; }
+				if (politics.governmentType == "Isolationist") { st -= 2; }
+				if (economy.productivity < 1000) { st -= 1; }
+				if (economy.productivity > 1000000) { st += 1; }
+				if (colony.attacked == 1) { st -= 2; }
+				if (colony.attacked > 1) { st -= 3; }
+
+				// clamp
+				if (st < 0) { st = 0; }
+				if (st > 7) { st = 7; }
+
+				politics.stability = st;
+			}
+		}
+	}
+}());
+
+random.setStart(265000);
+
+
+
 
 
 
 (function() {
+	console.error(random.getPlace());
 	$.$debug = 1;
 	var planetinfoplist = "{\n";
 	for (i=0;i<$.galaxies;i++) {

@@ -173,10 +173,31 @@
 		habs.best = hb;
 		habs.worst = hw;
 		return habs;
+	};
+
+	species.setGovernmentPreferences = function(s,pref) {
+		speciesInfo[s].governments = pref;
+	};
+
+	species.randomGovernment = function(s,randf) {
+		return speciesInfo[s].governments[Math.floor(speciesInfo[s].governments.length*randf)];
+	};
+	
+	species.describeGovernmentPreferences = function(s) {
+		var prefs = {};
+		for (var i=0;i<speciesInfo[s].governments.length;i++) {
+			if (prefs[speciesInfo[s].governments[i]]) {
+				prefs[speciesInfo[s].governments[i]]++;
+			} else {
+				prefs[speciesInfo[s].governments[i]] = 1;
+			}
+		}
+		var result = "";
+		for (var p in prefs) {
+			result += p+": "+prefs[p]+"\n";
+		}
+		return result;
 	}
-
-
-
 
 
 	module.exports = species;

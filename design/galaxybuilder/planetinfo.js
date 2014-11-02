@@ -24,6 +24,9 @@
 
 	var planetdata = [[],[],[],[],[],[],[],[]];
 
+	// region 0 should never be asked for
+	var regiondata = [{}];
+
 	var cused = [{},{},{},{},{},{},{},{}];
 
 	var $plist = function(k,v) {
@@ -412,6 +415,44 @@
 		planetinfo.set(g,s,"economy",economy);
 	};
 
+	planetinfo.getRegion = function(r) {
+		return regiondata[r];
+	};
+
+	planetinfo.setRegion = function(r,info) {
+		return regiondata[r] = info;
+	};
+
+	planetinfo.governmentCategoryFromType = function(type) {
+		var cortypes = ["Company Monopoly","Capitalist Plutocracy","Corporate System","Timocracy"];
+		var demtypes = ["Republican Democracy","Federal Democracy","Demarchy","Direct Democracy"];
+		var hietypes = ["Dictatorship","Technocracy","Feudal Realm","Martial Law","Family Clans"];
+		var coltypes = ["Socialist","Communist","Independent Communes","Worker's Cooperative"];
+		var atytypes = ["Isolationist","Quarantine","Anarchist","Transapientism","Social Evolutionists","Cultural Reachers","Precedentarchy","Bureaucracy","Variationist"];
+		var usctypes = ["United Species Coalition","United Species Embassy"];
+		if (cortypes.indexOf(type) != -1) {
+			return "Corporate";
+		} else if (demtypes.indexOf(type) != -1) {
+			return "Democratic";
+		} else if (hietypes.indexOf(type) != -1) {
+			return "Hierarchical";
+		} else if (coltypes.indexOf(type) != -1) {
+			return "Collective";
+		} else if (atytypes.indexOf(type) != -1) {
+			return "Atypical";
+		} else if (usctypes.indexOf(type) != -1) {
+			return "United Species";
+		} else {
+			return "Disordered";
+		}
+	};
+
+	planetinfo.randomDisorderedGovernment = function(r) {
+		var distypes = ["Civil War","Criminal Rule","Fragmented Rule","Vigilantism"];
+		return distypes[Math.floor(distypes.length*r)];
+	};
+
+
 	planetinfo.dump = function(g,s) {
 		var fix = function(a,b) {
 			return a.toFixed(b);
@@ -422,6 +463,19 @@
 
 		var info = planetdata[g][s];
 		
+		var govtDebugNum = function(type) {
+			if (type == "") { return 1; } // not yet determined
+			var c = planetinfo.governmentCategoryFromType(type);
+			if (c == "Corporate") { return 7; }
+			if (c == "Democratic") { return 6; }
+			if (c == "Hierarchical") { return 3; }
+			if (c == "Collective") { return 4; }
+			if (c == "Atypical") { return 2; }
+			if (c == "Disordered") { return 0; }
+			if (c == "United Species") { return 5; }
+			return 1; // never?
+		}
+
 		var result = "\""+g+" "+s+"\" = {\n";
 		result += $plist("coordinates",info.coordinates[0]+" "+info.coordinates[1]);
 		result += $plist("name",info.name);
@@ -452,7 +506,11 @@
 		result += $plist("population",info.colony.stage*10); // unread
 		result += $plist("population_description",info.colony.populationDescription);
 		if (info.colony.stage > 0) { 
-			result += $plist("inhabitants",info.colony.species.join(", "));
+			if (info.colony.species.length > 3) {
+				result += $plist("inhabitants","Mixed species");
+			} else {
+				result += $plist("inhabitants",info.colony.species.join(", "));
+			}
 		} else {
 			result += $plist("inhabitants","Uninhabited");
 		}
@@ -462,15 +520,20 @@
 		result += $plist("economy_description",info.economy.type);
 		result += $plist("productivity",Math.ceil(info.economy.productivity/1E6));
 
+		result += $plist("government",info.politics.stability);
+		result += $plist("government_description",info.politics.governmentType?info.politics.governmentType:"Unknown");
+
 		if (this.$debug) {
+//			result += $plist("government",govtDebugNum(info.politics.governmentType));
 //			result += $plist("government",info.colony.stage);
-			result += $plist("government",info.politics.region?(info.politics.region%4)+2:(info.colony.contested||info.colony.independentHub?7:0));
+//			result += $plist("government",info.politics.region?(info.politics.region%4)+2:(info.colony.contested||info.colony.independentHub?7:0));
 			result += $plist("mineral_wealth",fix(info.planet.mineralWealth,2));
 			result += $plist("planet_surface_temperature",fix(info.planet.temperature,0));
 			result += $plist("planet_surface_radiation",fix(info.planet.surfaceRadiation,3));
 			result += $plist("planet_surface_gravity",fix(info.planet.surfaceGravity,2));
 			result += $plist("planet_seismic_instability",fix(info.planet.seismicInstability,3));
 			result += $plist("attacked",info.colony.attacked);
+			result += $plist("accession",info.politics.accession);
 			result += $plist("military_base",info.colony.militaryBase);
 			result += $plist("economy_reason",info.economy.reason);
 			result += $plist("planet_wind_speeds",fix(info.planet.windFactor,3));
