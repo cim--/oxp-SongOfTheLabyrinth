@@ -143,6 +143,19 @@
 	}
 
 
+	planetinfo.direction = function(g,s1,s2) {
+		var dx = planetdata[g][s1].coordinates[0] - planetdata[g][s2].coordinates[0];
+		var dy = (planetdata[g][s1].coordinates[1] - planetdata[g][s2].coordinates[1])/2;
+		var theta = Math.atan(dy/dx);
+		if (dx < 0 && dy >= 0) {
+			theta += Math.PI;
+		} else if (dx < 0) {
+			theta -= Math.PI;
+		}
+		return theta;
+	}
+
+
 	var $buildConnectivity = function(g) {
 		var connectivity = [];
 		for (var i=0;i<planetinfo.systems;i++) {
@@ -242,6 +255,9 @@
 	planetinfo.foundColony = function(gal,sys,specs,stage,tl,terraform) {
 		if (terraform) { terraform = true; } else { terraform = false; } 
 		var colony = planetinfo.get(gal,sys,"colony");
+		if (colony.species.length == 0) {
+			colony.founded = planetinfo.$historyStep;
+		}
 		var i;
 		for (i=0;i<specs.length;i++) {
 			if (colony.species.indexOf(specs[i]) == -1) {
@@ -255,6 +271,7 @@
 			console.error("Colony habitation failed "+JSON.stringify(colony)+" for "+gal+","+sys+" "+specs+" ("+stage+","+tl+")");
 		}
 		planetinfo.advanceColonyTech(gal,sys,tl-colony.techLevel);
+		planetinfo.addHistoryItem(gal,sys,{ type: "founded", species: specs });
 	};
 
 	planetinfo.colonyAtMaxSize = function (g,s,terraforming) {
@@ -304,6 +321,7 @@
 			var colony = planetinfo.get(g,s,"colony");
 			// okay, can advance
 			colony.stage++;
+			planetinfo.addHistoryItem(g,s,{ type: "expanded" });
 		}
 	};
 
@@ -311,6 +329,7 @@
 		var colony = planetinfo.get(g,s,"colony");
 		if (colony.stage > 1) {
 			colony.stage--;
+			planetinfo.addHistoryItem(g,s,{ type: "reduced" });
 		}
 		planetinfo.advanceColonyTech(g,s,0);
 	};
@@ -339,6 +358,7 @@
 			colony.techLevel = 1;
 		}
 		colony.attacked = 1;
+		planetinfo.addHistoryItem(g,s,{ type: "raided" });
 	};
 
 	planetinfo.assaultColony = function(g,s,t) {
@@ -351,17 +371,19 @@
 			colony.techLevel = 1;
 		}
 		colony.attacked = 2;
+		planetinfo.addHistoryItem(g,s,{ type: "assaulted" });
 	};
 
 	planetinfo.destroyColony = function(g,s) {
 		var colony = planetinfo.get(g,s,"colony");
 		colony.stage = 0;
 		colony.population = 0;
-		colony.species = [];
+//		colony.species = []; // needed for later records
 		colony.techLevel = 0;
 		colony.independentHub = 0; // unlikely that an embassy will go, but possible
 		colony.attacked = 3;
 		colony.destroyed = 1;
+		planetinfo.addHistoryItem(g,s,{ type: "destroyed" });
 	};
 
 	planetinfo.economyType = function(g,s,roll,prodfactor) {
@@ -453,6 +475,17 @@
 	};
 
 
+	planetinfo.addHistoryItem = function(g,s,item) {
+		if (!planetdata[g][s].history) {
+			planetdata[g][s].history = [];
+		}
+		item.historyStep = planetinfo.$historyStep;
+		planetdata[g][s].history.push(item);
+	};
+
+	planetinfo.$historyStep = 0;
+
+
 	planetinfo.dump = function(g,s) {
 		var fix = function(a,b) {
 			return a.toFixed(b);
@@ -485,7 +518,7 @@
 		result += $plist("corona_hues",fix(info.star.coronaHues,2));
 		result += $plist("sun_color",color(info.star.colour));
 		result += $plist("sun_distance",info.planet.orbitalRadius);
-		result += $plist("sun_name",info.star.sequence);
+		result += $plist("sun_name",info.star.name);
 
 		result += $plist("planet_distance",fix(info.planet.zpos,0));
 		result += $plist("radius",fix(info.planet.radius,0));
@@ -546,7 +579,7 @@
 			result += $plist("hab_li",fix(info.habitability.Lizard,1));
 			result += $plist("hab_lo",fix(info.habitability.Lobster,1));
 			result += $plist("hab_r",fix(info.habitability.Rodent,1));
-			result += $plist("description","Habitability: "+fix(info.habitability.worst,0)+"-"+fix(info.habitability.average,0)+"-"+fix(info.habitability.best,0)+". Sun: "+info.star.sequence+". Radiation: "+fix(info.planet.surfaceRadiation,3)+". Minerals: "+fix(info.planet.mineralWealth,2)+". Earthquakes: "+fix(info.planet.seismicInstability,3)+". Flares: "+fix(info.star.instability,2)+". Land: "+fix(info.planet.landFraction,2)+". Wind speed: "+fix(info.planet.windFactor,2)+". Temperature: "+fix(info.planet.temperature,0)+". Gravity: "+fix(info.planet.surfaceGravity,2)+". Attacked: "+info.colony.attacked+". Military: "+info.colony.militaryBase+". Economy Reason: "+info.economy.reason+". Bottleneck: "+planetinfo.bottleneckType(g,s));
+			result += $plist("description","Habitability: "+fix(info.habitability.worst,0)+"-"+fix(info.habitability.average,0)+"-"+fix(info.habitability.best,0)+". Sun: "+info.star.sequence+". Radiation: "+fix(info.planet.surfaceRadiation,3)+". Minerals: "+fix(info.planet.mineralWealth,2)+". Earthquakes: "+fix(info.planet.seismicInstability,3)+". Flares: "+fix(info.star.instability,2)+". Land: "+fix(info.planet.landFraction,2)+". Wind speed: "+fix(info.planet.windFactor,2)+". Temperature: "+fix(info.planet.temperature,0)+". Gravity: "+fix(info.planet.surfaceGravity,2)+". Attacked: "+info.colony.attacked+". Military: "+info.colony.militaryBase+". Economy Reason: "+info.economy.reason+". Bottleneck: "+planetinfo.bottleneckType(g,s)+". Orbits: "+info.star.name);
 		}
 
 		result += "};\n";

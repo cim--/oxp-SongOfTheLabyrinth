@@ -1,6 +1,7 @@
 #!/usr/local/bin/node
 "use strict";
 
+var namegen = require("./namegen");
 var random = require("./random");
 var species = require("./species");
 var $ = require("./planetinfo");
@@ -73,7 +74,8 @@ random.setStart(6000); // allows reducing of $.galaxies for testing, allows plen
 				shabfactor = 1.75;
 				minfactor = 0.8;
 				basecolour = [0.5,0.85,0.95];
-				star.sequence = "Class A"
+				star.sequence = "Class A";
+				star.brightness = 20 + random.rand(60);
 				break;
 			case 2:	case 3: case 4:
 				// "white";
@@ -82,6 +84,7 @@ random.setStart(6000); // allows reducing of $.galaxies for testing, allows plen
 				minfactor = 0.6;
 				basecolour = [0.9,0.9,0.9];
 				star.sequence = "Class F";
+				star.brightness = 2.5 + random.randf()*3.5;
 				break;
 			case 5: case 6: case 7: case 8: case 9:
 				// "yellow"; 
@@ -90,6 +93,7 @@ random.setStart(6000); // allows reducing of $.galaxies for testing, allows plen
 				minfactor = 0.5;
 				basecolour = [0.9,0.9,0.7];
 				star.sequence = "Class G";
+				star.brightness = 0.75 + random.randf()*0.5;
 				break;
 			case 10: case 11: case 12:
 				// "orange";
@@ -98,6 +102,7 @@ random.setStart(6000); // allows reducing of $.galaxies for testing, allows plen
 				minfactor = 0.4;
 				basecolour = [0.9,0.8,0.6];
 				star.sequence = "Class K";
+				star.brightness = 0.15 + random.randf()*0.25;
 				break;
 			case 13: case 14:
 				// "red";
@@ -106,6 +111,7 @@ random.setStart(6000); // allows reducing of $.galaxies for testing, allows plen
 				minfactor = 0.3;
 				basecolour = [0.95,0.75,0.7];
 				star.sequence = "Class M";
+				star.brightness = 0.05 + random.randf()*0.1;
 				break;
 			case 15:
 				// "giant"; 
@@ -114,10 +120,12 @@ random.setStart(6000); // allows reducing of $.galaxies for testing, allows plen
 				minfactor = 0.1; 
 				basecolour = [0.95,0.7,0.65];
 				star.sequence = "Red giant";
+				star.brightness = 100 + random.rand(600);
 				break;
 			default: // 16-19
 				// "dwarf";
 				star.sequence = "Class M dwarf";
+				star.brightness = 0.001 + random.randf()*0.009;
 				sradfactor = 0.3;
 				shabfactor = 0.4;
 				minfactor = 0.2;  
@@ -132,6 +140,8 @@ random.setStart(6000); // allows reducing of $.galaxies for testing, allows plen
 			star.coronaHues = (star.instability / 1.5);
 			star.habitableZoneFactor = shabfactor;
 			star.mineralFactor = minfactor;
+			star.constellation = "";
+			star.name = "";
 
 			// star colour
 			var adj = (random.randf()*0.05)-0.025;
@@ -477,8 +487,10 @@ random.setStart(150000); // guess ~35 total above random numbers max (may need m
 
 // list of key worlds (homeworlds, initial human worlds, United bases)
 var keyWorlds = {};
+var homeWorlds = [[],[],[],[],[],[],[],[]];
 
 (function() {
+	$.$historyStep = 1;
 	var setHomeWorld = function(g,s) {
 		var edging = 30;
 		var best = 0; var max = 0;
@@ -504,6 +516,7 @@ var keyWorlds = {};
 		$.set(g,best,"name",s+" Homeworld"); // temp
 		$.set(g,best,"colony",cinfo);
 		keyWorlds[s] = [g,best];
+		homeWorlds[g].push(best);
 		/* Reversing cause and effect here of course - we place them
 		 * there because it's the best system, but actualy it's the
 		 * best system because they evolved there. */
@@ -615,6 +628,7 @@ Then find nearby good habitation or mineral systems within 20 LY of Biya's Reach
 */
 
 (function() {
+	$.$historyStep = 2;
 	var earlyColonies = function(g,s,r) {
 		var c = keyWorlds[s];
 		if (s == "Human") {
@@ -702,6 +716,7 @@ random.setStart(150100); // the above is currently deterministic
 /* Stage 3: second-wave colonisation */
 
 (function() {
+	$.$historyStep = 3;
 	var nativeSpecies = [["Lizard"],["Human"],[],["Rodent"],["Feline"],["Frog","Bird"],["Lobster"],["Insect"]];
 	
 	for (i=0;i<$.galaxies;i++) {
@@ -762,6 +777,7 @@ The best uninhabited system for each species in chart 3 gets a stage 3 colony of
 Any uninhabited or outpost system with >90% habitability in any chart gets a stage 1 colony of the most suited species. (again, cycle backwards so nearest species gets first go)
 */
 (function() {
+	$.$historyStep = 4;
 	var hab, colony, planet;
 	// upgrade existing colonies first
 	for( i=0;i<$.galaxies;i++) {
@@ -803,7 +819,7 @@ Any uninhabited or outpost system with >90% habitability in any chart gets a sta
 	}
 	console.error("United Capital is 2 "+founduc);
 	$.foundColony(2,founduc,species.list(),5,7);
-	$.set(2,founduc,"name","United Capital");
+	$.set(2,founduc,"name","U nited Capital");
 	colony = $.get(2,founduc,"colony");
 	colony.homeWorld = 1; // close enough
 	keyWorlds["Capital"] = [2,founduc];
@@ -876,6 +892,7 @@ Any system with high mineral wealth, still at outpost stage, has a 10% chance of
 */
 
 for (var cocostage = 5; cocostage <= 7; cocostage++) {
+	$.$historyStep = cocostage;
 	// 10000 per pass seems to be plenty
 	random.setStart(110000 + (10000*cocostage));
 	(function() {
@@ -946,6 +963,7 @@ All remaining systems with high or medium mineral wealth get a stage 1 colony
 */
 
 (function() {
+	$.$historyStep = 8;
 	var hab, colony, planet;
 	var speclist = species.list();
 	for(i=0;i<$.galaxies;i++) {
@@ -1007,6 +1025,7 @@ random.setStart(200000);
 50% chance each colony increases by one stage if possible, 15% chance it decreases by one stage if not already an outpost
 Add 1 to TL of existing systems (stage/6 chance) */
 (function() {
+	$.$historyStep = 9;
 	var colony;
 	var speclist = species.list();
 
@@ -1047,7 +1066,10 @@ random.setStart(210000);
 Non-homeworld systems at the colony stage cap have a 5% chance of gaining d4 TL and a military base. */
 
 (function() {
+	$.$historyStep = 10;
 	var colony;
+	var speclist = species.list();
+
 	for(i=0;i<$.galaxies;i++) {
 		for (j=0;j<$.systems;j++) {
 			// colonies under attack
@@ -1089,6 +1111,7 @@ random.setStart(220000);
 
 /* Stage 11: set economies */
 (function() {
+	$.$historyStep = 11;
 	var colony;
 	for(i=0;i<$.galaxies;i++) {
 		for (j=0;j<$.systems;j++) {
@@ -1208,7 +1231,7 @@ var unitedRegionID = 0;
 
 	var $joinSystem = function() {
 		tpolitics.region = regionID;
-		tpolitics.regionName = "Region "+regionID; //tmp
+//		tpolitics.regionName = "Region "+regionID; //tmp
 	}
 
 	for (var i=0;i<$.galaxies;i++) {
@@ -1284,7 +1307,7 @@ var unitedRegionID = 0;
 					// so join them in now for free
 					var influenceLevel = politics.regionInfluence;
 					politics.region = regionID;
-					politics.regionName = "Capital of region "+regionID; // tmp
+//					politics.regionName = "Capital of region "+regionID; // tmp
 
 					if (i==1) {
 						if (influencer == keyWorlds["Hope"][1]) {
@@ -1376,6 +1399,8 @@ random.setStart(240000);
 
 // set up species government preferences
 (function() {
+	console.error("Setting government preferences");
+
 	var speclist = species.list();
 	for (k=0;k<speclist.length;k++) {
 		var basetypes = ["Corporate","Corporate","Democratic","Democratic","Hierarchical","Hierarchical","Collective","Collective","Atypical","Corporate","Corporate","Democratic","Democratic","Hierarchical","Hierarchical","Collective","Collective"];
@@ -1421,7 +1446,11 @@ random.setStart(245000);
 
 // start applying governments to systems
 (function() {
+	console.error("Setting governments");
+
 	var politics,colony,region,economy;
+	console.error("...Setting regional governments");
+
 	// regional influential governments first
 	for (k=1;k<=maxRegionID;k++) {
 		region = $.getRegion(k);
@@ -1447,6 +1476,7 @@ random.setStart(245000);
 			region.members.push(j);
 		}
 	}
+	console.error("...Setting regional secondary governments");
 	// regional non-influential systems next
 	for (i=0;i<$.galaxies;i++) {
 		for (j=0;j<$.systems;j++) {
@@ -1478,7 +1508,7 @@ random.setStart(245000);
 							|| (colony.stage == 4 && copyInf < 0.4)) {
 							// copy an influential
 							politics.governmentType = $.get(i,region.influential[random.rand(region.influential.length)],"politics").governmentType;
-						} else if (colony.outsiders == 0) {
+						} else if (colony.outsiders == 0 || colony.founded == 10) {
 							// species random
 							politics.governmentType = species.randomGovernment(colony.species[random.rand(colony.species.length)],random.randf());
 						} else {
@@ -1493,6 +1523,7 @@ random.setStart(245000);
 			}
 		}
 	}
+	console.error("...Setting regional types");
 	// now set types of regions
 	for (k=1;k<=maxRegionID;k++) {
 		region = $.getRegion(k);
@@ -1563,6 +1594,7 @@ random.setStart(245000);
 			region.category = "Historic Area";
 		}
 	}
+	console.error("...Setting non-regional systems");
 	// now can do the non-regional systems
 	for (i=0;i<$.galaxies;i++) {
 		for (j=0;j<$.systems;j++) {
@@ -1585,7 +1617,7 @@ random.setStart(245000);
 					politics.governmentType = $.randomDisorderedGovernment(random.randf());
 				} else if (economy.type == "Survival" || colony.stage == 0) {
 					politics.governmentType = $.randomDisorderedGovernment(random.randf());
-				} else if (colony.outsiders == 1) {
+				} else if (colony.outsiders == 1 && colony.founded < 10) {
 					do {
 						// outsiders tend to have atypical
 						politics.governmentType = species.randomGovernment(colony.species[random.rand(colony.species.length)],random.randf());
@@ -1607,7 +1639,7 @@ random.setStart(245000);
 								var regInfo = $.getRegion(reg);
 								gcat = $.get(i,regInfo.influential[0],"politics").governmentCategory;
 							}
-						} while (gcat == "");
+						} while (gcat == "" || gcat == "United Species");
 						// select random government of that region
 						do {
 							politics.governmentType = species.randomGovernment(colony.species[random.rand(colony.species.length)],random.randf());
@@ -1659,7 +1691,7 @@ random.setStart(245000);
 			}
 		}
 	}
-
+	console.error("...Cleanup");
 	// cleanup similar government types
 	for (i=0;i<$.galaxies;i++) {
 		for (j=0;j<$.systems;j++) {
@@ -1687,7 +1719,7 @@ random.setStart(260000);
 // set system stability levels
 (function() {
 	var politics,colony,region,economy;
-
+	console.error("Setting system stability");
 	for (i=0;i<$.galaxies;i++) {
 		for (j=0;j<$.systems;j++) {
 			politics = $.get(i,j,"politics");
@@ -1747,6 +1779,223 @@ random.setStart(260000);
 
 random.setStart(265000);
 
+// generate word and name components for species
+(function() {
+	var speclist = species.list();
+	for (k=0;k<speclist.length;k++) {
+		if (speclist[k] != "Human") {
+			// human strings are not randomised
+			species.generatePreferredWordBits(speclist[k],random);
+			species.generateNameLists(speclist[k],random);
+		}
+	}
+	
+}());
+
+// leave plenty of space for adding extra base word bits later
+random.setStart(300000);
+
+(function() {
+	var ku = 0;
+	var colony, spec, star, colony2;
+	var letters = ["","Alpha","Beta","Gamma","Delta","Epsilon","Zeta","Eta","Theta","Iota","Kappa","Lambda","Mu","Nu","Xi","Omicron","Pi","Rho","Sigma","Tau","Upsilon","Phi","Chi","Psi","Omega"];
+	// first pass, name stars
+	// most uninhabited systems are going to keep these names
+	for (i=0;i<$.galaxies;i++) {
+		var byBrightness = [];
+		for (j=0;j<$.systems;j++) {
+			star = $.get(i,j,"star");
+			if (i==1) {
+				if (ku == 0 && star.sequence == "Class G") {
+					// ~250 LY from Sol
+					// far enough that a plane-cut doesn't need
+					// to include other catalogued stars.
+					// Some way past Mizar (Ursa Major) from Sol
+					star.name = "SAO 28750"; ku = 1;
+				} else {
+					// fictional future catalogue versions
+					star.name = "SAO "+(random.rand(4000000)+260000);
+				}
+				star.constellation = "";
+			} else if (i==2) {
+				// systematic survey of new region of space
+				star.name = "SCC-"+(j+1);
+				star.constellation = "";
+			} else {
+				// calculate distance, brightness, direction from (nearest) homeworld
+				if (homeWorlds[i].indexOf(j) != -1) {
+					// is a homeworld
+					colony = $.get(i,j,"colony");
+					spec = colony.species[0];
+					star.name = species.retrieveNameOnce(spec,random);
+					// set system name at same time
+					$.set(i,j,"name",species.retrieveNameOnce(spec,random));
+				} else {
+					for (k=0;k<homeWorlds[i].length;k++) {
+						var dist = $.distance(i,homeWorlds[i][k],j);
+						var dir = $.direction(i,homeWorlds[i][k],j);
+						var brightness = star.brightness / (dist*dist);
+						byBrightness.push({
+							brightness: brightness,
+							dir: dir,
+							homeIndex: k,
+							id: j
+						});
+					}
+				}
+			}
+		}
+		if (i != 1 && i != 2) {
+			// start making constellations
+			for (j=0;j<homeWorlds[i].length;j++) {
+				colony = $.get(i,homeWorlds[i][j],"colony");
+				spec = colony.species[0];
+				var namedStars = 15+random.rand(10);
+
+				// sort by apparent magnitude, brightest first
+				byBrightness.sort(function(a,b) { return -(a.brightness-b.brightness); });
+				var constellations = [];
+				var catalogueName = species.wordBit(spec,random).toUpperCase();
+				for (k=0;k<24;k++) {
+					constellations.push({
+						name:species.retrieveNameOnce(spec,random),
+						index:0
+					});
+				}
+				// visibility threshold ~ 0.0003
+				for (k=0;k<byBrightness.length;k++) {
+					var starInfo = byBrightness[k];
+					if (starInfo.homeIndex != j) { continue; }
+					star = $.get(i,starInfo.id,"star");
+					var constellation = Math.floor(((starInfo.dir/Math.PI)*12)+12)%24;
+					brightness = starInfo.brightness;
+
+					constellations[constellation].index++;
+					// once get to the dimmer stars, start skipping some
+					if (brightness < 0.001*random.randf()) {
+						constellations[constellation].index++;
+						if (brightness < 0.001*random.randf()) {
+							constellations[constellation].index++;
+						}
+					}
+					var sn = "";
+					if (k < namedStars || constellations[constellation].index == 1) {
+						sn = species.retrieveNameOnce(spec,random)+" ("+letters[constellations[constellation].index]+" "+constellations[constellation].name+")";
+						star.constellation = constellations[constellation].name;
+
+					} else if (brightness > 0.0003 && constellations[constellation].index < letters.length) {
+						sn = letters[constellations[constellation].index]+" "+constellations[constellation].name;
+						star.constellation = constellations[constellation].name;
+						
+					} else {
+						sn = catalogueName+" "+(random.rand(50)+(k*50));
+					}
+//					console.error(sn);
+					if (j==0) {
+						star.name = sn;
+					} else {
+						// special case G6
+						if (star.name.match(/[0-9]/) && !sn.match(/[0-9]/)) {
+							// named by second species, not by first
+							star.name = sn;
+						} else if (!star.name.match(/[0-9]/) && sn.match(/[0-9]/)) {
+							// named by first species, not by second
+							// do nothing
+						} else {
+							// merge names
+							star.name += " / "+sn;
+						}
+					}
+				}
+			}
+		}
+	}
+	// second pass, name other systems
+	var usedNames = {};
+	/* Reversed so that duplicate breaking isn't concentrated in
+	 * higher charts */
+	for (j=0;j<$.systems;j++) {
+		for (i=0;i<$.galaxies;i++) {
+			star = $.get(i,j,"star");
+			if (!star.name) {
+				console.error("No star name for "+i+" "+j);
+			}
+
+			colony = $.get(i,j,"colony");
+			// already named
+			if (colony.homeWorld == 1) { continue; }
+			if (colony.founded > 0) {
+				var thisName = "";
+				var dc = 0;
+				thisName = namegen.nameSystem(i,j,$,species,random);
+				if (usedNames[thisName]) {
+					console.error("Duplicate name "+thisName+" => fixing");
+					var us = (usedNames[thisName]-1)%$.systems;
+					var ug = (usedNames[thisName]-1-us)/$.systems;
+					colony2 = $.get(ug,us,"colony");
+					if (colony2.founded < colony.founded) {
+						thisName = namegen.newPrefix(random)+thisName;
+					} else {
+						var newname = namegen.newPrefix(random)+thisName;
+						$.set(ug,us,"name",newname);
+						usedNames[newname] = usedNames[thisName];
+					}
+
+				}
+				usedNames[thisName] = 1+(i*$.systems)+j;
+//				console.error(thisName);
+
+				$.set(i,j,"name",thisName);
+			} else {
+				// set name to star name
+				if (!$.get(i,j,"name")) {
+					$.set(i,j,"name",$.get(i,j,"star").name);
+				}
+			}
+		}
+	}
+
+}());
+
+// naming takes a lot of numbers
+random.setStart(320000);
+
+// name regions
+(function() {
+	for (k=1;k<=maxRegionID;k++) {
+		region = $.getRegion(k);
+		if (region.name == "") {
+			// ucr is already named
+			var capital = region.influential[0];
+			var colony = $.get(region.galaxy,capital,"colony");
+			var rname = "";
+			if (colony.homeWorld == 1) {
+				rname = namegen.nameHomeRegion(region,$,species,random);
+			} else if (colony.militaryBase == 1) {
+				rname = namegen.nameMilitaryRegion(region,$,species,random);
+			} else if (region.category == "Strong Political Alliance") {
+				rname = namegen.namePoliticalRegion(region,$,species,random);
+			} else if (region.category == "Weak Political Alliance" && random.randf() < 0.5) {
+				rname = namegen.namePoliticalRegion(region,$,species,random);
+			} else if (region.category == "Politically Unstable Region" && random.randf() < 0.5) {
+				rname = namegen.nameUnstableRegion(region,$,species,random);
+			} else if (region.category == "Economic Area" && random.randf() < 0.8) {
+				rname = namegen.nameEconomicRegion(region,$,species,random);
+			} else {
+				rname = namegen.nameHistoricRegion(region,$,species,random);
+			}
+
+		} // united capital region
+
+		for (j=0;j<region.members.length;j++) {
+			var politics = $.get(region.galaxy,region.members[j],"politics");
+			politics.regionName = region.name;
+		}		
+	}
+
+}());
+
+
 
 
 
@@ -1758,29 +2007,19 @@ random.setStart(265000);
 	var planetinfoplist = "{\n";
 	for (i=0;i<$.galaxies;i++) {
 		for (j=0;j<$.systems;j++) {
-			if (!$.get(i,j,"name")) {
-				var colony = $.get(i,j,"colony");
-				if (colony.stage > 1) {
-					$.set(i,j,"name","C"+(colony.stage-1)+" "+i+"-"+j);
-				} else if (colony.stage == 1) {
-					$.set(i,j,"name","O "+i+"-"+j);
-				} else {
-					$.set(i,j,"name","S "+i+"-"+j);
-				}
-			}
 			planetinfoplist += $.dump(i,j);
 		}
 	}
 	planetinfoplist += "}\n";
-	fs.writeFileSync("planetinfo.plist",planetinfoplist);
+	fs.writeFileSync("build/planetinfo.plist",planetinfoplist);
 
-	var descriptionplist = "{\n";
+	var descriptionplist = "\n";
 	for (i=0;i<$.galaxies;i++) {
 		for (j=0;j<$.systems;j++) {
 			descriptionplist += $.dumpRegion(i,j);
 		}
 	}
-	descriptionplist += "}\n";
-	fs.writeFileSync("descriptions.plist",descriptionplist);
+	descriptionplist += "\n";
+	fs.writeFileSync("build/descriptions.plist.regional",descriptionplist);
 
 }());
