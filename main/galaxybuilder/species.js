@@ -89,6 +89,8 @@ console.error(namelist.length);
 			seismicTolerance: 0.25,
 			windTolerance: 0.1,
 			nativeChart: 5,
+			speciesName: "",
+			evolution: "above %S scattered islands"
 		},
 		"Feline" : {
 			preferredGravity: 0.86,
@@ -100,6 +102,8 @@ console.error(namelist.length);
 			seismicTolerance: 0.05,
 			windTolerance: 0.17,
 			nativeChart: 4,
+			speciesName: "",
+			evolution: "in the extensive grasslands of %H"
 		},
 		"Frog" : {
 			preferredGravity: 0.83,
@@ -111,6 +115,8 @@ console.error(namelist.length);
 			seismicTolerance: 0.11,
 			windTolerance: 0.19,
 			nativeChart: 5,
+			speciesName: "",
+			evolution: "in %S swamps"
 		},
 		"Human" : {
 			preferredGravity: 1.00,
@@ -124,6 +130,8 @@ console.error(namelist.length);
 			wordBits: wordbits, // use standard list
 			nameList: namelist,
 			nativeChart: 1,
+			speciesName: "Humans",
+			evolution: "on distant Earth"
 		},
 		"Insect" : {
 			preferredGravity: 0.74,
@@ -135,6 +143,8 @@ console.error(namelist.length);
 			seismicTolerance: 0.25,
 			windTolerance: 0.09,
 			nativeChart: 7,
+			speciesName: "",
+			evolution: "on the warm equatorial coasts"
 		},
 		"Lizard" : {
 			preferredGravity: 0.95,
@@ -146,6 +156,8 @@ console.error(namelist.length);
 			seismicTolerance: 0.3,
 			windTolerance: 0.21,
 			nativeChart: 0,
+			speciesName: "",
+			evolution: "in the hot plains of %H"
 		},
 		"Lobster" : {
 			preferredGravity: 1.26,
@@ -157,6 +169,8 @@ console.error(namelist.length);
 			seismicTolerance: 0.33,
 			windTolerance: 0.35,
 			nativeChart: 6,
+			speciesName: "",
+			evolution: "beneath %S vast oceans"
 		},
 		"Rodent" : {
 			preferredGravity: 0.79,
@@ -168,6 +182,8 @@ console.error(namelist.length);
 			seismicTolerance: 0.01,
 			windTolerance: 0.56,
 			nativeChart: 3,
+			speciesName: "",
+			evolution: "below the surface"
 		}
 	};
 
@@ -351,32 +367,32 @@ console.error(namelist.length);
 			// gravity
 			var diff = (Math.abs(spec.preferredGravity-planet.surfaceGravity) - spec.preferredGravity/4);
 			if (diff > 0) {
-				hab -= (diff * 95)
+				hab -= (diff * 125)
 			}
 			// temperature
 			diff = Math.abs(spec.preferredTemperature-planet.temperature)-spec.temperatureTolerance;
 			if (diff > 0) {
-				hab -= diff*1.5;
+				hab -= diff*1.75;
 			}
 			// radiation
 			diff = planet.surfaceRadiation-spec.radiationTolerance;
 			if (diff > 0) {
-				hab -= 175*diff;
+				hab -= 200*diff;
 			}
 			// seismic
 			diff = planet.seismicInstability-spec.seismicTolerance;
 			if (diff > 0) {
-				hab -= 125*diff;
+				hab -= 150*diff;
 			}
 			// land/water split
 			diff = Math.abs(spec.preferredLand - planet.percentLand)-spec.landTolerance;
 			if (diff > 0) {
-				hab -= 20*diff;
+				hab -= 25*diff;
 			}
 			// wind factor
 			diff = planet.windFactor - spec.windTolerance;
 			if (diff > 0) {
-				hab -= 125*diff;
+				hab -= 150*diff;
 			}
 
 			if (hab > 50 && planet.cloudAlpha == 0) {
@@ -425,6 +441,17 @@ console.error(namelist.length);
 		return (speciesInfo[s].nativeChart == g);
 	};
 
+	species.setName = function(s,name) {
+		speciesInfo[s].name = name;
+	}
+
+	species.name = function(s) {
+		return speciesInfo[s].name;
+	}
+
+	species.evolution = function(s) {
+		return speciesInfo[s].evolution;
+	}
 
 	module.exports = species;
 

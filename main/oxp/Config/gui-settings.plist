@@ -1,5 +1,6 @@
 {
 	"chart_label_scale" = 0.6;
+	"chart_circle_scale" = 0.001;
 	"chart_traveltime_tabs" = (0,180,340);
 	"chart_range_color" = "0.0 1.0 0.0 0.3";
 	"chart_crosshair_color" = "0.0 1.0 0.0 0.3";

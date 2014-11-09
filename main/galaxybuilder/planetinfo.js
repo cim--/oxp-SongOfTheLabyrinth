@@ -22,6 +22,11 @@
 
 (function() {
 
+	var highMineralPoint = 0.45;
+	var mediumMineralPoint = 0.25;
+	var highHabPoint
+
+
 	var planetdata = [[],[],[],[],[],[],[],[]];
 
 	// region 0 should never be asked for
@@ -65,11 +70,11 @@
 		"Industrial I": ["Ground Mining","Refining","Refining","Refining","Production","Production"],
 		"Industrial II": ["Refining","Production","Production","Research (Eng)","Research (Comp)","Shipyard"],
 		"Mixed": ["Cultural","Cultural","Tourism","Farming","Production","*Research*"],
-		"Specialist I": ["Cultural","Cultural","*Research*","*Research*","*Research*","Shipyard"],
+		"Specialist I": ["Cultural","*Research*","*Research*","*Research*","*Research*","Shipyard"],
 		"Specialist II": ["Research (Comp)","Research (Comp)","Research (Eng)","Research (Eng)","Research (Sci)","Shipyard"],
 		"Military": ["Military","Military","Military","Shipyard","Research (Mil)","Quarantine"],
 		"Shipyard": ["Production","Military","Shipyard","Shipyard","Shipyard","Research (Eng)"],
-		"Research": ["Research (Mil)","Research (Bio)","Research (Eng)","Research (Soc)","Research (Comp)","Research (Sci)"]
+		"Research": ["Research (Eng)","Research (Soc)","Research (Comp)","Research (Sci)","Research (Soc)","Research (Sci)"] // only first four values used
 	};
 
 	var economyProductivityTable = {
@@ -277,13 +282,13 @@
 	planetinfo.colonyAtMaxSize = function (g,s,terraforming) {
 		var ter3, ter4, ter5, ter6;
 		if (!terraforming) { 
-			ter3 = 70;
-			ter4 = 80;
+			ter3 = 80;
+			ter4 = 85;
 			ter5 = 90;
 			ter6 = 95;
 		} else { 
-			ter3 = 60; 
-			ter4 = 75;
+			ter3 = 70; 
+			ter4 = 80;
 			ter5 = 85;
 			ter6 = 90;
 		}
@@ -308,11 +313,11 @@
 		// to get to stage 2 requires hab >= ter || high mineral wealth and hab >= 40
 		if (colony.stage >= 2 && 
 			(hmax < 40 || 
-			 (planet.mineralWealth < 0.6 && hmax < ter3))) { return true; } 
+			 (planet.mineralWealth < highMineralPoint && hmax < ter3))) { return true; } 
 		// to get to stage 1 requires hab >= ter || medium mineral wealth and hab >= 10
 		if (colony.stage >= 1 && 
 			(hmax < 10 || 
-			 (planet.mineralWealth < 0.3 && hmax < ter3))) { return true; } 
+			 (planet.mineralWealth < mediumMineralPoint && hmax < ter3))) { return true; } 
 		return false;
 	};
 
@@ -392,25 +397,26 @@
 		var planet = planetinfo.get(g,s,"planet");
 
 		var table = "";
-		if (hab.best >= 90) {
+		// tables are misnamed now
+		if (hab.best >= 95) {
 			table = "hab90";	
 		} else if (colony.militaryBase) {
 			table = "military";
-		} else if (planet.mineralWealth >= 0.6) {
+		} else if (planet.mineralWealth >= highMineralPoint) {
 			if (hab.best >= 40) {
 				table = "hiMinHab40";
 			} else {
 				table = "hiMin";
 			}
-		} else if (hab.best >= 70) {
+		} else if (hab.best >= 80) {
 			table = "hab70";
-		} else if (hab.best >= 60 && colony.stage >= 2) {
+		} else if (hab.best >= 70 && colony.stage >= 2) {
 			table = "hab60col";
-		} else if (planet.mineralWealth >= 0.3 && hab.best >= 40) {
+		} else if (planet.mineralWealth >= mediumMineralPoint && hab.best >= 40) {
 			table = "medMinHab40";
-		} else if (planet.mineralWealth >= 0.3) {
+		} else if (planet.mineralWealth >= mediumMineralPoint) {
 			table = "medMin";
-		} else if (hab.best >= 60) {
+		} else if (hab.best >= 70) {
 			table = "lowMinHab60Out";
 		} else {
 			table = "lowMin";
@@ -425,7 +431,7 @@
 		economy.type = economySelectionTable[ectype][roll];
 		if (economy.type == "*Research*") {
 			// random research type instead
-			economy.type = economySelectionTable["Research"][s%6];
+			economy.type = economySelectionTable["Research"][s%4];
 		}
 		economy.icon = economyIconTable[economy.type];
 
@@ -556,11 +562,14 @@
 		result += $plist("government",info.politics.stability);
 		result += $plist("government_description",info.politics.governmentType?info.politics.governmentType:"Unknown");
 
+		result += $plist("description",info.description);
+
 		if (this.$debug) {
 //			result += $plist("government",govtDebugNum(info.politics.governmentType));
 //			result += $plist("government",info.colony.stage);
 //			result += $plist("government",info.politics.region?(info.politics.region%4)+2:(info.colony.contested||info.colony.independentHub?7:0));
 			result += $plist("mineral_wealth",fix(info.planet.mineralWealth,2));
+			result += $plist("founded",info.colony.founded);
 			result += $plist("planet_surface_temperature",fix(info.planet.temperature,0));
 			result += $plist("planet_surface_radiation",fix(info.planet.surfaceRadiation,3));
 			result += $plist("planet_surface_gravity",fix(info.planet.surfaceGravity,2));
@@ -579,7 +588,7 @@
 			result += $plist("hab_li",fix(info.habitability.Lizard,1));
 			result += $plist("hab_lo",fix(info.habitability.Lobster,1));
 			result += $plist("hab_r",fix(info.habitability.Rodent,1));
-			result += $plist("description","Habitability: "+fix(info.habitability.worst,0)+"-"+fix(info.habitability.average,0)+"-"+fix(info.habitability.best,0)+". Sun: "+info.star.sequence+". Radiation: "+fix(info.planet.surfaceRadiation,3)+". Minerals: "+fix(info.planet.mineralWealth,2)+". Earthquakes: "+fix(info.planet.seismicInstability,3)+". Flares: "+fix(info.star.instability,2)+". Land: "+fix(info.planet.landFraction,2)+". Wind speed: "+fix(info.planet.windFactor,2)+". Temperature: "+fix(info.planet.temperature,0)+". Gravity: "+fix(info.planet.surfaceGravity,2)+". Attacked: "+info.colony.attacked+". Military: "+info.colony.militaryBase+". Economy Reason: "+info.economy.reason+". Bottleneck: "+planetinfo.bottleneckType(g,s)+". Orbits: "+info.star.name);
+//			result += $plist("description","Habitability: "+fix(info.habitability.worst,0)+"-"+fix(info.habitability.average,0)+"-"+fix(info.habitability.best,0)+". Sun: "+info.star.sequence+". Radiation: "+fix(info.planet.surfaceRadiation,3)+". Minerals: "+fix(info.planet.mineralWealth,2)+". Earthquakes: "+fix(info.planet.seismicInstability,3)+". Flares: "+fix(info.star.instability,2)+". Land: "+fix(info.planet.landFraction,2)+". Wind speed: "+fix(info.planet.windFactor,2)+". Temperature: "+fix(info.planet.temperature,0)+". Gravity: "+fix(info.planet.surfaceGravity,2)+". Attacked: "+info.colony.attacked+". Military: "+info.colony.militaryBase+". Economy Reason: "+info.economy.reason+". Bottleneck: "+planetinfo.bottleneckType(g,s)+". Orbits: "+info.star.name);
 		}
 
 		result += "};\n";
@@ -588,7 +597,12 @@
 
 
 	planetinfo.dumpRegion = function(g,s) {
-		return $plist("long-range-chart-title-"+g+"-"+s,planetdata[g][s].politics.regionName);
+		var region = planetdata[g][s].politics.region;
+		if (region > 0) {
+			var rdata = planetinfo.getRegion(region);
+			return $plist("long-range-chart-title-"+g+"-"+s,rdata.name);
+		}
+		return "";
 	};
 
 

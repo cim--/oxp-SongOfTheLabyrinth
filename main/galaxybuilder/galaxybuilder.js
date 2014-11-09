@@ -2,6 +2,7 @@
 "use strict";
 
 var namegen = require("./namegen");
+var descgen = require("./descgen");
 var random = require("./random");
 var species = require("./species");
 var $ = require("./planetinfo");
@@ -135,7 +136,14 @@ random.setStart(6000); // allows reducing of $.galaxies for testing, allows plen
 			star.radius = Math.floor(80000 * (0.9+(0.2*random.randf())) * sradfactor);
 			/* Mostly <0.3, a few in 0.4..0.6, extremely rare 0.6..0.9 */
 			star.instability = (random.randf() * random.randf() * random.randf());
+			if (star.sequence == "Class M dwarf") {
+				star.instability /= 10;
+			}
 			star.coronaFlare = 0.1+((star.instability / 2) + (random.randf()/10));
+			if (star.sequence == "Red giant") {
+				star.coronaFlare += 0.7;
+				star.instability += 0.2;
+			}
 			star.coronaShimmer = (star.instability / 3);
 			star.coronaHues = (star.instability / 1.5);
 			star.habitableZoneFactor = shabfactor;
@@ -160,7 +168,7 @@ random.setStart(6000); // allows reducing of $.galaxies for testing, allows plen
 
 random.setStart(35000); // guess ~13 total above random numbers max
 
-// 18 rands per system so far
+// 19 rands per system so far
 (function () {
 	for (i=0;i<$.galaxies;i++) {
 		for (j=0;j<$.systems;j++) {
@@ -169,10 +177,10 @@ random.setStart(35000); // guess ~13 total above random numbers max
 			var planet = {};
 
 			planet.habZoneRange = 0.5+random.randf();
-			planet.orbitalRadius = Math.floor(star.habitableZoneFactor * planet.habZoneRange * 4E6);
+			planet.orbitalRadius = Math.floor(star.habitableZoneFactor * planet.habZoneRange * 7.5E6);
 			var mw1 = random.randf(); var mw2 = random.randf();
 			// pick the one closer to the minfactor
-			planet.mineralWealth = ((Math.abs(mw1-star.mineralFactor) < Math.abs(mw2-star.mineralFactor))?mw1:mw2);
+			planet.mineralWealth = ((Math.abs(mw1-star.mineralFactor) < Math.abs(mw2-star.mineralFactor))?mw1:mw2) * random.randf();
 			// <0.3 = low, <0.65 = medium
 
 			planet.radius = 2750+random.rand(6000);
@@ -289,6 +297,7 @@ random.setStart(75000); // guess ~20 total above random numbers max
 			homeWorld: 0,
 			contested: 0,
 			independentHub: 0,
+			embassy: 0,
 			attacked: 0,
 			destroyed: 0,
 			militaryBase: 0,
@@ -373,7 +382,7 @@ random.setStart(75000); // guess ~20 total above random numbers max
 				// use same number of rands
 				random.randf();random.randf();random.randf();
 			} else if (h > 70) {
-				// habitable with a lot of work
+				// habitable with terraforming
 				planet.landColour = [
 					0.45+(random.randf()*0.2),
 					0.35+(random.randf()*0.2),
@@ -406,7 +415,7 @@ random.setStart(75000); // guess ~20 total above random numbers max
 				]; 
 				// use same number of rands
 			} else if (h > 60) {
-				// with terraforming, just about suitable for someone
+				// just out of reach of terraforming
 				planet.landColour = [
 					0.1+(random.randf()*0.8),
 					0.1+(random.randf()*0.2),
@@ -541,7 +550,7 @@ var homeWorlds = [[],[],[],[],[],[],[],[]];
 			if (pos[1] <= edge || pos[1] >= 255-edge) {
 				planet = $.get(1,j,"planet");
 				hab = $.get(1,j,"habitability");
-				if (planet.mineralWealth < 0.4 && hab.best < 70) {
+				if (planet.mineralWealth < 0.4 && hab.best < 80) {
 					candidates.push(j);
 				}
 			}
@@ -561,7 +570,7 @@ var homeWorlds = [[],[],[],[],[],[],[],[]];
 	for (j=0;j<$.systems;j++) {
 		if (j==foundReach) { continue; }
 		hab = $.get(1,j,"habitability");
-		if (hab.Human < 70) { continue; }
+		if (hab.Human < 80) { continue; }
 		pos = $.get(1,j,"coordinates");
 		var dist = $.distance(1,j,foundReach);
 		if (dist < hdist) {
@@ -641,7 +650,7 @@ Then find nearby good habitation or mineral systems within 20 LY of Biya's Reach
 				var colony = $.get(g,j,"colony");
 				var planet = $.get(g,j,"planet");
 				if (colony.stage == 0) {
-					if (hab[s] >= 70) {
+					if (hab[s] >= 80) {
 						$.foundColony(g,j,[s],3,2);
 					} else if (planet.mineralWealth > 0.6) {
 						if (hab[s] >= 10) {
@@ -676,12 +685,12 @@ Then find nearby good habitation or mineral systems within 20 LY of Biya's Reach
 		var planet = $.get(g,j,"planet");
 		if (colony.stage == 0) {
 			if (bdist < 30 || fdist < 30) {
-				if (hab["Bird"] >= 70 && hab["Frog"] >= 70) {
+				if (hab["Bird"] >= 80 && hab["Frog"] >= 80) {
 					// joint colony
 					$.foundColony(g,j,["Bird","Frog"],3,2);
-				} else if (bdist < 30 && hab["Bird"] >= 70) {
+				} else if (bdist < 30 && hab["Bird"] >= 80) {
 					$.foundColony(g,j,["Bird"],3,2);
-				} else if (fdist < 30 && hab["Frog"] >= 70) {
+				} else if (fdist < 30 && hab["Frog"] >= 80) {
 					$.foundColony(g,j,["Frog"],3,2);
 				} else if (planet.mineralWealth > 0.6) {
 					if (bdist < hdist && fdist < hdist) {
@@ -738,12 +747,12 @@ random.setStart(150100); // the above is currently deterministic
 			} else {
 				// add new colonies
 				for (k=0;k<nativeSpecies[i].length;k++) {
-					if (hab[nativeSpecies[i][k]] >= 90) {
+					if (hab[nativeSpecies[i][k]] >= 90 && random.randf() < 0.3) {
 						$.foundColony(i,j,[nativeSpecies[i][k]],2,3);
 					} 
 				}
 				// add new mining operations
-				if (planet.mineralWealth >= 0.6 && colony.stage == 0) {
+				if (planet.mineralWealth >= 0.45 && colony.stage == 0 && random.randf() < 0.25) {
 					$.foundColony(i,j,nativeSpecies[i],1,1);
 				}
 				// add outposts near homeworlds
@@ -819,7 +828,7 @@ Any uninhabited or outpost system with >90% habitability in any chart gets a sta
 	}
 	console.error("United Capital is 2 "+founduc);
 	$.foundColony(2,founduc,species.list(),5,7);
-	$.set(2,founduc,"name","U nited Capital");
+	$.set(2,founduc,"name","United Capital");
 	colony = $.get(2,founduc,"colony");
 	colony.homeWorld = 1; // close enough
 	keyWorlds["Capital"] = [2,founduc];
@@ -855,7 +864,7 @@ Any uninhabited or outpost system with >90% habitability in any chart gets a sta
 					founduc = j;
 				}
 			}
-			// stage 3 embassy
+			// stage 3 embassy colony
 			colony = $.get(i,founduc,"colony");
 			if (colony.stage <= 2) {
 				$.foundColony(i,founduc,species.list(),4,6);
@@ -864,6 +873,7 @@ Any uninhabited or outpost system with >90% habitability in any chart gets a sta
 				$.foundColony(i,founduc,species.list(),5,7);
 			}
 			colony.independentHub = 1;
+			colony.embassy = 1;
 			$.set(i,founduc,"name","United Embassy "+(i+1));
 			console.error("United Embassy at "+i+" "+founduc);
 		}
@@ -875,7 +885,7 @@ Any uninhabited or outpost system with >90% habitability in any chart gets a sta
 			for (j=0;j<$.systems;j++) {
 				hab = $.get(i,j,"habitability");
 				colony = $.get(i,j,"colony");
-				if (hab[spec] >= 90 && colony.stage <= 1) {
+				if (hab[spec] >= 95 && colony.stage <= 1 && random.randf() < 0.4) {
 					$.foundColony(i,j,[spec],2,4);
 				}
 			}
@@ -921,7 +931,7 @@ for (var cocostage = 5; cocostage <= 7; cocostage++) {
 					hab = $.get(i,j,"habitability");
 					for (k=0;k<speclist.length;k++) {
 						if (colony.species.indexOf(speclist[k]) == -1 && 
-							((hab[speclist[k]] >= 70 && random.randf() < 0.2))) {
+							((hab[speclist[k]] >= 80 && random.randf() < 0.2))) {
 							if (colony.stage > 0) {
 								colony.species.push(speclist[k]);
 								if (colony.stage <= 4) {
@@ -937,7 +947,7 @@ for (var cocostage = 5; cocostage <= 7; cocostage++) {
 				}
 				planet = $.get(i,j,"planet");
 				// expand mining outposts collaboratively
-				if (planet.mineralWealth >= 0.6 && colony.stage == 1) {
+				if (planet.mineralWealth >= 0.45 && colony.stage == 1) {
 					colony.species.push(speclist[random.rand(speclist.length)]);
 					$.advanceColonyStage(i,j);
 					$.advanceColonyTech(i,j,1);
@@ -992,16 +1002,18 @@ All remaining systems with high or medium mineral wealth get a stage 1 colony
 			}
 			if (colony.stage <= 1) {
 				// search for terraforming candidates
-				if (hab.best >= 60 && hab.worst < 70) {
+				if (hab.best >= 70 && hab.worst < 80) {
 					var terrlist = [];
 					for (k=0;k<speclist.length;k++) {
-						if (hab[speclist[k]] > 60) {
+						if (hab[speclist[k]] > 70 && random.randf() < 0.5) {
 							terrlist.push(speclist[k]);
 						}
 					}
-					$.foundColony(i,j,terrlist,3,6,true);
+					if (terrlist.length > 0) {
+						$.foundColony(i,j,terrlist,3,6,true);
+					}
 					// search for reasonable mining opportunities
-				} else if (planet.mineralWealth > 0.3 && random.randf() < planet.mineralWealth) {
+				} else if (planet.mineralWealth > 0.25 && random.randf() < planet.mineralWealth) {
 					if (hab.worst >= 10) {
 						$.foundColony(i,j,[speclist[random.rand(speclist.length)]],2,5);
 					} else {
@@ -1301,7 +1313,8 @@ var unitedRegionID = 0;
 						members: [], // gets filled in later
 						category: "",
 						subCategory: "",
-						name: "Region "+regionID // overwritten later
+						name: ""
+//						name: "Region "+regionID // overwritten later
 					}
 					// core human worlds are all part of the same region
 					// so join them in now for free
@@ -1602,7 +1615,7 @@ random.setStart(245000);
 			colony = $.get(i,j,"colony");
 			if (politics.region == 0) {
 				economy = $.get(i,j,"economy");
-				if (colony.independentHub == 1) {
+				if (colony.independentHub == 1 && colony.stage > 0) {
 					if ($.get(i,j,"name") && $.get(i,j,"name").match(/Embassy/)) {
 						politics.governmentType = "United Species Coalition";
 					} else {
@@ -1958,12 +1971,44 @@ random.setStart(300000);
 }());
 
 // naming takes a lot of numbers
+random.setStart(319000);
+
+// name species
+(function() {
+	var cons = ["ari","or","","a","ian","oid"];
+	var vow = ["thi","","se","ri","n"];
+	
+	for (i=0;i<$.galaxies;i++) {
+		if (i==1 || i==2) { continue; }
+		for (k=0;k<homeWorlds[i].length;k++) {
+			j = homeWorlds[i][k];
+			var spec = $.get(i,j,"colony").species[0];
+			var pname = $.get(i,j,"name");
+			var sname = "";
+			if (random.randf() < 0.5) {
+				// species and planet name are similar
+				sname = pname;
+			} else {
+				sname = species.word(spec,random);
+			}
+			if (sname.match(/[aeiouáàéèíìóòúù]$/)) {
+				sname += vow.splice(random.rand(vow.length),1);
+			} else {
+				sname += cons.splice(random.rand(vow.length),1);
+			}
+			console.error("Named "+spec+" "+sname);
+			species.setName(spec,sname);
+		}
+	}
+
+}());
+
 random.setStart(320000);
 
 // name regions
 (function() {
 	for (k=1;k<=maxRegionID;k++) {
-		region = $.getRegion(k);
+		var region = $.getRegion(k);
 		if (region.name == "") {
 			// ucr is already named
 			var capital = region.influential[0];
@@ -1984,8 +2029,8 @@ random.setStart(320000);
 			} else {
 				rname = namegen.nameHistoricRegion(region,$,species,random);
 			}
-
-		} // united capital region
+			region.name = rname;
+		} 
 
 		for (j=0;j<region.members.length;j++) {
 			var politics = $.get(region.galaxy,region.members[j],"politics");
@@ -1995,9 +2040,34 @@ random.setStart(320000);
 
 }());
 
+random.setStart(325000);
 
-
-
+// system descriptions
+(function() {
+	/* Reversed so that duplicate breaking isn't concentrated in
+	 * higher charts */
+	for (j=0;j<$.systems;j++) {
+		for (i=0;i<$.galaxies;i++) {
+			var descblocks = descgen.getDescBlocks(i,j,$,random,species);
+			var lenacc = 0;
+			var useblocks = 0;
+			do {
+				lenacc += descblocks[useblocks++].text.length;
+			} while(lenacc < 400 && useblocks < descblocks.length);
+			var blocks = descblocks.splice(0,useblocks);
+			descgen.countblocks(blocks);
+			blocks.sort(function(a,b) {
+				if (a.displayOrder != b.displayOrder) {
+					return a.displayOrder - b.displayOrder;
+				} else {
+					return b.importance - a.importance;
+				}
+			});
+			$.set(i,j,"description",blocks.map(function(b) { return b.text; }).join(" "));
+		}
+	}
+	descgen.debug();
+}());
 
 
 
