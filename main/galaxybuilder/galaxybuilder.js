@@ -51,6 +51,7 @@ random.setStart(0); // for clarity
 				$.set(i,j,"coordinates",coords);
 				cused[coords[0]+" "+coords[1]] = 1;
 			}
+			$.set(i,j,"history",[]);
 		}
 		$.ensureConnectivity(i);
 	}
@@ -301,7 +302,8 @@ random.setStart(75000); // guess ~20 total above random numbers max
 			attacked: 0,
 			destroyed: 0,
 			militaryBase: 0,
-			outsiders: 0
+			outsiders: 0,
+			reason: ""
 		}
 	};
 
@@ -652,12 +654,16 @@ Then find nearby good habitation or mineral systems within 20 LY of Biya's Reach
 				if (colony.stage == 0) {
 					if (hab[s] >= 80) {
 						$.foundColony(g,j,[s],3,2);
-					} else if (planet.mineralWealth > 0.6) {
+						colony.reason = "Habitability";
+						// 0.55 higher than normal
+						// mining technology less advanced
+					} else if (planet.mineralWealth > 0.55) {
 						if (hab[s] >= 10) {
 							$.foundColony(g,j,[s],2,1);
 						} else {
 							$.foundColony(g,j,[s],1,1);
 						}
+						colony.reason = "Mining";
 					} 
 				}
 			}			
@@ -688,30 +694,38 @@ Then find nearby good habitation or mineral systems within 20 LY of Biya's Reach
 				if (hab["Bird"] >= 80 && hab["Frog"] >= 80) {
 					// joint colony
 					$.foundColony(g,j,["Bird","Frog"],3,2);
+					colony.reason = "Joint Habitability";
 				} else if (bdist < 30 && hab["Bird"] >= 80) {
 					$.foundColony(g,j,["Bird"],3,2);
+					colony.reason = "Habitability";
 				} else if (fdist < 30 && hab["Frog"] >= 80) {
 					$.foundColony(g,j,["Frog"],3,2);
-				} else if (planet.mineralWealth > 0.6) {
+					colony.reason = "Habitability";
+					// 0.55 higher than normal
+					// mining technology less advanced
+				} else if (planet.mineralWealth > 0.55) {
 					if (bdist < hdist && fdist < hdist) {
 						// joint mining
 						if (hab["Bird"] >= 10 || hab["Frog"] >= 10) {
 							$.foundColony(g,j,["Bird","Frog"],2,1);
 						} else {
-							$.foundColony(g,j,["Bird","Frog"],1,1);
+							$.foundColony(g,j,["Frog","Bird"],1,1);
 						}
+						colony.reason = "Joint Mining";
 					} else if (bdist < fdist) {
 						if (hab["Bird"] >= 10) {
 							$.foundColony(g,j,["Bird"],2,1);
 						} else {
 							$.foundColony(g,j,["Bird"],1,1);
 						}
+						colony.reason = "Mining";
 					} else {
 						if (hab["Frog"] >= 10) {
 							$.foundColony(g,j,["Frog"],2,1);
 						} else {
 							$.foundColony(g,j,["Frog"],1,1);
 						}
+						colony.reason = "Mining";
 					}
 				}
 			}
@@ -749,18 +763,25 @@ random.setStart(150100); // the above is currently deterministic
 				for (k=0;k<nativeSpecies[i].length;k++) {
 					if (hab[nativeSpecies[i][k]] >= 90 && random.randf() < 0.3) {
 						$.foundColony(i,j,[nativeSpecies[i][k]],2,3);
+						colony.reason = "Habitability";
 					} 
 				}
 				// add new mining operations
 				if (planet.mineralWealth >= 0.45 && colony.stage == 0 && random.randf() < 0.25) {
-					$.foundColony(i,j,nativeSpecies[i],1,1);
+					$.foundColony(i,j,[nativeSpecies[i][random.rand(nativeSpecies[i].length)]],1,1);
+					colony.reason = "Mining";
 				}
 				// add outposts near homeworlds
 				if (colony.stage == 0) {
 					for (var keyw in keyWorlds) {
 						var w = keyWorlds[keyw];
+						var spec = keyw;
+						if (i==1) {
+							spec = "Human";
+						}
 						if (w[0] == i && $.distance(i,j,w[1]) <= 15) {
-							$.foundColony(i,j,nativeSpecies[i],1,1);
+							$.foundColony(i,j,[spec],1,1);
+							colony.reason = "Waystation";
 							break;
 						}
 					}
@@ -831,6 +852,7 @@ Any uninhabited or outpost system with >90% habitability in any chart gets a sta
 	$.set(2,founduc,"name","United Capital");
 	colony = $.get(2,founduc,"colony");
 	colony.homeWorld = 1; // close enough
+	colony.reason = "United Capital";
 	keyWorlds["Capital"] = [2,founduc];
 
 	var order = species.getNearestOrder(2);
@@ -849,6 +871,8 @@ Any uninhabited or outpost system with >90% habitability in any chart gets a sta
 		}
 		// stage 3 colony
 		$.foundColony(2,bestempty,[spec],4,6);
+		colony = $.get(2,bestempty,"colony");
+		colony.reason = "Best G3";
 	}
 
 	for (i=0;i<$.galaxies;i++) {
@@ -874,6 +898,7 @@ Any uninhabited or outpost system with >90% habitability in any chart gets a sta
 			}
 			colony.independentHub = 1;
 			colony.embassy = 1;
+			if (!colony.reason) { colony.reason = "Embassy"; }
 			$.set(i,founduc,"name","United Embassy "+(i+1));
 			console.error("United Embassy at "+i+" "+founduc);
 		}
@@ -885,9 +910,14 @@ Any uninhabited or outpost system with >90% habitability in any chart gets a sta
 			for (j=0;j<$.systems;j++) {
 				hab = $.get(i,j,"habitability");
 				colony = $.get(i,j,"colony");
-				if (hab[spec] >= 95 && colony.stage <= 1 && random.randf() < 0.4) {
+				if (hab[spec] >= 95 && colony.stage <= 1 && random.randf() < 0.4 && !species.isNative(i,spec)) {
+					if (colony.stage == 1) {
+						console.error(spec+" joining outpost at "+i+" "+j);
+					}
+
 					$.foundColony(i,j,[spec],2,4);
 				}
+				if (!colony.reason) { colony.reason = "Galdrive Habitable"; }
 			}
 		}
 	}

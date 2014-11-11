@@ -9,7 +9,7 @@
  */
 (function() {
 	var usedKeys = {};
-	var state = {};
+	var state = { home: {"Human": "Dramani's Hope" } };
 	var checkKey = function(k,c,e) {
 		if (!usedKeys[k]) {
 			usedKeys[k] = 0;
@@ -31,18 +31,37 @@
 		}
 	}
 
+	var historySearch = function(history, event, stage) {
+		for (var i=0;i<history.length;i++) {
+			if (history[i].type == event && history[i].historyStep == stage) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	var expandMinerals = ["Platinum","Rhodium","Gold","Iridium","Osmium","Palladium","Rhenium","Ruthenium","Indium","Tellurium","Bismuth"];
 	var expandCreatures = ["fungi","vines","leviathans","creatures","trees","grasses","mammoths","behemoths","plants","animals","predators","swarms","venomous creatures","pollen","burrowers","worms","amoebas","scavengers","beasts","colossi","titans","constrictors","herds"];
 	var expandPolitics = ["taxation","funding","economic policy","migration","settlement","mineral rights","trade routes","leadership changes","autonomy"];
-	
+	var expandAccident = ["an asteroid storm","a reactor explosion","a collision","an unusually severe solar flare","a thruster failure","life-support failures","a coolant leak","a fuel leak","unknown causes","radical saboteurs"];
+
 	var expand = function(info,string) {
+//		console.error(info,string);
 		string = string.replace(/%S/g,info.name+"'s");
 		string = string.replace(/%H/g,info.name);
 		string = string.replace(/%U/g,info.star.name.replace(/ \(.*/,""));
-		string = string.replace(/%I/g,info.species.name(info.colony.species[0]));
+		if (info.colony.species.length > 0) {
+			if (info.colony.species.length > 1) {
+				string = string.replace(/%I1/g,info.species.name(info.colony.species[1]));
+			}
+			string = string.replace(/%I/g,info.species.name(info.colony.species[0]));
+			string = string.replace(/%O/g,state.home[info.colony.species[0]]?state.home[info.colony.species[0]]:"their homeworld");
+			string = string.replace(/%N/g,info.species.word(info.colony.species[0],info.r));
+		}
 		string = string.replace(/%M/g,expandMinerals[info.r.rand(expandMinerals.length)]);
 		string = string.replace(/%P/g,expandPolitics[info.r.rand(expandPolitics.length)]);
 		string = string.replace(/%C/g,expandCreatures[info.r.rand(expandCreatures.length)]);
+		string = string.replace(/%A/g,expandAccident[info.r.rand(expandAccident.length)]);
 		// initial colonisation
 		string = string.replace(/%D1/g,(info.r.rand(10)+140)+" kD");
 		string = string.replace(/%D2/g,(info.r.rand(250)+150)+" kD");
@@ -124,6 +143,7 @@
 			key: ""
 		};
 		if (info.g != 1 && info.g != 2) {
+			state.home[info.colony.species[0]] = info.name;
 			block.text = evolutionDesc(info);
 		} else if (info.g == 1) {
 			if (info.name == "Dramani's Hope") {
@@ -169,8 +189,10 @@
 			block.key = "BFE-New";
 			if (checkKey(block.key,0)) {
 				block.text = "The system was settled in %D4 as a USC embassy and administrative centre for the chart.";
-			} else if (checkKey(block.key,1,true)) {
+			} else if (checkKey(block.key,1)) {
 				block.text = "%H was chosen as the chart's USC embassy in %D4.";
+			} else if (checkKey(block.key,2,true)) {
+				block.text = "The pleasant climate and lack of previous claims led to %H being chosen as the site of the USC embassy.";
 			}
 		}
 		blocks.push(block);
@@ -219,48 +241,7 @@
 				text: ""
 			};
 		}
-		if (info.planet.mineralWealth > 0.6) {
-//			console.error("Stage 2 mineral colony "+info.g+" "+info.s);
-			opts = [
-				{key: "BFIC-MIN1", text: "As the demands of witchspace travel increased, %S position near to their homeworld led the %I to establish mining operations here in %D2.", condition: true},
-				{key: "BFIC-MIN2", text: "The easily accessible minerals in this system's asteroid belts were key to early colonisation of the chart.", condition: info.economy.type != "Ground Mining" },
-				{key: "BFIC-MIN3", text: "As a mineral-rich system, %H gained an outpost in %D2.", condition: true},
-				{key: "BFIC-MIN4", text: "Despite the extremely harsh conditions, the %I began mining %S considerable mineral deposits early on. Thousands of early colonists died due to the lack of environmental protection while obtaining the valuable %M ores.", condition: info.habitability.best == 0},
-				{key: "BFIC-MIN5", text: "While not an obvious choice for %I colonisation, the concentration of %M deposits in the system made it essential to their early expansion.", condition: info.habitability[info.colony.species[0]] < 80 },
-				{key: "BFIC-MIN6", text: "%S rich surface deposits needed little work to extract. While nowadays more conventional deep-mining is needed, when operations started in %D2 they almost doubled the %I's %M production.", condition: info.economy.type != "Asteroid Mining" },
-				{key: "BFIC-MIN7", text: "Founded in %D2 as a %M extraction system.", condition: true },
-				{key: "BFIC-MIN8", text: "In %H the %I's early colonisation struck both literal and figurative %M, as the planet combined rich deposits with a biosphere survivable without environmental suits", condition: info.habitability[info.colony.species[0]] >= 80 },
-				{key: "BFIC-MIN9", text: "%H was a home away from home for the early %I pioneers. Environmentally very similar to their homeworld, the system is also mineral-rich.", condition: info.habitability[info.colony.species[0]] >= 90 },
-				{key: "BFIC-MIN10", text: "Mining began here in %D2 to support the %I's expanding space industry.", condition: true },
-				{key: "BFIC-MIN11", text: "The original mining operations never lived up to the promises of %S vast mineral wealth, due to the intense radiation from %U.", condition: info.planet.surfaceRadiation > 0.3 },
-				{key: "BFIC-MIN12", text: "While the unstable crust brought great deposits of %M to the surface, it made establishing consistent mining difficult.", condition: info.planet.seismicInstability > 0.2 },
-				{key: "BFIC-MIN13", text: "Much of %S %M is buried deep beneath the ice caps, but enough was accessible to early settlers that a few mines were operational by %D2", condition: info.planet.percentIce > 0.5 },
-				{key: "BFIC-MIN14", text: "The initial outpost was established here in %D2 to assist supply lines and carry out asteroid mining.", condition: info.economy.type != "Ground Mining" },
-				{key: "BFIC-MIN15", text: "%H was founded as one of the %I's earliest extraction systems", condition: true },
-				{key: "BFIC-MIN16", text: "%H's low gravity and high mineral wealth made it an attractive mining planet", condition: info.planet.surfaceGravity < 0.7 },
-				{key: "BFIC-MIN17", text: "After a couple of failed attempts, mining operations began in earnest in %D2.", condition: true },
-				{key: "BFIC-MIN18", text: "%H was an early %I mining system.", condition: true },
-				{key: "BFIC-MIN19", text: "%M first brought settlers to %H in %D2.", condition: true }
-			];
-			
-			do {
-				do {
-					opt = opts[info.r.rand(opts.length)];
-					block.key = opt.key;
-					block.text = opt.text;
-				} while (!opt.condition);
-			} while (!checkKey(block.key,6,true));
-			
-		}
-		if (block.text != "") {
-			blocks.push(block);
-			block = {
-				importance: 40,
-				displayOrder: 2,
-				key: "",
-				text: ""
-			};
-		} else if (info.habitability[info.colony.species[0]] >= 80)  {
+		if (info.habitability[info.colony.species[0]] >= 80)  {
 			opts = [
 				{key: "BFIC-HAB1", text: "Early %I explorers discovered %H to be safely inhabitable, and initial settlements were built in %D2.", condition: true },
 				{key: "BFIC-HAB2", text: "%S pleasant environment and closeness to the %I homeworld made it a natural early colony.", condition:  info.habitability[info.colony.species[0]] >= 90 },
@@ -281,6 +262,10 @@
 				{key: "BFIC-HAB17", text: "The oceans of %H are detectable by telescope from the %I homeworld, and it was one of the first candidates for a local survey following their invention of the witchdrive.", condition: info.planet.landFraction < 0.25 },
 				{key: "BFIC-HAB18", text: "One of the first %I colonies, %H declared independence in %D2 in a dispute over %P.", condition: info.politics.region == 0 },
 				{key: "BFIC-HAB19", text: "Initially unsure of how common habitable worlds were, the %I settled marginal worlds such as %H in the early stages of their expansion.", condition: info.habitability[info.colony.species[0]] < 85 },
+				{key: "BFIC-HAB20", text: "The %I and %I1 both found this a suitable habitable system, and jointly colonised it in %D2.", condition: info.colony.reason == "Joint Habitability" },
+				{key: "BFIC-HAB21", text: "Initially discovered by a %I scout, it was settled by both the %I1 and %I as part of their early treaties.", condition: info.colony.reason == "Joint Habitability" },
+				{key: "BFIC-HAB22", text: "The %I1 and %I founded joint colonies like %H after their first contact to encourage cultural exchange.", condition: info.colony.reason == "Joint Habitability" },
+				{key: "BFIC-HAB23", text: "With an environment suitable for both %I and %I1, and positioned between their two homeworlds, %H became a joint colony in %D2", condition: info.colony.reason == "Joint Habitability" }
 				// more unconditional hab entries needed
 			];
 
@@ -291,8 +276,60 @@
 					block.key = opt.key;
 					block.text = opt.text;
 				} while (!opt.condition);
-			} while (!checkKey(block.key,16,true));
-			// TODO: reduce 16
+			} while (!checkKey(block.key,10,true));
+			// TODO: reduce 10
+		}
+		if (block.text != "") {
+			blocks.push(block);
+			block = {
+				importance: 40,
+				displayOrder: 2,
+				key: "",
+				text: ""
+			};
+		} else 		if (info.planet.mineralWealth > 0.45) {
+//			console.error("Stage 2 mineral colony "+info.g+" "+info.s);
+			opts = [
+				{key: "BFIC-MIN1", text: "As the demands of witchspace travel increased, %S position near to their homeworld led the %I to establish mining operations here in %D2.", condition: true},
+				{key: "BFIC-MIN2", text: "The easily accessible minerals in this system's asteroid belts were key to early colonisation of the chart.", condition: info.economy.type != "Ground Mining" },
+				{key: "BFIC-MIN3", text: "As a mineral-rich system, %H gained an outpost in %D2.", condition: true},
+				{key: "BFIC-MIN4", text: "Despite the extremely harsh conditions, the %I began mining %S considerable mineral deposits early on. Thousands of early colonists died due to the lack of environmental protection while obtaining the valuable %M ores.", condition: info.habitability.best == 0},
+				{key: "BFIC-MIN5", text: "While not an obvious choice for %I colonisation, the concentration of %M deposits in the system made it essential to their early expansion.", condition: info.habitability[info.colony.species[0]] < 80 },
+				{key: "BFIC-MIN6", text: "%S rich surface deposits needed little work to extract. While nowadays more conventional deep-mining is needed, when operations started in %D2 they almost doubled the %I's %M production.", condition: info.economy.type != "Asteroid Mining" },
+				{key: "BFIC-MIN7", text: "Founded in %D2 as a %M extraction system.", condition: true },
+				{key: "BFIC-MIN8", text: "In %H the %I's early colonisation struck both literal and figurative %M, as the planet combined rich deposits with a biosphere survivable without environmental suits", condition: info.habitability[info.colony.species[0]] >= 80 },
+				{key: "BFIC-MIN9", text: "%H was a home away from home for the early %I pioneers. Environmentally very similar to their homeworld, the system is also mineral-rich.", condition: info.habitability[info.colony.species[0]] >= 90 },
+				{key: "BFIC-MIN10", text: "Mining began here in %D2 to support the %I's expanding space industry.", condition: true },
+				{key: "BFIC-MIN11", text: "The original mining operations never lived up to the promises of %S vast mineral wealth, due to the intense radiation from %U.", condition: info.planet.surfaceRadiation > 0.3 },
+				{key: "BFIC-MIN12", text: "While the unstable crust brought great deposits of %M to the surface, it made establishing consistent mining difficult.", condition: info.planet.seismicInstability > 0.2 },
+				{key: "BFIC-MIN13", text: "Much of %S %M is buried deep beneath the ice caps, but enough was accessible to early settlers that a few mines were operational by %D2", condition: info.planet.percentIce > 0.5 },
+				{key: "BFIC-MIN14", text: "The initial outpost was established here in %D2 to assist supply lines and carry out asteroid mining.", condition: info.economy.type != "Ground Mining" },
+				{key: "BFIC-MIN15", text: "%H was founded as one of the %I's earliest extraction systems", condition: true },
+				{key: "BFIC-MIN16", text: "%H's low gravity and high mineral wealth made it an attractive mining planet", condition: info.planet.surfaceGravity < 0.7 },
+				{key: "BFIC-MIN17", text: "After a couple of failed attempts, mining operations began in earnest in %D2.", condition: true },
+				{key: "BFIC-MIN18", text: "%H was an early %I mining system.", condition: true },
+				{key: "BFIC-MIN19", text: "%M first brought settlers to %H in %D2.", condition: true },
+				{key: "BFIC-MIN20", text: "The initial mining outpost was founded in %D2 for %M extraction.", condition: true },
+				{key: "BFIC-MIN21", text: "Their shared shortages of %M led to %I and %I1 cooperation in mining %H in %D2", condition: info.colony.reason == "Joint Mining" },
+				{key: "BFIC-MIN22", text: "Combining their mining technology allowed the %I1 and %I to rapidly exploit the rich seams of this system.", condition: info.colony.reason == "Joint Mining" },
+				{key: "BFIC-MIN23", text: "%I mining operations started here in %D2, with the %I1 joining soon after first contact.", condition: info.colony.reason == "Joint Mining" },
+				{key: "BFIC-MIN24", text: "%M mining has been carried out here by both %I and %I1 since %D2.", condition: info.colony.reason == "Joint Mining" },
+				{key: "BFIC-MIN25", text: "The first mining operations started in %D2.", condition: true },
+				{key: "BFIC-MIN26", text: "The extraction operations started in %D2 still continue in %H.", condition: info.economy.reason == "Extraction" },
+				{key: "BFIC-MIN27", text: "The %U system is unusually rich in %M, and was crucial to early %I witchdrive manufacture.", condition: true },
+				{key: "BFIC-MIN28", text: "%H is home to one of the earliest %I prospecting habitats.", condition: true },
+				{key: "BFIC-MIN29", text: "%H was settled in %D2 for %M extraction.", condition: true }, 
+				{key: "BFIC-MIN30", text: "This system was first inhabited by %I miners in %D2", condition: true }
+			];
+			// TODO: one or two more unconditionals
+			do {
+				do {
+					opt = opts[info.r.rand(opts.length)];
+					block.key = opt.key;
+					block.text = opt.text;
+				} while (!opt.condition);
+			} while (!checkKey(block.key,6,true));
+			
 		}
 		if (block.text != "") {
 			blocks.push(block);
@@ -304,12 +341,204 @@
 			}
 		}
 
-
 		return blocks;
 	}
 
 	var blocksForPreGaldriveColony = function(info) {
-		return [];
+		var blocks = [];
+		var opt, opts;
+		var block = {
+			importance: 35,
+			displayOrder: 3,
+			key: "",
+			text: ""
+		};
+
+		if (info.habitability[info.colony.species[0]] >= 90) {
+			opts = [
+				{key: "BFPGC-HAB1", text: "The significant increase in operational range as the %I witchdrive programme continued brought many more systems within their reach. %H, in a stable orbit with conditions similar to %O, was settled in %D3.", condition: true },
+				{key: "BFPGC-HAB2", text: "%H was one of the earlier %I colonies intended purely for self-sustained habitation, chosen because of its great similarity to %O.", condition: info.habitability[info.colony.species[0]] >= 97 },
+				{key: "BFPGC-HAB3", text: "The initial survey of %U missed %H due to equipment failures. It was only after resurveying in %D3 that it was colonised.", condition: true },
+				{key: "BFPGC-HAB4", text: "This system was settled pre-unification in %D3.", condition: true },
+				{key: "BFPGC-HAB5", text: "%S soil was discovered to be suitable for many %I native flora, and initial farming camps were set up in %D3 to help supply the nearby mining outposts.", condition: info.economy.type == "Farming" },
+				{key: "BFPGC-HAB6", text: "The discovery of many habitable planets such as %H led to increasing demands on the early %I witchdrive factories, both for the colonisation ships themselves and the supply lines needed in their early days. Despite its suitability, the system was only colonised in %D3.", condition: true },
+				{key: "BFPGC-HAB7", text: "%H was founded in %D3 as a residential colony.", condition: true },
+				{key: "BFPGC-HAB8", text: "%H was quarantined shortly after discovery to protect the unusual native life from harm.", condition: info.economy.reason == "Native Life" && info.economy.type == "Quarantine" },
+				{key: "BFPGC-HAB9", text: "While easily habitable, the early colony suffered from significant mineral shortages.", condition: info.planet.mineralWealth < 0.1 },
+				{key: "BFPGC-HAB10", text: "Known as an exoplanet since pre-witchdrive times, the first explorers to visit %U were surprised to find %H to be habitable. A small colony was founded in %D3.", condition: true },
+				{key: "BFPGC-HAB11", text: "Long-range surveys from %O discovered %H in %D2, but it was only in %D3 that it was felt suitable for colonisation.", condition: true },
+				{key: "BFPGC-HAB12", text: "The agricultural potential of this system was recognised early on by the %I, who founded a small colony here in %D3.", condition: info.economy.reason == "Agriculture II" },
+				{key: "BFPGC-HAB13", text: "This early %I settlement was considered pre-unification to be among one of the most beautiful known worlds.", condition: info.economy.type == "Tourism" },
+				{key: "BFPGC-HAB14", text: "The %U system was settled pre-unification by the %I.", condition: true }
+			];
+
+
+			do {
+				do {
+					opt = opts[info.r.rand(opts.length)];
+					block.key = opt.key;
+					block.text = opt.text;
+				} while (!opt.condition);
+			} while (!checkKey(block.key,6,true));
+		}
+
+		if (block.text != "") {
+			blocks.push(block);
+			block = {
+				importance: 35,
+				displayOrder: 3,
+				key: "",
+				text: ""
+			};
+		}
+		else if (info.planet.mineralWealth > 0.45) {
+			opts = [
+				{key: "BFPGC-MIN1", text: "Advances in miniaturisation and reliably of witchdrives allowed %I miners to reach this system in %D3.", condition: true },
+				{key: "BFPGC-MIN2", text: "As %I space expanded, systems such as %H were valuable for their %M reserves.", condition: true },
+				{key: "BFPGC-MIN3", text: "The continuing need for more %M to supply expansion led to several colonies being founded in mineral-rich systems. %H was particularly important due to the purity of its deposits.", condition: info.planet.mineralWealth > 0.6 },
+				{key: "BFPGC-MIN4", text: "While the planets were considered unremarkable by early %I explorers, the mineral-rich asteroids of the system's %N belt brought thousands of prospectors to the system.", condition: info.economy.type == "Asteroid Mining" },
+				{key: "BFPGC-MIN5", text: "As a mineral-rich world with a pleasant environment, %H was settled by the %I shortly after they discovered it in %D3.", condition: info.habitability[info.colony.species[0]] >= 80 },
+				{key: "BFPGC-MIN6", text: "%H was originally settled as a mining system in %D3.", condition: true },
+				{key: "BFPGC-MIN7", text: "%M mining has been carried out in %H since before unification, with the first operations beginning around %D3.", condition: true },
+				{key: "BFPGC-MIN8", text: "The surface of %H contained many accessible metal deposits when it was discovered in %D3.", condition: info.economy.type != "Ground Mining" },
+				{key: "BFPGC-MIN9", text: "As %I space expanded, it became more impractical to build all equipment at %O, and %H was founded as an early factory colony.", condition: info.economy.type == "Production" },
+				{key: "BFPGC-MIN10", text: "The need for %M led the %I to conduct some exploratory mining in the harsh light of %U, but difficulties in safely extracting the ore meant that the system never made a profit.", condition: info.habitability.best == 0 },
+				{key: "BFPGC-MIN11", text: "Combining both a suitable environment and easy mining opportunities, %H was settled in %D3 shortly after the initial surveys.", condition: info.habitability[info.colony.species[0]] >= 80 },
+				{key: "BFPGC-MIN12", text: "Founded in %D3 as another of the %I mining systems.", condition: true },
+				{key: "BFPGC-MIN13", text: "The development of cheaper and more reliable witchdrives allowed the %I to expand supply lines to new colonies considerably further than before. %H had been surveyed briefly in %D2, but despite significant mineral reserves it was only considered practical to settle in %D3.", condition: true },
+			];
+
+			do {
+				do {
+					opt = opts[info.r.rand(opts.length)];
+					block.key = opt.key;
+					block.text = opt.text;
+				} while (!opt.condition);
+			} while (!checkKey(block.key,10,true));
+			// TODO: reduce 10
+		}
+		if (block.text != "") {
+			blocks.push(block);
+		}
+		block = {
+			importance: 25,
+			displayOrder: 3,
+			key: "",
+			text: ""
+		};
+		if (info.colony.reason == "Waystation") {
+			opts = [
+				{ key: "BFPGC-WAY1", text: "As %I space expanded, they began a programme of installing orbital stations in nearby otherwise uninhabited systems.", condition: true },
+				{ key: "BFPGC-WAY2", text: "Initial habitation in %H was a %I way station installed in %D3 to resupply their widening trade routes. Most of the %I have now left the system.", condition: info.colony.species.length > 1 },
+				{ key: "BFPGC-WAY3", text: "A small refuelling outpost was placed here in %D3.", condition: true },
+				{ key: "BFPGC-WAY4", text: "Originally founded as a rest stop for convoys between %O and the colonies, %H retains some of that role today.", condition: info.colony.stage == 1 },
+				{ key: "BFPGC-WAY5", text: "The original station in this system was destroyed by %A, leaving early convoys vulnerable to accidents. While it was later refounded, the stability of the system never quite recovered.", condition: info.economy.type == "Salvage" && info.colony.attacked == 0 },
+				{ key: "BFPGC-WAY6", text: "When the %I first placed a station in orbit around %H to service their colonisation fleet, they had no intention of the system becoming as important as it is now.", condition: info.colony.stage > 3 },
+				{ key: "BFPGC-WAY7", text: "%H was not originally considered worthwhile to colonise by the %I. While by %D3 they had not changed their minds, its position close to %O led to the establishment of a small supply depot.", condition: true },
+				{ key: "BFPGC-WAY8", text: "A pair of orbital stations were installed in %D3, before being significantly upgraded in %D6 to support increased traffic along this trade route.", condition: info.connected.length == 3 || info.connected.length == 2 },
+				{ key: "BFPGC-WAY9", text: "The remote location and undesirable environment made this an ideal place for an early %I research station, although little sign of this remains nowadays.", condition: info.connected.length <= 2 },
+				{ key: "BFPGC-WAY10", text: "%H was originally a resupply system for the %I.", condition: true },
+				{ key: "BFPGC-WAY11", text: "A small supply depot was established here in %D3.", condition: true },
+				{ key: "BFPGC-WAY12", text: "Efficiently managing the expanding %I convoys required the establishment of small orbital platforms around systems near to %O.", condition: true },
+				{ key: "BFPGC-WAY13", text: "%H was originally settled in %D3 with an orbital station to assist convoys passing through to more interesting systems.", condition: true },
+				{ key: "BFPGC-WAY14", text: "The pre-unification %I colonisation required otherwise undesirable systems such as %H to have orbital stations installed to service the early supply freighters.", condition: true },
+				{ key: "BFPGC-WAY15", text: "%S orbital stations date back to %D3 when it was a common stop on the routes to more distant colonies", condition: info.colony.stage == 1 }
+			];
+
+			do {
+				do {
+					opt = opts[info.r.rand(opts.length)];
+					block.key = opt.key;
+					block.text = opt.text;
+				} while (!opt.condition);
+			} while (!checkKey(block.key,20,true));
+		}
+		if (block.text != "") {
+			blocks.push(block);
+		}
+
+		return blocks;
+	}
+
+
+	var blocksForGaldriveColony = function(info) {
+		// the founding of these is covered elsewhere
+		if (info.colony.homeWorld || info.colony.embassy) { return []; }
+		var blocks = [];
+		var opt, opts;
+		var block = {
+			importance: 45,
+			displayOrder: 4,
+			key: "",
+			text: ""
+		};
+		// new colonies
+		if (info.colony.reason == "Best G3") {
+			opts = [
+				{ key:"BFGC-BEST1", text: "The USC treaty established eight systems to accompany the capital in this chart. %H was selected for %I habitation.", condition: true },
+				{ key:"BFGC-BEST2", text: "One of the eight systems originally intended as a species embassy to the USC, over ten million colonists landed here in %D4 hoping to lead the way in peaceful cooperation.", condition: true },
+				{ key:"BFGC-BEST3", text: "%H was the first %I colony in this chart, nominated by the USC treaty due to its superb similarity to %O.", condition: true },
+			];
+			// TODO: a few more
+			do {
+				do {
+					opt = opts[info.r.rand(opts.length)];
+					block.key = opt.key;
+					block.text = opt.text;
+				} while (!opt.condition);
+			} while (!checkKey(block.key,3,true));
+
+		} else if (info.colony.founded == 4) {
+			opts = [
+				{ key:"BFGC-NEW1", text: "The discovery of the cross-chart witchspace routes brought many new colonies within reach of the %I, but this form of colonisation was hugely expensive and undertaken only for systems such as %H which had excellent living conditions.", condition: true },
+				{ key:"BFGC-NEW2", text: "Early cross-chart colonisation focused on worlds with excellent habitability for the crossing species. %H was founded in %D4 by the %I.", condition: true },
+				{ key:"BFGC-NEW3", text: "Cross-chart colonies largely depended on the chart's native species to provide extra supplies. They were generally therefore founded on highly habitable worlds, to reduce the chances of miscommunications being fatal to the new colony.", condition: info.g != 2 },
+				{ key:"BFGC-NEW4", text: "In addition to the eight colonies established by treaties, a few other colonies were established in this chart soon after unification. The first %I settlers landed here in %D4.", condition: info.g == 2 },
+				{ key:"BFGC-NEW5", text: "While %H initially seemed ideal for the %I, a series of disasters involving the native %C led to the abandoning of the original colony and the world being quarantined in %D4.", condition: info.economy.reason == "Native Life" && info.economy.type == "Quarantine" },
+				{ key:"BFGC-NEW6", text: "This was an early unification era colony of the %I, founded in %D4.", condition: true },
+				{ key:"BFGC-NEW7", text: "%H orbits perfectly in what the %I consider to be %U's habitable zone, and with the strengthening of supply lines it was colonised in %D4.", condition: true },
+				{ key:"BFGC-NEW8", text: "The %M reserves of %H, combined with its pleasant environment, made it an obvious target for unification era colonisation.", condition: info.planet.mineralWealth > 0.45 },
+				{ key:"BFGC-NEW9", text: "The first %I settlers landed here in %D4 as part of the early unification era experiments into interspecies cooperation.", condition: true },
+				{ key:"BFGC-NEW10", text: "The unification era occasionally led to disputes over colonisation rights. After extensive debate, in %D4 %H was given to the %I.", condition: info.habitability.best == 100 && info.habitability[info.colony.species[0]] < 100 },
+			];
+			
+			do {
+				do {
+					opt = opts[info.r.rand(opts.length)];
+					block.key = opt.key;
+					block.text = opt.text;
+				} while (!opt.condition);
+			} while (!checkKey(block.key,10,true));
+
+		} else {
+			// other species' outposts being colonised
+			opts = [
+				{ key:"BFGC-OLD1", text: "The %I had previously established a small outpost here, which remained in orbit to support trade while the %I1 settled the planet below.", condition: true },
+				{ key:"BFGC-OLD2", text: "While the %I had placed an orbital station in this system for strategic reasons, inhabiting the planet itself was never considered, and so the system was ceded to the better-adapted %I1 in %D4.", condition: info.habitability[info.colony.species[0]] < 60 },
+				{ key:"BFGC-OLD3", text: "%I1 settlers joined the existing outpost in %D4", condition: true },
+				{ key:"BFGC-OLD4", text: "The %I1 began the habitation of %H itself in %D4.", condition: true },
+				{ key:"BFGC-OLD5", text: "The existing outpost was supplemented by a %I1 ground station soon after unification.", condition: true },
+				{ key:"BFGC-OLD6", text: "Unification brought many more habitable worlds within reach of the %I1. Systems such as %U which already had basic orbital infrastructure were often considered safer to settle.", condition: true },
+				{ key:"BFGC-OLD7", text: "The expense of cross-chart witchspace routes meant that the %I1 preferred to settle systems where supply deals could be made with an existing outpost.", condition: true },
+				{ key:"BFGC-OLD8", text: "The %I1 began establishing farming communities on the surface of %H in %D4.", condition: info.economy.type == "Farming" },
+				{ key:"BFGC-OLD9", text: "Before the post-unification waves of intentional joint colonisation, inter-species cooperation was tested at systems like %U, where the %I1 settlers joined existing stations.", condition: true },
+				{ key:"BFGC-OLD10", text: "The excellent habitability of the system led to its selection for %I1 habitation in %D4, though it was several kD later before the necessary agreements with the %I were concluded.", condition: true },
+			];
+
+			do {
+				do {
+					opt = opts[info.r.rand(opts.length)];
+					block.key = opt.key;
+					block.text = opt.text;
+				} while (!opt.condition);
+			} while (!checkKey(block.key,2,true));
+			// this is a very rare case, so try to avoid reusing text
+		}
+		if (block.text != "") {
+			blocks.push(block);
+		}
+
+		return blocks;
 	}
 
 
@@ -353,6 +582,21 @@
 		else if (info.colony.founded == 3) {
 			blocks = blocks.concat(blocksForPreGaldriveColony(info));
 		}
+		//  + galdrive colonisation
+		if (historySearch(info.history,"founded",4)) {
+			blocks = blocks.concat(blocksForGaldriveColony(info));
+		}
+
+		//  +++ first joint colony in chart
+		//  ++ early joint colony in chart
+		//  + joint colony
+
+
+		//  +++ first terraformed colony
+		//  +++ early terraformed colony
+		//  ++ terraformed colony
+
+		//  ++ early colony has 2nd species join
 		//  ++ colony founded on 0-0-0 world
 		//  ++ reduced to outpost randomly
 		//  +++ reduced to outpost randomly more than once
@@ -360,16 +604,8 @@
 		//  ++ reduced in level more than once
 		//  +++ current level more than two behind peak (except for invasion)
 		//  +++ first colony of a species in chart
-		//  + galdrive colonisation
-		//  +++ first joint colony in chart
-		//  ++ early joint colony in chart
-		//  ++ early colony has 2nd species join
-		//  + joint colony
 		// 	 ++ colony has >= 3 species
 		//  +++ colony has >= 4 species (and not a United world)
-		//  +++ first terraformed colony
-		//  +++ early terraformed colony
-		//  ++ terraformed colony
 		//  + founded as habitable
 		//  + founded as high mineral
 		//  + founded as terraformable

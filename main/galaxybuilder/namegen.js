@@ -85,7 +85,7 @@
 		"Choice","Option","Voice","Song","Breath","Majority","Decision","Ballot","Vote","Preference","Score","Council","Senate"
 	];
 	var hierarchicalConcepts = [
-		"Order","Throne","Seat","Crown","Sceptre","Sphere","Command","Supremacy","Stand","Citadel","Fortress","Leadership","Royal","Might","Victory","Empire"
+		"Order","Throne","Seat","Crown","Sceptre","Seal","Orb","Sphere","Command","Supremacy","Stand","Citadel","Fortress","Leadership","Royal","Might","Victory","Empire"
 	];
 	var collectiveConcepts = [
 		"Unity","Unison","Harmony","Equity","Liberty","Labour","Work","Accord","Collective","Equality","Community","Society","Peace","Tenacity","Help","Support","Union","Commonwealth","Commons","Combine"
