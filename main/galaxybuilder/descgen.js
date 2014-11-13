@@ -34,7 +34,7 @@
 	var historySearch = function(history, event, stage) {
 		for (var i=0;i<history.length;i++) {
 			if (history[i].type == event && history[i].historyStep == stage) {
-				return true;
+				return history[i];
 			}
 		}
 		return false;
@@ -44,6 +44,9 @@
 	var expandCreatures = ["fungi","vines","leviathans","creatures","trees","grasses","mammoths","behemoths","plants","animals","predators","swarms","venomous creatures","pollen","burrowers","worms","amoebas","scavengers","beasts","colossi","titans","constrictors","herds"];
 	var expandPolitics = ["taxation","funding","economic policy","migration","settlement","mineral rights","trade routes","leadership changes","autonomy"];
 	var expandAccident = ["an asteroid storm","a reactor explosion","a collision","an unusually severe solar flare","a thruster failure","life-support failures","a coolant leak","a fuel leak","unknown causes","radical saboteurs"];
+	var expandCity = ["Port","Landing","Harbour","City","Town","Village","Fort","Circle","Farm","Mine","Haven"];
+	// government type, biased toward atypical
+	var expandGovernment = ["Corporate","Democratic","Hierarchical","Collective","Isolationist","Anarchist","Transapientist","Social Evolutionist","Cultural Reaching","Precedentarchic","Bureaucratic","Variationist"];
 
 	var expand = function(info,string) {
 //		console.error(info,string);
@@ -52,6 +55,9 @@
 		string = string.replace(/%U/g,info.star.name.replace(/ \(.*/,""));
 		if (info.colony.species.length > 0) {
 			if (info.colony.species.length > 1) {
+				if (info.colony.species.length > 2) {
+					string = string.replace(/%I2/g,info.species.name(info.colony.species[2]));
+				}
 				string = string.replace(/%I1/g,info.species.name(info.colony.species[1]));
 			}
 			string = string.replace(/%I/g,info.species.name(info.colony.species[0]));
@@ -62,15 +68,19 @@
 		string = string.replace(/%P/g,expandPolitics[info.r.rand(expandPolitics.length)]);
 		string = string.replace(/%C/g,expandCreatures[info.r.rand(expandCreatures.length)]);
 		string = string.replace(/%A/g,expandAccident[info.r.rand(expandAccident.length)]);
+		string = string.replace(/%Y/g,expandCity[info.r.rand(expandCity.length)]);
+		string = string.replace(/%G/g,expandGovernment[info.r.rand(expandGovernment.length)]);
 		// initial colonisation
-		string = string.replace(/%D1/g,(info.r.rand(10)+140)+" kD");
+// if needed, has to move below %D10 anyway
+//		string = string.replace(/%D1/g,(info.r.rand(10)+140)+" kD");
 		string = string.replace(/%D2/g,(info.r.rand(250)+150)+" kD");
 		// initial colonisation 2
 		string = string.replace(/%D3/g,(info.r.rand(150)+400)+" kD");
 		// galdrive phase
 		string = string.replace(/%D4/g,(info.r.rand(50)+550)+" kD");
 		// cooperative phases
-		string = string.replace(/%D5/g,(info.r.rand(150)+600)+" kD");
+		string = string.replace(/%D5E/g,(info.r.rand(15)+600)+" kD");
+		string = string.replace(/%D5/g,(info.r.rand(135)+615)+" kD");
 		string = string.replace(/%D6/g,(info.r.rand(100)+750)+" kD");
 		string = string.replace(/%D7/g,(info.r.rand(50)+850)+" kD");
 		// terraforming phase
@@ -539,6 +549,163 @@
 		}
 
 		return blocks;
+	};
+
+	var blocksForEarlyUnifiedColony = function(info) {
+		var blocks = [];
+		var opt, opts;
+		var block = {
+			importance: 35,
+			displayOrder: 5,
+			key: "",
+			text: ""
+		};
+		if (info.colony.outsiders == 0) {
+			if (checkKey("BFEUC-FIRST"+info.g,0)) {
+				// limited set for the first intentionally joint in each chart
+				importance = 100;
+				block.key = "BFEUC-FIRST"+info.g;
+				opts = [
+					"The successful cooperation in the early years of unification encouraged the young USC to go further, settling habitable planets cooperatively from the start. %H was the first planet in this chart to be settled this way, with %I, %I1 and other settlers landing in %D5E.",
+					"Generally positive initial results of cross-chart colonisation and between the separate settlements on the embassy worlds led the USC to begin a programme of integrated colonisation, selecting worlds highly suitable for two or more species which had not yet been inhabited. In %D5E, the %U system became the first in this chart.",
+					"%H is noteworthy for being the first joint settlement in this chart sponsored by the USC, the old "+info.species.name("Bird")+" and "+info.species.name("Frog")+" joint settlements in their native chart being a significant model. The initial landing of 30,000 %I and %I1 settlers took place in %D5E.",
+					"In %D5E, %H became the first USC-sponsored joint settlement in the chart. While unlike the other charts the existence of two native species meant that this was less unusual, it was still a key moment of cooperation for the %I, the %I1, and the smaller numbers of settlers from other species."
+				];
+				var sel = info.r.rand(3);
+				if (info.g == 5) { 
+					// need this wording for the chart 6 one
+					sel = 3;
+				}
+				block.text = opts[sel];
+			} else {
+				opts = [
+					{ key: "BFEUC-JOINT1", text: "The %I and %I1 jointly colonised this system under the USC cooperation scheme in %D5.", condition: true },
+					{ key: "BFEUC-JOINT2", text: "After early trials and successful cooperation on embassy worlds suggested a strong future for multi-species worlds, the %I and %I1 settled on %H in %D5.", condition: true },
+					{ key: "BFEUC-JOINT3", text: "Hundreds of new worlds were colonised as part of the USC's multi-species world plans between around 600 kD and around 750 kD. %H had its first settlers land in %D5.", condition: true },
+					{ key: "BFEUC-JOINT4", text: "It was unusual for worlds such as %H to go uninhabited as late as %D5, but the intensive settling that occurred in the unification era sometimes led to shortages of both colonists and supplies.", condition: info.habitability.best > 95 },
+					{ key: "BFEUC-JOINT5", text: "The %I began setting up small-scale habitats on %H in %D5. A few kD later, they were joined by the %I1.", condition: true },
+					{ key: "BFEUC-JOINT6", text: "One of the more ambitious joint settlements of the unification era, the generally superb environment of %H made it a destination for settlers from all species.", condition: info.colony.species.length >= 4 },
+					{ key: "BFEUC-JOINT7", text: "%H is regarded as one of the most attractive worlds in the chart, with the initial %I and %I1 settlements being founded to blend in with its natural environment.", condition: info.economy.type == "Tourism" },
+					{ key: "BFEUC-JOINT8", text: "Having gained confidence in two-species joint projects, the USC sponsored settlements like %H as a multi-species colony in %D5.", condition: info.colony.species.length >= 3 },
+					{ key: "BFEUC-JOINT9", text: "While many systems are now inhabited by significant populations of several species, %U's colonisation was intended that way from the start, with the %I, %I1 and %I2 all landing here within a few days of each other.", condition: info.colony.species.length >= 3 },
+					{ key: "BFEUC-JOINT10", text: "%H was settled by the %I and %I1 in %D5.", condition: true },
+					{ key: "BFEUC-JOINT11", text: "Detailed biological surveys in %D5 suggested that the environment of %H was particularly suitable for %I1 food production, and they landed here soon after. Supplies of %M soon ran low, however, and a %I transport consortium was dispatched to assist, many of whom joined the original settlers after the crisis was over.", condition: checkKey("BFEUC-JOINT11",0) },
+					{ key: "BFEUC-JOINT12", text: "While barely habitable with the pre-terraforming technology available at the time, %H gained a small settlement of both %I and %I1 in %D5, who could at least work unassisted in the planet's environment.", condition: info.habitability.best < 85 },
+					{ key: "BFEUC-JOINT13", text: "The %U system was originally jointly colonised by the %I and %I1.", condition: true },
+					{ key: "BFEUC-JOINT14", text: "While %H seemed a suitable settlement for %I and %I1 alike, a series of early setbacks meant that it never attracted further migrants before newer systems overtook it.", condition: info.colony.stage == 2 && info.colony.attacked == 0 },
+					{ key: "BFEUC-JOINT15", text: "While the %U system had been surveyed several times before %D5, it was only with the new habitation technology provided by the cooperation of scientists across the eight charts that it became practical to inhabit full-time.", condition: true },
+					{ key: "BFEUC-JOINT16", text: "After an initial %I settlement in %D4 was abandoned after %A critically damaged its orbital station, they returned in %D5 with %I1 assistance.", condition: true },
+					{ key: "BFEUC-JOINT17", text: "The satisfactory environment, combined with easily-accessible %M reserves, helped the initial %I colony to expand. In %D5 they were joined by %I1 settlers attracted to the mining opportunities.", condition: info.planet.mineralWealth > 0.25 },
+					{ key: "BFEUC-JOINT18", text: "The high winds of %H posed a challenge to the original %I and %I1 settlers, who lost their first two settlements to hurricanes before successfully founding %N %Y in %D5", condition: info.planet.windFactor >= 0.25 },
+					{ key: "BFEUC-JOINT19", text: "%I and %I1 colonists first settled on %H in %D5", condition: true },
+					{ key: "BFEUC-JOINT20", text: "The political instability of the %U system was there from the start, when the %I and %I1 colonists founded seven separate cities over disputed %P even before the final colony ships had landed. The USC, monitoring its joint colonisation programme closely, was at least able to note that none of the splits had occurred on species grounds.", condition: info.politics.governmentCategory == "Disordered" },
+					{ key: "BFEUC-JOINT21", text: "%H is considered to be within the habitable zone of %U by several species, with the first settlement being by the %I and %I1 around %D5", condition: true }
+				];
+				
+
+				do {
+					do {
+						opt = opts[info.r.rand(opts.length)];
+						block.key = opt.key;
+						block.text = opt.text;
+					} while (!opt.condition);
+				} while (!checkKey(block.key,15,true));
+				// TODO: allow reduction of 15
+
+			}
+		} else {
+			block.importance = 85;
+			// outsiders (~10 systems)
+			console.error("Outsider colony step 5");
+			opts = [
+				{ key: "BFEUC-OUT1", text: "Contact was lost with the %H colony in %D5, though scans from orbit revealed the habitat to still be functioning.", condition: info.politics.governmentType == "Isolationist" },
+				{ key: "BFEUC-OUT2", text: "In %D5, with the USC managing settlement on the worlds considered suitable for habitation or mining, a group of %I radicals quietly settled the backwater system of %U. By the time they were discovered in %D6, their colony on %H was established. Negotiating with a strictly non-hierarchical group proved difficult, but the USC recognised their rights to the system.", condition: info.politics.governmentType == "Anarchist" },
+				{ key: "BFEUC-OUT3", text: "Meeting other species was for many a time for reflection on one's own species. The Transapiest movement started among the %I, and rapidly spread on the fringes of society. In %D5, with planetary governments growing increasingly hostile to their message of remaking the biology and technology of all eight species into a single 'transcendental' species, they bought a small orbital platform and moved it into orbit around %H.", condition: info.politics.governmentType == "Transapientism" },
+				{ key: "BFEUC-OUT4", text: "The meeting of species brought many benefits, and considerably widened the debates on which government form was best. In %D5 a small number of researchers and supporters of various sides placed an orbital station around the unwanted planet of %H with the aim of conducting controlled experiements into the matter.", condition: info.politics.governmentType == "Social Evolutionists" },
+				{ key: "BFEUC-OUT5", text: "While in modern times the surplus capacity of many planets is reinvested in the production and sharing of cultural artefacts, %H is rare in that it was founded in %D5 with this purpose, largely settled by artists looking for somewhere peaceful to produce their works. The colony had a tough start, but soon their sales began to provide enough money to sustain them.", condition: info.politics.governmentType == "Cultural Reachers" },
+				{ key: "BFEUC-OUT6", text: "The settling of a new system was not a decision anyone took lightly, but the settlers of %H were especially cautious, debating for tens of kD whether the previous successful colonisation of worlds by other people meant that they should also do so, until they finally decided to proceed in %D5.", condition: info.politics.governmentType == "Precedentarchy" },
+				{ key: "BFEUC-OUT7", text: "Where there is government and power, there will soon be corruption. %H was settled by a group of %I in %D5, who believed that with sufficiently well-drafted rules and well-designed accountability they could avoid this problem.", condition: info.politics.governmentType == "Bureaucracy" },
+				{ key: "BFEUC-OUT8", text: "The %U system did not in %D5 contain anything considered particularly important, and so the cobbling together of several small ships and a few freighters into a makeshift orbital station took a while to attract outside attention.", condition: info.politics.governmentType == "Variationist" },
+				{ key: "BFEUC-OUT9", text: "An administrative error led to %H being marked for colonisation. As the initial orbital station was moved into position in %D5, it became clear that the supplies for habitat construction were entirely incorrect for the world. A small crew was left onboard the station to maintain it, and after the decision was made that it would be uneconomical to recover the station, some of them stayed.", condition: info.politics.governmentCategory != "Atypical" },
+				{ key: "BFEUC-OUT10", text: "Most planetary colonisations in the early unification era were sponsored by one or more homeworld governments, but occasionally independent groups would make a request, and the USC sometimes accepted this for systems not considered economically or strategically important.", condition: info.politics.governmentCategory != "Atypical" },
+				{ key: "BFEUC-OUT11", text: "Many groups throughout history have thought that they could do better than their current government. Some have succeeded. Others, like the settlers of %H, did not. In %D5, shortly after founding, their %G government collapsed and never recovered.", condition: info.politics.governmentCategory == "Disordered" && info.colony.attacked == 0 },
+				{ key: "BFEUC-OUT12", text: "The %H system was founded by radical settlers in %D5, aiming to run the system along strict %G lines. Despite scepticism from more established governments, the structure survived until the invasion shattered the colony.", condition: info.politics.governmentCategory == "Disordered" && info.colony.attacked >= 1 },
+				{ key: "BFEUC-OUT13", text: "The settlers in %D5 originally set up a %G government, but this collapsed after the %N revolution in %D7.", condition: info.politics.governmentCategory == "Disordered" }
+
+			];
+
+			do {
+				do {
+					opt = opts[info.r.rand(opts.length)];
+					block.key = opt.key;
+					block.text = opt.text;
+				} while (!opt.condition);
+			} while (!checkKey(block.key,5,true));
+			// TODO: reduce 5
+		}
+
+		if (block.text != "") {
+			blocks.push(block);
+		}
+
+		return blocks;
+	}
+
+
+	var blocksForEarlyUnifiedJoin = function(info, event) {
+		var blocks = [];
+		var opt, opts;
+		var block = {
+			importance: 10,
+			displayOrder: 5,
+			key: "",
+			text: ""
+		};
+		
+		if (info.planet.mineralWealth >= 0.45) {
+			opts = [
+				{ key: "BFEUJ-MIN1", text: "On the more habitable worlds, colonisation often depends on who can best live there. Mining worlds, however, often have an environment unpleasantly harsh for everyone, and it was not uncommon for other species to begin competing mining operations.", condition: true },
+				{ key: "BFEUJ-MIN2", text: "Mining operations have often been on the fringes of society, and an escape for the discontent. A group of "+info.species.name(event.species)+" arrived here to join the existing habitat in %D5.", condition: true },
+				{ key: "BFEUJ-MIN3", text: "Additional miners arrived from the "+info.species.name(event.species)+" in %D5.", condition: true },
+				{ key: "BFEUJ-MIN4", text: "The discovery of fresh %M deposits led to many more workers heading to the system in %D5.", condition: true },
+				{ key: "BFEUJ-MIN5", text: "Increased demand for %M in %D5 was responded to by a "+info.species.name(event.species)+" group also setting up operations.", condition: true },
+				{ key: "BFEUJ-MIN6", text: "The inhospitable surface of %H is a great equaliser, and its orbital habitat attracted miners from many species.", condition: info.habitability.best < 10 },
+				{ key: "BFEUJ-MIN7", text: "Throughout the early unification era, %U developed a reputation as a mining system welcoming to all species.", condition: info.colony.species.length >= 4 },
+				{ key: "BFEUJ-MIN8", text: "Mining stations are often some of the best designed for the diverse needs of all eight anatomies, and the station orbiting %H is considered a fine example of the early unification era.", condition: true },
+				{ key: "BFEUJ-MIN9", text: "The %I1 joined the extraction operations here in %D5", condition: info.colony.species.length == 2 },
+				{ key: "BFEUJ-MIN10", text: "The colony expanded significantly in %D5 with the construction of several surface habitats.", condition: true },
+				{ key: "BFEUJ-MIN11", text: "Asteroid mining in %U picked up significantly in %D5 after a %I1 surveyor discovered additional %M-rich rocks in the system's outer %N belt.", condition: info.economy.type == "Asteroid Mining" },
+				{ key: "BFEUJ-MIN12", text: "After a series of accidents in %H's %N mine, "+info.species.name(event.species)+" specialists were brought in to carry out a full refit.", condition: info.economy.type == "Ground Mining" },
+				{ key: "BFEUJ-MIN13", text: "The early mining operations at %H were more often than not unsuccessful despite the large %M concentrations. The departure of disillusioned miners and their replacement with new hopefuls throughout the early unification era gave the system its current multi-species demographics.", condition: info.colony.species.length >= 4 },
+				{ key: "BFEUJ-MIN14", text: "In %D5, with yields slowly dropping, the "+info.species.name(event.species)+" sponsored the installation of the system's first refinery. The ability to sell low-mass high-value refined products restored the system to profitability.", condition: info.economy.type == "Refining" } 
+			];
+
+			do {
+				do {
+					opt = opts[info.r.rand(opts.length)];
+					block.key = opt.key;
+					block.text = opt.text;
+				} while (!opt.condition);
+			} while (!checkKey(block.key,10,true));
+			// can probably bring 10 down a bit later
+			
+		} else {
+			if (checkKey("BFEUJ-JHAB-"+info.g+"-"+info.s,0)) {
+				// only do this once no matter how many species join
+				useKey("BFEUJ-JHAB-"+info.g+"-"+info.s);
+
+			// join habitable
+			} else {
+				// tiny note for further species
+			}
+		}
+
+		if (block.text != "") {
+			blocks.push(block);
+		}
+
+
+		return blocks;
 	}
 
 
@@ -548,6 +715,8 @@
 	descgen.getDescBlocks = function(g,s,p,r,sp) {
 		var blocks = [];
 		
+		var event = null;
+
 		var info = {};
 		info.g = g;
 		info.s = s;
@@ -589,14 +758,28 @@
 
 		//  +++ first joint colony in chart
 		//  ++ early joint colony in chart
+		if (info.colony.founded == 5) {
+			blocks = blocks.concat(blocksForEarlyUnifiedColony(info));
+		}
+		//  ++ earlier colony has 2nd species join (stage 5)
+		if (event = historySearch(info.history,"joined",5)) {
+			blocks = blocks.concat(blocksForEarlyUnifiedJoin(info,event));
+		}
+
+
 		//  + joint colony
+		//  ++ earlier colony has 2nd species join (stage 6)
+
+
+		//  + joint colony
+		//  ++ earlier colony has 2nd species join (stage 7)
+
 
 
 		//  +++ first terraformed colony
 		//  +++ early terraformed colony
 		//  ++ terraformed colony
 
-		//  ++ early colony has 2nd species join
 		//  ++ colony founded on 0-0-0 world
 		//  ++ reduced to outpost randomly
 		//  +++ reduced to outpost randomly more than once

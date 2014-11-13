@@ -522,6 +522,7 @@ var homeWorlds = [[],[],[],[],[],[],[],[]];
 		var cinfo = $.get(g,best,"colony");
 		cinfo.stage = 7; // stage 6
 		cinfo.homeWorld = 1;
+		cinfo.founded = 1;
 		cinfo.techLevel = 5;
 		cinfo.species.push(s);
 		$.set(g,best,"name",s+" Homeworld"); // temp
@@ -600,6 +601,7 @@ var homeWorlds = [[],[],[],[],[],[],[],[]];
 	cinfo.stage = 1; // outpost
 	cinfo.species.push("Human");
 	cinfo.techLevel = 2;
+	cinfo.founded = 1;
 	$.set(1,foundReach,"colony",cinfo);
 	$.set(1,foundReach,"name","Biya's Reach");
 	keyWorlds["Reach"] = [1,foundReach];
@@ -609,6 +611,7 @@ var homeWorlds = [[],[],[],[],[],[],[],[]];
 	cinfo.species.push("Human");
 	cinfo.homeWorld = 1;
 	cinfo.techLevel = 4;
+	cinfo.founded = 1;
 	$.set(1,foundHope,"colony",cinfo);
 	$.set(1,foundHope,"name","Dramani's Hope");
 	keyWorlds["Hope"] = [1,foundHope];
@@ -618,6 +621,7 @@ var homeWorlds = [[],[],[],[],[],[],[],[]];
 	cinfo.species.push("Human");
 	cinfo.homeWorld = 1;
 	cinfo.techLevel = 3;
+	cinfo.founded = 1;
 	$.set(1,foundLanding,"colony",cinfo);
 	$.set(1,foundLanding,"name","Aquino's Landing");
 	keyWorlds["Landing"] = [1,foundLanding];
@@ -652,6 +656,9 @@ Then find nearby good habitation or mineral systems within 20 LY of Biya's Reach
 				var colony = $.get(g,j,"colony");
 				var planet = $.get(g,j,"planet");
 				if (colony.stage == 0) {
+				// at this stage, don't even have basic terraforming
+				// tech to make 70-80 worlds habitable.
+
 					if (hab[s] >= 80) {
 						$.foundColony(g,j,[s],3,2);
 						colony.reason = "Habitability";
@@ -910,7 +917,7 @@ Any uninhabited or outpost system with >90% habitability in any chart gets a sta
 			for (j=0;j<$.systems;j++) {
 				hab = $.get(i,j,"habitability");
 				colony = $.get(i,j,"colony");
-				if (hab[spec] >= 95 && colony.stage <= 1 && random.randf() < 0.4 && !species.isNative(i,spec)) {
+				if (hab[spec] >= 95 && colony.stage <= 1 && random.randf() < 0.4 && !species.isNative(i,spec) && colony.species.indexOf(spec) == -1) {
 					if (colony.stage == 1) {
 						console.error(spec+" joining outpost at "+i+" "+j);
 					}
@@ -933,11 +940,21 @@ Any system with high mineral wealth, still at outpost stage, has a 10% chance of
 
 for (var cocostage = 5; cocostage <= 7; cocostage++) {
 	$.$historyStep = cocostage;
+	var speclist = species.list();
+
+	var hab270 = function(hab) {
+		var ct = 0;
+		for (var s=0;s<speclist.length;s++) {
+			if (hab[speclist[s]]>=70) {
+				ct++;
+			}
+		}
+		return (ct>1);
+	}
 	// 10000 per pass seems to be plenty
 	random.setStart(110000 + (10000*cocostage));
 	(function() {
 		var hab, colony, planet;
-		var speclist = species.list();
 		for( i=0;i<$.galaxies;i++) {
 			for (j=0;j<$.systems;j++) {
 				colony = $.get(i,j,"colony");
@@ -959,33 +976,53 @@ for (var cocostage = 5; cocostage <= 7; cocostage++) {
 				// extra colonists settle
 				if (colony.stage <= 3) {
 					hab = $.get(i,j,"habitability");
-					for (k=0;k<speclist.length;k++) {
-						if (colony.species.indexOf(speclist[k]) == -1 && 
-							((hab[speclist[k]] >= 80 && random.randf() < 0.2))) {
-							if (colony.stage > 0) {
+					if (colony.stage > 0) {
+						for (k=0;k<speclist.length;k++) {
+							/* Now have tech to make 70-80 worlds
+							 * habitable. Not true terraforming, more
+							 * improved habitat design and shielding */
+							if (colony.species.indexOf(speclist[k]) == -1 && 
+								((hab[speclist[k]] >= 70 && random.randf() < 0.2))) {
 								colony.species.push(speclist[k]);
+								$.addHistoryItem(i,j,{type:"joined", species:speclist[k]});
 								if (colony.stage <= 4) {
 									// extra species won't increase above stage 3 colony
 									$.advanceColonyStage(i,j);
 								}
 								$.advanceColonyTech(i,j,1);
-							} else {
-								$.foundColony(i,j,[speclist[k]],2,4);
 							}
 						}
+					} else if (random.randf() < 0.2 && hab270(hab)) {
+						var specs = [];
+						do {
+							for (k=0;k<speclist.length;k++) {
+								if (specs.indexOf(speclist[k]) == -1 && hab[speclist[k]] >= 70+random.rand(20)) {
+									specs.push(speclist[k]);
+								}
+							}
+						} while (specs.length < 2);
+
+						$.foundColony(i,j,specs,2,4);
+						colony.reason = "Joint Colony";
 					}
+
 				}
 				planet = $.get(i,j,"planet");
 				// expand mining outposts collaboratively
 				if (planet.mineralWealth >= 0.45 && colony.stage == 1) {
-					colony.species.push(speclist[random.rand(speclist.length)]);
-					$.advanceColonyStage(i,j);
-					$.advanceColonyTech(i,j,1);
+					k = random.rand(speclist.length);
+					if (colony.species.indexOf(speclist[k]) == -1) {
+						colony.species.push(speclist[k]);
+						$.addHistoryItem(i,j,{type:"joined", species:speclist[k]});
+						$.advanceColonyStage(i,j);
+						$.advanceColonyTech(i,j,1);
+					}
 				}
 				// outsider settlements - low tech outposts
 				if (colony.stage == 0 && random.randf() < 0.01) {
 					$.foundColony(i,j,[speclist[random.rand(speclist.length)]],1,1);
 					colony.outsiders = 1;
+					colony.reason = "Outsiders";
 				}
 			}
 		}
@@ -1032,10 +1069,10 @@ All remaining systems with high or medium mineral wealth get a stage 1 colony
 			}
 			if (colony.stage <= 1) {
 				// search for terraforming candidates
-				if (hab.best >= 70 && hab.worst < 80) {
+				if (hab.best >= 60 && hab.worst < 70) {
 					var terrlist = [];
 					for (k=0;k<speclist.length;k++) {
-						if (hab[speclist[k]] > 70 && random.randf() < 0.5) {
+						if (hab[speclist[k]] > 60 && random.randf() < 0.5 && colony.species.indexOf(speclist[k]) == -1) {
 							terrlist.push(speclist[k]);
 						}
 					}
@@ -1044,10 +1081,13 @@ All remaining systems with high or medium mineral wealth get a stage 1 colony
 					}
 					// search for reasonable mining opportunities
 				} else if (planet.mineralWealth > 0.25 && random.randf() < planet.mineralWealth) {
-					if (hab.worst >= 10) {
-						$.foundColony(i,j,[speclist[random.rand(speclist.length)]],2,5);
-					} else {
-						$.foundColony(i,j,[speclist[random.rand(speclist.length)]],1,4);
+					var spec = speclist[random.rand(speclist.length)];
+					if (colony.species.indexOf(spec) == -1) {
+						if (hab.worst >= 10) {
+							$.foundColony(i,j,[spec],2,5);
+						} else {
+							$.foundColony(i,j,[spec],1,4);
+						}
 					}
 				} 
 			}
@@ -1840,6 +1880,7 @@ random.setStart(300000);
 
 (function() {
 	var ku = 0;
+	var usedNames = {};
 	var colony, spec, star, colony2;
 	var letters = ["","Alpha","Beta","Gamma","Delta","Epsilon","Zeta","Eta","Theta","Iota","Kappa","Lambda","Mu","Nu","Xi","Omicron","Pi","Rho","Sigma","Tau","Upsilon","Phi","Chi","Psi","Omega"];
 	// first pass, name stars
@@ -1872,7 +1913,9 @@ random.setStart(300000);
 					spec = colony.species[0];
 					star.name = species.retrieveNameOnce(spec,random);
 					// set system name at same time
-					$.set(i,j,"name",species.retrieveNameOnce(spec,random));
+					var n = species.retrieveNameOnce(spec,random);
+					$.set(i,j,"name",n);
+					usedNames[n] = 1+(i*$.systems)+j;
 				} else {
 					for (k=0;k<homeWorlds[i].length;k++) {
 						var dist = $.distance(i,homeWorlds[i][k],j);
@@ -1954,7 +1997,7 @@ random.setStart(300000);
 		}
 	}
 	// second pass, name other systems
-	var usedNames = {};
+
 	/* Reversed so that duplicate breaking isn't concentrated in
 	 * higher charts */
 	for (j=0;j<$.systems;j++) {
@@ -1978,9 +2021,11 @@ random.setStart(300000);
 					colony2 = $.get(ug,us,"colony");
 					if (colony2.founded < colony.founded) {
 						thisName = namegen.newPrefix(random)+thisName;
+						console.error("...Renamed to "+thisName);
 					} else {
 						var newname = namegen.newPrefix(random)+thisName;
 						$.set(ug,us,"name",newname);
+						console.error("...Renamed other to "+newname);
 						usedNames[newname] = usedNames[thisName];
 					}
 
@@ -1992,7 +2037,9 @@ random.setStart(300000);
 			} else {
 				// set name to star name
 				if (!$.get(i,j,"name")) {
-					$.set(i,j,"name",$.get(i,j,"star").name);
+					// trim bright star greek designations
+					// from system label (keep on star)
+					$.set(i,j,"name",$.get(i,j,"star").name.replace(/ \(.*\)/g,""));
 				}
 			}
 		}

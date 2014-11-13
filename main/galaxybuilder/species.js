@@ -442,11 +442,11 @@ console.error(namelist.length);
 	};
 
 	species.setName = function(s,name) {
-		speciesInfo[s].name = name;
+		speciesInfo[s].speciesName = name;
 	}
 
 	species.name = function(s) {
-		return speciesInfo[s].name;
+		return speciesInfo[s].speciesName;
 	}
 
 	species.evolution = function(s) {

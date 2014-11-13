@@ -282,12 +282,12 @@
 	planetinfo.colonyAtMaxSize = function (g,s,terraforming) {
 		var ter3, ter4, ter5, ter6;
 		if (!terraforming) { 
-			ter3 = 80;
+			ter3 = 70;
 			ter4 = 85;
 			ter5 = 90;
 			ter6 = 95;
 		} else { 
-			ter3 = 70; 
+			ter3 = 60; 
 			ter4 = 80;
 			ter5 = 85;
 			ter6 = 90;
@@ -397,7 +397,7 @@
 		var planet = planetinfo.get(g,s,"planet");
 
 		var table = "";
-		// tables are misnamed now
+		// tables are a little misnamed now
 		if (hab.best >= 95) {
 			table = "hab90";	
 		} else if (colony.militaryBase) {
@@ -408,15 +408,15 @@
 			} else {
 				table = "hiMin";
 			}
-		} else if (hab.best >= 80) {
+		} else if (hab.best >= 70) {
 			table = "hab70";
-		} else if (hab.best >= 70 && colony.stage >= 2) {
+		} else if (hab.best >= 60 && colony.stage >= 2) {
 			table = "hab60col";
 		} else if (planet.mineralWealth >= mediumMineralPoint && hab.best >= 40) {
 			table = "medMinHab40";
 		} else if (planet.mineralWealth >= mediumMineralPoint) {
 			table = "medMin";
-		} else if (hab.best >= 70) {
+		} else if (hab.best >= 60) {
 			table = "lowMinHab60Out";
 		} else {
 			table = "lowMin";
