@@ -9,7 +9,11 @@
  */
 (function() {
 	var usedKeys = {};
-	var state = { home: {"Human": "Dramani's Hope" } };
+	var state = { 
+		home: {"Human": "Dramani's Hope" }, 
+		oneoffs: {}, 
+		debugcounter: 0
+	};
 	var checkKey = function(k,c,e) {
 		if (!usedKeys[k]) {
 			usedKeys[k] = 0;
@@ -42,11 +46,14 @@
 
 	var expandMinerals = ["Platinum","Rhodium","Gold","Iridium","Osmium","Palladium","Rhenium","Ruthenium","Indium","Tellurium","Bismuth"];
 	var expandCreatures = ["fungi","vines","leviathans","creatures","trees","grasses","mammoths","behemoths","plants","animals","predators","swarms","venomous creatures","pollen","burrowers","worms","amoebas","scavengers","beasts","colossi","titans","constrictors","herds"];
-	var expandPolitics = ["taxation","funding","economic policy","migration","settlement","mineral rights","trade routes","leadership changes","autonomy"];
+	var expandPolitics = ["taxation","funding","economic policy","migration","settlement","mineral rights","trade routes","leadership changes","autonomy","civil rights"];
 	var expandAccident = ["an asteroid storm","a reactor explosion","a collision","an unusually severe solar flare","a thruster failure","life-support failures","a coolant leak","a fuel leak","unknown causes","radical saboteurs"];
 	var expandCity = ["Port","Landing","Harbour","City","Town","Village","Fort","Circle","Farm","Mine","Haven"];
 	// government type, biased toward atypical
 	var expandGovernment = ["Corporate","Democratic","Hierarchical","Collective","Isolationist","Anarchist","Transapientist","Social Evolutionist","Cultural Reaching","Precedentarchic","Bureaucratic","Variationist"];
+	var expandBusiness = ["Consortium","Corporation","Company","Partnership","Syndicate","Conglomerate"];
+	var expandWarmonger = ["General","Admiral","Colonel","Marshall","Overlord","Commodore"];
+	var expandTribunal = ["Arbitrators","Tribunal","Mediators","Judges","Magistrates","Committee","Inquisition","Commission"];
 
 	var expand = function(info,string) {
 //		console.error(info,string);
@@ -70,6 +77,9 @@
 		string = string.replace(/%A/g,expandAccident[info.r.rand(expandAccident.length)]);
 		string = string.replace(/%Y/g,expandCity[info.r.rand(expandCity.length)]);
 		string = string.replace(/%G/g,expandGovernment[info.r.rand(expandGovernment.length)]);
+		string = string.replace(/%B/g,expandBusiness[info.r.rand(expandBusiness.length)]);
+		string = string.replace(/%W/g,expandWarmonger[info.r.rand(expandWarmonger.length)]);
+		string = string.replace(/%T/g,expandTribunal[info.r.rand(expandTribunal.length)]);
 		// initial colonisation
 // if needed, has to move below %D10 anyway
 //		string = string.replace(/%D1/g,(info.r.rand(10)+140)+" kD");
@@ -298,7 +308,6 @@
 				text: ""
 			};
 		} else 		if (info.planet.mineralWealth > 0.45) {
-//			console.error("Stage 2 mineral colony "+info.g+" "+info.s);
 			opts = [
 				{key: "BFIC-MIN1", text: "As the demands of witchspace travel increased, %S position near to their homeworld led the %I to establish mining operations here in %D2.", condition: true},
 				{key: "BFIC-MIN2", text: "The easily accessible minerals in this system's asteroid belts were key to early colonisation of the chart.", condition: info.economy.type != "Ground Mining" },
@@ -461,7 +470,8 @@
 					block.key = opt.key;
 					block.text = opt.text;
 				} while (!opt.condition);
-			} while (!checkKey(block.key,20,true));
+			} while (!checkKey(block.key,15,true));
+			// can probably decrease 15 later somewhat
 		}
 		if (block.text != "") {
 			blocks.push(block);
@@ -616,7 +626,6 @@
 		} else {
 			block.importance = 85;
 			// outsiders (~10 systems)
-			console.error("Outsider colony step 5");
 			opts = [
 				{ key: "BFEUC-OUT1", text: "Contact was lost with the %H colony in %D5, though scans from orbit revealed the habitat to still be functioning.", condition: info.politics.governmentType == "Isolationist" },
 				{ key: "BFEUC-OUT2", text: "In %D5, with the USC managing settlement on the worlds considered suitable for habitation or mining, a group of %I radicals quietly settled the backwater system of %U. By the time they were discovered in %D6, their colony on %H was established. Negotiating with a strictly non-hierarchical group proved difficult, but the USC recognised their rights to the system.", condition: info.politics.governmentType == "Anarchist" },
@@ -630,7 +639,8 @@
 				{ key: "BFEUC-OUT10", text: "Most planetary colonisations in the early unification era were sponsored by one or more homeworld governments, but occasionally independent groups would make a request, and the USC sometimes accepted this for systems not considered economically or strategically important.", condition: info.politics.governmentCategory != "Atypical" },
 				{ key: "BFEUC-OUT11", text: "Many groups throughout history have thought that they could do better than their current government. Some have succeeded. Others, like the settlers of %H, did not. In %D5, shortly after founding, their %G government collapsed and never recovered.", condition: info.politics.governmentCategory == "Disordered" && info.colony.attacked == 0 },
 				{ key: "BFEUC-OUT12", text: "The %H system was founded by radical settlers in %D5, aiming to run the system along strict %G lines. Despite scepticism from more established governments, the structure survived until the invasion shattered the colony.", condition: info.politics.governmentCategory == "Disordered" && info.colony.attacked >= 1 },
-				{ key: "BFEUC-OUT13", text: "The settlers in %D5 originally set up a %G government, but this collapsed after the %N revolution in %D7.", condition: info.politics.governmentCategory == "Disordered" }
+				{ key: "BFEUC-OUT13", text: "The settlers in %D5 originally set up a %G government, but this collapsed after the %N revolution in %D7.", condition: info.politics.governmentCategory == "Disordered" },
+				{ key: "BFEUC-OUT14", text: "The settlers of %H were struck with a particularly virulent form of %N plague shortly after landing, and almost all of them died. The survivors were those with a genetic resistance to the plague, and their descendants continue to inhabit the settlement today. With the resistance merely protecting them from the most severe systems, the disease is still endemic and the system is quarantined.", condition: info.politics.governmentType == "Quarantine" },
 
 			];
 
@@ -642,6 +652,9 @@
 				} while (!opt.condition);
 			} while (!checkKey(block.key,5,true));
 			// TODO: reduce 5
+			if (block.key == "BFEUC-OUT5") {
+				state.precendentarchy = info.name;
+			}
 		}
 
 		if (block.text != "") {
@@ -690,24 +703,359 @@
 			// can probably bring 10 down a bit later
 			
 		} else {
-			if (checkKey("BFEUJ-JHAB-"+info.g+"-"+info.s,0)) {
+			if (!state.oneoffs["BFEUJ-JHAB-"+info.g+"-"+info.s]) {
 				// only do this once no matter how many species join
-				useKey("BFEUJ-JHAB-"+info.g+"-"+info.s);
+				state.oneoffs["BFEUJ-JHAB-"+info.g+"-"+info.s] = 1;
+				// join habitable				
+				opts = [
+					{ key: "BFEUJ-JHAB1", text: "The USC interspecies policy also attracted settlers of other species to existing colonies where they could make use of parts of the environment less attractive to the current inhabitants. A large group of "+info.species.name(event.species)+" settlers landed here in %D5.", condition: true },
+					{ key: "BFEUJ-JHAB2", text: "Additional settlers from other species joined the growing colony in %D5.", condition: true },
+					{ key: "BFEUJ-JHAB3", text: "While originally a %I colony, %H is even better suited to the "+info.species.name(event.species)+", and in %D5 with the agreement of both species they set up several major cities here.", condition: info.habitability[event.species] == info.habitability.best },
+					{ key: "BFEUJ-JHAB4", text: "%H was attractive to the "+info.species.name(event.species)+" and as multi-species colonies became more common in the early unification era, they joined the existing colony.", condition: true },
+					{ key: "BFEUJ-JHAB5", text: "The planet's natural beauty attracted visitors even shortly after unification, with some settling permanently.", condition: info.economy.type == "Tourism" },
+					{ key: "BFEUJ-JHAB6", text: "The "+info.species.name(event.species)+" joined the colony in %D5.", condition: true },
+					{ key: "BFEUJ-JHAB7", text: "With the relatively pleasant environment allowing the colony to stabilise quickly, it grew from both a high birth rate and substantial immigration.", condition: true },
+					{ key: "BFEUJ-JHAB8", text: "Joining an established colony was usually safer than starting a new one, even on habitable planets. %H received many additional settlers shortly after unification.", condition: true },
+					{ key: "BFEUJ-JHAB9", text: "Taking advantage of the existing supply lines, the "+info.species.name(event.species)+" joined the small colony on %H in %D5, more than doubling the population.", condition: true },
+					{ key: "BFEUJ-JHAB10", text: "The superb natural environment of %H attracted colonists from many species to the %U system.", condition: info.habitability.best == 100 },
+					{ key: "BFEUJ-JHAB11", text: "In the early unification era, even a long-established colony had a population thousands of times smaller than a homeworld, and massive population growth could sometimes happen overnight, as it did here when hundreds of thousands of "+info.species.name(event.species)+" settlers arrived in %D5.", condition: true },
+					{ key: "BFEUJ-JHAB12", text: "%H's population expanded significantly in %D5 with the arrival of additional "+info.species.name(event.species)+" workers.", condition: true }
+					/* TODO: maybe some species-specific entries? */
+				];
 
-			// join habitable
-			} else {
-				// tiny note for further species
+				do {
+					do {
+						opt = opts[info.r.rand(opts.length)];
+						block.key = opt.key;
+						block.text = opt.text;
+					} while (!opt.condition);
+				} while (!checkKey(block.key,10,true));
+				// can probably bring 10 down a bit later
+
 			}
 		}
 
 		if (block.text != "") {
 			blocks.push(block);
 		}
-
+		
 
 		return blocks;
 	}
 
+
+	var blocksForMidUnifiedColony = function(info) {
+		var blocks = [];
+		var opt, opts;
+		var block = {
+			importance: 35,
+			displayOrder: 6,
+			key: "",
+			text: ""
+		};
+		if (info.colony.outsiders == 0) {
+			opts = [
+				{ key: "BFMUC-NEW1", text: "As the USC stabilised, it became more common for new settlements to be founded by groups other than homeworld governments. %H was settled from nearby %I and %I1 colonies in %D6.", condition: true },
+				{ key: "BFMUC-NEW2", text: "While the explicit joint colonisation programme was winding down, the USC still looked more favourably on joint applications, and so the %I and %I1 landed here in %D6.", condition: true },
+				{ key: "BFMUC-NEW3", text: "The initial settlements on %H were founded in %D6.", condition: true },
+				{ key: "BFMUC-NEW4", text: "With both a pleasant environment on %H and reasonably accessible minerals, the %U system was originally planned for colonisation in %D5, but a shortage of supplies led to repeated postponement. The first settlers finally landed in %D6.", condition: info.planet.mineralWealth > 0.25 },
+				{ key: "BFMUC-NEW5", text: "An early %I settlement in %D4 failed to prosper and was soon abandoned. With %I1 assistance, they returned in %D6.", condition: true },
+				{ key: "BFMUC-NEW6", text: "The %N corporation obtained settlement rights to %H in %D6, with the first ships landing shortly afterwards.", condition: info.politics.governmentCategory == "Corporate" },
+				{ key: "BFMUC-NEW7", text: "Disputes over %P on %O led a group of %I settlers to found a "+info.politics.governmentType+" here in %D6, inviting like-minded individuals from other species to join them.", condition: info.politics.governmentCategory == "Democratic" },
+				{ key: "BFMUC-NEW8", text: "The charismatic %I leader %N brought hundreds of thousands of followers with him to the %U system in %D6.", condition: info.politics.governmentCategory == "Hierarchical" },
+				{ key: "BFMUC-NEW9", text: "As USC policies changed post-unification, it became easier for non-homeworld groups to request settlement rights. A coalition of %I and %I1 workers' movements obtained permission to land on %H in %D6.", condition: info.politics.governmentCategory == "Collective" },
+				{ key: "BFMUC-NEW10", text: "%H was settled in %D6 by a group of %I and %I1 dissatisfied with the political structure of their homeworlds.", condition: info.politics.governmentCategory == "Atypical" },
+				{ key: "BFMUC-NEW11", text: "The first permanent ground settlement in %U was founded on %H in %D6.", condition: true },
+				{ key: "BFMUC-NEW12", text: "A controversial change of leadership on %O in %D6 saw many %I leave the system. %N %Y on %H was founded by some of this group.", condition: true },
+				{ key: "BFMUC-NEW13", text: "Several waves of settlers, from the %I, %I1 and others, established independent cities on %H starting in %D6.", condition: info.politics.governmentType == "Fragmented Rule" },
+				{ key: "BFMUC-NEW14", text: "One of the last settlements explicitly founded under the joint colonisation programme, %H received %I and %I1 colonists in %D6.", condition: true },
+			];
+				
+
+			do {
+				do {
+					opt = opts[info.r.rand(opts.length)];
+					block.key = opt.key;
+					block.text = opt.text;
+				} while (!opt.condition);
+			} while (!checkKey(block.key,15,true));
+			// TODO: allow reduction of 15
+			
+			
+		} else {
+			block.importance = 85;
+			// outsiders (~10 systems)
+			opts = [
+				{ key: "BFMUC-OUT1", text: "Founded in %D6 by a group of %I settlers distrustful of the USC, the inhabitants refuse almost all external communication.", condition: info.politics.governmentType == "Isolationist" },
+				{ key: "BFMUC-OUT2", text: "Entirely non-hierarchical ways of running a settlement have been tried on many occasions. %H is one of the few which has continued to do so ever since its founding in %D6.", condition: info.politics.governmentType == "Anarchist" },
+				{ key: "BFMUC-OUT3", text: "The increased rate of scientific discovery post-unification led to the %N movement in %D6 establishing orbital stations in %U to experiment with extreme technological advancement of their %I bodies and minds.", condition: info.politics.governmentType == "Transapientism" },
+				{ key: "BFMUC-OUT4", text: "The %H settlers rebelled against the authority of %O in %D6, but having achieved independence could not decide on a new government form. As a compromise they agreed to trial and refine many forms, on a strict rotation.", condition: info.politics.governmentType == "Social Evolutionists" },
+				{ key: "BFMUC-OUT5", text: "The appearance of %H fascinated the %N, who spent days at a time orbiting and sketching the planet from cheap shuttles. A group of %I entrepreneurs set up a small orbital outpost to sell them supplies in %D6, and the system went on to gain a reputation as an excellent working environment for other artists.", condition: info.politics.governmentType == "Cultural Reachers" },
+				{ key: "BFMUC-OUT6A", text: "Following the example of "+state.precedentarchy+", a Precedentist group placed an orbital station around %H in %D6.", condition: info.politics.governmentType == "Precedentarchy" && state.precdentarchy },
+				{ key: "BFMUC-OUT6B", text: "The settling of a new system was not a decision anyone took lightly, but the settlers of %H were especially cautious, debating for tens of kD whether the previous successful colonisation of worlds by other people meant that they should also do so, until they finally decided to proceed in %D5.", condition: info.politics.governmentType == "Precedentarchy" && !state.precdentarchy },
+				{ key: "BFMUC-OUT7", text: "An extremely strong belief in strict adherence to the law led the %N fringe political movement to colonise %H in %D6.", condition: info.politics.governmentType == "Bureaucracy" },
+				{ key: "BFMUC-OUT8", text: "The non-conformist Variationist movement began shortly after unification, feeling that the new potential of the eight species was being wasted by an over-regulated USC. In %D6, they established stations around %H, in preparation for establishing ground habitats.", condition: info.politics.governmentType == "Variationist" },
+				{ key: "BFMUC-OUT9", text: "Originally founded in %D6 as a %G society, the government was replaced when the system came under the auspices of the "+info.politics.regionName, condition: info.politics.governmentCategory != "Atypical" && info.politics.region != 0 },
+				{ key: "BFMUC-OUT10", text: "The original %G government founded in %D6 lasted only "+(12+info.r.rand(23))+" kD before being replaced.", condition: info.politics.governmentCategory != "Atypical" && info.politics.region == 0 },
+				{ key: "BFMUC-OUT11", text: "Arguments among the original %I colonists led to %H falling into disorder in %D6, barely after the final colonisation ship had landed.", condition: info.politics.governmentCategory == "Disordered" && info.colony.attacked == 0 },
+				{ key: "BFMUC-OUT12", text: "The settlement at %H was originally founded in %D6 by a group of anti-USC radicals.", condition: info.politics.governmentCategory == "Disordered" && info.colony.attacked >= 1 },
+				{ key: "BFMUC-OUT13", text: "Fleeing from criminal charges on %O, the %N reached %U in %D6. Despite occasional efforts to remove them, the system has remained under their control since.", condition: info.politics.governmentType == "Criminal Rule" },
+				{ key: "BFMUC-OUT14", text: "The %U system had not been approved for settlement due to its inhospitability. After a group of %I reactionaries landed on the surface in %D6, it was placed under formal USC quarantine.", condition: info.politics.governmentType == "Quarantine" },
+
+			];
+
+			do {
+				do {
+					opt = opts[info.r.rand(opts.length)];
+					block.key = opt.key;
+					block.text = opt.text;
+				} while (!opt.condition);
+			} while (!checkKey(block.key,2,true));
+			if (block.key == "BFMUC-OUT6B") {
+				state.precendentarchy = info.name;
+			}
+
+		}
+
+		if (block.text != "") {
+			blocks.push(block);
+		}
+
+		return blocks;
+	}
+
+
+	var blocksForMidUnifiedJoin = function(info, event) {
+		var blocks = [];
+		var opt, opts;
+		var block = {
+			importance: 10,
+			displayOrder: 6,
+			key: "",
+			text: ""
+		};
+		var sn = info.species.name(event.species);		
+		if (info.habitability.best >= 70) {
+			if (!state.oneoffs["BFMUJ-JHAB-"+info.g+"-"+info.s]) {
+				// only do this once no matter how many species join
+				state.oneoffs["BFMUJ-JHAB-"+info.g+"-"+info.s] = 1;
+
+				opts = [
+					{ key: "BFMUJ-JHAB1", text: "Additional "+sn+" settlers arrived in %D6.", condition: true },
+					{ key: "BFMUJ-JHAB2", text: "The popularity of %H continued post-unification, with several major waves of settlers arriving, including hundreds of thousands of "+sn+" in %D6.", condition: true },
+					{ key: "BFMUJ-JHAB3", text: "The post-unification era saw significant expansion of the %H cities, with the capital moving to %N %Y in %D6.", condition: true },
+					{ key: "BFMUJ-JHAB4", text: "The population of %H increased substantially in %D6, with %I and %I1 remaining the most common species.", condition: true },
+					{ key: "BFMUJ-JHAB5", text: "Management of the system passed to the %N %B in %D6, who brought many "+sn+" workers to the system from other worlds.", condition: info.politics.governmentCategory == "Corporate" },
+					{ key: "BFMUJ-JHAB6", text: "One of the greatest scandals in %H politics occurred in %D6 when Councillor %N was accused of having brought almost one hundred thousand "+sn+" settlers to the system to flood the Presidential vote. After much deliberation, the case was dismissed, but %N retired from politics before the election.", condition: info.politics.governmentCategory == "Democratic" },
+					{ key: "BFMUJ-JHAB7", text: "Inter-system conflict was rare and strongly discouraged by the USC, but the struggling %U system was successfully invaded in %D6 by the rogue %W %N and their "+sn+" mercenaries. Unable to expel them without risking massive loss of civilian life, the USC forces eventually withdrew.", condition: info.politics.governmentCategory == "Hierarchical" },
+					{ key: "BFMUJ-JHAB8", text: "The habitability of %H and its collectivist government made it a popular destination for "+sn+" workers, who now make up around a third of the population.", condition: info.politics.governmentCategory == "Collective" },
+					{ key: "BFMUJ-JHAB9", text: "The post-unification era saw increased emigration from the homeworlds as interstellar and even inter-chart travel became more affordable. Many arrived on %H shortly after %D6, as its economy transitioned from self-sustaining to being a significant exporter of food to nearby mining systems.", condition: info.economy.reason.match(/Agriculture/) },
+					{ key: "BFMUJ-JHAB10", text: sn+" migrants joined the existing population in large numbers in %D6.", condition: true },
+					{ key: "BFMUJ-JHAB11", text: "The agreeable environment of %H continued to attract migrants during the post-unification era", condition: true },
+					{ key: "BFMUJ-JHAB12", text: "%N %Y was founded in %D6 to meet the needs of the increasing number of "+sn+" settlers.", condition: true },
+					{ key: "BFMUJ-JHAB13", text: "The %U system remained a popular destination for migrants during the post-unification era.", condition: true },
+					{ key: "BFMUJ-JHAB14", text: "The majority of %S "+sn+" population are descended from a colony ship which was damaged by %A in %D6 and forced to divert to the nearest habitable system.", condition: true },
+					{ key: "BFMUJ-JHAB15", text: "Despite %H having a suitable environment, it was only in %D6 that "+sn+" settlers joined the existing population.", condition: info.habitability[event.species] > 90 },
+					{ key: "BFMUJ-JHAB16", text: "By %D6 habitation technology had progressed to make %H suitable for all species, and the population increased significantly.", condition: info.habitability.worst > 70 },
+					{ key: "BFMUJ-JHAB17", text: "One of the last systems to be part of the USC joint colonisation plans, %H received a steady stream of "+sn+" migrants until %D6.", condition: true }
+				];
+				
+				do {
+					do {
+						opt = opts[info.r.rand(opts.length)];
+						block.key = opt.key;
+						block.text = opt.text;
+					} while (!opt.condition);
+				} while (!checkKey(block.key,10,true));
+				// can probably bring 10 down a bit later
+			}
+		} else {
+			// join mining world
+			opts = [
+				{ key: "BFMUJ-JMIN1", text: "Increased demand for %M led to the temporary expansion of mining operations in %D6.", condition: true },
+				{ key: "BFMUJ-JMIN2", text: "An attempt to establish further surface mining bases was made in %D6.", condition: true },
+				{ key: "BFMUJ-JMIN3", text: "By %D6, the %U system was home to four major mining platforms.", condition: true },
+				{ key: "BFMUJ-JMIN4", text: "Asteroid mining requires little permanent investment in a system, and by %D6, a steady stream of prospectors of all species were arriving, searching the belts, and unless they struck lucky, leaving again.", condition: info.economy.type == "Asteroid Mining" },
+				{ key: "BFMUJ-JMIN5", text: "With %M prices rising in %D6, the %N %B brought thousands of "+sn+" workers to the system, turning record profits.", condition: info.politics.governmentType == "Corporate" },
+				{ key: "BFMUJ-JMIN6", text: "The post-unification era saw significant growth in the mining operations on and around %H, with new deposits being found faster than the necessary workers could arrive in the system", condition: true },
+				{ key: "BFMUJ-JMIN7", text: "The main orbital station was significantly renovated in %D6 to reflect the increasing multi-species nature of the system.", condition: true },
+				{ key: "BFMUJ-JMIN8", text: "The radiation levels in %U were considered too high for permanent residence, and so the population experienced rapid turnover throughout the post-unification era.", condition: info.planet.surfaceRadiation > 0.3 },
+				{ key: "BFMUJ-JMIN9", text: "Speculation in %M prices lead to many new workers arriving in %D6, hoping for easy riches.", condition: true },
+			];
+
+			do {
+				do {
+					opt = opts[info.r.rand(opts.length)];
+					block.key = opt.key;
+					block.text = opt.text;
+				} while (!opt.condition);
+			} while (!checkKey(block.key,10,true));
+			// can probably bring 10 down a bit later
+
+		}
+
+		if (block.text != "") {
+			blocks.push(block);
+		}
+		
+
+		return blocks;
+	}
+
+
+	var blocksForLateUnifiedColony = function(info) {
+		var blocks = [];
+		var opt, opts;
+		var block = {
+			importance: 35,
+			displayOrder: 7,
+			key: "",
+			text: ""
+		};
+		if (info.colony.outsiders == 0) {
+			opts = [
+				{ key: "BFLUC-NEW1", text: "By %D7, when %H was colonised, there was liitle enthusiasm among the homeworld governments for further expansion as their practical influence over existing colonies waned. Like many of this era, the initial supplies were funded by subscription from the colonists themselves.", condition: true },
+				{ key: "BFLUC-NEW2", text: "A joint %I-%I1 expedition settled %H in %D7.", condition: true },
+				{ key: "BFLUC-NEW3", text: "Near the end of the post-unification era, homeworld funding for new settlements was extremely low. %H was one of the few systems still settled from %O, as the %I wished to have access to its %M reserves.", condition: info.planet.mineralWealth > 0.25 },
+				{ key: "BFLUC-NEW4", text: "Settlers in %D7 were as likely to come from a failing colony to try again as they were to come from their species' homeworld. %H was founded by refugees fleeing collapses of %I and %I1 colonies in the area.", condition: true },
+				{ key: "BFLUC-NEW5", text: "The %N %B bought settlement rights to “%N's Retreat” in %D7 as a holiday world for their executives. When they went bankrupt shortly after, the world was transferred by the USC to the habitat construction workers, who renamed it to %H.", condition: info.politics.governmentCategory == "Collective" },
+				{ key: "BFLUC-NEW6", text: "%H was claimed for colonisation by the %I as early as %D5, but it was only in %D7 when together with the %I1 they were able to assemble a suitable fleet.", condition: true },
+				{ key: "BFLUC-NEW7", text: "Despite the position of this system on key trade routes, surface habitation was only established in %D7, replacing previous ad hoc and undocumented orbital installations.", condition: info.bottle > 0 },
+				{ key: "BFLUC-NEW8", text: "The %I and %I1 placed habitats on %S surface in %D7.", condition: true },
+				{ key: "BFLUC-NEW9", text: "As colonisation slowed, private funding was often required to assemble a fleet. The %N %B provided the majority of the funding for %S in %D7.", condition: info.politics.governmentCategory == "Corporate" },
+				{ key: "BFLUC-NEW10", text: "In %D7, shortly before first landing, one of the supply ships was destroyed by %A. Without the central backing of prior eras, obtaining supplies to finish the job has been a very slow process.", condition: info.economy.type == "Colonisation" },
+				{ key: "BFLUC-NEW11", text: "Towards the end of the post-unification era, USC oversight of colonisation requests became extremely lax, and %H was one of many worlds to have multiple conflicting requests accepted. Relationships between the %I and %I1 landing parties were extremely strained when they both arrived here in %D7.", condition: info.politics.governmentCategory == "Disordered" },
+				{ key: "BFLUC-NEW12", text: "%H is now all that remains of the former %N Empire. Founded in %D7, it was distant enough to avoid the revolutions which overthrew the dictatorial governments in the rest of the Empire.", condition: info.politics.governmentCategory == "Hierarchical" },
+				{ key: "BFLUC-NEW13", text: "%H was settled towards the end of the post-unification era.", condition: true },
+			];
+				
+
+			do {
+				do {
+					opt = opts[info.r.rand(opts.length)];
+					block.key = opt.key;
+					block.text = opt.text;
+				} while (!opt.condition);
+			} while (!checkKey(block.key,15,true));
+			// TODO: allow reduction of 15
+			
+			
+		} else {
+			block.importance = 85;
+			// outsiders (~10 systems)
+			opts = [
+				{ key: "BFLUC-OUT1", text: "Little is known of the original settlers who arrived in the %U system around %D7, as they refused to answer any communications at all until %D9.", condition: info.politics.governmentType == "Isolationist" },
+				{ key: "BFLUC-OUT2", text: "Protesting against USC support for the homeworlds, the settlers of %H took over the previously uninhabited system in %D7.", condition: info.politics.governmentType == "Anarchist" },
+				{ key: "BFLUC-OUT3", text: "Several orbital stations were placed around %H in %D7 to conduct research into artificial intelligence. When the project funding was cut, many of the scientists remained in the system.", condition: info.politics.governmentType == "Transapientism" },
+				{ key: "BFLUC-OUT4", text: "The inhabitants of %H have the aim of finding the perfect social structure. They founded the system in %D7 to trial various options on a smaller scale.", condition: info.politics.governmentType == "Social Evolutionists" },
+				{ key: "BFLUC-OUT5", text: "The famous %I philanthropist %N provided funding for a small settlement on %H in %D7 as an artists' retreat.", condition: info.politics.governmentType == "Cultural Reachers" },
+				{ key: "BFLUC-OUT6", text: "Precedentist governments had previously been set up in sufficient other systems that when the %N Precedentists were founded in %D7, colonising their own planet became the obvious decision.", condition: info.politics.governmentType == "Precedentarchy" },
+				{ key: "BFLUC-OUT7", text: "The original orbital installation at %H almost failed entirely due to major disputes between the crew. To keep the peace, in %D7 dispute resolution was given over to the %T who would strictly enforce the colony's laws and regulations.", condition: info.politics.governmentType == "Bureaucracy" },
+				{ key: "BFLUC-OUT8", text: "The original colonists of %H believed the pace of progress to be too slow. Their aim in settling was to be somewhere that daily environmental changes were inevitable, in the hope that this would encourage them in making rapid change of other forms.", condition: info.politics.governmentType == "Variationist" },
+				{ key: "BFLUC-OUT9", text: "The settlement at %H was founded in %D7 by a small independent group but joined the "+info.politics.regionName+" in %D9.", condition: info.politics.governmentCategory != "Atypical" && info.politics.region != 0 },
+				{ key: "BFLUC-OUT10", text: "In the late post-unification era, it became more practical to establish makeshift orbital stations by joining a few freighters. A station of this sort was placed in %H by exiled %I.", condition: info.politics.governmentCategory != "Atypical" && info.politics.region == 0 },
+				{ key: "BFLUC-OUT11", text: "The extremely limited order in %U is provided from a small orbital platform placed around %H in %D7.", condition: info.politics.governmentCategory == "Disordered" && info.colony.attacked == 0 },
+				{ key: "BFLUC-OUT12", text: "The small independent settlement at %H was founded around %D7, though managed to remain hidden from later surveys. Unfortunately it did not remain hidden during the invasion.", condition: info.politics.governmentCategory == "Disordered" && info.colony.attacked >= 1 },
+				{ key: "BFLUC-OUT13", text: "%U's position makes it ideal for criminal operations, which are believed to have been coordinated from here since %D7.", condition: info.politics.governmentType == "Criminal Rule" },
+				{ key: "BFLUC-OUT14", text: "%H was exposed to heavy radioactive fallout in %D7 when a new freighter prototype being tested here lost control and exploded in the upper atmosphere. A small USC installation was placed in orbit to monitor the environment and enforce quarantine.", condition: info.politics.governmentType == "Quarantine" },
+				{ key: "BFLUC-OUT15", text: "Originally founded as a %G system in %D7, the government was overthrown after mismanagement of supply lines, and the nearby "+info.politics.regionName+" stepped in to restore order.", condition: info.politics.governmentCategory != "Atypical" && info.politics.region != 0 },
+				{ key: "BFLUC-OUT16", text: "The station around %H was installed in %D7 to support planned settlements which never occurred. To stop it falling into disrepair, the system was transferred to the "+info.politics.regionName+".", condition: info.politics.governmentCategory != "Atypical" && info.politics.region != 0 },
+
+			];
+
+			do {
+				do {
+					opt = opts[info.r.rand(opts.length)];
+					block.key = opt.key;
+					block.text = opt.text;
+				} while (!opt.condition);
+			} while (!checkKey(block.key,2,true));
+
+			if (block.key == "BFLUC-OUT6") {
+				state.precendentarchy = info.name;
+			}
+
+		}
+
+		if (block.text != "") {
+			blocks.push(block);
+		}
+
+		return blocks;
+	}
+
+
+	var blocksForLateUnifiedJoin = function(info, event) {
+		var blocks = [];
+		var opt, opts;
+		var block = {
+			importance: 10,
+			displayOrder: 7,
+			key: "",
+			text: ""
+		};
+		var sn = info.species.name(event.species);		
+		if (info.habitability.best >= 70) {
+			if (!state.oneoffs["BFLUJ-JHAB-"+info.g+"-"+info.s]) {
+				// only do this once no matter how many species join
+				state.oneoffs["BFLUJ-JHAB-"+info.g+"-"+info.s] = 1;
+
+				// need ~120
+				opts = [
+					{ key: "BFLUJ-JHAB1", text: "The settlement on %H continued to expand during the post-unification era.", condition: true },
+					{ key: "BFLUJ-JHAB2", text: "The success of %H attracted additional "+sn+" settlers in %D7.", condition: true },
+					{ key: "BFLUJ-JHAB3", text: "To make better use of some of %S biomes, many "+sn+" groups were invited to join the colony in %D7.", condition: true },
+					{ key: "BFLUJ-JHAB4", text: "Further significant expansion took place in %D7.", condition: true },
+					{ key: "BFLUJ-JHAB5", text: "Tens of thousands of "+sn+" refugees were welcomed to %H in %D7.", condition: true },
+					{ key: "BFLUJ-JHAB6", text: "A stable environment and government attracted many additional settlers throughout the post-unification era.", condition: info.colony.species.length >= 4 },
+					{ key: "BFLUJ-JHAB7", text: "As operating losses increased, ownership of the habitats was taken over by the %N %B in %D7, who moved many of their operations there.", condition: info.politics.governmentCategory == "Corporate" },
+					{ key: "BFLUJ-JHAB8", text: "Several major settlements were added during later expansion, with the largest being %N %Y, begun in %D7.", condition: true },
+					{ key: "BFLUJ-JHAB9", text: "While there had been a small number of "+sn+" living on %H since the early unification era, and the environment was well suited to them, its distance from their homeworld meant that it was only when other established "+sn+" systems began sending out their own settlers that the population here significantly increased.", condition: info.habitability[event.species] > 90 },
+					{ key: "BFLUJ-JHAB10", text: "Having proved that their unconventional form of government could be sustainable, many more sympathisers joined the colony, with construction of %N %Y beginning in %D7 to house the increasing population.", condition: info.politics.governmentCategory == "Atypical" },
+					{ key: "BFLUJ-JHAB11", text: "%U system's economically important position attracted many more settlers to the system as inter-system trade networks began to predominate in the late post-unification era.", condition: info.bottle > 0 },
+					{ key: "BFLUJ-JHAB12", text: "%H continued to be a popular settlement throughout the late post-unification era.", condition: info.colony.stage >= 3 },
+				];
+				
+				do {
+					do {
+						opt = opts[info.r.rand(opts.length)];
+						block.key = opt.key;
+						block.text = opt.text;
+					} while (!opt.condition);
+				} while (!checkKey(block.key,20,true)); 
+				// can probably bring 20 down a bit later
+			}
+		} else {
+			// need ~30
+
+			// join mining world
+			opts = [
+				{ key: "BFLUJ-JMIN1", text: "Mining operations in %H were further expanded in %D7.", condition: true },
+				{ key: "BFLUJ-JMIN2", text: "A decreased demand for %M required diversification into other minerals to keep the operations profitable. "+sn+" consultants were brought in to upgrade equipment and retrain the miners.", condition: true },
+				{ key: "BFLUJ-JMIN3", text: "Later surveys discovered extensive %M deposits on %H, and several mining corporations bid for the extraction rights.", condition: info.politics.governmentCategory == "Corporate" },
+				{ key: "BFLUJ-JMIN4", text: "The concern of the %H mining operators for worker safety led to slightly reduced profits, but made the system an extremely popular destination for miners.", condition: info.politics.governmentCategory == "Collective" },
+				{ key: "BFLUJ-JMIN5", text: "In %D7, rich %M deposits were discovered in the system's outer %N belt, and efforts were made to upgrade the orbital stations to support the fast transports needed to economically exploit them.", condition: info.economy.type == "Asteroid Mining" },
+				{ key: "BFLUJ-JMIN6", text: "The extraction of minerals in %H remained profitable, with sufficient surplus being made to upgrade the orbital platforms in %D7.", condition: true },
+			];
+
+			do {
+				do {
+					opt = opts[info.r.rand(opts.length)];
+					block.key = opt.key;
+					block.text = opt.text;
+				} while (!opt.condition);
+			} while (!checkKey(block.key,10,true));
+			// can probably bring 10 down a bit later
+
+		}
+
+		if (block.text != "") {
+			blocks.push(block);
+		}
+		
+
+		return blocks;
+	}
 
 
 	/* Returns the description blocks for a system, sorted by
@@ -731,6 +1079,7 @@
 		info.economy = p.get(g,s,"economy");
 		info.habitability = p.get(g,s,"habitability");
 		info.r = r;
+		info.bottle = p.bottleneckType(g,s);
 
 		// 	 ++++ homeworld or equivalent
 		if (info.colony.homeWorld == 1) {
@@ -768,11 +1117,23 @@
 
 
 		//  + joint colony
+		if (info.colony.founded == 6) {
+			blocks = blocks.concat(blocksForMidUnifiedColony(info));
+		}
 		//  ++ earlier colony has 2nd species join (stage 6)
+		if (event = historySearch(info.history,"joined",6)) {
+			blocks = blocks.concat(blocksForMidUnifiedJoin(info,event));
+		}
 
 
 		//  + joint colony
+		if (info.colony.founded == 7) {
+			blocks = blocks.concat(blocksForLateUnifiedColony(info));
+		}
 		//  ++ earlier colony has 2nd species join (stage 7)
+		if (event = historySearch(info.history,"joined",7)) {
+			blocks = blocks.concat(blocksForLateUnifiedJoin(info,event));
+		}
 
 
 

@@ -54,7 +54,7 @@
 		"Ice","Glaze","Rime","Winter"
 	];
 	var harshConcepts = [
-		"Bleakness","Labour","Punishment","Toil","Grave","Tomb","Wreck","Ruin"
+		"Bleakness","Labour","Punishment","Toil","Grave","Tomb","Wreck","Ruin","Folly","Hubris","Pride"
 	];
 	var radiationConcepts = [
 		"Burn","Beacon","Blight","Scorch","Revenge"

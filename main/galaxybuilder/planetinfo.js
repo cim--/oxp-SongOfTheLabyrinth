@@ -588,6 +588,8 @@
 			result += $plist("hab_li",fix(info.habitability.Lizard,1));
 			result += $plist("hab_lo",fix(info.habitability.Lobster,1));
 			result += $plist("hab_r",fix(info.habitability.Rodent,1));
+			result += $plist("hab_worst",fix(info.habitability.worst,1));
+			result += $plist("hab_best",fix(info.habitability.best,1));
 //			result += $plist("description","Habitability: "+fix(info.habitability.worst,0)+"-"+fix(info.habitability.average,0)+"-"+fix(info.habitability.best,0)+". Sun: "+info.star.sequence+". Radiation: "+fix(info.planet.surfaceRadiation,3)+". Minerals: "+fix(info.planet.mineralWealth,2)+". Earthquakes: "+fix(info.planet.seismicInstability,3)+". Flares: "+fix(info.star.instability,2)+". Land: "+fix(info.planet.landFraction,2)+". Wind speed: "+fix(info.planet.windFactor,2)+". Temperature: "+fix(info.planet.temperature,0)+". Gravity: "+fix(info.planet.surfaceGravity,2)+". Attacked: "+info.colony.attacked+". Military: "+info.colony.militaryBase+". Economy Reason: "+info.economy.reason+". Bottleneck: "+planetinfo.bottleneckType(g,s)+". Orbits: "+info.star.name);
 		}
 

@@ -656,10 +656,11 @@ Then find nearby good habitation or mineral systems within 20 LY of Biya's Reach
 				var colony = $.get(g,j,"colony");
 				var planet = $.get(g,j,"planet");
 				if (colony.stage == 0) {
-				// at this stage, don't even have basic terraforming
-				// tech to make 70-80 worlds habitable.
-
-					if (hab[s] >= 80) {
+					// at this stage, don't even have basic terraforming
+					// tech to make 70-80 worlds habitable.
+					// and supply lines are often too limited for the 80-90
+					// range
+					if (hab[s] >= 80+random.rand(20)) {
 						$.foundColony(g,j,[s],3,2);
 						colony.reason = "Habitability";
 						// 0.55 higher than normal
@@ -698,14 +699,14 @@ Then find nearby good habitation or mineral systems within 20 LY of Biya's Reach
 		var planet = $.get(g,j,"planet");
 		if (colony.stage == 0) {
 			if (bdist < 30 || fdist < 30) {
-				if (hab["Bird"] >= 80 && hab["Frog"] >= 80) {
+				if (hab["Bird"] >= 85 && hab["Frog"] >= 85) {
 					// joint colony
 					$.foundColony(g,j,["Bird","Frog"],3,2);
 					colony.reason = "Joint Habitability";
-				} else if (bdist < 30 && hab["Bird"] >= 80) {
+				} else if (bdist < 30 && hab["Bird"] >= 80+random.rand(20)) {
 					$.foundColony(g,j,["Bird"],3,2);
 					colony.reason = "Habitability";
-				} else if (fdist < 30 && hab["Frog"] >= 80) {
+				} else if (fdist < 30 && hab["Frog"] >= 80+random.rand(20)) {
 					$.foundColony(g,j,["Frog"],3,2);
 					colony.reason = "Habitability";
 					// 0.55 higher than normal
@@ -767,8 +768,9 @@ random.setStart(150100); // the above is currently deterministic
 				$.advanceColonyTech(i,j,random.rand(4));
 			} else {
 				// add new colonies
+				// with whole galaxy to choose from, pick the best
 				for (k=0;k<nativeSpecies[i].length;k++) {
-					if (hab[nativeSpecies[i][k]] >= 90 && random.randf() < 0.3) {
+					if (hab[nativeSpecies[i][k]] >= 95 && random.randf() < 0.3) {
 						$.foundColony(i,j,[nativeSpecies[i][k]],2,3);
 						colony.reason = "Habitability";
 					} 
@@ -786,10 +788,14 @@ random.setStart(150100); // the above is currently deterministic
 						if (i==1) {
 							spec = "Human";
 						}
+						// nearby
 						if (w[0] == i && $.distance(i,j,w[1]) <= 15) {
-							$.foundColony(i,j,[spec],1,1);
-							colony.reason = "Waystation";
-							break;
+							// and at least somewhat interesting
+							if (hab[spec] > 70 || planet.mineralWealth > 0.25) {
+								$.foundColony(i,j,[spec],1,1);
+								colony.reason = "Waystation";
+								break;
+							}
 						}
 					}
 				}
@@ -2140,7 +2146,7 @@ random.setStart(325000);
 					return b.importance - a.importance;
 				}
 			});
-			$.set(i,j,"description",blocks.map(function(b) { return b.text; }).join(" "));
+			$.set(i,j,"description",blocks.map(function(b) { return b.text; }).join(" ... "));
 		}
 	}
 	descgen.debug();
