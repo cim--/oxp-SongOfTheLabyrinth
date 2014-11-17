@@ -45,11 +45,11 @@
 	}
 
 	var economyTypeTable = {
-		hab90: ["Ruins","Native Life","Wilderness","Agriculture I","Agriculture II","Mixed","Specialist I","Specialist I"],
+		hab90: ["Native Empty","Native Life","Wilderness","Agriculture I","Agriculture II","Mixed","Specialist I","Specialist I"],
 		military: ["Error","Military","Military","Military","Military","Shipyard","Shipyard","Shipyard"],
-		hiMinHab40: ["Ruins","Extraction","Extraction","Industrial I","Industrial I","Industrial II","Specialist II","Specialist II"],
-		hiMin: ["Ruins","Extraction","Extraction","Extraction","Industrial I","Industrial II","Specialist II","Specialist II"],
-		hab70: ["Ruins","Native Life","Wilderness","Agriculture I","Agriculture II","Mixed","Mixed","Mixed"],
+		hiMinHab40: ["Empty","Extraction","Extraction","Industrial I","Industrial II","Specialist II","Specialist II","Specialist II"],
+		hiMin: ["Empty","Extraction","Extraction","Industrial I","Industrial II","Industrial II","Specialist II","Specialist II"],
+		hab70: ["Empty","Native Life","Wilderness","Agriculture I","Agriculture II","Mixed","Mixed","Mixed"],
 		hab60col: ["Error","Error","Terraforming","Terraforming","Mixed","Error","Error","Error","Error"],
 		medMinHab40: ["Empty","Extraction","Extraction","Industrial I","Error","Error","Error","Error"],
 		medMin: ["Empty","Outsiders","Extraction","Error","Error","Error","Error","Error"],
@@ -58,16 +58,17 @@
 	};
 
 	var economySelectionTable = {
-		"Empty": ["Survival","Survival","Survival","Survival","Salvage","Salvage"],
+		"Empty": ["Survival","Survival","Survival","Survival","Survival","Survival"],
+		"Native Empty": ["Quarantine","Quarantine","Quarantine","Quarantine","Quarantine","Quarantine"],
 		"Ruins": ["Survival","Survival","Salvage","Research (Mil)","Quarantine","Military"],
 		"Native Life": ["Quarantine","Quarantine","Tourism","Research (Bio)","Colonisation","Colonisation"],
 		"Wilderness": ["Colonisation","Colonisation","Tourism","Farming","Survival","Research (Bio)"],
 		"Terraforming": ["Terraforming","Terraforming","Terraforming","Colonisation","Colonisation","Quarantine"],
-		"Outsiders": ["Survival","Survival","Survival","Salvage","Salvage","Asteroid Mining"],
-		"Extraction": ["Salvage","Asteroid Mining","Asteroid Mining","Ground Mining","Ground Mining","Refining"],
+		"Outsiders": ["Survival","Survival","Salvage","Colonisation","Asteroid Mining","Asteroid Mining"],
+		"Extraction": ["Asteroid Mining","Asteroid Mining","Ground Mining","Ground Mining","Ground Mining","Refining"],
 		"Agriculture I": ["Farming","Farming","Farming","Tourism","Cultural","Terraforming"],
 		"Agriculture II": ["Farming","Farming","Tourism","Cultural","Cultural","Cultural"],
-		"Industrial I": ["Ground Mining","Refining","Refining","Refining","Production","Production"],
+		"Industrial I": ["Refining","Refining","Refining","Production","Production","Production"],
 		"Industrial II": ["Refining","Production","Production","Research (Eng)","Research (Comp)","Shipyard"],
 		"Mixed": ["Cultural","Cultural","Tourism","Farming","Production","*Research*"],
 		"Specialist I": ["Cultural","*Research*","*Research*","*Research*","*Research*","Shipyard"],
@@ -257,6 +258,19 @@
 	};
 
 
+	planetinfo.proximityFactor = function (gal,sys,baseline) {
+		var connected = planetdata[gal][sys].connectedSystems;
+		var accum = 1;
+		for (var k = 0; k < connected.length; k++) {
+			var other = connected[k];
+			if (planetdata[gal][other].colony.founded < planetinfo.$historyStep) {
+				accum += planetdata[gal][other].colony.stage;
+			}
+		}
+		return accum * baseline;
+	}
+
+
 	planetinfo.foundColony = function(gal,sys,specs,stage,tl,terraform) {
 		if (terraform) { terraform = true; } else { terraform = false; } 
 		var colony = planetinfo.get(gal,sys,"colony");
@@ -326,15 +340,17 @@
 			var colony = planetinfo.get(g,s,"colony");
 			// okay, can advance
 			colony.stage++;
-			planetinfo.addHistoryItem(g,s,{ type: "expanded" });
+			planetinfo.addHistoryItem(g,s,{ type: "expanded" , newSize: colony.stage });
 		}
 	};
 
-	planetinfo.reduceColonyStage = function(g,s) {
+	planetinfo.reduceColonyStage = function(g,s,nolog) {
 		var colony = planetinfo.get(g,s,"colony");
 		if (colony.stage > 1) {
 			colony.stage--;
-			planetinfo.addHistoryItem(g,s,{ type: "reduced" });
+			if (!nolog) {
+				planetinfo.addHistoryItem(g,s,{ type: "reduced" , newSize: colony.stage });
+			}
 		}
 		planetinfo.advanceColonyTech(g,s,0);
 	};
@@ -356,31 +372,33 @@
 	};
 
 	planetinfo.raidColony = function(g,s,t) {
-		planetinfo.reduceColonyStage(g,s);
+		planetinfo.reduceColonyStage(g,s,true);
 		var colony = planetinfo.get(g,s,"colony");
 		colony.techLevel -= t;
 		if (colony.techLevel < 1) {
 			colony.techLevel = 1;
 		}
 		colony.attacked = 1;
-		planetinfo.addHistoryItem(g,s,{ type: "raided" });
+		planetinfo.addHistoryItem(g,s,{ type: "raided", newSize: colony.stage, oldSize: colony.stage+1 });
 	};
 
 	planetinfo.assaultColony = function(g,s,t) {
 		var colony = planetinfo.get(g,s,"colony");
+		planetinfo.addHistoryItem(g,s,{ type: "assaulted", newSize: 1, oldSize: colony.stage });
+
 		while (colony.stage > 1) {
-			planetinfo.reduceColonyStage(g,s);
+			planetinfo.reduceColonyStage(g,s,true);
 		}
 		colony.techLevel = t;
 		if (colony.techLevel < 1) {
 			colony.techLevel = 1;
 		}
 		colony.attacked = 2;
-		planetinfo.addHistoryItem(g,s,{ type: "assaulted" });
 	};
 
 	planetinfo.destroyColony = function(g,s) {
 		var colony = planetinfo.get(g,s,"colony");
+		planetinfo.addHistoryItem(g,s,{ type: "destroyed", oldSize: colony.stage });
 		colony.stage = 0;
 		colony.population = 0;
 //		colony.species = []; // needed for later records
@@ -388,7 +406,7 @@
 		colony.independentHub = 0; // unlikely that an embassy will go, but possible
 		colony.attacked = 3;
 		colony.destroyed = 1;
-		planetinfo.addHistoryItem(g,s,{ type: "destroyed" });
+
 	};
 
 	planetinfo.economyType = function(g,s,roll,prodfactor) {
@@ -426,6 +444,9 @@
 			console.error("Unexpected economy type for "+g+" "+s);
 			return;
 		}
+		if ((ectype == "Empty" && colony.attacked > 0) || colony.attacked > 1) {
+			ectype = "Ruins";
+		}
 		var economy = {};
 		economy.reason = ectype;
 		economy.type = economySelectionTable[ectype][roll];
@@ -456,7 +477,7 @@
 		var demtypes = ["Republican Democracy","Federal Democracy","Demarchy","Direct Democracy"];
 		var hietypes = ["Dictatorship","Technocracy","Feudal Realm","Martial Law","Family Clans"];
 		var coltypes = ["Socialist","Communist","Independent Communes","Worker's Cooperative"];
-		var atytypes = ["Isolationist","Quarantine","Anarchist","Transapientism","Social Evolutionists","Cultural Reachers","Precedentarchy","Bureaucracy","Variationist"];
+		var atytypes = ["Isolationist","Quarantine","Anarchist","Transapientism","Social Evolutionist","Cultural Reacher","Precedentarchy","Bureaucracy","Variationist"];
 		var usctypes = ["United Species Coalition","United Species Embassy"];
 		if (cortypes.indexOf(type) != -1) {
 			return "Corporate";
@@ -517,7 +538,14 @@
 
 		var result = "\""+g+" "+s+"\" = {\n";
 		result += $plist("coordinates",info.coordinates[0]+" "+info.coordinates[1]);
-		result += $plist("name",info.name);
+		if (info.colony.stage > 0 || info.colony.founded > 0) {
+			result += $plist("name",info.name);
+			result += $plist("planet_name",info.name);
+		} else {
+			// slightly different system map for uninhabited systems
+			result += $plist("name",info.star.name.replace(/ \(.*\)/g,""));
+			result += $plist("planet_name",info.name);
+		}
 		result += $plist("sun_radius",info.star.radius);
 		result += $plist("corona_flare",fix(info.star.coronaFlare,2));
 		result += $plist("corona_shimmer",fix(info.star.coronaShimmer,2));
@@ -560,7 +588,11 @@
 		result += $plist("productivity",Math.ceil(info.economy.productivity/1E6));
 
 		result += $plist("government",info.politics.stability);
-		result += $plist("government_description",info.politics.governmentType?info.politics.governmentType:"Unknown");
+		if (info.colony.stage > 0) {
+			result += $plist("government_description",info.politics.governmentType);
+		} else {
+			result += $plist("government_description","None");
+		}
 
 		result += $plist("description",info.description);
 
@@ -603,10 +635,72 @@
 		if (region > 0) {
 			var rdata = planetinfo.getRegion(region);
 			return $plist("long-range-chart-title-"+g+"-"+s,rdata.name);
+		} else {
+			var colony = planetdata[g][s].colony;
+			if (colony.contested) {
+				var cnames = " ("+colony.contesting.map(function(i) {
+					// return region name for region id
+					return planetinfo.getRegion(i).name;
+				}).join("/")+")";
+				return $plist("long-range-chart-title-"+g+"-"+s,"Disputed system"+cnames);
+			} else if (colony.embassy) {
+				return $plist("long-range-chart-title-"+g+"-"+s,"USC Embassy");
+			} else if (colony.independentHub) {
+				return $plist("long-range-chart-title-"+g+"-"+s,"Independent hub");
+			}
 		}
 		return "";
 	};
 
+	var regionColor = function(category) {
+		if (category.match(/Political Alliance/)) {
+			return "0.3 0.7 0.3 0.5";
+		} else if (category == "Politically Unstable Region") {
+			return "0.7 0.3 0.3 0.5";
+		} else {
+			return "0.3 0.3 0.7 0.5";
+		}
+	};
+
+	planetinfo.dumpRegionLinks = function(r) {
+		var p1,p2;
+		var result = "// "+r.name+" ("+r.members.join(",")+")\n";
+		for (var i=0;i<r.members.length;i++) {
+			for (var j=i+1;j<r.members.length;j++) {
+				p1 = r.members[i];
+				p2 = r.members[j];
+				if (p2 < p1) {
+					var tmp = p1; p1 = p2; p2 = tmp; // swap
+				}
+				result += "\"interstellar: "+r.galaxy+" "+p1+" "+p2+"\" = {\n";
+				result += $plist("link_color",regionColor(r.category));
+				result += "};\n";
+			}
+			var connected = planetdata[r.galaxy][r.members[i]].connectedSystems;
+			var accum = 1;
+			for (var k = 0; k < connected.length; k++) {
+				var other = connected[k];
+				if (planetdata[r.galaxy][other].colony.contested || (planetdata[r.galaxy][other].colony.independentHub && !planetdata[r.galaxy][other].colony.embassy)) {
+					p1 = r.members[i];
+					p2 = other
+					if (p2 < p1) {
+						var tmp = p1; p1 = p2; p2 = tmp; // swap
+					}
+					result += "\"interstellar: "+r.galaxy+" "+p1+" "+p2+"\" = {\n";
+					if (planetdata[r.galaxy][other].colony.independentHub) {
+						result += $plist("link_color","0.2 0.6 0.6 0.5");
+					} else {
+						result += $plist("link_color","0.7 0.5 0.2 0.5");
+					}
+					result += "};\n";
+					
+
+				}
+			}
+
+		}
+		return result;
+	};
 
 	module.exports = planetinfo;
 

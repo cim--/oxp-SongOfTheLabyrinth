@@ -130,7 +130,7 @@ console.error(namelist.length);
 			wordBits: wordbits, // use standard list
 			nameList: namelist,
 			nativeChart: 1,
-			speciesName: "Humans",
+			speciesName: "Human",
 			evolution: "on distant Earth"
 		},
 		"Insect" : {
@@ -443,6 +443,14 @@ console.error(namelist.length);
 
 	species.setName = function(s,name) {
 		speciesInfo[s].speciesName = name;
+	}
+
+	species.setHomeworld = function(s,g,sys) {
+		speciesInfo[s].homeWorld = [g,sys];
+	}
+
+	species.getHomeworld = function(s) {
+		return speciesInfo[s].homeWorld;
 	}
 
 	species.name = function(s) {

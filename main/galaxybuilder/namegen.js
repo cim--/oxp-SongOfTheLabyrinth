@@ -81,6 +81,10 @@
 	var corporateConcepts = [
 		"Market","Bazaar","Profit","Yield","Harvest","Winnings","Acquisition","Grant","Claim","Share","Board","Income","Asset","Credit","Stock","Purchase","Contract"
 	];
+	var corporateOrganisationConcepts = [
+		"Corporation","Incorporation","Conglomerate","Consortium","Syndicate"
+	];
+
 	var democraticConcepts = [
 		"Choice","Option","Voice","Song","Breath","Majority","Decision","Ballot","Vote","Preference","Score","Council","Senate"
 	];
@@ -159,7 +163,7 @@
 	];
 
 	var allianceConcepts = [
-		"Treaty","Pact","Coalition","Alliance","Federation","Confederacy","Union","League","Syndicate","Entente","Bloc","Unification","Conjunction"
+		"Treaty","Pact","Coalition","Alliance","Federation","Confederacy","Union","League","Syndicate","Entente","Bloc","Unification","Conjunction","Organisation","Unity","Arrangement","Council","Cooperation"
 	];
 
 	var chaosConcepts = [
@@ -310,6 +314,7 @@
 		var list = [];
 		if (pol == "Corporate") {
 			list = list.concat(corporateConcepts);
+			list = list.concat(corporateOrganisationConcepts);
 		} else if (pol == "Democratic") {
 			list = list.concat(democraticConcepts);
 		} else if (pol == "Hierarchical") {
@@ -358,7 +363,11 @@
 	};
 
 	var componentFounderName = function(r,sp,spec) {
-		return sp.retrieveNameOnce(spec,r);
+		if (!spec) {
+			return sp.retrieveNameOnce(sp.list()[r.rand(sp.list().length)],r);
+		} else {
+			return sp.retrieveNameOnce(spec,r);
+		}
 	};
 
 	var componentAtypicalGovernmentConcept = function(r,gov) {
@@ -869,6 +878,23 @@
 	};
 
 
+	var nameUninhabitedSystem = function(g,s,p,sp,r) {
+		var star = p.get(g,s,"star");
+		var colony = p.get(g,s,"colony");
+		var politics = p.get(g,s,"politics");
+		var choice = r.randf();
+		if (star.constellation != "")  {
+			if (star.name.match(/\(/)) {
+				return nameByBrightStar(g,s,p,sp,r);
+			} else {
+				return nameByConstellation(g,s,p,sp,r);
+			}
+		} else {
+			return nameByUnimaginative(g,s,p,sp,r);
+		}
+	};
+
+
 
 	/* Select name pattern selector */
 	namegen.nameSystem = function(g,s,planetinfo,speciesInfo,random) {
@@ -887,7 +913,7 @@
 			} else {
 				return nameMidSystem(g,s,planetinfo,speciesInfo,random);
 			}
-		} else {
+		} else if (colony.stage > 0 || colony.founded > 0) {
 			var hab = planetinfo.get(g,s,"habitability");
 			if (hab.best >= 60 && hab.best < 70) {
 				return nameTerraformedSystem(g,s,planetinfo,speciesInfo,random);
@@ -896,8 +922,9 @@
 			} else {
 				return nameLateSystem(g,s,planetinfo,speciesInfo,random);
 			}
+		} else {
+			return nameUninhabitedSystem(g,s,planetinfo,speciesInfo,random);
 		}
-
 	};
 
 	namegen.newPrefix = function(r) {
@@ -915,6 +942,9 @@
 			iter++
 			if (iter == 5) {
 				console.error("repeatedly trying to find unused with generator "+debug);
+			} else if (iter == 10) {
+				console.error("gave up finding unused with generator "+debug);
+				return result; // give up
 			}
 		} while (usedComponents[result]);
 		usedComponents[result] = 1;
@@ -926,7 +956,7 @@
 		var hw = region.influential[0];
 		var spec = p.get(region.galaxy,hw,"colony").species[0];
 		if (spec != "Human") {
-			var n = spec;
+			var n = s.name(spec);
 			if (r.randf() < 0.5) {
 				n = p.get(region.galaxy,hw,"name");
 			}
@@ -935,7 +965,7 @@
 			} else {
 				n += " "+noReuse(componentOriginConcept.bind(this,r),"Origin");
 			}
-			return "The "+n;
+			return n;
 		} else {
 			// human is different as it's not really a homeworld
 			return "Biya's Providence";
@@ -958,7 +988,6 @@
 		} else {
 			n = nameByWord(region.galaxy,hw,p,s,r)+" "+suffix;
 		}
-		n = "The "+n;
 		return n;
 	};
 
@@ -967,7 +996,7 @@
 		var hw = region.influential[0];
 		var star = p.get(region.galaxy,hw,"star");
 		var system = p.get(region.galaxy,hw,"name");
-		var suffix = noReuse(componentAllianceConcept.bind(this,r,region.subCategory),"Politics");
+		var suffix = noReuse(componentAllianceConcept.bind(this,r,region.subCategory),"Politics ("+region.subCategory+")");
 		var n = "";
 		if (star.name.match(/\(/) && choice < 0.6) {
 			n = star.name.replace(/ \(.*/,"")+" "+suffix;
@@ -978,7 +1007,6 @@
 		} else {
 			n = nameByWord(region.galaxy,hw,p,s,r)+" "+suffix;
 		}
-		n = "The "+n;
 		return n;
 	};
 
@@ -1014,7 +1042,7 @@
 		} else {
 			n = nameByWord(region.galaxy,hw1,p,s,r)+"-"+nameByWord(region.galaxy,hw2,p,s,r)+" "+suffix;
 		}
-		return "The "+n;
+		return n;
 	};
 
 	namegen.nameEconomicRegion = function(region,p,s,r) {
@@ -1033,7 +1061,6 @@
 		} else {
 			n = nameByWord(region.galaxy,hw,p,s,r)+" "+suffix;
 		}
-		n = "The "+n;
 		return n;
 
 	};
@@ -1049,18 +1076,14 @@
 		var n = "";
 		if (star.name.match(/\(/) && choice < 0.1) {
 			n = star.name.replace(/ \(.*/,"")+" "+suffix;
-			n = "The "+n;
 		} else if (star.constellation != "" && choice < 0.5) {
 			n = star.constellation+" "+suffix;
-			n = "The "+n;
 		} else if (!system.match(/ /) && choice < 0.15) {
 			n = system+" "+suffix;
-			n = "The "+n;
 		} else {
 			choice = r.randf();
 			if (choice < 0.15) {
 				n = nameByWord(region.galaxy,hw,p,s,r)+" "+suffix;
-				n = "The "+n;
 			} else if (choice < 0.35) {
 				var specl = p.get(region.galaxy,hw,"colony").species;
 				n = componentFounderName(r,s,specl[r.rand(specl.length)]);
@@ -1071,7 +1094,6 @@
 				if (!n.match(/s$/)) {
 					n += "s";
 				}
-				n = "The "+n;
 			} else {
 				n = nameByWord(region.galaxy,hw,p,s,r);
 			}
