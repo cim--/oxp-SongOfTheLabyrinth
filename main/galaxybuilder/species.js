@@ -90,7 +90,8 @@ console.error(namelist.length);
 			windTolerance: 0.1,
 			nativeChart: 5,
 			speciesName: "",
-			evolution: "above %S scattered islands"
+			evolution: "above %S scattered islands",
+			earlyHistory: "Early %I experiments with space flight allowed them to go far above what their own wings would allow. They discovered the fundamentals of witchspace in %D1, and began launching their initial scouts soon after."
 		},
 		"Feline" : {
 			preferredGravity: 0.86,
@@ -103,7 +104,8 @@ console.error(namelist.length);
 			windTolerance: 0.17,
 			nativeChart: 4,
 			speciesName: "",
-			evolution: "in the extensive grasslands of %H"
+			evolution: "in the extensive grasslands of %H",
+			earlyHistory: "The %I discovered witchspace in %D1E, but a shortage of %M meant that their first successful witchdrive test only occurred in %D1L after a significant asteroid mining programme. Many of their early mining colonies were set up to provide %H with this locally rare element."
 		},
 		"Frog" : {
 			preferredGravity: 0.83,
@@ -116,7 +118,8 @@ console.error(namelist.length);
 			windTolerance: 0.19,
 			nativeChart: 5,
 			speciesName: "",
-			evolution: "in %S swamps"
+			evolution: "in %S swamps",
+			earlyHistory: "Equally at home in the water and on land, conquering the air and then space was a dream of the ancestral %I. Their comprehensive astronomy programme detected faint radio transmissions from the %IB's home system, though it was only in %D1E with their discovery of witchspace that they truly began preparing for first contact with another species."
 		},
 		"Human" : {
 			preferredGravity: 1.00,
@@ -131,7 +134,8 @@ console.error(namelist.length);
 			nameList: namelist,
 			nativeChart: 1,
 			speciesName: "Human",
-			evolution: "on distant Earth"
+			evolution: "on distant Earth",
+			earlyHistory: "%Is are believed to have been the earliest species to discover the witchdrive, and the calendar's 0 kD is marked from the estimated date of this. The human homeworld is around 250LY from Biya's Reach, and other than that they were fleeing something little is now known of why they came to this region of space."
 		},
 		"Insect" : {
 			preferredGravity: 0.74,
@@ -144,7 +148,8 @@ console.error(namelist.length);
 			windTolerance: 0.09,
 			nativeChart: 7,
 			speciesName: "",
-			evolution: "on the warm equatorial coasts"
+			evolution: "on the warm equatorial coasts",
+			earlyHistory: "The tough exoskeleton and wings of the %I served them well during early space flight, allowing them to move easily in microgravity, and survive harsh radiation. They discovered witchspace in %D1 on one of their off-world stations."
 		},
 		"Lizard" : {
 			preferredGravity: 0.95,
@@ -153,11 +158,12 @@ console.error(namelist.length);
 			radiationTolerance: 0.07,
 			preferredLand: 0.50,
 			landTolerance: 0.2,
-			seismicTolerance: 0.3,
+			seismicTolerance: 0.13,
 			windTolerance: 0.21,
 			nativeChart: 0,
 			speciesName: "",
-			evolution: "in the hot plains of %H"
+			evolution: "in the hot plains of %H",
+			earlyHistory: "Early space travel was a challenge for the %I, whose need to keep their environmental temperature carefully regulated significantly added to the cost. They discovered witchspace in %D1E but were not able to safely make a crewed flight until %D1L."
 		},
 		"Lobster" : {
 			preferredGravity: 1.26,
@@ -170,7 +176,8 @@ console.error(namelist.length);
 			windTolerance: 0.35,
 			nativeChart: 6,
 			speciesName: "",
-			evolution: "beneath %S vast oceans"
+			evolution: "beneath %S vast oceans",
+			earlyHistory: "The aquatic %I took several thousand kD after initially developing a technological culture to emerge on to the land. Once they had done so, however, they reached the air, space and witchspace in quick succession, making their first inter-system journey in %D1."
 		},
 		"Rodent" : {
 			preferredGravity: 0.79,
@@ -183,7 +190,8 @@ console.error(namelist.length);
 			windTolerance: 0.56,
 			nativeChart: 3,
 			speciesName: "",
-			evolution: "below the surface"
+			evolution: "below the surface",
+			earlyHistory: "Their vast tunnels stretch several kilometres below the surface, which in their prehistory was occupied by several dangerous predators. They did not venture onto the surface again until after the development of air travel. In %D1 they developed their first witchdrive."
 		}
 	};
 
@@ -326,6 +334,11 @@ console.error(namelist.length);
 		return name[0].replace(/^./, function (str) { return str.toUpperCase(); });
 	}
 
+	species.retrieveName = function(spec,random) {
+		var name = speciesInfo[spec].nameList[random.rand(speciesInfo[spec].nameList.length)];
+		return name.replace(/^./, function (str) { return str.toUpperCase(); });
+	}
+
 
 	species.list = function() {
 		return Object.keys(speciesInfo);
@@ -441,6 +454,19 @@ console.error(namelist.length);
 		return (speciesInfo[s].nativeChart == g);
 	};
 
+	species.getNative = function(g,r) {
+		var l = [];
+		if (g == 2) {
+			l = species.list();
+		}
+		for (var k in speciesInfo) {
+			if (speciesInfo[k].nativeChart == g) {
+				l.push(k);
+			}
+		}
+		return l[r.rand(l.length)];
+	};
+
 	species.setName = function(s,name) {
 		speciesInfo[s].speciesName = name;
 	}
@@ -457,9 +483,23 @@ console.error(namelist.length);
 		return speciesInfo[s].speciesName;
 	}
 
+	species.pluralName = function(s) {
+		var sn = speciesInfo[s].speciesName;
+		if (sn.match(/[aeiou]$/)) {
+			return sn;
+		} else {
+			return sn + "s";
+		}
+	}
+
+
 	species.evolution = function(s) {
 		return speciesInfo[s].evolution;
-	}
+	};
+
+	species.earlyHistory = function(s) {
+		return speciesInfo[s].earlyHistory;
+	};
 
 	module.exports = species;
 

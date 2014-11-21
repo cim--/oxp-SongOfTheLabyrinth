@@ -5,7 +5,7 @@ VERSION=1.0
 
 # Build galaxy data
 cd galaxybuilder
-./galaxybuilder.js
+./galaxybuilder.js 2>&1
 cp build/planetinfo.plist ../oxp/Config/
 cd ..
 echo '{' > oxp/Config/descriptions.plist

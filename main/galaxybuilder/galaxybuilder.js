@@ -299,6 +299,7 @@ random.setStart(75000); // guess ~20 total above random numbers max
 			techLevel: 0,
 			homeWorld: 0,
 			contested: 0,
+			contesting: [],
 			independentHub: 0,
 			embassy: 0,
 			attacked: 0,
@@ -1296,7 +1297,7 @@ var maxRegionID = 0;
 var unitedRegionID = 0;
 
 (function() {
-	var colony, politics, tcolony, tpolitics, considered, influencer;
+	var colony, politics, tcolony, tpolitics, teconomy, considered, influencer;
 	var regionID = 1;
 
 	var $ignoreSystem = function(adjacents,idx) {
@@ -1342,6 +1343,11 @@ var unitedRegionID = 0;
 			tcolony.independentHub = 1;
 			tpolitics.region = 0;
 			tpolitics.regionName = "Independent Hub";
+			
+			// massive boost to trading income!
+			teconomy.productivity += 100000;
+			teconomy.productivity *= 5+(random.randf()*10);
+			teconomy.productivity = Math.floor(teconomy.productivity);
 		}
 	};
 
@@ -1459,7 +1465,7 @@ var unitedRegionID = 0;
 						var bottleCost = bottle;//==2?2:0;
 						tcolony = $.get(i,trysys,"colony");
 						tpolitics = $.get(i,trysys,"politics");
-						var teconomy = $.get(i,trysys,"economy");
+						teconomy = $.get(i,trysys,"economy");
 						if (tcolony.embassy == 1) {
 							// always ignore embassies
 							$ignoreSystem(adjacents,tryidx);
@@ -1469,19 +1475,22 @@ var unitedRegionID = 0;
 								// ignore the central systems
 								// ignore if one from this region ends up listed
 								$ignoreSystem(adjacents,tryidx);
-							} else {
-								if (bottle == 2) {
+							} else if (tcolony.stage > 0) {
+								// only inhabited can be contested
+//								if (bottle == 2) {
 									// cross bottlenecks naturally end up contested
+								influenceLevel = $includeSystem(adjacents,tryidx,influenceLevel,0,$contestSystem,false);
+/*									contestchance++;
+								} else {
+
 									influenceLevel = $includeSystem(adjacents,tryidx,influenceLevel,0,$contestSystem,false);
-									contestchance++;
-								} else if ($.distance(i,trysys,influencer)<7 || random.randf() < 1/contestchance) {
-									// others are a little more expensive
-									influenceLevel = $includeSystem(adjacents,tryidx,influenceLevel,tcolony.stage>0?1:0,$contestSystem,false);
 									contestchance++;
 								} else {
 									// not actually contesting it
 									$ignoreSystem(adjacents,tryidx);
-								}
+								}*/
+							} else {
+								$ignoreSystem(adjacents,tryidx);
 							}
 						} else if (tcolony.contested == 1 || tcolony.independentHub == 1) {
 							// systems which are already contested
@@ -1501,7 +1510,7 @@ var unitedRegionID = 0;
 
 						} else if ($.distance(i,influencer,trysys) <= 7) {
 							// nearby non-outpost systems joined free
-							var cCost = (tcolony.stage >= 2)?0:1;
+							var cCost = (tcolony.stage != 1)?0:1;
 							influenceLevel = $includeSystem(adjacents,tryidx,influenceLevel,cCost+bottleCost,$joinSystem,bottle==0);
 						} else if (teconomy.type == "Quarantine" || teconomy.type == "Survival") {
 							// it's officially in, but only because no-one wants it
@@ -1513,9 +1522,10 @@ var unitedRegionID = 0;
 							// outposts take more, and are less use for transmitting control
 							influenceLevel = $includeSystem(adjacents,tryidx,influenceLevel,bottleCost+2,$joinSystem,bottle==0);
 						} else {
-							// uninhabited system next to start system
-							// include for free
-							influenceLevel = $includeSystem(adjacents,tryidx,influenceLevel,0,$joinSystem,false);
+							// uninhabited system not next to start system
+							// skip
+//							influenceLevel = $includeSystem(adjacents,tryidx,influenceLevel,0,$joinSystem,false);
+							$ignoreSystem(adjacents,tryidx);
 						}
 					}
 					$.setRegion(regionID,regionInfo);
@@ -1679,29 +1689,29 @@ random.setStart(245000);
 				atyp++; total++;
 			}
 		}
-		var strpt = 0.8; var wkpt = 0.5; var unpt = 0.33;
-		if (corp >= total*strpt) {
+		var strpt = 0.8; var wkpt = 0.501; var unpt = 0.33;
+		if (total > 1 && corp >= total*strpt) {
 			region.category = "Strong Political Alliance";
 			region.subCategory = "Corporate";
-		} else if (demo >= total*strpt) {
+		} else if (total > 1 && demo >= total*strpt) {
 			region.category = "Strong Political Alliance";
 			region.subCategory = "Democratic";
-		} else if (hier >= total*strpt) {
+		} else if (total > 1 && hier >= total*strpt) {
 			region.category = "Strong Political Alliance";
 			region.subCategory = "Hierarchical";
-		} else if (coll >= total*strpt) {
+		} else if (total > 1 && coll >= total*strpt) {
 			region.category = "Strong Political Alliance";
 			region.subCategory = "Collective";
-		} else if (corp >= total*wkpt) {
+		} else if (total > 2 && corp >= total*wkpt) {
 			region.category = "Weak Political Alliance";
 			region.subCategory = "Corporate";
-		} else if (demo >= total*wkpt) {
+		} else if (total > 2 && demo >= total*wkpt) {
 			region.category = "Weak Political Alliance";
 			region.subCategory = "Democratic";
-		} else if (hier >= total*wkpt) {
+		} else if (total > 2 && hier >= total*wkpt) {
 			region.category = "Weak Political Alliance";
 			region.subCategory = "Hierarchical";
-		} else if (coll >= total*wkpt) {
+		} else if (total > 2 && coll >= total*wkpt) {
 			region.category = "Weak Political Alliance";
 			region.subCategory = "Collective";
 		} else if (total > 3 && corp >= total*unpt && demo >= total*unpt) {
@@ -1729,18 +1739,29 @@ random.setStart(245000);
 		}
 	}
 	// decontest systems
+	var regionscontesting = [];
 	for (i=0;i<$.galaxies;i++) {
 		for (j=0;j<$.systems;j++) {
 			colony = $.get(i,j,"colony");
 			if (colony.contested == 1) {
 				var rt1 = $.getRegion(colony.contesting[0]).category;
 				var rt2 = $.getRegion(colony.contesting[1]).category;
-				if (!rt1.match(/Political/) || !rt2.match(/Political/)) {
-					colony.contesting = undefined;
+				if (!rt1.match(/Political/) && !rt2.match(/Political/)) {
+					colony.contesting = [];
 					colony.contested = 0;
-					// can only contest between two political regions
+					// can only contest with political regions
 					// but need to temporarily include as independent hubs
 					// can be formed between three or more.
+				} else if (regionscontesting.indexOf(colony.contesting[0]) > -1 && regionscontesting.indexOf(colony.contesting[1]) > -1) {
+					colony.contesting = [];
+					colony.contested = 0;
+					// each region can only contest one system at once
+					// but might end up contesting two in unusual circumstances
+					// which is okay. The others drop back to uncontested.
+				} else {
+					// actually being contested
+					regionscontesting.push(colony.contesting[0]);
+					regionscontesting.push(colony.contesting[1]);
 				}
 			}
 		}
@@ -1809,11 +1830,15 @@ random.setStart(245000);
 					var surrounded = false;
 					if (reg != 0) {
 						surrounded = true;
+						var scount = 0;
 						for (k=1;k<adj.length;k++) {
 							if ($.get(i,adj[k],"politics").region != reg) {
-								surrounded = false;
+								scount++;
 								break;
 							}
+						}
+						if (scount / adj.length > 0.25) {
+							surrounded = false; // better than 1 in 4 links
 						}
 					}
 					if (surrounded && regInfo.category.match(/Political Alliance/)) {
@@ -1821,6 +1846,7 @@ random.setStart(245000);
 						if (choice < 0.2) {
 							politics.governmentType = "Civil War";
 							politics.regionAccession = 2;
+							colony.contesting.push(reg);
 						} else if (choice < 0.5) {
 							politics.governmentType = species.randomGovernment(colony.species[random.rand(colony.species.length)],random.randf());
 						} else {
@@ -1829,6 +1855,7 @@ random.setStart(245000);
 								politics.governmentType = species.randomGovernment(colony.species[random.rand(colony.species.length)],random.randf());
 							} while ($.governmentCategoryFromType(politics.governmentType) != gcat);
 							politics.regionAccession = 1;
+							colony.contesting.push(reg);
 						}						
 					} else {
 						if (random.randf() < 0.05) {
@@ -1883,7 +1910,7 @@ random.setStart(260000);
 				region = null;
 			}
 
-			if (colony.stage == 0 || economy.type == "Survival") {
+			if (colony.stage == 0) {
 				politics.stability = 0;
 			} else if (colony.homeWorld == 1 || colony.militaryBase == 1) {
 				politics.stability = 7;
@@ -1906,6 +1933,7 @@ random.setStart(260000);
 				if (colony.economy == "Research (Mil)") { st += 1; }
 				if (colony.economy == "Shipyard") { st += 1; }
 				if (colony.economy == "Tourism") { st += 1; }
+				if (colony.economy == "Survival") { st -= 5; }
 				if (politics.governmentType == "Martial Law") { st += 2; }
 				else if (politics.governmentCategory == "Hierarchical") { st += 1; }
 				if (politics.governmentCategory == "Disordered") { st -= 2; }
@@ -2198,13 +2226,29 @@ random.setStart(325000);
 	 * higher charts */
 	for (j=0;j<$.systems;j++) {
 		for (i=0;i<$.galaxies;i++) {
+			var names = {
+				company: descgen.companyName(i,j,$,random,species),
+				dictator: descgen.dictatorName(i,j,$,random,species),
+				warmonger: descgen.warmongerName(i,j,$,random,species),
+				capital: descgen.capitalcityName(i,j,$,random,species),
+				gap: descgen.gapName(i,j,$,random,species),
+				party1: namegen.partyName(random),
+				party2: namegen.partyName(random)
+			};
+			$.set(i,j,"names",names);
 			var descblocks = descgen.getDescBlocks(i,j,$,random,species);
 			var lenacc = 0;
 			var useblocks = 0;
+			var blocks = [];
 			do {
-				lenacc += descblocks[useblocks++].text.length;
+				if (descblocks[useblocks].text.length + lenacc < 550) {
+					blocks.push(descblocks[useblocks]);
+					lenacc += descblocks[useblocks++].text.length;
+				} else {
+					useblocks++; // try to find a shorter block?
+				}
 			} while(lenacc < 400 && useblocks < descblocks.length);
-			var blocks = descblocks.splice(0,useblocks);
+
 			descgen.countblocks(blocks);
 			blocks.sort(function(a,b) {
 				if (a.displayOrder != b.displayOrder) {
@@ -2214,6 +2258,8 @@ random.setStart(325000);
 				}
 			});
 			$.set(i,j,"description",blocks.map(function(b) { return b.text; }).join(" ... "));
+			// in case later work wants to depend on the presence of a particular element
+			$.set(i,j,"descriptionElements",blocks.map(function(b) { return b.key; }).join(","));
 		}
 	}
 	descgen.debug();
@@ -2227,7 +2273,7 @@ random.setStart(325000);
 	var planetinfoplist = "{\n";
 	for (i=0;i<$.galaxies;i++) {
 		for (j=0;j<$.systems;j++) {
-			planetinfoplist += $.dump(i,j);
+			planetinfoplist += $.dump(i,j,species);
 		}
 	}
 	for (k=1;k<=maxRegionID;k++) {

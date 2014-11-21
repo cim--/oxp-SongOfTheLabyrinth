@@ -513,7 +513,7 @@
 	planetinfo.$historyStep = 0;
 
 
-	planetinfo.dump = function(g,s) {
+	planetinfo.dump = function(g,s,sp) {
 		var fix = function(a,b) {
 			return a.toFixed(b);
 		}
@@ -576,7 +576,11 @@
 			if (info.colony.species.length > 3) {
 				result += $plist("inhabitants","Mixed species");
 			} else {
-				result += $plist("inhabitants",info.colony.species.join(", "));
+				result += $plist("inhabitants",info.colony.species.map(
+					function(x) {
+						return sp.name(x);
+					}
+				).join(", "));
 			}
 		} else {
 			result += $plist("inhabitants","Uninhabited");
@@ -595,6 +599,7 @@
 		}
 
 		result += $plist("description",info.description);
+		result += $plist("description_elements",info.descriptionElements);
 
 		if (this.$debug) {
 //			result += $plist("government",govtDebugNum(info.politics.governmentType));
@@ -607,6 +612,8 @@
 			result += $plist("planet_surface_gravity",fix(info.planet.surfaceGravity,2));
 			result += $plist("planet_seismic_instability",fix(info.planet.seismicInstability,3));
 			result += $plist("attacked",info.colony.attacked);
+			result += $plist("contested",info.colony.contested);
+			result += $plist("independent_hub",info.colony.independentHub);
 			result += $plist("accession",info.politics.accession);
 			result += $plist("military_base",info.colony.militaryBase);
 			result += $plist("economy_reason",info.economy.reason);

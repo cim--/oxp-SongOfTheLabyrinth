@@ -86,7 +86,7 @@
 	];
 
 	var democraticConcepts = [
-		"Choice","Option","Voice","Song","Breath","Majority","Decision","Ballot","Vote","Preference","Score","Council","Senate"
+		"Choice","Option","Voice","Song","Breath","Majority","Decision","Ballot","Vote","Preference","Score","Council","Senate","Chamber","Legislature","Cabinet","Plebiscite"
 	];
 	var hierarchicalConcepts = [
 		"Order","Throne","Seat","Crown","Sceptre","Seal","Orb","Sphere","Command","Supremacy","Stand","Citadel","Fortress","Leadership","Royal","Might","Victory","Empire"
@@ -114,7 +114,7 @@
 		"Art","Artwork","Dance","Song","Poem","Symphony","Sculpture","Theatre","Music","Drawing"
 	];
 	var precedentGovernmentConcepts = [
-		"History","Precedent","Authority","Ancestor","Model","Antecedent","Ritual","Routine","Practice"
+		"History","Precedent","Authority","Ancestor","Model","Antecedent","Ritual","Routine","Practice","Conservation"
 	];
 	var bureauGovernmentConcepts = [
 		"Law","Rule","Paper","Form","Order","Structure","Design","System"
@@ -607,6 +607,9 @@
 		var planet = p.get(g,s,"planet");
 		var hab = p.get(g,s,"habitability");
 		var n = "";
+		if (!colony.founded && r.randf() < 0.8) {
+			choice = 0.8; // uninhabited planets much more likely to have "no" name
+		}
 		if (choice < 0.02) {
 			n = componentPlanetConcept(r,planet,hab);
 		} else if (choice < 0.1) {
@@ -1101,7 +1104,10 @@
 		return n;
 	};
 
-
+	namegen.partyName = function(r) {
+		var choices = [].concat(brightConcepts,greenConcepts,redConcepts,greenRockConcepts,blueConcepts,collectiveConcepts,refugeConcepts,convergenceConcepts,biggroupConcepts,triadConcepts,quadConcepts);
+		return choices[r.rand(choices.length)];
+	}
 
 	module.exports = namegen;
 
