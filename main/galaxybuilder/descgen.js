@@ -78,7 +78,8 @@
 	var expandNumber = ["one","two","three","four","five","six","seven","eight","nine"];
 	var expandDictator = ["Emperor","Empress","King","Queen","President","Viceroy","General","Admiral","Governor"];
 	var expandBridge = ["Gap","Edge","Bridge","Link","Span","Arch","Connection","Transit","Knife","Pass","Cut"];
-
+	var expandCriminal = ["Director","Baroness","Duchess","Baron","Duke","Elder","Commander","Captain","Commodore","Professor","Doctor","Mistress","Master","Father","Mother","Minister","the fugitive","the brigand","the outlaw","the pirate","the marauder"];
+	
 	var expand = function(info,string) {
 //		console.error(info,string);
 		string = string.replace(/%S/g,info.name+"'s");
@@ -91,6 +92,8 @@
 		string = string.replace(/%NW/g,info.names.warmonger);
 		string = string.replace(/%NC/g,info.names.capital);
 		string = string.replace(/%NG/g,info.names.gap);
+		string = string.replace(/%NVG/g,info.names.criminalGroup);
+		string = string.replace(/%NV/g,info.names.criminal);
 
 		// some specifics here
 		string = string.replace(/%IB/g,info.species.name("Bird"));
@@ -138,6 +141,7 @@
 		string = string.replace(/%L2/g,"hundred thousand");
 		string = string.replace(/%L1/g,"ten thousand");
 		string = string.replace(/%L0/g,"one thousand");
+		string = string.replace(/%L-/g,"one hundred");
 
 		// period names
 		string = string.replace(/%DE2/g,"early witchdrive");
@@ -224,6 +228,16 @@
 		result += " "+s.retrieveName(spec,r);
 		return result;
 	};
+
+	descgen.criminalName = function(i,j,p,r,s) {
+		var spec = p.get(i,j,"colony").species[0];
+		if (!spec) { spec = s.getNative(i,r); }
+		var result;
+		result = expandCriminal[r.rand(expandCriminal.length)];
+		result += " "+s.retrieveName(spec,r);
+		return result;
+	};
+
 	
 	descgen.warmongerName = function(i,j,p,r,s) {
 		var spec = p.get(i,j,"colony").species[0];
@@ -1010,7 +1024,7 @@
 					{ key: "BFMUJ-JHAB4", text: "The population of %H increased substantially in %D6, with %I and %I1 remaining the most common species.", condition: true },
 					{ key: "BFMUJ-JHAB5", text: "Management of the system passed to the %NB in %D6, who brought many "+sn+" workers to the system from other worlds.", condition: info.politics.governmentCategory == "Corporate" },
 					{ key: "BFMUJ-JHAB6", text: "One of the greatest scandals in %H politics occurred in %D6 when Councillor %N was accused of having brought almost one hundred thousand "+sn+" settlers to the system to flood the Presidential vote. After much deliberation, the case was dismissed, but %N retired from politics before the election.", condition: info.politics.governmentCategory == "Democratic" },
-					{ key: "BFMUJ-JHAB7", text: "Inter-system conflict was rare and strongly discouraged by the USC, but the struggling %U system was successfully invaded in %D6 by the rogue %W %N and their "+sn+" mercenaries. Unable to expel them without risking massive loss of civilian life, the USC forces eventually withdrew.", condition: info.politics.governmentCategory == "Hierarchical" },
+					{ key: "BFMUJ-JHAB7", text: "intersystem conflict was rare and strongly discouraged by the USC, but the struggling %U system was successfully invaded in %D6 by the rogue %W %N and their "+sn+" mercenaries. Unable to expel them without risking massive loss of civilian life, the USC forces eventually withdrew.", condition: info.politics.governmentCategory == "Hierarchical" },
 					{ key: "BFMUJ-JHAB8", text: "The habitability of %H and its collectivist government made it a popular destination for "+sn+" workers, who now make up around a third of the population.", condition: info.politics.governmentCategory == "Collective" },
 					{ key: "BFMUJ-JHAB9", text: "The post-unification period saw increased emigration from the homeworlds as interstellar and even inter-chart travel became more affordable. Many arrived on %H shortly after %D6, as its economy transitioned from self-sustaining to being a significant exporter of food to nearby mining systems.", condition: info.economy.reason.match(/Agriculture/) },
 					{ key: "BFMUJ-JHAB10", text: sn+" migrants joined the existing population in large numbers in %D6.", condition: true },
@@ -1178,7 +1192,7 @@
 					{ key: "BFLUJ-JHAB8", text: "Several major settlements were added during later expansion, with the largest being %N %Y, begun in %D7.", condition: true },
 					{ key: "BFLUJ-JHAB9", text: "While there had been a small number of "+sns+" living on %H since the early unification period, and the environment was well suited to them, its distance from their homeworld meant that it was only when other established "+sn+" systems began sending out their own settlers that the population here significantly increased.", condition: info.habitability[event.species] > 90 },
 					{ key: "BFLUJ-JHAB10", text: "Having proved that their unconventional form of government could be sustainable, many more sympathisers joined the colony, with construction of %N %Y beginning in %D7 to house the increasing population.", condition: info.politics.governmentCategory == "Atypical" },
-					{ key: "BFLUJ-JHAB11", text: "%U system's economically important position attracted many more settlers to the system as inter-system trade networks began to predominate in the late post-unification period.", condition: info.bottle > 0 },
+					{ key: "BFLUJ-JHAB11", text: "%U system's economically important position attracted many more settlers to the system as intersystem trade networks began to predominate in the late post-unification period.", condition: info.bottle > 0 },
 					{ key: "BFLUJ-JHAB12", text: "%H continued to be a popular settlement throughout the late post-unification period.", condition: info.colony.stage >= 3 },
 				];
 				
@@ -2222,7 +2236,7 @@
 				{ key: "BFBS-CON6", text: "%H has at times signed membership treaties with both "+r1.name+" and "+r2.name+". The current situation is uncertain.", condition: r1.category.match(/Political/) && r2.category.match(/Political/) },
 				{ key: "BFBS-CON7", text: "The previous pro-"+r1.name+" government was recently toppled by "+r2.name+" sympathisers, and the future of the system is now unclear.", condition: info.politics.governmentCategory == "Disordered" },
 				{ key: "BFBS-CON8", text: "%H recently declared independence from "+r1.name+" and is petitioning for admittance into "+r2.name+".", condition: true },
-				{ key: "BFBS-CON9", text: "While historically the %U system has been part of "+r2.name+", the current government is petitioning for admittance int the "+r1.name+" group.", condition: r1.category.match(/Political/) && !r2.category.match(/Political/) },
+				{ key: "BFBS-CON9", text: "While historically the %U system has been part of "+r2.name+", the current government is petitioning for admittance into the "+r1.name+" group.", condition: r1.category.match(/Political/) && !r2.category.match(/Political/) },
 				{ key: "BFBS-CON10", text: "The government of %H recently protested to the USC, alleging that agents of the nearby "+r1.name+" region were attempting to destabilise it.", condition: true },
 			];
 
@@ -2319,7 +2333,7 @@
 				{ key: "BFBS-BOT3", text: "The position of %U gives travellers a hard choice - pass through its unstable space, or make a large detour.", condition: info.politics.stability < 3 },
 				{ key: "BFBS-BOT4", text: "The %H station is a popular stop with long-distance travellers.", condition: true },
 				{ key: "BFBS-BOT5", text: "As the last system before the %NG - or the first after it - the system sees many ships pass through.", condition: info.bottle == 1 },
-				{ key: "BFBS-BOT6", text: "The %H refuelling and supply station is one of the more important to inter-system trade.", condition: info.colony.stage == 1 },
+				{ key: "BFBS-BOT6", text: "The %H refuelling and supply station is one of the more important to intersystem trade.", condition: info.colony.stage == 1 },
 				{ key: "BFBS-BOT7", text: "Situated at a natural convergence of witchspace routes, %H station attracts visitors from across the chart.", condition: info.bottle == 2 },
 				{ key: "BFBS-BOT8", text: "The convenient position of %U has boosted its tourism industry.", condition: info.economy.type == "Tourism" },
 				{ key: "BFBS-BOT9", text: "One of the more dangerous witchspace bottlenecks, attempts to establish control over %S space have all failed.", condition: info.politics.governmentCategory == "Disordered" },
@@ -3162,7 +3176,7 @@
 				{ key: "BFGAS-FEDE3", text: "The responsibilities of %S different layers of government are strictly demarcated. The planetary government is not allowed to pass laws affecting areas in the competence of a local or regional government.", condition: true },
 				{ key: "BFGAS-FEDE4", text: "The constitution of %H places increasingly stricter requirements on the passing of laws the greater their area of effect. In general most planetary laws are passed by two-thirds of regions passing identical laws, rather than directly at the planetary level.", condition: true },
 				{ key: "BFGAS-FEDE5", text: "Laws in %H are drafted at a planetary level, and then must be approved by at least three quarters of the local assemblies, making up majorities of all regional areas.", condition: true },
-				{ key: "BFGAS-FEDE6", text: "The planetary government only manages inter-system trade and diplomacy, with all other matters delegated to autonomous regional governments.", condition: true },
+				{ key: "BFGAS-FEDE6", text: "The planetary government only manages intersystem trade and diplomacy, with all other matters delegated to autonomous regional governments.", condition: true },
 				{ key: "BFGAS-FEDE7", text: "Citizens on %H only directly elect the most local tier of representatives, with other political bodies elected by those representatives.", condition: true },
 
 			];
@@ -3183,7 +3197,7 @@
 				{ key: "BFGAS-DIDE1", text: "All legislative decisions on %H are made by a direct vote of those affected, with votes taking place every %XL days.", condition: true },
 				{ key: "BFGAS-DIDE2", text: "%H uses direct democracy for government decisions. To keep this manageable, as many decisions as possible have been delegated to local levels.", condition: true },
 				{ key: "BFGAS-DIDE3", text: "The democratic traditions of %S founders continue today, with any issue not able to achieve the support of at least eighty percent of the government being put to a public vote.", condition: info.colony.stage > 3 },
-				{ key: "BFGAS-DIDE4", text: "%H lacks a government in the conventional sense, with all legislative and inter-system decisions being taken by referendum.", condition: true },
+				{ key: "BFGAS-DIDE4", text: "%H lacks a government in the conventional sense, with all legislative and intersystem decisions being taken by referendum.", condition: true },
 				{ key: "BFGAS-DIDE5", text: "Concerns over individual accumulation of power led the %H settlers to place low limits on the authority of their politicians, with all significant decisions voted on by the population as a whole.", condition: true },
 				{ key: "BFGAS-DIDE6", text: "All government decisions on %H are subject to being overruled by the people. A petition of %XS thousand citizens - the number chosen when the colony was founded - will put a decision to a public vote.", condition: true },
 				{ key: "BFGAS-DIDE7", text: "A constant stream of issues is placed before the %H population for voting, with most votes only remaining open for a few days. The planet's economy dips noticeably when close votes are expected, as the majority of the population takes time off to research and vote.", condition: true },
@@ -3242,35 +3256,167 @@
 			break;
 		case "Socialist":
 			opts = [
-				{ key: "BFGAS-SCLS1", text: "", condition: true },
-				{ key: "BFGAS-SCLS2", text: "", condition: true },
-				{ key: "BFGAS-SCLS3", text: "", condition: true },
-				{ key: "BFGAS-SCLS4", text: "", condition: true },
-				{ key: "BFGAS-SCLS5", text: "", condition: true },
-				{ key: "BFGAS-SCLS6", text: "", condition: true },
-				{ key: "BFGAS-SCLS7", text: "", condition: true },
+				{ key: "BFGAS-SCLS1", text: "The major industries on %H are owned by the government, which uses the profits generated, especially in intersystem trading, to fund public services.", condition: true },
+				{ key: "BFGAS-SCLS2", text: "Most production on %H takes place through the state-owned %NB, whose operations are directed through the government.", condition: true },
+				{ key: "BFGAS-SCLS3", text: "The socialist government on %H does allow privately-owned companies to exist, provided their operations are not considered necessary to the survival of the planet. A few over-ambitious corporations have found most of their assets unexpectedly confiscated and publicised as a result of crossing that line.", condition: true },
+				{ key: "BFGAS-SCLS4", text: "The heads of all major businesses on %H are publicly elected, though the businesses are not technically owned by the government.", condition: true },
+				{ key: "BFGAS-SCLS5", text: "Unlike many systems where the corporations own the government, on %H, the government on paper owns the corporations. The concentration of power, however, is similar, and many other socialist systems have disputed the USC's classification of %H.", condition: true },
+				{ key: "BFGAS-SCLS6", text: "State control of key infrastructure is not unusual even in non-socialist systems, but the %H government considers almost all production to be in some way key to the planet's success.", condition: true },
+				{ key: "BFGAS-SCLS7", text: "Careful planning in %D10 allowed the previously token democratic government of %H to buy a controlling interest in the %NB. The new government appointed directors sold the assets cheaply to the government, before dissolving it, despite protests to the USC from the other shareholders and former executives.", condition: true },
 			];
+			break;
 		case "Communist":
+			opts = [
+				{ key: "BFGAS-COMM1", text: "All production on %H is collectively owned by the workers, who have the right to appoint suitable coordinators for that production.", condition: true },
+				{ key: "BFGAS-COMM2", text: "The government of %H owns and controls all production in the system. intersystem trade is tolerated provided that the ships restrict themselves to the authorised orbital station.", condition: true },
+				{ key: "BFGAS-COMM3", text: "The heads of all businesses on %H are elected annually by their workforce, at the same time as the government elections.", condition: true },
+				{ key: "BFGAS-COMM4", text: "The government of %H takes great steps to ensure fairness to its citizens, with tight control over planetary production being used to standardise and equalise provision. Only the tiny minority of citizens who manage intersystem relations are likely to ever see a USC credit. ", condition: true },
+				{ key: "BFGAS-COMM5", text: "Power over all production in the system is in the control of the %H government, with the central cabinet consisting of the chiefs of each industry. The most successful citizens will eventually be promoted enough to reach this cabinet themselves.", condition: true },
+				{ key: "BFGAS-COMM6", text: "The workers of %H are accorded political power and wealth strictly according to their contributions to the planetary economy. The most powerful are generally medical and emergency workers, who get to claim as their contribution significant proportions of the future production of anyone whose life they save.", condition: true },
+				{ key: "BFGAS-COMM7", text: "Each production facility on %H is collectively owned by its workers, who share equally in the profits and send representatives to regular planetary councils which set the sales prices for the next period.", condition: true },
+			];
+			break;
 		case "Independent Communes":
-		case "Worker's Cooperative":
+			opts = [
+				{ key: "BFGAS-INCO1", text: "The settlements of %H are divided into small communities of a few hundred people each, designed to be self-sufficient as far as possible. Where specialist production unable to be supported within a community is required, a number of communities will cooperate to provide specialists towards it.", condition: true },
+				{ key: "BFGAS-INCO2", text: "%H is divided into regions of %X %L"+Math.floor(info.colony.stage/2)+" people each of which is intended to be self-sufficient and deals separately in intersystem trade. The regions are divided further so far as possible, with the intent of giving each individual a clear idea of how they contribute to their commune, and how their commune contributes to the wider region.", condition: true },
+				{ key: "BFGAS-INCO3", text: "%H consists of hundreds of individual groups, each carefully sized to be large enough to be self-sufficient but small enough to be effectively self-governing. Intersystem trade is handled by representatives of the individual groups turning up to the orbital station market as and when they have goods to buy or sell.", condition: true },
+				{ key: "BFGAS-INCO4", text: "The independent communes of %H can be difficult for outsiders to deal with, as agreements made with one are not binding on any of the others.", condition: true },
+				{ key: "BFGAS-INCO5", text: "The approximately %X %L"+Math.floor(info.colony.stage-1)+" communes on %H have a fluid membership as people can leave and join freely at any time.", condition: true },
+				{ key: "BFGAS-INCO6", text: "All production on %H is carried out by small independent communes, each of which specialises in one step of what would be a production line in a more conventional economy.", condition: true },
+				{ key: "BFGAS-INCO7", text: "The population of %H is divided between around %X %L"+Math.floor(info.colony.stage-1)+" autonomous regions.", condition: true },
+			];
+			break;
+		case "Workers' Cooperative":
+			opts = [
+				{ key: "BFGAS-WOCO1", text: "All businesses on %H are owned by their workers, who collectively decide on their direction and production. A small elected government adjudicates inter-business disputes and pays for planet-wide services.", condition: true },
+				{ key: "BFGAS-WOCO2", text: "%H is controlled by a single workers' cooperative, which through consensus decision making operates the colony.", condition: info.colony.stage < 4 },
+				{ key: "BFGAS-WOCO3", text: "The workers' cooperatives on %H operate the planet's industry to provide for all residents, with profits from intersystem trade being reinvested.", condition: true },
+				{ key: "BFGAS-WOCO4", text: "%S cooperatives provide as high a standard of living to all their employees as possible, with no difference in pay between workers and their managers.", condition: true },
+				{ key: "BFGAS-WOCO5", text: "There is no formal government on %H, but representatives of the various workers' organisations will represent the system if required.", condition: true },
+				{ key: "BFGAS-WOCO6", text: "The influential "+info.names.party1+" and "+info.names.party2+" movements, originally set up to help coordinate activites between the cooperatives, now also hold considerable sway within many of them, and their leaders, rather than the workers, hold the majority of the power.", condition: true },
+				{ key: "BFGAS-WOCO7", text: "Production on %H is managed by around %X hundred workers' organisations, each specialising in one area.", condition: true },
+			];
+			break;
 		case "Isolationist":
+			opts = [
+				{ key: "BFGAS-ISOL1", text: "The people of %H have cut themselves off from the USC, with the only contact being limited trading facilities at the orbital station.", condition: true },
+				{ key: "BFGAS-ISOL2", text: "Following disagreements with the USC in %D"+(info.colony.founded+2)+" all diplomatic relations were severed and off-world visitors are no longer prohibited.", condition: info.colony.outsiders == 0 },
+				{ key: "BFGAS-ISOL3", text: "The government of %H resents outside interference and only begrudginly trades for a few essentials which cannot be produced natively.", condition: true },
+			];
+			break;
 		case "Quarantine":
+			opts = [
+				{ key: "BFGAS-QUAR1", text: "The native %C of %H are extremely unusual and the world has been placed under USC quarantine to protect them.", condition: info.colony.attacked == 0 && info.economy.reason == "Native Life" },
+				{ key: "BFGAS-QUAR2", text: "After early colonisation was shown to be damaging the fragile native %C, the population were withdrawn to orbital stations and the surface was quarantined.", condition: info.colony.attacked == 0 && info.economy.reason == "Native Life"  },
+				{ key: "BFGAS-QUAR3", text: "The native %C emit potent biotoxins when under stress. After this discovery, the surface settlements were abandoned and the planet quarantined.", condition: info.colony.attacked == 0 && info.economy.reason == "Native Life"  },
+				{ key: "BFGAS-QUAR4", text: "The invading forces used bioweapons on %H, and the system is now under USC quarantine.", condition: info.colony.attacked > 0 },
+				{ key: "BFGAS-QUAR5", text: "An unknown epidemic killed most of the refugees who fled %H after the attack. The world has been quarantined for investigation.", condition: info.colony.attacked > 0 },
+				// note: these four aren't currently used, as
+				// only the economy type is Quarantine in these cases
+				{ key: "BFGAS-QUAR6", text: "Following the destruction of the settlements by the invaders, %S surface has exhibited unusual properties. The system has been placed under USC quarantine as a precautionary measure.", condition: info.colony.attacked == 3 },
+				{ key: "BFGAS-QUAR7", text: "Unexpected side-effects of environmental modification have caused problems on %H. While the situation is stabilised, surface-orbit transfers are strictly controlled.", condition: info.colony.attacked == 0 && info.economy.reason == "Terraforming" },
+				{ key: "BFGAS-QUAR8", text: "The planet is currently carrying out the "+nth(info.r.rand(3)+1)+" phase of its environmental modification programme, and landing is currently strictly restricted.", condition: info.colony.attacked == 0 && info.economy.reason == "Terraforming"  },
+				{ key: "BFGAS-QUAR9", text: "The surface has been evacuated and sealed after an environmental modification plant ran out of control. The plant has been shut down and it is hoped that the situation will soon return to normal.", condition: info.colony.attacked == 0 && info.economy.reason == "Terraforming"  },
+			];
+			break;
 		case "Anarchist":
+			opts = [
+				{ key: "BFGAS-ANRC1", text: "The population of %H reject all structured exercise of power. There is no government in the conventional sense.", condition: true },
+				{ key: "BFGAS-ANRC2", text: "The %H population have built and sustained a society without structured authority. Instead, the tasks required for keeping the settlement running are documented, and announcements are made if a particular task requires more people to work on it.", condition: true },
+				{ key: "BFGAS-ANRC3", text: "The entirely non-hierarchical governance of %H is extremely difficult for the USC to work with. Intersystem trade works on broadly conventional lines, but other intersystem negotiations are extremely slow.", condition: true },
+			];
+			break;
 		case "Transapientism":
+			opts = [
+				{ key: "BFGAS-TSAP1", text: "Transapiest movements believe that future advanced technology will allow the eight species to become a single new species, so far above any current species as a %I is above simple multicellular life. All surplus on %H goes into researching and trialling of prototype technology.", condition: true },
+				{ key: "BFGAS-TSAP2", text: "The people of %H believe that increases in AI sophistication will soon allow it to simulate a sapient mind fully, and then the minds of billions, leaving behind mortality as a species forever. The system's surplus is entirely spent on the latest AI hardware.", condition: true },
+				{ key: "BFGAS-TSAP3", text: "The transapiests of %H are slowly replacing all parts of their bodies with mechanical devices, where cost permits. They intend one day to extend this to their brains or analogous structures.", condition: true },
+			];
+			break;
 		case "Social Evolutionist":
+			opts = [
+				{ key: "BFGAS-SCEV1", text: "Social evolutionists attempt to accelerate the progress of society by trialling social structures in controlled conditions in an attempt to refine and discover the best. %H is currently experimenting with a variation on %G philosophies.", condition: true },
+				{ key: "BFGAS-SCEV2", text: "The social evolutionists of %H are currently running a series of rapid trials of governmental structures, in which a fixed budget and timescale is given for the structure. The system's current government classification should therefore be checked before entry.", condition: true },
+				{ key: "BFGAS-SCEV3", text: "The social evolutionists of %H are currently running a research program on themselves to discover the ultimate limits of a %G approach to governance.", condition: true },
+			];
+			break;
 		case "Cultural Reacher":
+			opts = [
+				{ key: "BFGAS-CURE1", text: "While most species and planets agree that an important use for a planetary surplus is the production of cultural works, the Cultural Reacher movement running %H holds that this is the only moral use of the surplus.", condition: true },
+				{ key: "BFGAS-CURE2", text: "The primary concern of the government of %H is to make the processes needed to support the colony as efficient as possible so that the citizens spend less time working and more time producing art.", condition: true },
+				{ key: "BFGAS-CURE3", text: "Cultural Reachers aim, through the production and distribution of as many works of art as possible, to expand the thoughts of their cousins across the eight charts.", condition: true },
+			];
+			break;
 		case "Precedentarchy":
+			opts = [
+				{ key: "BFGAS-PREC1", text: "The precedentists of %H believe that long-term survival depends on doing only what has been shown to work before. The government's role is twofold: to maintain an archive of previous events, and to adjudicate whether a proposal to act is sufficiently similar to an archived event.", condition: true },
+				{ key: "BFGAS-PREC2", text: "The %H government is extremely hostile to surprises, and visitors to the system should ensure that they carry with them records of the times similar visitors, similar ships and similar purposes of visits occurred.", condition: true },
+				{ key: "BFGAS-PREC3", text: "The government of %H consists of the %X %L- oldest citizens. Each may authorise any action which has been successfully done at least %X %L- times before, with higher numbers needed to authorise less precedented actions.", condition: true },
+			];
+			break;
 		case "Bureaucracy":
+			opts = [
+				{ key: "BFGAS-BRCY1", text: "The full laws of %H run to %X %L1 volumes. Visitors should ensure that all documentation is precisely in order according to these laws, or risk exile, imprisonment or even execution.", condition: true },
+				{ key: "BFGAS-BRCY2", text: "The people of %H believe that comprehensive regulation is best to protect everyone. Almost all citizens have two jobs - one conventional one, and one managing the monitoring and documentation required to establish compliance.", condition: true },
+				{ key: "BFGAS-BRCY3", text: "The government of %H employs over %XL ten percent of the population to ensure that all regulations are followed. The punishments for failing to follow regulations are severe, though to ensure absolute fairness the trial process often takes several kD to complete.", condition: true },
+			];
+			break;
 		case "Variationist":
+			opts = [
+				{ key: "BFGAS-VARI1", text: "The Variationist government of %H believes that rapid change is desirable to expand the mind and strengthen the body. Citizens and visitors are encouraged to constantly change - appearance, jobs, attitudes, anatomy, and so on.", condition: true },
+				{ key: "BFGAS-VARI2", text: "All structure on %H including the government is under constant change. Unlike social evolutionists, the variationists do not intend this change to have a particular direction: the change is an end in itself.", condition: true },
+				{ key: "BFGAS-VARI3", text: "Visitors to %H should bear in mind that the layout of the orbital stations is under constant adjustment. It is recommended that if you intend to leave your ship, you fit it with a tracking device first, so that you can find its docking bay later.", condition: true },
+			];
+			break;
 		case "United Species Coalition":
+			opts = [
+				{ key: "BFGAS-USC1", text: "USC worlds are governed by a council of representatives from the inhabiting species, in proportion to the population of the planet. Each species has the right to select its representatives by whatever means they choose.", condition: true },
+				{ key: "BFGAS-USC2", text: "The governance of %H is managed by a council of species representatives. With the increase in multi-species worlds and the decrease in homeworld influence, most USC councillors agree that this structure is outdated, but there has been no agreement on a replacement.", condition: true },
+				{ key: "BFGAS-USC3", text: "As a USC world, %H is governed by a standard interspecies council.", condition: true },
+			];
+			break;
 		case "United Species Embassy":
+			opts = [
+				{ key: "BFGAS-USE1", text: "%H is a USC embassy world, and the primary USC administration for all non-native species in this chart is carried out from this system.", condition: true },
+				{ key: "BFGAS-USE2", text: "As a USC embassy, %H contains independent regions for each species, with a separate USC council in the capital %NY.", condition: true },
+				{ key: "BFGAS-USE3", text: "Representatives of each homeworld outside the chart are available at the USC embassies for both intra- and inter-species business.", condition: true },
+			];
+			break;
 		case "Civil War":
+			opts = [
+				{ key: "BFGAS-CVWR1", text: "The %H government is currently suspended as the military fights against rebel forces in major settlements.", condition: true },
+				{ key: "BFGAS-CVWR2", text: "A major rebellion against the %H government has led to civil war in the system.", condition: true },
+				{ key: "BFGAS-CVWR3", text: "The position of %H between two major regions has led to a violent breakdown of government order and open warfare between supporters of the two factions.", condition: info.colony.contested == 1 },
+				{ key: "BFGAS-CVWR4", text: "It is believed that nearby systems are supplying arms to the %H rebels.", condition: info.politics.regionAccession == 2 },
+				{ key: "BFGAS-CVWR5", text: "It is believed that nearby systems are supplying arms to the %H loyalists.", condition: info.politics.regionAccession == 2 },
+				{ key: "BFGAS-CVWR6", text: "A military coup has overthrown the government of %H. A resistance movement loyal to the old regime is currently fighting back in several settlements as well as orbital space, and the system should be considered extremely dangerous.", condition: true },
+				{ key: "BFGAS-CVWR7", text: "%S civil war has at least %XL sides, as alliances between various military and paramilitary groups constantly shift. The capital, %NY, is currently in ruins after extensive fighting there.", condition: true }
+			];
+			break;
 		case "Criminal Rule":
+			opts = [
+				{ key: "BFGAS-CRIM1", text: "All formal order in the %U system has broken down. Many criminal operations prosper, with the %NVG led by %NV being the most powerful and stable.", condition: true },
+				{ key: "BFGAS-CRIM2", text: "A power vacuum left after the collapse of the government allowed the %NVG to obtain general control over the system.", condition: true },
+				{ key: "BFGAS-CRIM3", text: "A protracted stalemate between the %H government and rebel forces was broken when %NV, who had been supplying weapons to both sides, ceased doing so and instead wiped them out. Their control over the system is now uncontested by any local forces.", condition: true },
+				{ key: "BFGAS-CRIM4", text: "The %NVG criminal group has effective control over both planetary and orbital space in %U. Attempts by other systems to track down the group have been unsuccessful.", condition: true },
+				{ key: "BFGAS-CRIM5", text: "Both the %NVG and its leader %NV have defeated numerous attempts to capture them or expel them from %U. Their control of the system remains significant.", condition: true },
+				{ key: "BFGAS-CRIM6", text: "The %U system provides a mostly safe haven for criminals, who provided that they do not act against the interests of %NV, may easily escape from legal pursuers.", condition: true },
+				{ key: "BFGAS-CRIM7", text: "In %U, %NV's leadership of the %NVG grants them control of the only real power in the system. Criminal rule is often harsh and unpleasant, but nevertheless provides some measure of stability, and while there is no formal diplomatic relationship it is believed that some nearby systems have secret agreements.", condition: true },
+			];
+			break;
 		case "Fragmented Rule":
-		case "Vigilantism":
+			opts = [
 
+			];
+			break;
+		case "Vigilantism":
+			opts = [
+
+			];
+			break;
 		}
-		if (opts.length) { // temporary while entries above are completed.
+		if (opts.length) {
 			do {
 				do {
 					opt = opts[info.r.rand(opts.length)];
@@ -3464,7 +3610,7 @@
 		//  +++ stability is critically low
 		//  ++ stability is very high
 		//  ++ stability is being lowered by nearby region
-		if (info.colony.stage > 0) {
+		if (info.colony.stage > 0 && info.colony.homeWorld == 0) {
 			blocks = blocks.concat(blocksForGovernmentAndStability(info));
 		}
 

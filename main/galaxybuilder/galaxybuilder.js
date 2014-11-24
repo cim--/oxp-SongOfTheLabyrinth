@@ -1555,7 +1555,7 @@ random.setStart(240000);
 		var cortypes = ["Company Monopoly","Capitalist Plutocracy","Corporate System","Timocracy"];
 		var demtypes = ["Republican Democracy","Federal Democracy","Demarchy","Direct Democracy"];
 		var hietypes = ["Dictatorship","Feudal Realm","Martial Law","Family Clans"];
-		var coltypes = ["Socialist","Communist","Independent Communes","Worker's Cooperative"];
+		var coltypes = ["Socialist","Communist","Independent Communes","Workers' Cooperative"];
 		var atytypes = ["Isolationist","Anarchist","Transapientism","Social Evolutionists","Cultural Reachers","Precedentarchy","Bureaucracy","Variationist"];
 		for (i=0;i<10;i++) {
 			cortypes.push(cortypes[random.rand(cortypes.length)]);
@@ -1645,20 +1645,26 @@ random.setStart(245000);
 					} else {
 						// no special case.
 						var copyInf = random.randf();
-						if (colony.stage == 1 && copyInf < 0.5
-							|| (colony.stage == 2 && copyInf < 0.7)
-							|| (colony.stage == 3 && copyInf < 0.5)
-							|| (colony.stage == 4 && copyInf < 0.4)) {
+						var infToCopy = $.get(i,region.influential[random.rand(region.influential.length)],"politics");
+						
+						if (infToCopy.governmentCategory != "Disordered" && infToCopy.governmentCategory != "Atypical" && 
+							(colony.stage == 1 && copyInf < 0.5
+							 || (colony.stage == 2 && copyInf < 0.7)
+							 || (colony.stage == 3 && copyInf < 0.5)
+							 || (colony.stage == 4 && copyInf < 0.4))) {
 							// copy an influential
-							politics.governmentType = $.get(i,region.influential[random.rand(region.influential.length)],"politics").governmentType;
+							politics.governmentType = infToCopy.governmentType;
 						} else if (colony.outsiders == 0 || colony.founded == 10) {
 							// species random
 							politics.governmentType = species.randomGovernment(colony.species[random.rand(colony.species.length)],random.randf());
-						} else {
+						} else if (colony.outsiders == 1) {
 							do {
 								// outsiders tend to have atypical
 								politics.governmentType = species.randomGovernment(colony.species[random.rand(colony.species.length)],random.randf());
 							} while ($.governmentCategoryFromType(politics.governmentType) != "Atypical");
+						} else {
+							// species random
+							politics.governmentType = species.randomGovernment(colony.species[random.rand(colony.species.length)],random.randf());
 						}
 					}
 				}
@@ -1880,8 +1886,8 @@ random.setStart(245000);
 			if (politics.governmentType == "Dictatorship" && economy.type.match(/Research/)) {
 				politics.governmentType = "Technocracy";
 			} else if (politics.governmentType == "Civil War" && colony.stage <= 1) {
-				politics.governmentType = "War zone";
-			} else if (politics.governmentType == "Fragmented Society" && colony.stage <= 0) {
+				politics.governmentType = "None";
+			} else if (politics.governmentType == "Fragmented Society" && colony.stage <= 1) {
 				politics.governmentType = "None";
 			} else if (politics.governmentType == "Isolationist" && economy.type == "Quarantine") {
 				politics.governmentType = "Quarantine";
@@ -2229,6 +2235,8 @@ random.setStart(325000);
 			var names = {
 				company: descgen.companyName(i,j,$,random,species),
 				dictator: descgen.dictatorName(i,j,$,random,species),
+				criminalGroup: namegen.criminalGroupName(random,species),
+				criminal: descgen.criminalName(i,j,$,random,species),
 				warmonger: descgen.warmongerName(i,j,$,random,species),
 				capital: descgen.capitalcityName(i,j,$,random,species),
 				gap: descgen.gapName(i,j,$,random,species),

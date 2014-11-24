@@ -476,7 +476,7 @@
 		var cortypes = ["Company Monopoly","Capitalist Plutocracy","Corporate System","Timocracy"];
 		var demtypes = ["Republican Democracy","Federal Democracy","Demarchy","Direct Democracy"];
 		var hietypes = ["Dictatorship","Technocracy","Feudal Realm","Martial Law","Family Clans"];
-		var coltypes = ["Socialist","Communist","Independent Communes","Worker's Cooperative"];
+		var coltypes = ["Socialist","Communist","Independent Communes","Workers' Cooperative"];
 		var atytypes = ["Isolationist","Quarantine","Anarchist","Transapientism","Social Evolutionist","Cultural Reacher","Precedentarchy","Bureaucracy","Variationist"];
 		var usctypes = ["United Species Coalition","United Species Embassy"];
 		if (cortypes.indexOf(type) != -1) {

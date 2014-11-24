@@ -329,6 +329,23 @@ console.error(namelist.length);
 		return word.replace(/^./, function (str) { return str.toUpperCase(); });
 	}
 
+	species.longerWord = function(spec,random) {
+		var wb = speciesInfo[spec].wordBits;
+		var wbl = wb.length;
+		var word = "";
+		var nl = random.rand(3)+3;
+		for (var j=0;j<nl;j++) {
+			word += wb[random.rand(wbl)];
+		}
+		for (j in wordmap) {
+			word = word.replace(j,wordmap[j]);
+		}
+		word = word.replace(/^'/,"");
+		word = word.replace(/'$/,"");
+		return word.replace(/^./, function (str) { return str.toUpperCase(); });
+	}
+
+
 	species.retrieveNameOnce = function(spec,random) {
 		var name = speciesInfo[spec].nameList.splice(random.rand(speciesInfo[spec].nameList.length),1);
 		return name[0].replace(/^./, function (str) { return str.toUpperCase(); });

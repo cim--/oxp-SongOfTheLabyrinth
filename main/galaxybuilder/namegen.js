@@ -194,6 +194,11 @@
 		"Worlds","Swathe","Flight","Centre","Realm","Expanse"
 	];
 
+	var criminalConcepts = [
+		"Sword","Spear","Axe","Raiders","Marauders","Freebooters","Family","Corsairs","Guild","Lodge","Band","Gang","Fellowship","Mob","Pack","Ring","Clan","Crew","Cabal"
+	];
+
+
 	/* Name components */
 	var componentOrbitPosition = function(r) {
 		return orbitPositions[r.rand(orbitPositions.length)];
@@ -232,7 +237,7 @@
 	}
 
 
-	var componentConstellationPosition = function(r,s) {
+	var constellationPositionList = function(s) {
 		var list = constellationPositionsGeneric;
 		if (s == "Lizard") {
 			list = list.concat(constellationPositionsLizard);
@@ -249,6 +254,11 @@
 		} else if (s == "Insect") {
 			list = list.concat(constellationPositionsInsect);
 		}
+		return list;
+	}
+
+	var componentConstellationPosition = function(r,s) {
+		var list = constellationPositionList(s);
 		return list[r.rand(list.length)];
 	}
 
@@ -1107,6 +1117,24 @@
 	namegen.partyName = function(r) {
 		var choices = [].concat(brightConcepts,greenConcepts,redConcepts,greenRockConcepts,blueConcepts,collectiveConcepts,refugeConcepts,convergenceConcepts,biggroupConcepts,triadConcepts,quadConcepts);
 		return choices[r.rand(choices.length)];
+	}
+
+	namegen.criminalGroupName = function(r,s) {
+		var ntype = r.randf();
+		var slist = s.list();
+		var spec = slist[r.rand(slist.length)];
+		if (ntype < 0.3) {
+			// random word-name
+			return s.longerWord(spec,r);
+		} else if (ntype < 0.7) {
+			// sequenceConcepts is a lot longer, so triple the others
+			var adjchoice = [].concat(sequenceConcepts,hotConcepts,coldConcepts,radiationConcepts,redConcepts,greenRockConcepts,blueConcepts,hotConcepts,coldConcepts,radiationConcepts,redConcepts,greenRockConcepts,blueConcepts,hotConcepts,coldConcepts,radiationConcepts,redConcepts,greenRockConcepts,blueConcepts);
+			var nounchoice = [].concat(constellationPositionList(s),brightConcepts,criminalConcepts,convergenceConcepts,corporateOrganisationConcepts);
+			return adjchoice[r.rand(adjchoice.length)]+" "+nounchoice[r.rand(nounchoice.length)];
+		} else {
+			var nounchoice = [].concat(constellationPositionList(s),brightConcepts,criminalConcepts,convergenceConcepts,corporateOrganisationConcepts);
+			return s.word(spec,r)+" "+nounchoice[r.rand(nounchoice.length)];
+		}
 	}
 
 	module.exports = namegen;
