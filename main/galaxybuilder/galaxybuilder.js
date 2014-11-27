@@ -1496,7 +1496,7 @@ var unitedRegionID = 0;
 							// systems which are already contested
 							influenceLevel = $includeSystem(adjacents,tryidx,influenceLevel,0,$contestSystem,false);
 						} else if (tpolitics.regionInfluence > 0) {
-							if ($.distance(i,influencer,trysys) <= 7 || tpolitics.regionInfluence/2 < influenceLevel) {
+							if ($.distance(i,influencer,trysys) <= 7 || tpolitics.regionInfluence <= influenceLevel) {
 								// secondary capital joins!
 								influenceLevel = $includeSystem(adjacents,tryidx,influenceLevel,-Math.floor(tpolitics.regionInfluence/2),$joinSystem,true);
 								// above always succeeds, so no need to check here
@@ -1935,21 +1935,21 @@ random.setStart(260000);
 					}
 				}
 				if ($.colonyAtMaxSize(i,j,true)) { st += 1; }
-				if (colony.economy == "Colonisation") { st -= 2; }
-				if (colony.economy == "Research (Mil)") { st += 1; }
-				if (colony.economy == "Shipyard") { st += 1; }
-				if (colony.economy == "Tourism") { st += 1; }
-				if (colony.economy == "Survival") { st -= 5; }
+				if (economy.type == "Colonisation") { st -= 2; }
+				if (economy.type == "Research (Mil)") { st += 1; }
+				if (economy.type == "Shipyard") { st += 1; }
+				if (economy.type == "Tourism") { st += 1; }
+				if (economy.type == "Survival") { st -= 5; }
 				if (politics.governmentType == "Martial Law") { st += 2; }
 				else if (politics.governmentCategory == "Hierarchical") { st += 1; }
 				if (politics.governmentCategory == "Disordered") { st -= 2; }
 				// next set stack with the category penalty
 				if (politics.governmentType == "Civil War") { st -= 2; }
-				if (politics.governmentType == "War Zone") { st -= 2; }
+				if (politics.governmentType == "None") { st -= 2; }
 				if (politics.governmentType == "Criminal Rule") { st -= 2; }
 				if (politics.governmentType == "Isolationist") { st -= 2; }
-				if (economy.productivity < 1000) { st -= 1; }
-				if (economy.productivity > 1000000) { st += 1; }
+				if (economy.productivity < 1E3) { st -= 1; }
+				if (economy.productivity > 1E6) { st += 1; }
 				if (colony.attacked == 1) { st -= 2; }
 				if (colony.attacked > 1) { st -= 3; }
 

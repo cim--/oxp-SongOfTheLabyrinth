@@ -143,7 +143,7 @@
 			condition_script = "sotw-conditions.js";
 			available_to_all = true;
 			weapon_info = {
-				range = 15000;
+				range = 30000;
 				energy = 1.1;
 				damage = 12.0;
 				recharge_rate = 0.1;

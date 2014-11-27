@@ -123,6 +123,7 @@
 		string = string.replace(/%AG/g,expandGroundAccident[info.r.rand(expandGroundAccident.length)]);
 		string = string.replace(/%A/g,expandAccident[info.r.rand(expandAccident.length)]);
 		string = string.replace(/%Y/g,expandCity[info.r.rand(expandCity.length)]);
+		string = string.replace(/%GN/g,expandGovernment[info.r.rand(4)]);
 		string = string.replace(/%G/g,expandGovernment[info.r.rand(expandGovernment.length)]);
 		string = string.replace(/%B/g,expandBusiness[info.r.rand(expandBusiness.length)]);
 		string = string.replace(/%W/g,expandWarmonger[info.r.rand(expandWarmonger.length)]);
@@ -1734,7 +1735,7 @@
 		}
 		if (block.text != "") {
 			blocks.push(block);
-			var block = {
+			block = {
 				importance: 0,
 				displayOrder: 0,
 				key: "",
@@ -1764,7 +1765,28 @@
 				} while (!opt.condition);
 			} while (!checkKey(block.key,10,true));
 
+		} else if (advSteps.length > 0) {
+			block.importance = 10;
+			var adv = advSteps[info.r.rand(advSteps.length)];
+			// use %Dadv / %DEadv
+
+			opts = [
+				{ key: "BFCG-ADV1", text: "", condition: true },
+			];
+
+			do {
+				do {
+					opt = opts[info.r.rand(opts.length)];
+					block.key = opt.key;
+					block.text = opt.text;
+					block.displayOrder = bilStep;
+				} while (!opt.condition);
+			} while (!checkKey(block.key,10,true));
+
+
 		}
+
+
 		if (block.text != "") {
 			blocks.push(block);
 			var block = {
@@ -1774,6 +1796,8 @@
 				text: ""
 			}
 		}
+
+
 
 		return blocks;
 	};
@@ -2544,7 +2568,7 @@
 				{ key: "BFSEP-RADE7", text: "Effectively shielding the mining operations from the intense radiation is a substantial challenge.", condition: info.planet.mineralWealth > 0.45 && info.colony.stage > 0 },
 				{ key: "BFSEP-RADE8", text: "The cost of radiation shielding makes extraction of %H's %M deposits impractical.", condition: !info.colony.founded && info.planet.mineralWealth > 0.45 },
 				{ key: "BFSEP-RADE9", text: "The crust of %H is thick with Uranium and other radioactive elements. The strongly ionising radiation is virtually impossible to adequately shield against.", condition: true },
-				{ key: "BFSEP-RADE10", text: "At "+Math.floor(info.planet.surfaceRadiation)+" Fd, the surface radiation levels on %H are some of the highest recorded on a habitable zone planet.", condition: true },
+				{ key: "BFSEP-RADE10", text: "At "+info.planet.surfaceRadiation.toFixed(1)+" Fd, the surface radiation levels on %H are some of the highest recorded on a habitable zone planet.", condition: true },
 			];
 
 			do {
@@ -3017,7 +3041,7 @@
 		block = {
 			importance: -1,
 			displayOrder: 13,
-			key: "",
+			key: "BFUEP-GRAV",
 			text: "Surface gravity: "+(info.planet.surfaceGravity*9.81).toFixed(2)+"m/s²."
 		};
 		blocks.push(block);
@@ -3026,7 +3050,7 @@
 			block = {
 				importance: -1,
 				displayOrder: 13,
-				key: "",
+				key: "BFUEP-TEMP",
 				text: "Mean surface temperature: "+(info.planet.temperature+273).toFixed(0)+" K."
 			};
 			blocks.push(block);
@@ -3036,7 +3060,7 @@
 			block = {
 				importance: -1,
 				displayOrder: 13,
-				key: "",
+				key: "BFUEP-RAD",
 				text: "Normalised surface radiation: "+(info.planet.surfaceRadiation).toFixed(3)+" Fd."
 			};
 			blocks.push(block);
@@ -3059,7 +3083,7 @@
 			block = {
 				importance: -1,
 				displayOrder: 13,
-				key: "",
+				key: "BFUEP-SEIS",
 				text: "Seismic activity: "+seisExa(info.planet.seismicInstability)+"."
 			};
 			blocks.push(block);
@@ -3069,7 +3093,7 @@
 			block = {
 				importance: -1,
 				displayOrder: 13,
-				key: "",
+				key: "BFUEP-NOATM",
 				text: "Extremely thin atmosphere."
 			};
 			blocks.push(block);
@@ -3089,12 +3113,63 @@
 			block = {
 				importance: -1,
 				displayOrder: 13,
-				key: "",
+				key: "BFUEP-STORM",
 				text: "Winds/Storms: "+windExa(info.planet.windFactor)+"."
 			};
 			blocks.push(block);
 		}
 
+		var habSpecs = function(hab,thresh) {
+			var sl = info.species.list();
+			var result = [];
+			for (var i=0;i<sl.length;i++) {
+				if (hab[sl[i]] >= thresh) {
+					result.push(sl[i]);
+				}
+			}
+			if (result.length >= 4) {
+				return "many species";
+			}
+			var hablstr = result.map(
+				function(x) {
+					return info.species.name(x);
+				}
+			).join(", ");
+			hablstr = hablstr.replace(/,([^,]+)$/,' or$1');
+			return hablstr;
+		}
+		
+		block = {
+			importance: 0,
+			displayOrder: 5,
+			key: "",
+			text: ""
+		};
+
+		var habl;
+		if (info.habitability.best >= 90) {
+			habl = habSpecs(info.habitability,90);
+
+			block.importance = 50;
+			block.key = "BFUEP-HABI";
+			block.text = "The surface of %H is ideally suited to settlement by "+habl+".";
+		} else if (info.habitability.best >= 70) {
+			habl = habSpecs(info.habitability,70);
+
+			block.importance = 20;
+			block.key = "BFUEP-HABI";
+			block.text = "The surface of %H could be settled by "+habl+" without the use of sealed habitats.";
+		} else if (info.habitability.best >= 60) {
+			habl = habSpecs(info.habitability,60);
+
+			block.importance = 10;
+			block.key = "BFUEP-HABI";
+			block.text = "Extensive use of environmental modification technology could in principle make %H suitable for colonisation by "+habl+".";
+		}
+
+		if (block.text != "") {
+			blocks.push(block);
+		}
 
 
 		return blocks;
@@ -3105,7 +3180,7 @@
 		var blocks = [];
 		var opt, opts = [];
 		var block = {
-			importance: info.politics.governmentCategory == "Atypical"?55:40,
+			importance: info.politics.governmentCategory == "Atypical"?35:20,
 			displayOrder: 12,
 			key: "",
 			text: ""
@@ -3407,12 +3482,24 @@
 			break;
 		case "Fragmented Rule":
 			opts = [
-
+				{ key: "BFGAS-FRAG1", text: "The %XS regions of %H are unable to agree on a mutual stance for inter-system negotiations and make separate deals.", condition: true },
+				{ key: "BFGAS-FRAG2", text: "%H was divided into %XL regions on its founding after disputes between the original settlers. These regions remain fiercly independent and negotiate separately in inter-system matters.", condition: true },
+				{ key: "BFGAS-FRAG3", text: "A civil war in the %U system was narrowly avoided with the voluntary partition of the system's resources into %XS, each to be administered by the major parties in the dispute.", condition: true },
+				{ key: "BFGAS-FRAG4", text: "The %GN government in %H collapsed in %D10, and only regional authorities remain intact. So far attempts to re-establish unified control over the whole system have been unsuccessful.", condition: true },
+				{ key: "BFGAS-FRAG5", text: "The lengthy %H civil war eventually ended in %D8 after USC diplomats negotiated a treaty with the opposing sides and imposed an arms embargo on the system. Many generations later the descendants of the two sides are at peace but their differences prevent a reunification of the system.", condition: info.colony.founded < 7 },
+				{ key: "BFGAS-FRAG6", text: "While all the nations of %H are %GN in nature, they are unable to agree on more than basic cooperation, and make separate deals with other systems.", condition: true },
+				{ key: "BFGAS-FRAG7", text: "%H is divided between %XS regional governments, who currently maintain an uneasy peace but who have no recent record of successful cooperation.", condition: true },
 			];
 			break;
 		case "Vigilantism":
 			opts = [
-
+				{ key: "BFGAS-VGLN1", text: "There is no formal government in %H, but many armed groups attempt to enforce order and security. Overt criminality has been successfully discouraged but small skirmishes over disputes are commonplace.", condition: true },
+				{ key: "BFGAS-VGLN2", text: "The %H government collapsed in %D10 after invader strikes on the system, but several paramilitary groups are attempting to enforce its former laws.", condition: true },
+				{ key: "BFGAS-VGLN3", text: "There is little formal authority in %H but some order is maintained by armed gangs who have divided the system between them and have reasonably peaceful relationships. Visitors should be aware of the rules of each before entering their areas.", condition: true },
+				{ key: "BFGAS-VGLN4", text: "Vigilante patrols in the system have taken over the system military's role after it was wiped out during the invasion. So far they have managed to suppress criminals at the cost of the accidental destruction of several civilian visitors.", condition: true },
+				{ key: "BFGAS-VGLN5", text: "The %U system is a haven for bounty hunters, mercenaries and other irregulars, who strongly discourage the use of violence by others.", condition: true },
+				{ key: "BFGAS-VGLN6", text: "The %H civil war ended in a drawn-out stalemate when neither side was able to fight on. Their successors, with the remaining weapons, keep a semblance of order in the ruined settlements.", condition: true },
+				{ key: "BFGAS-VGLN7", text: "The %U system is heavily patrolled by several paramilitary groups. It is recommended to arrange the protection of one of these groups before entering the system, to avoid being mistaken for an attacker.", condition: true },
 			];
 			break;
 		}
@@ -3427,11 +3514,181 @@
 			blocks.push(block);
 		}
 
+		block = {
+			importance: 35-(info.politics.stability*5),
+			displayOrder: 12,
+			key: "",
+			text: ""
+		}
+		opts = [];
+
+		switch (info.politics.stability) {
+		case 1:
+			opts = [
+				{ key: "BFGAS-STABXL1", text: "Disputes over funding have led to the suspension of security patrols in the %U system.", condition: true },
+				{ key: "BFGAS-STABXL2", text: "There are no resources to provide security patrols in %U.", condition: info.politics.government == "Survival" },
+				{ key: "BFGAS-STABXL3", text: "The assault on this system during the invasion has left it without any security patrols.", condition: info.colony.attacked > 0 },
+				{ key: "BFGAS-STABXL4", text: "The %H government does not fund orbital security patrols. Visitors are responsible for their own security.", condition: true },
+				{ key: "BFGAS-STABXL5", text: "The colony at %H is not yet fully established, and has so far been unable to begin security patrols.", condition: info.economy.type == "Colonisation" },
+				{ key: "BFGAS-STABXL6", text: "There are no formal security patrols in %U.", condition: true },
+				{ key: "BFGAS-STABXL7", text: "The lack of central organisation in this system has prevented the assembly of any effective security patrols.", condition: info.politics.governmentCategory == "Disordered" },
+				{ key: "BFGAS-STABXL8", text: "The government of %H intentionally does not provide security patrols in the system, to discourage visitors.", condition: info.politics.governmentType == "Isolationist" },
+				{ key: "BFGAS-STABXL9", text: "The political uncertainty surrounding %H has led to security patrols being suspended after fights between rival groups.", condition: info.colony.contested == 1 },
+				{ key: "BFGAS-STABXL10", text: "The small size of the %H settlement prevents it from funding security patrols.", condition: info.colony.stage < 3 },
+				{ key: "BFGAS-STABXL11", text: "The population of %H generally remains in and around the orbital station. They currently consider it too risky to provide orbital patrols.", condition: info.colony.stage == 1 },
+				{ key: "BFGAS-STABXL12", text: "%H does not have the resources to provide effective security patrols and chooses not to waste lives providing ineffective ones.", condition: true },
+			];
+			break;
+		case 2:
+			opts = [
+				{ key: "BFGAS-STABVL1", text: "The %H government is only able to support minimal security patrols.", condition: true },
+				{ key: "BFGAS-STABVL2", text: "During the invasion, most patrol craft were destroyed. A minimal patrol close to the planet is maintained.", condition: info.colony.attacked > 0 },
+				{ key: "BFGAS-STABVL3", text: "The system's patrols are not yet fully operational.", condition: info.economy.type == "Colonisation" },
+				{ key: "BFGAS-STABVL4", text: "The competing interests in %U only fund sporadic and poorly-organised security patrols.", condition: info.politics.governmentCategory == "Disordered" },
+				{ key: "BFGAS-STABVL5", text: "The security patrols in %U are for defense of orbital infrastructure only.", condition: true },
+				{ key: "BFGAS-STABVL6", text: "The small size of the %H colony prevents it from providing more than token security patrols.", condition: info.colony.stage < 3 },
+			];
+			break;
+		case 3:
+			opts = [
+				{ key: "BFGAS-STABL1", text: "Security patrols in the %U system generally remain close to %H.", condition: true },
+				{ key: "BFGAS-STABL2", text: "The %H government concentrates its limited resources for security patrols around key installations.", condition: true },
+				{ key: "BFGAS-STABL3", text: "The %U system's security patrols are infrequent.", condition: true },
+				{ key: "BFGAS-STABL4", text: "A lack of funding means that the security patrols in %U rarely have access to modern ships or equipment.", condition: true },
+				{ key: "BFGAS-STABL5", text: "The station at %H maintains a large security patrol for the population, but they are not able to fully secure the system.", condition: info.colony.stage == 1 },
+			];
+			break;
+		case 4:
+			opts = [
+				{ key: "BFGAS-STABA1", text: "Security patrols are present in %U on all major routes.", condition: true },
+				{ key: "BFGAS-STABA2", text: "The security patrols in %H are coordinated to protect tourist transports. Other ships may receive less support", condition: info.economy.type == "Tourism" },
+				{ key: "BFGAS-STABA3", text: "The %H government is able to fund adequate security patrols for the system.", condition: info.economy.type != "Tourism" },
+				{ key: "BFGAS-STABA4", text: "The security patrols in %H are reasonably well-equipped but do not have access to the more advanced fighters and weapons.", condition: true },
+				{ key: "BFGAS-STABA5", text: "%ND has consistently funded stronger security patrols around %H than the system's budget might normally allow.", condition: info.politics.governmentCategory == "Hierarchical" },
+			];
+			break;
+		case 5:
+			opts = [
+				{ key: "BFGAS-STABH1", text: "The %U system has high quality security patrols on all major routes.", condition: true },
+				{ key: "BFGAS-STABH2", text: "The strategic location of the %U system means that the %H government has invested in significant security patrols.", condition: info.bottle > 0 },
+				{ key: "BFGAS-STABH3", text: "Security patrols in %U provide generally good protection for visiting ships.", condition: true },
+				{ key: "BFGAS-STABH4", text: "Concerns over criminal activity have led the %H government to provide high patrol coverage of the system.", condition: true },
+				{ key: "BFGAS-STABH5", text: "The security patrols around %H are strong enough to protect trade vessels from rebel forces.", condition: info.politics.governmentCategory == "Hierarchical" },
+			];
+			break;
+		case 6:
+			opts = [
+				{ key: "BFGAS-STABVH1", text: "The security patrols in %U are extremely well-funded.", condition: info.s % 2 == 0 },
+				{ key: "BFGAS-STABVH2", text: "The %H government operates comprehensive patrols on all major routes in the system.", condition: info.s % 2 != 0 },
+				{ key: "BFGAS-STABVH3", text: "The military forces providing security patrols are equipped with the latest ships and weapons.", condition: info.politics.governmentType == "Martial Law" },
+				{ key: "BFGAS-STABVH4", text: "The shipyard at %H is strongly protected by a small defense fleet.", condition: info.economy.type == "Shipyard" },
+				{ key: "BFGAS-STABVH5", text: "The large %H population is able to fund a substantial orbital security force.", condition: info.colony.stage > 4 },
+			];
+			break;
+		case 7:
+			opts = [
+				{ key: "BFGAS-STABXH1", text: "The strategic importance of %H means that the system has comprehensive and well-equipped security patrols.", condition: info.colony.stage > 4 },
+				{ key: "BFGAS-STABXH2", text: "The security patrols in the %U system often have access to the latest military technology.", condition: true },
+				{ key: "BFGAS-STABXH3", text: "The %U has extremely extensive security patrols.", condition: true },
+				{ key: "BFGAS-STABXH4", text: "The strong %H economy has no difficulty funding very well-equipped security patrols.", condition: info.economy.productivity > 1E6 },
+				{ key: "BFGAS-STABXH5", text: "Security in the %U system is second to none.", condition: true },
+			];
+			break;
+		}
+
+		if (opts.length) {
+			do {
+				do {
+					opt = opts[info.r.rand(opts.length)];
+					block.key = opt.key;
+					block.text = opt.text;
+				} while (!opt.condition);
+			} while (!checkKey(block.key,50,true));
+			blocks.push(block);
+		}
+		
 		
 		return blocks;
 	};
 
 
+	var blocksForEconomicInformation = function(info) {
+		var blocks = [];
+		var opt, opts = [];
+		var block = {
+			importance: 20,
+			displayOrder: 12,
+			key: "",
+			text: ""
+		}
+
+		switch (info.economy.type) {
+		case "Asteroid Mining": // ~70
+			break;
+		case "Colonisation": // ~60
+			break;
+		case "Cultural": // ~125
+			break;
+		case "Farming": // ~175
+			break;
+		case "Ground Mining": // ~75
+			break;
+		case "Military": // ~15
+			block.importance = 35;
+			break;
+		case "Production": // ~50
+			break;
+		case "Quarantine": // ~50
+			break;
+		case "Refining": // ~50
+			break;
+		case "Research (Bio)": // ~25
+			block.importance = 35;
+			break;
+		case "Research (Comp)": // ~15
+			block.importance = 35;
+			break;
+		case "Research (Eng)": // ~15
+			block.importance = 35;
+			break;
+		case "Research (Mil)": // ~15
+			block.importance = 35;
+			break;
+		case "Research (Sci)": // ~15
+			block.importance = 35;
+			break;
+		case "Research (Soc)": // ~15
+			block.importance = 35;
+			break;
+		case "Salvage": // ~25
+			block.importance = 35;
+			break;
+		case "Shipyard": // ~15
+			block.importance = 35;
+			break;
+		case "Survival": // ~15 (not including uninhabited)
+			block.importance = 35;
+			break;
+		case "Terraforming": // ~40
+			block.importance = 35;
+			break;
+		case "Tourism": // ~100
+			break;
+		}
+
+		if (opts.length) {
+			do {
+				do {
+					opt = opts[info.r.rand(opts.length)];
+					block.key = opt.key;
+					block.text = opt.text;
+				} while (!opt.condition);
+			} while (!checkKey(block.key,10,true));
+			blocks.push(block);
+		}
+
+		return blocks;
+	};
 
 
 
@@ -3626,7 +3883,9 @@
 		//  ++ research eco
 		//  +++ shipyard eco
 		//  + economy flavour text
-
+		if (info.colony.stage > 0 && info.colony.homeWorld == 0) {
+			blocks = blocks.concat(blocksForEconomicInformation(info));
+		}
 
 		// Random flavour for inhabited systems about their culture or geography
 
@@ -3642,8 +3901,8 @@
 		} else {
 			for (var i=0;i<blocks.length;i++) {
 				blocks[i].text = expand(info,blocks[i].text);
-				// shuffles blocks with identical (usually very low) priority
-				blocks[i].importance += info.r.randf();
+				// shuffles blocks with similar (usually low) priority
+				blocks[i].importance += info.r.randf()*10;
 			}
 		}
 

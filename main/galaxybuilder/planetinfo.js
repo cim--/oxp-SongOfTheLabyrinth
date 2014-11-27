@@ -559,7 +559,9 @@
 		result += $plist("percent_land",fix(100*info.planet.percentLand,2));
 		result += $plist("percent_ice",fix(100*info.planet.percentIce,2));
 		result += $plist("percent_cloud",fix(100*info.planet.percentCloud,2));
+		result += $plist("has_atmosphere",info.planet.cloudAlpha>0?1:0);
 		result += $plist("cloud_alpha",fix(info.planet.cloudAlpha,2));
+
 		result += $plist("rotational_velocity",fix(info.planet.rotationalVelocity,7));
 		result += $plist("atmosphere_rotational_velocity",fix(info.planet.atmosphereVelocity,7));
 
