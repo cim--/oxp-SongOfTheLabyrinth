@@ -79,6 +79,8 @@
 	var expandDictator = ["Emperor","Empress","King","Queen","President","Viceroy","General","Admiral","Governor"];
 	var expandBridge = ["Gap","Edge","Bridge","Link","Span","Arch","Connection","Transit","Knife","Pass","Cut"];
 	var expandCriminal = ["Director","Baroness","Duchess","Baron","Duke","Elder","Commander","Captain","Commodore","Professor","Doctor","Mistress","Master","Father","Mother","Minister","the fugitive","the brigand","the outlaw","the pirate","the marauder"];
+	var expandArtMaterial = ["furs","ingredients","corals","fabrics","plants","gems","stones","ceramics","metals","wood","plastics"];	
+	var expandArtType = ["dances","songs","poems","symphonies","sculptures","plays","music","drawings","films","novels","buildings","games","photographs","paintings","gourmet meals","comedies","tragedies","romances","satires","epics","ballets","operas","serials","gardens","jewellery","carvings","fonts","prints","mosaics","clothes","murals","performances","stories","banquets"];
 	
 	var expand = function(info,string) {
 //		console.error(info,string);
@@ -133,6 +135,8 @@
 		string = string.replace(/%XL/g,expandNumber[Math.floor(expandNumber.length/2)+info.r.rand(Math.floor(expandNumber.length/2))]);
 		string = string.replace(/%XS/g,expandNumber[1+info.r.rand(Math.floor(expandNumber.length/2))]);
 		string = string.replace(/%X/g,expandNumber[info.r.rand(expandNumber.length)]);
+		string = string.replace(/%QI/g,expandArtMaterial[info.r.rand(expandArtMaterial.length)]);
+		string = string.replace(/%QO/g,expandArtType[info.r.rand(expandArtType.length)]);
 		// invasion population loss
 		string = string.replace(/%L7/g,"one billion");
 		string = string.replace(/%L6/g,"one billion");
@@ -1616,7 +1620,7 @@
 
 		} else if (redOuts == 1) {
 			// failure of ground colony (~200 cases)
-			block.importance = 15;
+			block.importance = 25;
 			
 			opts = [
 				{ key: "BFCG-GCF1", text: "The first ground settlement on %H was destroyed by %AG in %D"+redOutSteps[0]+".", condition: true },
@@ -1769,7 +1773,7 @@
 			block.importance = 10;
 			var adv = advSteps[info.r.rand(advSteps.length)];
 			// use %Dadv / %DEadv
-
+			/* TODO: Write advancement texts */
 			opts = [
 				{ key: "BFCG-ADV1", text: "", condition: true },
 			];
@@ -3172,6 +3176,41 @@
 		}
 
 
+		if (info.isolation == 3)
+		{
+			block = {
+				importance: 40,
+				displayOrder: 12,
+				key: "",
+				text: ""
+			};
+
+			// ~15
+			opts = [
+				{ key: "BFUEP-HUDB1", text: "The trade route passing through %U involves an extremely long journey through uninhabited systems, and only well-organised convoys or very well-equipped ships have the endurance for it.", condition: info.bottle > 0 },
+				{ key: "BFUEP-HUDL1", text: "Well away from inhabited space or trade routes, visitors to the %U system are extremely rare.", condition: info.connected.length == 1 },
+				{ key: "BFUEP-HUDO1", text: "Accidents of history and geography have left the %U system extremely distant from inhabited worlds.", condition: info.bottle == 0 && info.connected.length > 1 && info.planet.mineralWealth < 0.25 && info.habitability.best < 90 },
+				{ key: "BFUEP-HUDB2", text: "After several infamous ambushes of trade convoys passing through this distant bottleneck system, most now accept a slower journey for a safer route.", condition: info.bottle > 0 },
+				{ key: "BFUEP-HUDL2", text: "There are frequent rumours that this isolated system, three jumps from the nearest station, contains some secret installation. So far none have been substantiated.", condition: info.connected.length == 1 },
+				{ key: "BFUEP-HUDO2", text: "A lack of support for colonisation in this area has left %U one of the most remote systems in the eight charts.", condition: info.bottle == 0 && info.connected.length > 1 && info.planet.mineralWealth < 0.25 && info.habitability.best < 90 },
+				{ key: "BFUEP-HUDO3", text: "The system's distance from nearby stations makes the cost of extracting and transporting its minerals prohibitive for now.", condition: info.planet.mineralWealth > 0.25 },
+				{ key: "BFUEP-HUDO4", text: "%S great distance from existing settlements has left it uninhabited despite its suitable environment.", condition: info.habitability.best > 90 },
+				{ key: "BFUEP-HUDO5", text: "With its harsh environment, lack of natural resources, and lack of nearby inhabited systems, %U is one of the least visited systems in the eight charts.", condition: info.bottle == 0 && info.connected.length > 1 && info.planet.mineralWealth < 0.25 && info.habitability.best < 70 },
+			];
+
+			do {
+				do {
+					opt = opts[info.r.rand(opts.length)];
+					block.key = opt.key;
+					block.text = opt.text;
+				} while (!opt.condition);
+			} while (!checkKey(block.key,2,true));
+
+		}
+		if (block.text != "") {
+			blocks.push(block);
+		}
+
 		return blocks;
 	};
 
@@ -3180,7 +3219,7 @@
 		var blocks = [];
 		var opt, opts = [];
 		var block = {
-			importance: info.politics.governmentCategory == "Atypical"?35:20,
+			importance: info.politics.governmentCategory == "Atypical"?40:25,
 			displayOrder: 12,
 			key: "",
 			text: ""
@@ -3515,7 +3554,7 @@
 		}
 
 		block = {
-			importance: 35-(info.politics.stability*5),
+			importance: 20-(info.politics.stability*2),
 			displayOrder: 12,
 			key: "",
 			text: ""
@@ -3616,25 +3655,69 @@
 		var blocks = [];
 		var opt, opts = [];
 		var block = {
-			importance: 20,
+			importance: 25,
 			displayOrder: 12,
 			key: "",
 			text: ""
 		}
+		
+		var besthab = info.habitability.worst;
+		var sl = info.colony.species;
+		for (var k=0;k<sl.length;k++) {
+			if (info.habitability[sl[k]] > besthab) {
+				besthab = info.habitability[sl[k]];
+				// hab level for species there in any numbers
+			}
+		}
 
 		switch (info.economy.type) {
 		case "Asteroid Mining": // ~70
+			opts = [
+				{ key: "BFEI-ASTM1", text: "The asteroid mining operations in the %U system extract metal ores from the ancient rocks. While some small-scale refining and processing is carried out locally, the majority is taken to larger refining plants in other systems.", condition: true },
+				{ key: "BFEI-ASTM2", text: "%H is unable to be used for growing food, and while essential nutrition is provided by hydroponic plants aboard the station, better quality food is often desirable.", condition: besthab < 70 },
+				{ key: "BFEI-ASTM3", text: "Much of the asteroid mining in %U takes place by breaking apart smaller asteroids into transportable fragments. Spare parts for the mining ships are regularly needed.", condition: true },
+				{ key: "BFEI-ASTM4", text: "The larger and richer asteroids in %U are semi-permanently excavated by Locust-class mining ships. The slow speed of these giant vessels means that maintenance is carried out on site if possible.", condition: info.planet.mineralWealth > 0.45 },
+				{ key: "BFEI-ASTM5", text: "Common ores of iron and nickel are usually sent elsewhere for refining, but the mined chunks will be searched for rare metals and gems first, which will be directly sold for increased profit.", condition: true },
+				{ key: "BFEI-ASTM6", text: "The mining operations at %U also carry out surveys, cataloguing the various asteroid belts. The collected data is then analysed by astrophysicists to improve theories of star system formation.", condition: true },
+				{ key: "BFEI-ASTM7", text: "The high radiation levels around %H are also present in the inner asteroid belts. Shielding on the mining ships and installations rapidly degrades and needs replacing.", condition: info.planet.surfaceRadiation > 0.4 },
+				{ key: "BFEI-ASTM8", text: "A desire to preserve the environment of %H has led the system authorities to restrict mining operations to the asteroid belts.", condition: besthab >= 70 },
+			];
 			break;
 		case "Colonisation": // ~60
+			opts = [
+				{ key: "BFEI-COLO1", text: "The settlement of %H is still in its early stages, and basic supplies are constantly needed by the colonists.", condition: info.colony.founded >= 7 },
+				{ key: "BFEI-COLO2", text: "%H is undergoing a significant expansion of its settlements, and construction tools are regularly imported.", condition: info.colony.founded < 7 },
+				{ key: "BFEI-COLO3", text: "Despite the settlement's age, it is still not fully established, and basic medicines and clothes are still imported from nearby systems.", condition: info.colony.founded < 7 },
+				{ key: "BFEI-COLO4", text: "The colonists on %H are carefully cataloguing the native life, sending both samples and data to research institutes across the chart.", condition: true },
+				{ key: "BFEI-COLO5", text: "Illnesses from exposure to the unfamiliar environment on %H remain common, and the planet lacks the established production base to produce advanced medicines.", condition: true },
+				{ key: "BFEI-COLO6", text: "The plants of %H have not been fully investigated yet, and samples are sent to many systems for their properties and uses to be investigated.", condition: true },
+				{ key: "BFEI-COLO7", text: "Recent settlements such as %H do not have the industrial base to produce many specialist goods. The advanced fabrics used in protective clothing must all be imported, and the threat of the planet's %C means replacements are frequently needed.", condition: info.colony.founded >= 7 },
+			];
 			break;
 		case "Cultural": // ~125
+			opts = [
+				{ key: "BFEI-CULT1", text: "High-quality raw materials for artworks are prized on %H, with %QI being particularly popular.", condition: info.r.randf() < 0.5 },
+				{ key: "BFEI-CULT2", text: "The %QO of %H are widely-regarded, with reproductions being popular on many worlds, and originals sometimes selling for millions of credits", condition: info.r.randf() < 0.5 },
+				{ key: "BFEI-CULT3", text: "%H produces many luxury goods containing reproductions of its famous %QO, and imports the same from other worlds.", condition: info.r.randf() < 0.5 },
+				{ key: "BFEI-CULT4", text: "The continuing search for originality leads many of %S artists to experiment with mind-altering substances. Translating the results into something comprehensible to sober individuals is often a challenge, however.", condition: info.r.randf() < 0.5 },
+				{ key: "BFEI-CULT5", text: "%S economy is stable and largely self-sustaining, producing a large surplus. The majority of this surplus is spent on cultural enrichment, with the planet's %QO being particularly well-regarded.", condition: info.politics.governmentType != "Cultural Reachers" && info.r.randf() < 0.5 },
+				{ key: "BFEI-CULT6", text: "With day-to-day survival no longer a concern for %S inhabitants, many spend their time on the production of art. The system needs a constant supply of %QI to be used in their %QO.", condition: info.r.randf() < 0.5 && info.colony.attacked == 0 },
+				{ key: "BFEI-CULT7", text: "The exploration of artistic limits on %H is of great interest to social researchers who regularly review the system's work.", condition: info.r.randf() < 0.5 },
+				{ key: "BFEI-CULT8", text: "Many long-established worlds turn to the appreciation of art. %S people seek out a wide range of experiences from other worlds, and their own %QO are favourably reviewed.", condition: info.colony.founded < 5 && info.colony.attacked == 0  },
+				{ key: "BFEI-CULT9", text: "The invader attack on %H shook the settlers badly, and they have produced many %QO while attempting to comprehend their situation.", condition: info.colony.attacked >= 1 },
+				{ key: "BFEI-CULT10", text: "%H produces many artworks, though other than its %QO they are rarely appreciated off-world.", condition: info.colony.species.length == 1 },
+				{ key: "BFEI-CULT11", text: "The artists of %H are renowned for their imaginative use of %QI.", condition: info.r.randf() < 0.5 },
+				{ key: "BFEI-CULT12", text: "The citizens of %H import clothes and food from across the chart, looking to combine them into unique experiences.", condition: info.r.randf() < 0.5 },
+				{ key: "BFEI-CULT13", text: "%H produces many fine luxury goods inspired by their thriving artistic community.", condition: info.r.randf() < 0.5 && info.colony.attacked == 0 },
+				{ key: "BFEI-CULT14", text: "The settlers of %H have attempted to find solace in art after the damage caused to their world during the invasion.", condition: info.colony.attacked >= 1 },
+			];
 			break;
 		case "Farming": // ~175
 			break;
 		case "Ground Mining": // ~75
 			break;
 		case "Military": // ~15
-			block.importance = 35;
+			block.importance = 40;
 			break;
 		case "Production": // ~50
 			break;
@@ -3643,34 +3726,34 @@
 		case "Refining": // ~50
 			break;
 		case "Research (Bio)": // ~25
-			block.importance = 35;
+			block.importance = 40;
 			break;
 		case "Research (Comp)": // ~15
-			block.importance = 35;
+			block.importance = 40;
 			break;
 		case "Research (Eng)": // ~15
-			block.importance = 35;
+			block.importance = 40;
 			break;
 		case "Research (Mil)": // ~15
-			block.importance = 35;
+			block.importance = 40;
 			break;
 		case "Research (Sci)": // ~15
-			block.importance = 35;
+			block.importance = 40;
 			break;
 		case "Research (Soc)": // ~15
-			block.importance = 35;
+			block.importance = 40;
 			break;
 		case "Salvage": // ~25
-			block.importance = 35;
+			block.importance = 40;
 			break;
 		case "Shipyard": // ~15
-			block.importance = 35;
+			block.importance = 40;
 			break;
 		case "Survival": // ~15 (not including uninhabited)
-			block.importance = 35;
+			block.importance = 40;
 			break;
 		case "Terraforming": // ~40
-			block.importance = 35;
+			block.importance = 40;
 			break;
 		case "Tourism": // ~100
 			break;
@@ -3714,6 +3797,7 @@
 		info.economy = p.get(g,s,"economy");
 		info.habitability = p.get(g,s,"habitability");
 		info.names = p.get(g,s,"names");
+		info.isolation = p.get(g,s,"uninhabitedDistance");
 		info.r = r;
 		info.p = p;
 		info.bottle = p.bottleneckType(g,s);

@@ -271,6 +271,39 @@
 	}
 
 
+	planetinfo.uninhabitedDistances = function(gal) {
+		var found = {};
+		var foundc = 0;
+		for (var j=0;j<planetinfo.systems;j++) {
+			if (planetdata[gal][j].colony.stage > 0) {
+				found[j] = 1;
+				foundc++;
+				planetdata[gal][j].uninhabitedDistance = 0;
+			}
+		}
+		var undist = 1;
+
+		while (foundc < 256) {
+			for (var j=0;j<planetinfo.systems;j++) {
+				if (found[j] == undist) {
+					var connected = planetdata[gal][j].connectedSystems;
+					for (var k = 0; k < connected.length; k++) {
+						var other = connected[k];
+						if (!found[other]) {
+							foundc++;
+							found[other] = undist+1;
+							planetdata[gal][other].uninhabitedDistance = undist;
+						}
+					}
+				}
+			}
+//			console.error("Gal "+gal+" undist "+undist+" count "+foundc);
+			undist++;
+		}
+
+	};
+
+
 	planetinfo.foundColony = function(gal,sys,specs,stage,tl,terraform) {
 		if (terraform) { terraform = true; } else { terraform = false; } 
 		var colony = planetinfo.get(gal,sys,"colony");
@@ -613,6 +646,7 @@
 			result += $plist("planet_surface_radiation",fix(info.planet.surfaceRadiation,3));
 			result += $plist("planet_surface_gravity",fix(info.planet.surfaceGravity,2));
 			result += $plist("planet_seismic_instability",fix(info.planet.seismicInstability,3));
+			result += $plist("undist",info.uninhabitedDistance);
 			result += $plist("attacked",info.colony.attacked);
 			result += $plist("contested",info.colony.contested);
 			result += $plist("independent_hub",info.colony.independentHub);

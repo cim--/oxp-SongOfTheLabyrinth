@@ -1961,6 +1961,9 @@ random.setStart(260000);
 				politics.stability = st;
 			}
 		}
+
+		// uninhabited system stability
+		$.uninhabitedDistances(i);
 	}
 }());
 
