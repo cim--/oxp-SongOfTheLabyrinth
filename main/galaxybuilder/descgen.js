@@ -64,7 +64,7 @@
 	}
 
 	var expandMinerals = ["Platinum","Rhodium","Gold","Iridium","Osmium","Palladium","Rhenium","Ruthenium","Indium","Tellurium","Bismuth"];
-	var expandCreatures = ["fungi","vines","leviathans","creatures","trees","grasses","mammoths","behemoths","plants","animals","predators","swarms","venomous creatures","pollen","burrowers","worms","amoebas","scavengers","beasts","colossi","titans","constrictors","herds"];
+	var expandCreatures = ["leviathans","creatures","mammoths","behemoths","animals","predators","swarms","venomous creatures","burrowers","worms","amoebas","scavengers","beasts","colossi","titans","constrictors","herds","fungi","vines","trees","grasses","plants","pollen"]; // first 17 are animals
 	var expandPolitics = ["taxation","funding","economic policy","migration","settlement","mineral rights","trade routes","leadership changes","autonomy","civil rights"];
 	var expandAccident = ["an asteroid storm","a reactor explosion","a collision","an unusually severe solar flare","a thruster failure","life-support failures","a coolant leak","a fuel leak","unknown causes","radical saboteurs"];
 	var expandGroundAccident = ["a plague","an unexpected earthquake","an asteroid strike","a supply ship crashing","a reactor failure","a radiation leak","civil war","a massive storm","contamination","uncontrolled fires"];
@@ -98,6 +98,10 @@
 		string = string.replace(/%NV/g,info.names.criminal);
 
 		// some specifics here
+		var sl = info.species.list();
+		if (string.match(/%IX/)) {
+			string = string.replace(/%IX/g,info.species.name(sl[info.r.rand(sl.length)]));
+		}
 		string = string.replace(/%IB/g,info.species.name("Bird"));
 		string = string.replace(/%II/g,info.species.name("Insect"));
 		string = string.replace(/%IRS/g,info.species.pluralName("Rodent"));
@@ -117,26 +121,65 @@
 			string = string.replace(/%NN/g,info.species.retrieveName(info.colony.species[0],info.r));
 			string = string.replace(/%N/g,info.species.word(info.colony.species[0],info.r));
 		}
-		string = string.replace(/%B1/g,expandBridge[info.r.rand(expandBridge.length)]);
-		string = string.replace(/%M/g,expandMinerals[info.r.rand(expandMinerals.length)]);
-		string = string.replace(/%P/g,expandPolitics[info.r.rand(expandPolitics.length)]);
-		string = string.replace(/%C/g,expandCreatures[info.r.rand(expandCreatures.length)]);
-		string = string.replace(/%AG2/g,expandGroundAccident[info.r.rand(expandGroundAccident.length)]);
-		string = string.replace(/%AG/g,expandGroundAccident[info.r.rand(expandGroundAccident.length)]);
-		string = string.replace(/%A/g,expandAccident[info.r.rand(expandAccident.length)]);
-		string = string.replace(/%Y/g,expandCity[info.r.rand(expandCity.length)]);
-		string = string.replace(/%GN/g,expandGovernment[info.r.rand(4)]);
-		string = string.replace(/%G/g,expandGovernment[info.r.rand(expandGovernment.length)]);
-		string = string.replace(/%B/g,expandBusiness[info.r.rand(expandBusiness.length)]);
-		string = string.replace(/%W/g,expandWarmonger[info.r.rand(expandWarmonger.length)]);
-		string = string.replace(/%V/g,expandDictator[info.r.rand(expandDictator.length)]);
-		string = string.replace(/%T/g,expandTribunal[info.r.rand(expandTribunal.length)]);
-		string = string.replace(/%R/g,expandResearch[info.r.rand(expandResearch.length)]);
-		string = string.replace(/%XL/g,expandNumber[Math.floor(expandNumber.length/2)+info.r.rand(Math.floor(expandNumber.length/2))]);
-		string = string.replace(/%XS/g,expandNumber[1+info.r.rand(Math.floor(expandNumber.length/2))]);
-		string = string.replace(/%X/g,expandNumber[info.r.rand(expandNumber.length)]);
-		string = string.replace(/%QI/g,expandArtMaterial[info.r.rand(expandArtMaterial.length)]);
-		string = string.replace(/%QO/g,expandArtType[info.r.rand(expandArtType.length)]);
+		if (string.match(/%B1/)) {
+			string = string.replace(/%B1/g,expandBridge[info.r.rand(expandBridge.length)]);
+		} 
+		if (string.match(/%M/)) {
+			string = string.replace(/%M/g,expandMinerals[info.r.rand(expandMinerals.length)]);
+		}
+		if (string.match(/%P/)) {
+			string = string.replace(/%P/g,expandPolitics[info.r.rand(expandPolitics.length)]);
+		}
+		if (string.match(/%CA/)) {
+			string = string.replace(/%CA/g,expandCreatures[info.r.rand(17)]); // animals only
+		}
+		if (string.match(/%C/)) {
+			string = string.replace(/%C/g,expandCreatures[info.r.rand(expandCreatures.length)]);
+		}
+		if (string.match(/%AG2/)) {
+			string = string.replace(/%AG2/g,expandGroundAccident[info.r.rand(expandGroundAccident.length)]);
+		} 
+		if (string.match(/%AG/)) {
+			string = string.replace(/%AG/g,expandGroundAccident[info.r.rand(expandGroundAccident.length)]);
+		} 
+		if (string.match(/%A/)) {
+			string = string.replace(/%A/g,expandAccident[info.r.rand(expandAccident.length)]);
+		}
+		if (string.match(/%Y/)) {
+			string = string.replace(/%Y/g,expandCity[info.r.rand(expandCity.length)]);
+		}
+		if (string.match(/%GN/)) {
+			string = string.replace(/%GN/g,expandGovernment[info.r.rand(4)]);
+		}
+		if (string.match(/%G/)) {
+			string = string.replace(/%G/g,expandGovernment[info.r.rand(expandGovernment.length)]);
+		}
+		if (string.match(/%B/)) {
+			string = string.replace(/%B/g,expandBusiness[info.r.rand(expandBusiness.length)]);
+		} if (string.match(/%W/)) {
+			string = string.replace(/%W/g,expandWarmonger[info.r.rand(expandWarmonger.length)]);
+		} if (string.match(/%V/)) {
+			string = string.replace(/%V/g,expandDictator[info.r.rand(expandDictator.length)]);
+		} if (string.match(/%T/)) {
+			string = string.replace(/%T/g,expandTribunal[info.r.rand(expandTribunal.length)]);
+		} if (string.match(/%R/)) {
+			string = string.replace(/%R/g,expandResearch[info.r.rand(expandResearch.length)]);
+		} 
+		if (string.match(/%XL/)) {
+			string = string.replace(/%XL/g,expandNumber[Math.floor(expandNumber.length/2)+info.r.rand(Math.floor(expandNumber.length/2))]);
+		}
+		if (string.match(/%XS/)) {
+			string = string.replace(/%XS/g,expandNumber[1+info.r.rand(Math.floor(expandNumber.length/2))]);
+		} 
+		if (string.match(/%X/)) {
+			string = string.replace(/%X/g,expandNumber[info.r.rand(expandNumber.length)]);
+		} 
+		if (string.match(/%QI/)) {
+			string = string.replace(/%QI/g,expandArtMaterial[info.r.rand(expandArtMaterial.length)]);
+		} 
+		if (string.match(/%QO/)) {
+			string = string.replace(/%QO/g,expandArtType[info.r.rand(expandArtType.length)]);
+		} 
 		// invasion population loss
 		string = string.replace(/%L7/g,"one billion");
 		string = string.replace(/%L6/g,"one billion");
@@ -159,32 +202,66 @@
 		string = string.replace(/%DE9/g,"consolidation");
 		string = string.replace(/%DE10/g,"invasion");
 		// initial colonisation
-// if needed, has to move below %D10 anyway
-		string = string.replace(/%D2/g,(info.r.rand(250)+150)+" kD");
+		// if needed, has to move below %D10 anyway
+		if (string.match(/%D2/)) {
+			string = string.replace(/%D2/g,(info.r.rand(250)+150)+" kD");
+		}
 		// initial colonisation 2
-		string = string.replace(/%D3/g,(info.r.rand(150)+400)+" kD");
+		if (string.match(/%D3/)) {
+			string = string.replace(/%D3/g,(info.r.rand(150)+400)+" kD");
+		}
 		// galdrive phase
-		string = string.replace(/%D4/g,(info.r.rand(50)+550)+" kD");
+		if (string.match(/%D4/)) {
+			string = string.replace(/%D4/g,(info.r.rand(50)+550)+" kD");
+		}
 		// cooperative phases
-		string = string.replace(/%D5E/g,(info.r.rand(15)+600)+" kD");
-		string = string.replace(/%D5/g,(info.r.rand(135)+615)+" kD");
-		string = string.replace(/%D6/g,(info.r.rand(100)+750)+" kD");
-		string = string.replace(/%D7/g,(info.r.rand(50)+850)+" kD");
+		if (string.match(/%D5E/)) {
+			string = string.replace(/%D5E/g,(info.r.rand(15)+600)+" kD");
+		}
+		if (string.match(/%D5/)) {
+			string = string.replace(/%D5/g,(info.r.rand(135)+615)+" kD");
+		}
+		if (string.match(/%D6/)) {
+			string = string.replace(/%D6/g,(info.r.rand(100)+750)+" kD");
+		}
+		if (string.match(/%D7/)) {
+			string = string.replace(/%D7/g,(info.r.rand(50)+850)+" kD");
+		}
 		// terraforming phase
-		string = string.replace(/%D8E/g,(info.r.rand(15)+895)+" kD");
-		string = string.replace(/%D8L/g,(info.r.rand(40)+980)+" kD");
-		string = string.replace(/%D8/g,(info.r.rand(100)+910)+" kD");
+		if (string.match(/%D8E/)) {
+			string = string.replace(/%D8E/g,(info.r.rand(15)+895)+" kD");
+		}
+		if (string.match(/%D8L/)) {
+			string = string.replace(/%D8L/g,(info.r.rand(40)+980)+" kD");
+		}
+		if (string.match(/%D8/)) {
+			string = string.replace(/%D8/g,(info.r.rand(100)+910)+" kD");
+		}
 		// consolidation phase
-		string = string.replace(/%D9/g,(info.r.rand(126)+1000)+" kD");
+		if (string.match(/%D9/)) {
+			string = string.replace(/%D9/g,(info.r.rand(126)+1000)+" kD");
+		}
 		// invasion phase
-		string = string.replace(/%D10E/g,(info.r.rand(3)+1126)+" kD");
-		string = string.replace(/%D10/g,(info.r.rand(16)+1126)+" kD");
+		if (string.match(/%D10E/)) {
+			string = string.replace(/%D10E/g,(info.r.rand(3)+1126)+" kD");
+		}
+		if (string.match(/%D10/)) {
+			string = string.replace(/%D10/g,(info.r.rand(16)+1126)+" kD");
+		}
 		// post-invasion
-		string = string.replace(/%D11/g,(info.r.rand(3)+1142)+" kD");
+		if (string.match(/%D11/)) {
+			string = string.replace(/%D11/g,(info.r.rand(3)+1142)+" kD");
+		}
 		// witchdrive discovery
-		string = string.replace(/%D1E/g,(info.r.rand(20)+110)+" kD");
-		string = string.replace(/%D1L/g,(info.r.rand(20)+130)+" kD");
-		string = string.replace(/%D1/g,(info.r.rand(40)+110)+" kD");
+		if (string.match(/%D1E/)) {
+			string = string.replace(/%D1E/g,(info.r.rand(20)+110)+" kD");
+		}
+		if (string.match(/%D1L/)) {
+			string = string.replace(/%D1L/g,(info.r.rand(20)+130)+" kD");
+		}
+		if (string.match(/%D1/)) {
+			string = string.replace(/%D1/g,(info.r.rand(40)+110)+" kD");
+		}
 
 		// fix %X %L1/%L4
 		string = string.replace("one ten","ten");
@@ -3175,16 +3252,14 @@
 			blocks.push(block);
 		}
 
-
+		block = {
+			importance: 40,
+			displayOrder: 12,
+			key: "",
+			text: ""
+		};
 		if (info.isolation == 3)
 		{
-			block = {
-				importance: 40,
-				displayOrder: 12,
-				key: "",
-				text: ""
-			};
-
 			// ~15
 			opts = [
 				{ key: "BFUEP-HUDB1", text: "The trade route passing through %U involves an extremely long journey through uninhabited systems, and only well-organised convoys or very well-equipped ships have the endurance for it.", condition: info.bottle > 0 },
@@ -3710,38 +3785,138 @@
 				{ key: "BFEI-CULT12", text: "The citizens of %H import clothes and food from across the chart, looking to combine them into unique experiences.", condition: info.r.randf() < 0.5 },
 				{ key: "BFEI-CULT13", text: "%H produces many fine luxury goods inspired by their thriving artistic community.", condition: info.r.randf() < 0.5 && info.colony.attacked == 0 },
 				{ key: "BFEI-CULT14", text: "The settlers of %H have attempted to find solace in art after the damage caused to their world during the invasion.", condition: info.colony.attacked >= 1 },
+				{ key: "BFEI-CULT15", text: "While not renowned for its own artworks, %H uses its wealth to collect art from across the chart. The current fashion for %QO has led to very high auction prices.", condition: info.politics.governmentType != "Cultural Reachers" },
 			];
 			break;
 		case "Farming": // ~175
+			block.importance = 24; // very common, downgrade slightly
+			opts = [
+				{ key: "BFEI-FARM1", text: "To avoid damaging %S environment, the planet contains very little heavy industry. Tools and machinery for the farmers must often be imported from other systems.", condition: true },
+				{ key: "BFEI-FARM2", text: "The farms of %H produce much of the area's luxury foods, with modern fertilisers often having to be imported to meet the growing demand.", condition: true },
+				{ key: "BFEI-FARM3", text: "%S underwater farms produce beautiful corals for use in decorations and jewellery.", condition: info.colony.species.indexOf("Lobster") != -1 },
+				{ key: "BFEI-FARM4", text: "%H has an unusual species of native %C, which can be farmed to produce a fur-like substance in demand in the colder systems.", condition: true },
+				{ key: "BFEI-FARM5", text: "The %CA of %H are very versatile, with the farming settlements using them for food, materials and occasionally selling them off-world.", condition: true },
+				{ key: "BFEI-FARM6", text: "The conditions on %H are ideal for growing many fabric crops, and the good quality makes them popular with fashion designers across the chart.", condition: true },
+				{ key: "BFEI-FARM7", text: "Spare parts and tools to allow the farmers of %H to maintain and repair their equipment in the harsh conditions are constantly in demand.", condition: info.habitability.best < 85 },
+				{ key: "BFEI-FARM8", text: "The native plants of %H contain chemicals which are mind-altering for %IX. The export of these significantly supplements their income from more conventional foods and textiles.", condition: true },
+				{ key: "BFEI-FARM9", text: "In addition to being suitable for crops, many areas of %H contain clays suitable for use in decorative and industrial ceramics.", condition: true },
+				{ key: "BFEI-FARM10", text: "While the landscape of %H supports many plants grown for their use in hard-wearing fabrics, the harsh conditions require the import of advanced farming equipment.", condition: info.habitability.best < 80 },
+				{ key: "BFEI-FARM11", text: "The similarity of %H to %O means that it is able to produce a wide range of food to supplement the diets of %I here and in nearby systems.", condition: info.habitability[info.colony.species[0]] > 90 },
+				{ key: "BFEI-FARM12", text: "The fur of the animals of %H is warmer than many synthetic materials, and is often in demand on the colder worlds.", condition: info.planet.temperature < 10 },
+				{ key: "BFEI-FARM13", text: "Agricultural worlds such as %H provide foods and other organic products to their more industrial neighbours whose environments only allow for basic hydroponic facilities.", condition: true },
+				{ key: "BFEI-FARM14", text: "The farming on %H requires careful maintenance of the planetary environment, and mining and production industries are significantly restricted. As a result the planet must import much of its tools.", condition: true },
+				{ key: "BFEI-FARM15", text: "The settlers of %H hunt the wild %CA, whose meat and hides are prized across the region.", condition: info.economy.reason == "Wilderness" }
+			];
 			break;
 		case "Ground Mining": // ~75
+			opts = [
+				{ key: "BFEI-GRMN1", text: "The mining operations at %H produce large quantities of metal ores which are transported to refineries in other systems for processing.", condition: true },
+				{ key: "BFEI-GRMN2", text: "The long presence of life on %H has left rich seams of hydrocarbons, which are taken to other systems for use in plastics.", condition: info.habitability.best > 60 },
+				{ key: "BFEI-GRMN3", text: "The harsh surface conditions of %H are unsuitable for growing food, and so the miners must live on dull hydroponic food and whatever passing traders will sell to them.", condition: info.habitability.best < 70 },
+				{ key: "BFEI-GRMN4", text: "The crust of %H contains many metamorphic rocks and gemstones which are either unique or rarely found elsewhere, and are highly valued for their decorative nature.", condition: true },
+				{ key: "BFEI-GRMN5", text: "Telepresence devices are in high demand on %H to allow the mining of valuable minerals without needing to personally venture out onto the planet's hostile surface.", condition: info.habitability.best < 40 },
+				{ key: "BFEI-GRMN6", text: "The mining operations at %H require a constant supply of machinery to expand the operations, and spare parts to repair older equipment.", condition: true },
+				{ key: "BFEI-GRMN7", text: "Tools for mining %S valuable mineral ores continually wear out and need replacing, but the system lacks the production capacity to do much of this locally.", condition: true },
+				{ key: "BFEI-GRMN8", text: "Mining on %H provides easy access to many common mineral ores, as well as a few precious metals such as %M.", condition: true },
+			];
 			break;
 		case "Military": // ~15
+			opts = [
+				{ key: "BFEI-MLTY1", text: "Very little is produced at the military installations of %H, with supplies of medicines, ship components, weapons and fuel mostly needing to be imported.", condition: true },
+				{ key: "BFEI-MLTY2", text: "Data from field trials of military equipment at %H often needs to be securely returned to the research institutes for further analysis.", condition: true },
+				{ key: "BFEI-MLTY3", text: "While it lacks a full shipyard, the military base at %H carries out regular maintenance and upgrades to the fleet, with supplies of advanced computers, sensors, weapons and other parts vital to this work.", condition: true },
+			];
 			block.importance = 40;
 			break;
 		case "Production": // ~50
+			opts = [
+				{ key: "BFEI-PROD1", text: "Most systems carry out some local production, but on %H a focus on it has led to highly efficient factories which can often out-compete them even after transport costs are accounted for.", condition: true },
+				{ key: "BFEI-PROD2", text: "Refined metals, plastics, and organic materials are used in the factories of %H to make a range of machinery and tools.", condition: true },
+				{ key: "BFEI-PROD3", text: "%H specialises in producing radiation shields, and imports large quantities of high quality ceramics and metals every day.", condition: true },
+				{ key: "BFEI-PROD4", text: "Textiles produced on farming worlds or in synthetic plants are converted into functional clothing on %H. Their environmental suits are always in demand.", condition: true },
+				{ key: "BFEI-PROD5", text: "%S factories produce some of the highest quality tools and machinery in the eight charts. They work closely with engineering research institutes, and regularly send performance data of new designs back there.", condition: true },
+				{ key: "BFEI-PROD6", text: "High quality refined materials such as metal alloys, ceramics and plastics are constantly required by %S factories. Experiments in domestic production have generally been less profitable than shipping from more specialist systems.", condition: true },
+				{ key: "BFEI-PROD7", text: "The facilities at %H are able to synthesise advanced medicines capable of treating many of the most severe diseases. Transporting these medicines to where they are needed is often a logistical challenge.", condition: true },
+			];
 			break;
 		case "Quarantine": // ~50
+			if (info.economy.reason == "Terraforming") {
+				opts = [
+					{ key: "BFEI-QUAR1", text: "Unexpected side-effects of environmental modification have caused problems on %H. While the situation is stabilised, surface-orbit transfers are strictly controlled.", condition: true },
+					{ key: "BFEI-QUAR2", text: "The planet is currently carrying out the "+nth(info.r.rand(3)+1)+" phase of its environmental modification programme, and landing is currently strictly restricted.", condition: true },
+					{ key: "BFEI-QUAR3", text: "The surface has been evacuated and sealed after an environmental modification plant ran out of control. The plant has been shut down and it is hoped that the situation will soon return to normal.", condition: true },
+				];
+			} 
+			// else the *government* is also going to be Quarantine
+			// and there's no point in duplicating here
 			break;
 		case "Refining": // ~50
+			opts = [
+				{ key: "BFEI-REFN1", text: "The refining plants in this system convert both locally-mined and imported ore into pure metals and alloys.", condition: true },
+				{ key: "BFEI-REFN2", text: "%S refining industry produces much of the fuel used by spacecraft in the chart. The high-energy reactions needed to produce it mean that the plant machinery must be replaced frequently.", condition: true },
+				{ key: "BFEI-REFN3", text: "Oils and other hydrocarbons are converted into a range of useful plastics on %H, before being sold on to more advanced production systems.", condition: true },
+				{ key: "BFEI-REFN4", text: "Ore from mining systems is brought to %H and processed. Precious metals such as %M are refined to a pure form, while other ores are used to make alloys for ship hulls and industrial purposes.", condition: true },
+				{ key: "BFEI-REFN5", text: "The giant refineries of %H produce vast quantities of chemicals, from ship fuel, to fertiliser, to industrial plastics.", condition: true },
+				{ key: "BFEI-REFN6", text: "As a mining settlement like %H matures, refineries are installed to allow it to sell alloys and metals in a pure form for a much higher price than the raw ore would fetch.", condition: info.planet.mineralWealth > 0.45 },
+				{ key: "BFEI-REFN7", text: "The advanced alloys, ceramics and plastics produced on %H are sold to make machinery in nearby factory systems. Some of this machinery will return here to maintains the refineries.", condition: true },
+			];
 			break;
 		case "Research (Bio)": // ~25
-			block.importance = 40;
+			block.importance = 80;
+			opts = [
+				{ key: "BFEI-RESB1", text: "The native life of %H is of great interest to researchers, with its %C and %CA being particularly unusual. The majority of the settlement is research facilities.", condition: info.economy.reason == "Native Life" },
+				{ key: "BFEI-RESB2", text: "The wilderness of %H is under observation as part of a USC-funded research project. The planetary inhabitants are restricted to researchers and their support staff.", condition: info.economy.reason == "Wilderness" },
+				{ key: "BFEI-RESB3", text: "%H contains one of the most respected biological research facilities in the eight charts. Many new medicines and drugs have been developed here, and it is also heavily involved in the improvement of environmental manipulation technologies.", condition: info.colony.stage > 3 },
+				{ key: "BFEI-RESB4", text: "The research institutes on %H host one of the largest catalogues of biological data in the eight charts, collecting samples and recordings of animals and plants, as well as importing a large amount of computing hardware to process this data.", condition: info.colony.stage > 3 },
+				{ key: "BFEI-RESB5", text: "%S orbital station contains a small research installation observing the planet below. Planetary settlements are restricted to data collection sites and supporting infrastructure.", condition: info.economy.reason == "Wilderness" },
+			];
 			break;
 		case "Research (Comp)": // ~15
-			block.importance = 40;
+			block.importance = info.politics.governmentType == "Transapientism"?40:80;
+			opts = [
+				{ key: "BFEI-RESC1", text: "The system imports as many metals and fabrication tools as it can afford to build its own designs of advanced computer. While they have not yet produced a transapient AI, they have made a few breakthroughs in sensor and computing technology the sale of which keeps their economy going.", condition: info.politics.governmentType == "Transapientism" },
+				{ key: "BFEI-RESC2", text: "The research carried out into AI on %H has not yet produced a working system, but they have made advancements in the area of computer sensing, allowing them to sell advanced sensors and telepresence kits.", condition: info.politics.governmentType == "Transapientism" },
+				{ key: "BFEI-RESC3", text: "The computing research institutes at %H require a constant supply of precision machinery and precious metals to prototype new computing technologies.", condition: info.politics.governmentType != "Transapientism" },
+				{ key: "BFEI-RESC4", text: "%S computing research has made many breakthroughs, and for a price the latest advanced computers may be purchased here. Most go to other research systems to help with their data processing, or to the military.", condition: info.politics.governmentType != "Transapientism" },
+				{ key: "BFEI-RESC5", text: "Computing technology is widely used in all aspects of life, and the need to make smaller or faster computers remains. The prototypes produced here are generally initially too expensive to be built commercially, but over time the cost will decrease.", condition: info.politics.governmentType != "Transapientism" }
+			];
 			break;
 		case "Research (Eng)": // ~15
-			block.importance = 40;
+			block.importance = 80;
+			opts = [
+				{ key: "BFEI-RESE1", text: "The research centres of %H have made several famous advances in production technology, and produce many of the tools used by other research worlds. Raw materials of any quality are always required for experiments.", condition: true },
+				{ key: "BFEI-RESE2", text: "%H specialises in developing new radiation shields. Ceramics, alloys, plastics and even plants are all tested to improve the protection/weight ratio.", condition: true },
+				{ key: "BFEI-RESE3", text: "The engineering of ships is of course one of the key areas of research for the USC as a whole. On %H, prototype components are developed and tested. Experienced pilots may be able to volunteer for field tests and get significantly reduced prices.", condition: true },
+				{ key: "BFEI-RESE4", text: "The research institutes of %H analyse the performance of tools and heavy machinery, using a combination of samples and field data, to make recommendations for improvements.", condition: true },
+			];
 			break;
 		case "Research (Mil)": // ~15
-			block.importance = 40;
+			block.importance = 80;
+			opts = [
+				{ key: "BFEI-RESM1", text: "Protected by the USC, military researchers search the ruins of %H and the surrounding system for residue from invaders weapons, in the hope of developing countermeasures.", condition: info.economy.reason == "Ruins" },
+				{ key: "BFEI-RESM2", text: "The military research base at %H is heavily protected. High-quality materials are often purchased at the nearby civilian station, for manufacture of the latest weapon and shield technology.", condition: info.economy.reason == "Military" },
+				{ key: "BFEI-RESM3", text: "The invasion required rapid advancement in USC military technology, and %H was chosen in %D10E to receive billions of credits of research funding. Data about the performance of weapons in the field is collected and used to build the next generation.", condition: info.economy.reason != "Military" && info.economy.reason != "Ruins" },
+				{ key: "BFEI-RESM4", text: "%H builds some of the latest prototypes of ship and weapon technology, carrying out R&D contracts for both the USC and major system militaries around the eight charts.", condition: info.economy.reason != "Military" && info.economy.reason != "Ruins" },
+				{ key: "BFEI-RESM5", text: "The effects of the destruction on %H are carefully studied by USC military researchers in the hope of understanding more about the invaders' assault weapons.", condition: info.economy.reason == "Ruins" },
+				{ key: "BFEI-RESM6", text: "%S research base contains a small shipyard where the latest prototype military craft are produced. Prototype versions of the Espadon and Tabarzin fighters were built here during the invasion.", condition: info.economy.reason == "Military" },
+				{ key: "BFEI-RESM7", text: "The destruction of %H by the invaders used weapons unknown to the USC, and data retrieved from the few survivors is inconclusive. Researchers are scouring the system for any clues that can be found about what happened here.", condition: info.economy.reason == "Ruins" },
+			];
 			break;
 		case "Research (Sci)": // ~15
-			block.importance = 40;
+			block.importance = 80;
+			opts = [
+				{ key: "BFEI-RESS1", text: "%H is most famous for its pure science research, especially in physics, chemistry and astronomy. The system imports the latest machinery and computers to carry out its research.", condition: true },
+				{ key: "BFEI-RESS2", text: "The research institutes of %H are constantly pushing back the boundaries of knowledge. Most of their discoveries are tens if not hundreds of kilodays from having practical use, though some with potential may be taken to other more applied research worlds.", condition: true },
+				{ key: "BFEI-RESS3", text: "Specialising in witchspace theory, %S researchers are working on understanding the mysteries of this travel form, including the unusual topology of the eight charts. With the recent invasion using a poorly understood witchspace method, their research has gained considerable urgency.", condition: true },
+			];
 			break;
 		case "Research (Soc)": // ~15
-			block.importance = 40;
+			block.importance = 80;
+			opts = [
+				{ key: "BFEI-RESO1", text: "%H is well-respected for its research institutes' studies of society across the eight charts. They regularly obtain loaned artworks and luxuries from other worlds as part of their studies.", condition: true },
+				{ key: "BFEI-RESO2", text: "The rapid meeting of eight species following the discovery of cross-chart witchspace caused many major changes in all their societies, and the emergence of many new societies. On %H, researchers try to examine the impact of these changes, to assist future decisions.", condition: true },
+				{ key: "BFEI-RESO3", text: "The invasion brought the largest changes in collective psychology since unification. Researchers on %H attempt to understand how society is coping with the threat of a return, and how best to prepare people for another war if it comes.", condition: true },
+			];
 			break;
 		case "Salvage": // ~25
 			block.importance = 40;
@@ -3760,13 +3935,21 @@
 		}
 
 		if (opts.length) {
+			var limit = 10;
+			if (info.economy.type.match(/Research/)) {
+				limit = 2;
+				if (info.economy.type.match(/(Eng|Sci|Soc)/)) {
+					// these types don't have specific sources and so are rarer
+					limit = 1;
+				}
+			}
 			do {
 				do {
 					opt = opts[info.r.rand(opts.length)];
 					block.key = opt.key;
 					block.text = opt.text;
 				} while (!opt.condition);
-			} while (!checkKey(block.key,10,true));
+			} while (!checkKey(block.key,limit,true));
 			blocks.push(block);
 		}
 

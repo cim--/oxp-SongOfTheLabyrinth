@@ -1267,7 +1267,7 @@ random.setStart(220000);
 			colony.population = pop;
 			colony.populationDescription = pdesc;
 			
-			$.economyType(i,j,random.rand(6),random.randf());
+			$.economyType(i,j,random.rand(6),random.randf(),random);
 
 		}
 	}
@@ -1891,6 +1891,8 @@ random.setStart(245000);
 				politics.governmentType = "None";
 			} else if (politics.governmentType == "Isolationist" && economy.type == "Quarantine") {
 				politics.governmentType = "Quarantine";
+			} else if (politics.governmentType == "Transapientism" && (random.rand(7) < colony.stage || economy.type.match(/Research/))) {
+				economy.type = "Research (Comp)";
 			}
 		}
 	}

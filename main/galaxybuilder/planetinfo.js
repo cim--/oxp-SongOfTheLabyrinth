@@ -61,22 +61,25 @@
 		"Empty": ["Survival","Survival","Survival","Survival","Survival","Survival"],
 		"Native Empty": ["Quarantine","Quarantine","Quarantine","Quarantine","Quarantine","Quarantine"],
 		"Ruins": ["Survival","Survival","Salvage","Research (Mil)","Quarantine","Military"],
-		"Native Life": ["Quarantine","Quarantine","Tourism","Research (Bio)","Colonisation","Colonisation"],
-		"Wilderness": ["Colonisation","Colonisation","Tourism","Farming","Survival","Research (Bio)"],
+		"Native Life": ["Quarantine","Quarantine","Quarantine","Research (Bio)?","Colonisation","Colonisation"],
+		"Wilderness": ["Colonisation","Colonisation","Salvage","Farming","Survival","Research (Bio)?"],
 		"Terraforming": ["Terraforming","Terraforming","Terraforming","Colonisation","Colonisation","Quarantine"],
 		"Outsiders": ["Survival","Survival","Salvage","Colonisation","Asteroid Mining","Asteroid Mining"],
 		"Extraction": ["Asteroid Mining","Asteroid Mining","Ground Mining","Ground Mining","Ground Mining","Refining"],
 		"Agriculture I": ["Farming","Farming","Farming","Tourism","Cultural","Terraforming"],
 		"Agriculture II": ["Farming","Farming","Tourism","Cultural","Cultural","Cultural"],
 		"Industrial I": ["Refining","Refining","Refining","Production","Production","Production"],
-		"Industrial II": ["Refining","Production","Production","Research (Eng)","Research (Comp)","Shipyard"],
+		"Industrial II": ["Refining","Production","Production","Production","Shipyard","Shipyard"],
 		"Mixed": ["Cultural","Cultural","Tourism","Farming","Production","*Research*"],
 		"Specialist I": ["Cultural","*Research*","*Research*","*Research*","*Research*","Shipyard"],
-		"Specialist II": ["Research (Comp)","Research (Comp)","Research (Eng)","Research (Eng)","Research (Sci)","Shipyard"],
+		"Specialist II": ["*Research*","*Research*","*Research*","*Research*","*Research*","Shipyard"],
 		"Military": ["Military","Military","Military","Shipyard","Research (Mil)","Quarantine"],
 		"Shipyard": ["Production","Military","Shipyard","Shipyard","Shipyard","Research (Eng)"],
-		"Research": ["Research (Eng)","Research (Soc)","Research (Comp)","Research (Sci)","Research (Soc)","Research (Sci)"] // only first four values used
+		"Research": ["Research (Eng)","Research (Soc)","Research (Comp)","Research (Bio)","Research (Sci)","Research (Mil)"] 
 	};
+
+	var resstarcounts = {};
+	var maxresstarcount = 0;
 
 	var economyProductivityTable = {
 		"Survival": 1,
@@ -442,7 +445,7 @@
 
 	};
 
-	planetinfo.economyType = function(g,s,roll,prodfactor) {
+	planetinfo.economyType = function(g,s,roll,prodfactor,random) {
 		var colony = planetinfo.get(g,s,"colony");
 		var hab = planetinfo.get(g,s,"habitability");
 		var planet = planetinfo.get(g,s,"planet");
@@ -485,7 +488,23 @@
 		economy.type = economySelectionTable[ectype][roll];
 		if (economy.type == "*Research*") {
 			// random research type instead
-			economy.type = economySelectionTable["Research"][s%4];
+			var et = "";
+			do {
+				et = economySelectionTable["Research"][random.rand(6)];
+				if (!resstarcounts[et]) {
+					resstarcounts[et] = 0;
+				}
+				// balance usage of types carefully
+			} while (resstarcounts[et] > (maxresstarcount/6));
+			resstarcounts[et]++;
+			maxresstarcount++;
+			economy.type = et;
+		} else if (economy.type == "Research (Bio)?") {
+			if (random.rand(3)==0) {
+				economy.type = "Research (Bio)";
+			} else {
+				economy.type = "Tourism";
+			}
 		}
 		economy.icon = economyIconTable[economy.type];
 
