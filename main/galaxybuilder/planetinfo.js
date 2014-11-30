@@ -87,6 +87,7 @@
 		"Quarantine": 1,
 		"Military": 30,
 		"Tourism": 40,
+		"Service": 50,
 		"Colonisation": 10,
 		"Farming": 60,
 		"Terraforming": 10,
@@ -110,6 +111,7 @@
 		"Quarantine": 0,
 		"Military": 1,
 		"Tourism": 6,
+		"Service": 6,
 		"Colonisation": 4,
 		"Farming": 5,
 		"Terraforming": 4,
@@ -505,7 +507,10 @@
 			} else {
 				economy.type = "Tourism";
 			}
+		} else if ((economy.type == "Tourism" || economy.type == "Cultural") && random.randf() < 0.5) {
+			economy.type = "Service";
 		}
+		
 		economy.icon = economyIconTable[economy.type];
 
 		economy.productivity = economyProductivityTable[economy.type] * colony.population * (0.5+prodfactor) * 100;

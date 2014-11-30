@@ -82,9 +82,21 @@
 	var expandArtMaterial = ["furs","ingredients","corals","fabrics","plants","gems","stones","ceramics","metals","wood","plastics"];	
 	var expandArtType = ["dances","songs","poems","symphonies","sculptures","plays","music","drawings","films","novels","buildings","games","photographs","paintings","gourmet meals","comedies","tragedies","romances","satires","epics","ballets","operas","serials","gardens","jewellery","carvings","fonts","prints","mosaics","clothes","murals","performances","stories","banquets"];
 	
+	var expandShips = ["Firangi","Kaskari",/*"Espadon",*/"Labrys",/*"Tabarzin",*/"Menaulion","Atgeir", //5
+					   "Lena","Tarpan","Tabapua","Kolyma","Araguaia","Charolais","Garvonesa","Alentejana", // 8
+					   "Jackal","Atlas","Kodiak","Coyote","Corsac","Helarctos"]; //6
+
+	var expandTourismSpace = ["asteroid belts","gas giants","ring systems","sunspots","historic stations","varied moons"];
+	var expandTourismNatural = ["native %C","vast forests","serene plains","jagged mountains","tranquil lakes","extensive walking trails", //6 (generic)
+								"shimmering ice caps","bleak deserts","deep caverns","spectacular aurorae","scattered islands"];
+	var expandTourismArtifical = ["striking buildings","historic cities","bright casinos","diverse festivals","sporting championships","traditional artforms","renowned museums","gourmet cuisine","endless parties","unusual intoxicants"];
+
+	var expandServiceEconomy = ["banking","communications","journalism","insurance","legal","consultancy","technology","computing","information","entertainment"];
+
+	
 	var expand = function(info,string) {
 //		console.error(info,string);
-		string = string.replace(/%S/g,info.name+"'s");
+		string = string.replace(/%H'/g,info.name+"'s");
 		string = string.replace(/%H/g,info.name);
 		string = string.replace(/%UC/g,info.star.name);
 		string = string.replace(/%U/g,info.star.name.replace(/ \(.*/,""));
@@ -145,6 +157,9 @@
 		if (string.match(/%A/)) {
 			string = string.replace(/%A/g,expandAccident[info.r.rand(expandAccident.length)]);
 		}
+		if (string.match(/%S/)) {
+			string = string.replace(/%S/g,expandServiceEconomy[info.r.rand(expandServiceEconomy.length)]);
+		}
 		if (string.match(/%Y/)) {
 			string = string.replace(/%Y/g,expandCity[info.r.rand(expandCity.length)]);
 		}
@@ -153,6 +168,15 @@
 		}
 		if (string.match(/%G/)) {
 			string = string.replace(/%G/g,expandGovernment[info.r.rand(expandGovernment.length)]);
+		}
+		if (string.match(/%FN/)) {
+			string = string.replace(/%FN/g,expandTourismNatural[info.r.rand(6)]);
+		}
+		if (string.match(/%FA/)) {
+			string = string.replace(/%FA/g,expandTourismArtifical[info.r.rand(expandTourismArtifical.length)]);
+		}
+		if (string.match(/%F/)) {
+			string = string.replace(/%F/g,expandTourismSpace[info.r.rand(expandTourismSpace.length)]);
 		}
 		if (string.match(/%B/)) {
 			string = string.replace(/%B/g,expandBusiness[info.r.rand(expandBusiness.length)]);
@@ -518,7 +542,7 @@
 		if (info.habitability[info.colony.species[0]] >= 80)  {
 			opts = [
 				{key: "BFIC-HAB1", text: "Early %I explorers discovered %H to be safely inhabitable, and initial settlements were built in %D2.", condition: true },
-				{key: "BFIC-HAB2", text: "%S pleasant environment and closeness to the %I homeworld made it a natural early colony.", condition:  info.habitability[info.colony.species[0]] >= 90 },
+				{key: "BFIC-HAB2", text: "%H' pleasant environment and closeness to the %I homeworld made it a natural early colony.", condition:  info.habitability[info.colony.species[0]] >= 90 },
 				{key: "BFIC-HAB3", text: "The superb environment of %H made it a popular destination for early %I colonists, and immigration controls were introduced as early as %D2.", condition:  info.habitability[info.colony.species[0]] >= 95 },
 				{key: "BFIC-HAB4", text: "Exploration of the %U system discovered %H comfortably within the habitable zone, and colonisation ships were soon dispatched.", condition: true },
 				{key: "BFIC-HAB5", text: "The native life of %H fascinated the early %I explorers, who established their first monitoring station in %D2.", condition: info.economy.reason == "Native Life" },
@@ -527,8 +551,8 @@
 				{key: "BFIC-HAB8", text: "The natural beauty of %H was obvious to early %I explorers, and it became a highly popular destination for the new interstellar tourism industry.", condition: info.economy.type == "Tourism" },
 				{key: "BFIC-HAB9", text: "%H was founded as a %I residential colony in %D2.", condition: true },
 				{key: "BFIC-HAB10", text: "The %IS were lucky to find %H so close to their homeworld, and rapidly established a small settlement.", condition: info.habitability[info.colony.species[0]] >= 90 },
-				{key: "BFIC-HAB11", text: "%S first towns were founded in %D2.", condition: true },
-				{key: "BFIC-HAB12", text: "While only marginally habitable, %S position near the home world made it fundamental to initial %I colonisation, and the initial outpost soon grew.", condition: info.colony.stage >= 3 },
+				{key: "BFIC-HAB11", text: "%H' first towns were founded in %D2.", condition: true },
+				{key: "BFIC-HAB12", text: "While only marginally habitable, %H' position near the home world made it fundamental to initial %I colonisation, and the initial outpost soon grew.", condition: info.colony.stage >= 3 },
 				{key: "BFIC-HAB13", text: "The initial colony on %H was founded in %D2, but despite the initial promise of the world, a series of deadly setbacks led to further colonists mostly going elsewhere, and a self-sustaining economy has still not begun.", condition: info.economy.type == "Colonisation" },
 				{key: "BFIC-HAB14", text: "%H is home to a wide range of life, and while extremely habitable, settlements have intentionally been kept to a small area to preserve the wilderness.", condition: info.economy.reason == "Wilderness" },
 				{key: "BFIC-HAB15", text: "%I settlers first landed on this pleasant world in %D2", condition: true },
@@ -563,19 +587,19 @@
 			};
 		} else 		if (info.planet.mineralWealth > 0.45) {
 			opts = [
-				{key: "BFIC-MIN1", text: "As the demands of witchspace travel increased, %S position near to their homeworld led %IS to establish mining operations here in %D2.", condition: true},
+				{key: "BFIC-MIN1", text: "As the demands of witchspace travel increased, %H' position near to their homeworld led %IS to establish mining operations here in %D2.", condition: true},
 				{key: "BFIC-MIN2", text: "The easily accessible minerals in this system's asteroid belts were key to early colonisation of the chart.", condition: info.economy.type != "Ground Mining" },
 				{key: "BFIC-MIN3", text: "As a mineral-rich system, %H gained an outpost in %D2.", condition: true},
-				{key: "BFIC-MIN4", text: "Despite the extremely harsh conditions, %IS began mining %S considerable mineral deposits early on. Thousands of early colonists died due to the lack of environmental protection while obtaining the valuable %M ores.", condition: info.habitability.best == 0},
+				{key: "BFIC-MIN4", text: "Despite the extremely harsh conditions, %IS began mining %H' considerable mineral deposits early on. Thousands of early colonists died due to the lack of environmental protection while obtaining the valuable %M ores.", condition: info.habitability.best == 0},
 				{key: "BFIC-MIN5", text: "While not an obvious choice for %I colonisation, the concentration of %M deposits in the system made it essential to their early expansion.", condition: info.habitability[info.colony.species[0]] < 80 },
-				{key: "BFIC-MIN6", text: "%S rich surface deposits needed little work to extract. While nowadays more conventional deep-mining is needed, when operations started in %D2 they almost doubled the %IS's %M production.", condition: info.economy.type != "Asteroid Mining" },
+				{key: "BFIC-MIN6", text: "%H' rich surface deposits needed little work to extract. While nowadays more conventional deep-mining is needed, when operations started in %D2 they almost doubled the %IS's %M production.", condition: info.economy.type != "Asteroid Mining" },
 				{key: "BFIC-MIN7", text: "Founded in %D2 as a %M extraction system.", condition: true },
 				{key: "BFIC-MIN8", text: "In %H the %IS's early colonisation struck both literal and figurative %M, as the planet combined rich deposits with a biosphere survivable without environmental suits", condition: info.habitability[info.colony.species[0]] >= 80 },
 				{key: "BFIC-MIN9", text: "%H was a home away from home for the early %I pioneers. Environmentally very similar to their homeworld, the system is also mineral-rich.", condition: info.habitability[info.colony.species[0]] >= 90 },
 				{key: "BFIC-MIN10", text: "Mining began here in %D2 to support the %IS's expanding space industry.", condition: true },
-				{key: "BFIC-MIN11", text: "The original mining operations never lived up to the promises of %S vast mineral wealth, due to the intense radiation from %U.", condition: info.planet.surfaceRadiation > 0.3 },
+				{key: "BFIC-MIN11", text: "The original mining operations never lived up to the promises of %H' vast mineral wealth, due to the intense radiation from %U.", condition: info.planet.surfaceRadiation > 0.3 },
 				{key: "BFIC-MIN12", text: "While the unstable crust brought great deposits of %M to the surface, it made establishing consistent mining difficult.", condition: info.planet.seismicInstability > 0.2 },
-				{key: "BFIC-MIN13", text: "Much of %S %M is buried deep beneath the ice caps, but enough was accessible to early settlers that a few mines were operational by %D2", condition: info.planet.percentIce > 0.5 },
+				{key: "BFIC-MIN13", text: "Much of %H' %M is buried deep beneath the ice caps, but enough was accessible to early settlers that a few mines were operational by %D2", condition: info.planet.percentIce > 0.5 },
 				{key: "BFIC-MIN14", text: "The initial outpost was established here in %D2 to assist supply lines and carry out asteroid mining.", condition: info.economy.type != "Ground Mining" },
 				{key: "BFIC-MIN15", text: "%H was founded as one of the %IS's earliest extraction systems", condition: true },
 				{key: "BFIC-MIN16", text: "%H's low gravity and high mineral wealth made it an attractive mining planet", condition: info.planet.surfaceGravity < 0.7 },
@@ -633,7 +657,7 @@
 				{key: "BFPGC-HAB2", text: "%H was one of the earlier %I colonies intended purely for self-sustained habitation, chosen because of its great similarity to %O.", condition: info.habitability[info.colony.species[0]] >= 97 },
 				{key: "BFPGC-HAB3", text: "The initial survey of %U missed %H due to equipment failures. It was only after resurveying in %D3 that it was colonised.", condition: true },
 				{key: "BFPGC-HAB4", text: "This system was settled pre-unification in %D3.", condition: true },
-				{key: "BFPGC-HAB5", text: "%S soil was discovered to be suitable for many %I native flora, and initial farming camps were set up in %D3 to help supply the nearby mining outposts.", condition: info.economy.type == "Farming" },
+				{key: "BFPGC-HAB5", text: "%H' soil was discovered to be suitable for many %I native flora, and initial farming camps were set up in %D3 to help supply the nearby mining outposts.", condition: info.economy.type == "Farming" },
 				{key: "BFPGC-HAB6", text: "The discovery of many habitable planets such as %H led to increasing demands on the early %I witchdrive factories, both for the colonisation ships themselves and the supply lines needed in their early days. Despite its suitability, the system was only colonised in %D3.", condition: true },
 				{key: "BFPGC-HAB7", text: "%H was founded in %D3 as a residential colony.", condition: true },
 				{key: "BFPGC-HAB8", text: "%H was quarantined shortly after discovery to protect the unusual native life from harm.", condition: info.economy.reason == "Native Life" && info.economy.type == "Quarantine" },
@@ -715,7 +739,7 @@
 				{ key: "BFPGC-WAY12", text: "Efficiently managing the expanding %I convoys required the establishment of small orbital platforms around systems near to %O.", condition: true },
 				{ key: "BFPGC-WAY13", text: "%H was originally settled in %D3 with an orbital station to assist convoys passing through to more interesting systems.", condition: true },
 				{ key: "BFPGC-WAY14", text: "The pre-unification %I colonisation required otherwise undesirable systems such as %H to have orbital stations installed to service the early supply freighters.", condition: true },
-				{ key: "BFPGC-WAY15", text: "%S orbital stations date back to %D3 when it was a common stop on the routes to more distant colonies", condition: info.colony.stage == 1 }
+				{ key: "BFPGC-WAY15", text: "%H' orbital stations date back to %D3 when it was a common stop on the routes to more distant colonies", condition: info.colony.stage == 1 }
 			];
 
 			do {
@@ -1113,7 +1137,7 @@
 					{ key: "BFMUJ-JHAB11", text: "The agreeable environment of %H continued to attract migrants during the post-unification period", condition: true },
 					{ key: "BFMUJ-JHAB12", text: "%N %Y was founded in %D6 to meet the needs of the increasing number of "+sn+" settlers.", condition: true },
 					{ key: "BFMUJ-JHAB13", text: "The %U system remained a popular destination for migrants during the post-unification period.", condition: true },
-					{ key: "BFMUJ-JHAB14", text: "The majority of %S "+sn+" population are descended from a colony ship which was damaged by %A in %D6 and forced to divert to the nearest habitable system.", condition: true },
+					{ key: "BFMUJ-JHAB14", text: "The majority of %H' "+sn+" population are descended from a colony ship which was damaged by %A in %D6 and forced to divert to the nearest habitable system.", condition: true },
 					{ key: "BFMUJ-JHAB15", text: "Despite %H having a suitable environment, it was only in %D6 that "+sn+" settlers joined the existing population.", condition: info.habitability[event.species] > 90 },
 					{ key: "BFMUJ-JHAB16", text: "By %D6 habitation technology had progressed to make %H suitable for all species, and the population increased significantly.", condition: info.habitability.worst > 70 },
 					{ key: "BFMUJ-JHAB17", text: "One of the last systems to be part of the USC joint colonisation plans, %H received a steady stream of "+sn+" migrants until %D6.", condition: true }
@@ -1180,8 +1204,8 @@
 				{ key: "BFLUC-NEW5", text: "The %NB bought settlement rights to “%N's Retreat” in %D7 as a holiday world for their executives. When they went bankrupt shortly after, the world was transferred by the USC to the habitat construction workers, who renamed it to %H.", condition: info.politics.governmentCategory == "Collective" },
 				{ key: "BFLUC-NEW6", text: "%H was claimed for colonisation by %IS as early as %D5, but it was only in %D7 when together with %I1S they were able to assemble a suitable fleet.", condition: true },
 				{ key: "BFLUC-NEW7", text: "Despite the position of this system on key trade routes, surface habitation was only established in %D7, replacing previous ad hoc and undocumented orbital installations.", condition: info.bottle > 0 },
-				{ key: "BFLUC-NEW8", text: "%IS and %I1S placed habitats on %S surface in %D7.", condition: true },
-				{ key: "BFLUC-NEW9", text: "As colonisation slowed, private funding was often required to assemble a fleet. The %NB provided the majority of the funding for %S in %D7.", condition: info.politics.governmentCategory == "Corporate" },
+				{ key: "BFLUC-NEW8", text: "%IS and %I1S placed habitats on %H' surface in %D7.", condition: true },
+				{ key: "BFLUC-NEW9", text: "As colonisation slowed, private funding was often required to assemble a fleet. The %NB provided the majority of the funding for %H' in %D7.", condition: info.politics.governmentCategory == "Corporate" },
 				{ key: "BFLUC-NEW10", text: "In %D7, shortly before first landing, one of the supply ships was destroyed by %A. Without the central backing of prior periods, obtaining supplies to finish the job has been a very slow process.", condition: info.economy.type == "Colonisation" },
 				{ key: "BFLUC-NEW11", text: "Towards the end of the post-unification period, USC oversight of colonisation requests became extremely lax, and %H was one of many worlds to have multiple conflicting requests accepted. Relationships between the %I and %I1 landing parties were extremely strained when they both arrived here in %D7.", condition: info.politics.governmentCategory == "Disordered" },
 				{ key: "BFLUC-NEW12", text: "%H is now all that remains of the former %N Empire. Founded in %D7, it was distant enough to avoid the revolutions which overthrew the dictatorial governments in the rest of the Empire.", condition: info.politics.governmentCategory == "Hierarchical" },
@@ -1266,7 +1290,7 @@
 				opts = [
 					{ key: "BFLUJ-JHAB1", text: "The settlement on %H continued to expand during the post-unification period.", condition: true },
 					{ key: "BFLUJ-JHAB2", text: "The success of %H attracted additional "+sn+" settlers in %D7.", condition: true },
-					{ key: "BFLUJ-JHAB3", text: "To make better use of some of %S biomes, many "+sn+" groups were invited to join the colony in %D7.", condition: true },
+					{ key: "BFLUJ-JHAB3", text: "To make better use of some of %H' biomes, many "+sn+" groups were invited to join the colony in %D7.", condition: true },
 					{ key: "BFLUJ-JHAB4", text: "Further significant expansion took place in %D7.", condition: true },
 					{ key: "BFLUJ-JHAB5", text: "Tens of thousands of "+sn+" refugees were welcomed to %H in %D7.", condition: true },
 					{ key: "BFLUJ-JHAB6", text: "A stable environment and government attracted many additional settlers throughout the post-unification period.", condition: info.colony.species.length >= 4 },
@@ -1465,7 +1489,7 @@
 			{ key: "BFTJ-JOIN5", text: "More settlers arrived in %D8.", condition: true },
 			{ key: "BFTJ-JOIN6", text: "New %M deposits were discovered in %D8, briefly attracting a rush of miners and prospectors to the system.", condition: info.planet.mineralWealth > 0.45 },
 			{ key: "BFTJ-JOIN7", text: "The system was selected for terraforming trials in %D8L, shortly before the programme ended.", condition: info.habitability.best > 60 },
-			{ key: "BFTJ-JOIN8", text: "%S small orbital station was renovated and expanded in %D8 in preparation for planned ground settlements.", condition: true },
+			{ key: "BFTJ-JOIN8", text: "%H' small orbital station was renovated and expanded in %D8 in preparation for planned ground settlements.", condition: true },
 			{ key: "BFTJ-JOIN9", text: "%H was selected for environmental modification trials in %D8, focusing on thickening the atmosphere to reduce the harsh radiation from %U.", condition: info.planet.surfaceRadiation > 0.4 }
 		];
 		
@@ -1730,7 +1754,7 @@
 			opts = [
 				{ key: "BFCG-BSA1", text: "Billions of people abandoned %H in %D"+redBilSteps[0]+" after rumours that %U had become unstable took hold.", condition: true },
 				{ key: "BFCG-BSA2", text: "Over three hundred million died in %D"+redBilSteps[0]+" after %N %Y and much of the surrounding area was devastated by %AG.", condition: true },
-				{ key: "BFCG-BSA3", text: "%S population gradually fell during the %DE"+redBilSteps[0]+" period, eventually stabilising at around a fifth of its previous size.", condition: true },
+				{ key: "BFCG-BSA3", text: "%H' population gradually fell during the %DE"+redBilSteps[0]+" period, eventually stabilising at around a fifth of its previous size.", condition: true },
 				{ key: "BFCG-BSA4", text: "Violent conflicts beginning in %D"+redBilSteps[0]+" left hundreds of millions dead, and billions fleeing the system as refugees.", condition: true },
 				{ key: "BFCG-BSA5", text: "%H is known for experiencing a substantial population drop in the %DE"+redBilSteps[0]+" period. In %D"+(redBilSteps[0]+1)+" it was discovered that the food purification technology was suppressing fertility, and since its replacement the population stabilised.", condition: true }
 			];
@@ -1832,9 +1856,9 @@
 				{ key: "BFCG-BIL2", text: "The population exceeded one billion for the first time in %D"+bilStep+".", condition: true },
 				{ key: "BFCG-BIL3", text: "Very few worlds manage to reach a population of one billion, with %H doing so during the %DE"+bilStep+" period.", condition: true },
 				{ key: "BFCG-BIL4", text: "High mineral wealth and a superb environment made %H rapidly self-sufficient, and the population expanded, reaching one billion in %D"+bilStep+".", condition: info.planet.mineralWealth > 0.45 },
-				{ key: "BFCG-BIL5", text: "%S economy prospered during the %DE"+bilStep+" period, with sufficient surplus after feeding the billion inhabitants to produce many great artworks.", condition: info.economy.type == "Cultural" },
+				{ key: "BFCG-BIL5", text: "%H' economy prospered during the %DE"+bilStep+" period, with sufficient surplus after feeding the billion inhabitants to produce many great artworks.", condition: info.economy.type == "Cultural" },
 				{ key: "BFCG-BIL6", text: "The total population of the %U system reached one billion in %D"+bilStep+".", condition: true },
-				{ key: "BFCG-BIL7", text: "While always manageable, it was only with the development of environmental manipulation technology that sufficient living space could be found for %S population to reach one billion.", condition: info.habitability.best < 90 },
+				{ key: "BFCG-BIL7", text: "While always manageable, it was only with the development of environmental manipulation technology that sufficient living space could be found for %H' population to reach one billion.", condition: info.habitability.best < 90 },
 			];
 			
 			do {
@@ -1929,7 +1953,7 @@
 				{ key: "BFCI-DEST1", text: "The settlements on %H were completely destroyed as the invasion began in 1126 kD, and the %U system was used as a base of operations by the invaders for most of the invasion. Fewer than five thousand were able to escape the destruction.", condition: true },
 				{ key: "BFCI-DEST2", text: "The invaders struck at %H in %D10, destroying orbital installations before bombarding the planet. Despite the best efforts of USC forces, most of the evacuation ships were destroyed, and %X %L"+event.oldSize+" people were killed.", condition: true },
 				{ key: "BFCI-DEST3", text: "After responding to a series of hit-and-run attacks left USC defenders in disarray, the invaders struck with full force at %H, overwhelming the USC garrison and wiping out the colony.", condition: true },
-				{ key: "BFCI-DEST4", text: "A heroic rearguard action by the USC "+fleetnth(info.r)+" Fleet held off the invaders long enough for the evacuation of the majority of %S %L"+event.oldSize+" inhabitants to succeed. The system then fell under invader control, only being recovered in the final counterstrike in 1141 kD.", condition: true },
+				{ key: "BFCI-DEST4", text: "A heroic rearguard action by the USC "+fleetnth(info.r)+" Fleet held off the invaders long enough for the evacuation of the majority of %H' %L"+event.oldSize+" inhabitants to succeed. The system then fell under invader control, only being recovered in the final counterstrike in 1141 kD.", condition: true },
 				{ key: "BFCI-DEST5", text: "The %M extraction in %U was vital to the USC's defense strategy, and when the invaders assaulted the system destroying all habitats and killing %X %L"+event.oldSize+" in %D10, the "+fleetnth(info.r)+" Fleet was forced to retreat from the region.", condition: info.planet.mineralWealth > 0.45 },
 				{ key: "BFCI-DEST6", text: "A surprise assault by the invaders in %D10 swept aside the local defence forces and killed %X %L"+event.oldSize+" as they destroyed all surface and orbital installations.", condition: true }
 			];
@@ -2037,7 +2061,7 @@
 				{ key: "BFMB-BIG3", text: "Following the invasion, the "+fleet+" Fleet was assigned to %H in %D11.", condition: true },
 				{ key: "BFMB-BIG4", text: "After a series of raids on established shipyards, military construction facilities were secretly placed on %H in %D10. The system is now the "+fleet+" Fleet headquarters.", condition: true },
 				{ key: "BFMB-BIG5", text: "The USC "+fleet+" Fleet is currently assigned to the %U system on a long-term basis while the severe damage it took during the invasion is repaired.", condition: true },
-				{ key: "BFMB-BIG6", text: "%S shipyards were commandeered by the USC for military production supporting the "+fleet+" Fleet in %D10, and have not yet been returned to civilian control.", condition: true },
+				{ key: "BFMB-BIG6", text: "%H' shipyards were commandeered by the USC for military production supporting the "+fleet+" Fleet in %D10, and have not yet been returned to civilian control.", condition: true },
 			];
 
 			do {
@@ -2137,11 +2161,11 @@
 				{ key: "BFRI-RCAP33", text: "The "+region.name+" is dominated by the treaties between the "+region.subCategory+" systems centred on %H.", condition: region.category.match(/Alliance/) && region.subCategory == info.politics.governmentCategory  && info.r.randf() < 0.4 },	
 				{ key: "BFRI-RCAP34", text: "The political unity of the "+region.subCategory+" systems led by %H gives them significant influence over the "+region.name+".", condition: region.category.match(/Alliance/) && region.subCategory == info.politics.governmentCategory  && info.r.randf() < 0.4 },	
 				{ key: "BFRI-RCAP35", text: "The rulers of %H have wider authoritiy over the whole "+region.name+" area.", condition: region.category.match(/Alliance/) && region.subCategory == info.politics.governmentCategory && region.subCategory == "Hierarchical" },
-				{ key: "BFRI-RCAP36", text: "%S high population and thriving service sector makes it a natural home for the headquarters of many of the region's corporations.", condition: region.category.match(/Alliance/) && region.subCategory == info.politics.governmentCategory && region.subCategory == "Corporate" },
-				{ key: "BFRI-RCAP37", text: "%S high population gives it considerable influence in the systems of the "+region.name+".", condition: info.r.randf() < 0.2 },
+				{ key: "BFRI-RCAP36", text: "%H' high population and thriving service sector makes it a natural home for the headquarters of many of the region's corporations.", condition: region.category.match(/Alliance/) && region.subCategory == info.politics.governmentCategory && region.subCategory == "Corporate" },
+				{ key: "BFRI-RCAP37", text: "%H' high population gives it considerable influence in the systems of the "+region.name+".", condition: info.r.randf() < 0.2 },
 				{ key: "BFRI-RCAP38", text: "The "+region.name+" region no longer holds the importance it did in the %DE"+(info.r.rand(6)+3)+" period, but %H remains a locally influential world.", condition: region.category == "Historic Area" },
 				{ key: "BFRI-RCAP39", text: "Most of the systems of "+region.name+" are part of a stronger political alliance led from %H.", condition: region.category.match(/Alliance/) && region.subCategory == info.politics.governmentCategory && info.r.randf() < 0.4 },
-				{ key: "BFRI-RCAP40", text: "Under %S leadership, "+region.name+" has become a powerful force for "+region.subCategory+" philosophies.", condition: region.category.match(/Alliance/) && region.subCategory == info.politics.governmentCategory && info.r.randf() < 0.4  },	
+				{ key: "BFRI-RCAP40", text: "Under %H' leadership, "+region.name+" has become a powerful force for "+region.subCategory+" philosophies.", condition: region.category.match(/Alliance/) && region.subCategory == info.politics.governmentCategory && info.r.randf() < 0.4  },	
 			];
 			
 			do {
@@ -2167,7 +2191,7 @@
 				{ key: "BFRI-RMAJ9", text: "%H could by its population and economic power be a major participant in "+region.name+", were it not for the fact that what little authorities it can assemble are rarely trusted by the other systems.", condition: info.politics.governmentCategory == "Disordered" },
 				{ key: "BFRI-RMAJ10", text: "The economic and political power of the %U system adds considerably to the "+info.politics.governmentCategory+" of the debate within the "+region.name+" area.", condition: region.category == "Politically Unstable Region" && region.subCategory.match(info.politics.governmentCategory) },
 				{ key: "BFRI-RMAJ11", text: "Where possible, %H tries to remain outside the conflict between "+region.subCategory.replace(/\/.*/,"")+" and "+region.subCategory.replace(/.*\//,"")+" ideologies in the region.", condition: region.category == "Politically Unstable Region" && !region.subCategory.match(info.politics.governmentCategory) && info.politics.governmentCategory != "Disordered" },
-				{ key: "BFRI-RMAJ12", text: "The division between "+region.subCategory.replace(/\/.*/,"")+" and "+region.subCategory.replace(/.*\//,"")+" in the "+region.name+" is mirrored on %S surface as they struggle for control of this strategic system.", condition: region.category == "Politically Unstable Region" && !region.subCategory.match(info.politics.governmentCategory) && info.politics.governmentCategory == "Disordered" },
+				{ key: "BFRI-RMAJ12", text: "The division between "+region.subCategory.replace(/\/.*/,"")+" and "+region.subCategory.replace(/.*\//,"")+" in the "+region.name+" is mirrored on %H' surface as they struggle for control of this strategic system.", condition: region.category == "Politically Unstable Region" && !region.subCategory.match(info.politics.governmentCategory) && info.politics.governmentCategory == "Disordered" },
 				{ key: "BFRI-RMAJ13", text: "%H has so far resisted calls for its governance to be restructured under more "+region.subCategory+" lines.", condition: region.category.match(/Alliance/) && region.subCategory != info.politics.governmentCategory },
 				{ key: "BFRI-RMAJ14", text: "The economic power of %H allows it considerable influence over trade routes in "+region.name, condition: info.colony.militaryBase == 0 },
 				{ key: "BFRI-RMAJ15", text: "%H contributes extensively to the trading strength of "+region.name+".", condition: region.category == "Economic Area" },
@@ -2199,7 +2223,7 @@
 				{ key: "BFRI-OPA4", text: "The unusual government on %H is largely unconcerned with its nominal membership of "+region.name+", and the regional authorities for now seem uninclined to take the matter further.", condition: syc == "Atypical" },
 				{ key: "BFRI-OPA5", text: "The current disorder in %H is in part believed to be encouraged by other systems in "+region.name+" who are hoping to see a "+rec+" government emerge from it.", condition: str && syc == "Disordered" },
 				{ key: "BFRI-OPA6", text: "The "+rec+" government on %H collapsed in %D10, further weakening the alliance among the "+region.name+" systems.", condition: !str && syc == "Disordered" },
-				{ key: "BFRI-OPA7", text: "%S treatment of its workforce has been condemned by the other "+region.name+" systems.", condition: syc == "Corporate" && rec == "Collective" },
+				{ key: "BFRI-OPA7", text: "%H' treatment of its workforce has been condemned by the other "+region.name+" systems.", condition: syc == "Corporate" && rec == "Collective" },
 				{ key: "BFRI-OPA8", text: "The democracies of "+region.name+" seem to have little problem with the small %H population being under the control of a few very rich shareholders and executives.", condition: syc == "Corporate" && rec == "Democratic" },
 				{ key: "BFRI-OPA9", text: "The independent nature of %H is considered a challenge to many of its neighbours, who have tried to buy out the %NB on several occasions, as well as more underhanded tactics.", condition: syc == "Corporate" && rec == "Hierarchical" },
 				{ key: "BFRI-OPA10", text: "The population of %H are increasingly concerned about the influence of their corporate neighbours, and have set very strict limits on political advertising and media.", condition: syc == "Democratic" && rec == "Corporate" },
@@ -2216,7 +2240,7 @@
 				{ key: "BFRI-OPA21", text: "Part of the "+region.name+" area.", condition: true },
 				{ key: "BFRI-OPA22", text: "While theoretically part of "+region.name+", %H has too little authority to do much at all.", condition: syc == "Disordered" },
 				{ key: "BFRI-OPA23", text: "The %U system is geographically part of the "+region.name+" and has several trading partners there, but is not part of the political union.", condition: !str },
-				{ key: "BFRI-OPA24", text: "%S "+syc+" style of government brings it into frequent conflict with the majority of the "+region.name+" region.", condition: !str && syc != "Disordered" && syc != "Atypical" },
+				{ key: "BFRI-OPA24", text: "%H' "+syc+" style of government brings it into frequent conflict with the majority of the "+region.name+" region.", condition: !str && syc != "Disordered" && syc != "Atypical" },
 				{ key: "BFRI-OPA25", text: "The recent collapse of the government on %H is being observed with concern by other systems in "+region.name+".", condition: !str && syc == "Disordered" },
 			];
 
@@ -2416,7 +2440,7 @@
 				{ key: "BFBS-WACC6", text: "The treaty assigning %U to the "+r1.name+" region was voided in %D10 after a violent crackdown on protests in %NC led to all-out civil war.", condition: true },
 				{ key: "BFBS-WACC7", text: "A workers' revolt on %H with the aim of joining the system to "+r1.name+" has currently seized control of major settlements including %N %Y.", condition: r1.subCategory == "Collective" && info.colony.stage > 1},
 				{ key: "BFBS-WACC8", text: "The planet is currently the subject of a hostile takeover by the "+r1.name+" regional corporations.", condition: r1.subCategory == "Corporate" },
-				{ key: "BFBS-WACC9", text: "%S membership of "+r1.name+" has been suspended after the military overturned the results of a closely-contested election to appoint %NW to the presidency.", condition: r1.subCategory == "Democratic" },
+				{ key: "BFBS-WACC9", text: "%H' membership of "+r1.name+" has been suspended after the military overturned the results of a closely-contested election to appoint %NW to the presidency.", condition: r1.subCategory == "Democratic" },
 			];
 
 			do {
@@ -2441,7 +2465,7 @@
 				{ key: "BFBS-BOT6", text: "The %H refuelling and supply station is one of the more important to intersystem trade.", condition: info.colony.stage == 1 },
 				{ key: "BFBS-BOT7", text: "Situated at a natural convergence of witchspace routes, %H station attracts visitors from across the chart.", condition: info.bottle == 2 },
 				{ key: "BFBS-BOT8", text: "The convenient position of %U has boosted its tourism industry.", condition: info.economy.type == "Tourism" },
-				{ key: "BFBS-BOT9", text: "One of the more dangerous witchspace bottlenecks, attempts to establish control over %S space have all failed.", condition: info.politics.governmentCategory == "Disordered" },
+				{ key: "BFBS-BOT9", text: "One of the more dangerous witchspace bottlenecks, attempts to establish control over %H' space have all failed.", condition: info.politics.governmentCategory == "Disordered" },
 				{ key: "BFBS-BOT10", text: "Ships crossing the %NG will often stop at %H station to resupply.", condition: info.bottle == 1 },
 				{ key: "BFBS-BOT11", text: "The economy of %H is helped by its strategic position.", condition: true },
 				{ key: "BFBS-BOT12", text: "Were it not for its position, it is unlikely that %H would have been settled at all.", condition: info.planet.mineralWealth < 0.45 && info.habitability.best < 0.9 },
@@ -2495,9 +2519,9 @@
 			opts = [
 				{ key: "BFSEP-TEMRC1", text: "The icy surface of %H is virtually uninhabitable.", condition: true },
 				{ key: "BFSEP-TEMRC2", text: "With a mean surface temperature of "+Math.floor(273+info.planet.temperature)+"K, settlements on %H are sparse and travel between them non-existent.", condition: info.colony.stage > 1 },
-				{ key: "BFSEP-TEMRC3", text: "%S surface is one of the coldest of the inhabited planets, and no permanent settlements currently exist.", condition: info.colony.stage == 1 },
+				{ key: "BFSEP-TEMRC3", text: "%H' surface is one of the coldest of the inhabited planets, and no permanent settlements currently exist.", condition: info.colony.stage == 1 },
 				{ key: "BFSEP-TEMRC4", text: "The frozen surface of %U's most habitable planet has discouraged occupation of this system.", condition: !info.colony.founded },
-				{ key: "BFSEP-TEMRC5", text: "The extreme cold makes exploitation of %S %M reserves extremely challenging.", condition: info.planet.mineralWealth > 0.25 },
+				{ key: "BFSEP-TEMRC5", text: "The extreme cold makes exploitation of %H' %M reserves extremely challenging.", condition: info.planet.mineralWealth > 0.25 },
 				{ key: "BFSEP-TEMRC6", text: "Well below comfortable temperatures, the expense of cold-adapted tools and housing has meant that %H was never economical to colonise.", condition: !info.colony.founded },
 				{ key: "BFSEP-TEMRC7", text: "%H is the most habitable world in %U, but at "+Math.floor(273+info.planet.temperature)+"K it is still extremely challenging.", condition: true },
 			];
@@ -2530,8 +2554,8 @@
 				{ key: "BFSEP-TEMC14", text: "%H is too cold to support more than a few isolated settlements.", condition: info.habitability.best < 60 && info.colony.stage > 0 },
 				{ key: "BFSEP-TEMC15", text: "Surface temperatures on %H are well below even "+info.species.name("Bird")+" or "+info.species.name("Rodent")+" preferred levels.", condition: true },
 				{ key: "BFSEP-TEMC16", text: "While the orbital station is unaffected, the frozen land of %H has resisted attempts to establish permanent settlements.", condition: info.colony.stage == 1 },
-				{ key: "BFSEP-TEMC17", text: "%S oceans are mostly covered in a thick sheet of ice.", condition: info.planet.percentLand < 0.2 },
-				{ key: "BFSEP-TEMC18", text: "Thick glaciers cover %S continents, with only a few salty equatorial seas unfrozen.", condition: info.planet.percentLand > 0.8 },
+				{ key: "BFSEP-TEMC17", text: "%H' oceans are mostly covered in a thick sheet of ice.", condition: info.planet.percentLand < 0.2 },
+				{ key: "BFSEP-TEMC18", text: "Thick glaciers cover %H' continents, with only a few salty equatorial seas unfrozen.", condition: info.planet.percentLand > 0.8 },
 				{ key: "BFSEP-TEMC19", text: "Visitors to the surface of %H should ensure that they and their equipment are adequately insulated.", condition: true },
 			];
 
@@ -2582,8 +2606,8 @@
 				{ key: "BFSEP-TEMH6", text: "With a mean surface temperature of "+Math.floor(273+info.planet.temperature)+"K, %H is barely considered habitable.", condition: !info.colony.founded && info.habitability.best > 70 },
 				{ key: "BFSEP-TEMH7", text: "The intense heat from %U places %H well outside the comfortable range for most species.", condition: true },
 				{ key: "BFSEP-TEMH8", text: "Even with costly environmental manipulation tools, %H is unlikely to ever be fit for more than a few isolated polar settlements.", condition: info.habitability.best < 60 },
-				{ key: "BFSEP-TEMH9", text: "The construction of %NC in %S intense heat posed many challenges for the original engineers.", condition: info.colony.stage > 1 },
-				{ key: "BFSEP-TEMH10", text: "%U has turned most of %S into a barren wasteland.", condition: info.planet.cloudAlpha > 0 && info.planet.percentLand > 0.5 },
+				{ key: "BFSEP-TEMH9", text: "The construction of %NC in %H' intense heat posed many challenges for the original engineers.", condition: info.colony.stage > 1 },
+				{ key: "BFSEP-TEMH10", text: "%U has turned most of %H' into a barren wasteland.", condition: info.planet.cloudAlpha > 0 && info.planet.percentLand > 0.5 },
 				{ key: "BFSEP-TEMH11", text: "The high surface temperatures cause significant evaporation from %H's oceans, covering the world in thick clouds.", condition: info.planet.cloudAlpha > 2 && info.planet.percentLand < 0.5 },
 				{ key: "BFSEP-TEMH12", text: "The warm oceans of %H moderate the surface temperature, which still remains uncomfortably high.", condition: info.planet.percentLand < 0.2 },
 				{ key: "BFSEP-TEMH13", text: "Few species can tolerate the temperatures in even the colder regions of %H for long, and the system remains uninhabited.", condition: info.planet.cloudAlpha > 0 && !info.colony.founded },
@@ -2622,10 +2646,10 @@
 				{ key: "BFSEP-RADX1", text: "Without shielding, the surface radiation on %H is fatal within minutes even to "+info.species.pluralName("Insect")+".", condition: true },
 				{ key: "BFSEP-RADX2", text: "Shielding against the intense radiation on %H is virtually impossible.", condition: info.habitability.best == 0 },
 				{ key: "BFSEP-RADX3", text: "Even the thick exoskeletons of "+info.species.pluralName("Insect")+" or "+info.species.pluralName("Lobster")+" provide no protection against the intense radiation from %U. Exposure is invariably fatal.", condition: true },
-				{ key: "BFSEP-RADX4", text: "Survival on %S surface is impossible due to the intense radiation, and so settlement remains orbital only.", condition: info.colony.stage > 0 },
+				{ key: "BFSEP-RADX4", text: "Survival on %H' surface is impossible due to the intense radiation, and so settlement remains orbital only.", condition: info.colony.stage > 0 },
 				{ key: "BFSEP-RADX5", text: "The surface radiation on %H regularly exceeds "+Math.floor(info.planet.surfaceRadiation)+" Fd.", condition: true },
 				{ key: "BFSEP-RADX6", text: "Surface deposits of %M are visible even on a low fly-past, but the intense radiation makes getting out of a survey ship to retrieve them impossible.", condition: info.planet.mineralWealth > 0.45 },
-				{ key: "BFSEP-RADX7", text: "The thin atmosphere and proximity to %U means that %S surface receives over "+Math.floor(info.planet.surfaceRadiation)+" Fd of radiation.", condition: true }
+				{ key: "BFSEP-RADX7", text: "The thin atmosphere and proximity to %U means that %H' surface receives over "+Math.floor(info.planet.surfaceRadiation)+" Fd of radiation.", condition: true }
 			];
 
 			do {
@@ -2672,7 +2696,7 @@
 				{ key: "BFSEP-RADH5", text: "Due to high radiation levels, all permanent settlements are aboard well-shielded orbital stations.", condition: info.colony.stage == 1 },
 				{ key: "BFSEP-RADH6", text: "Mining in the high radiation environment of %H requires constant replacement of radiation shielding.", condition: info.planet.mineralWealth > 0.45 },
 				{ key: "BFSEP-RADH7", text: "While the surface radiation on %H is not instantly fatal, all species are advised to wear protective clothing and minimise exposure.", condition: true },
-				{ key: "BFSEP-RADH8", text: "%S proximity to %U means that the atmosphere is insufficient to prevent hard ultra-violet radiation striking the surface.", condition: info.planet.cloudAlpha > 0 },
+				{ key: "BFSEP-RADH8", text: "%H' proximity to %U means that the atmosphere is insufficient to prevent hard ultra-violet radiation striking the surface.", condition: info.planet.cloudAlpha > 0 },
 				{ key: "BFSEP-RADH9", text: "The surface settlements on %H are all heavily shielded against radiation.", condition: info.colony.stage > 1 },
 				{ key: "BFSEP-RADH10", text: "The radiation levels on %H vary considerably depending on solar activity, but can peak at around "+info.planet.surfaceRadiation.toFixed(2)+" Fd.", condition: info.star.instability > 0.3 },
 				{ key: "BFSEP-RADH11", text: "%H combines high surface radiation and a lack of useful resources, and so remains uninhabited.", condition: !info.colony.founded && info.planet.mineralWealth < 0.25 },
@@ -2745,9 +2769,9 @@
 				{ key: "BFSEP-QUKX3", text: "The high frequency of severe earthquakes on %H has made it uninhabitable.", condition: !info.colony.founded },
 				{ key: "BFSEP-QUKX4", text: "The orbital station above the planet contains several instruments for monitoring its unstable crust.", condition: info.colony.stage == 1 },
 				{ key: "BFSEP-QUKX5", text: "The highly unstable crust of %H brings a range of minerals to the surface, but makes safely extracting them difficult.", condition: info.planet.mineralWealth > 0.45 },
-				{ key: "BFSEP-QUKX6", text: "Gravitational forces from other bodies in the %U system distort %S crust, causing major earthquakes.", condition: true },
+				{ key: "BFSEP-QUKX6", text: "Gravitational forces from other bodies in the %U system distort %H' crust, causing major earthquakes.", condition: true },
 				{ key: "BFSEP-QUKX7", text: "The ground of %H is far too unstable for settlement, and its fragmented crust has no stable zones.", condition: !info.colony.founded },
-				{ key: "BFSEP-QUKX8", text: "Zettajoule earthquakes have been recorded from space on %S fragile surface.", condition: true },
+				{ key: "BFSEP-QUKX8", text: "Zettajoule earthquakes have been recorded from space on %H' fragile surface.", condition: true },
 			];
 
 			do {
@@ -2764,10 +2788,10 @@
 			opts = [
 				{ key: "BFSEP-QUKH1", text: "Large earthquakes are common on %H.", condition: true },
 				{ key: "BFSEP-QUKH2", text: "%H is believed to have formed around a billion kD later than the rest of the system, and large earthquakes are common.", condition: true },
-				{ key: "BFSEP-QUKH3", text: "The instability of %S crust has been a major factor in the lack of settlement.", condition: !info.colony.founded },
+				{ key: "BFSEP-QUKH3", text: "The instability of %H' crust has been a major factor in the lack of settlement.", condition: !info.colony.founded },
 				{ key: "BFSEP-QUKH4", text: "The surface of %H does not contain permanent settlements due to the lack of seismically stable areas.", condition: info.colony.stage == 1 },
 				{ key: "BFSEP-QUKH5", text: "%M is readily available on %H, but the frequency of earthquakes means that only shallow excavation is practical.", condition: info.planet.mineralWealth > 0.45 },
-				{ key: "BFSEP-QUKH6", text: "After long-term monitoring, it does not appear that any part of %S surface is safe from major earthquakes. ", condition: info.colony.stage < 1 },
+				{ key: "BFSEP-QUKH6", text: "After long-term monitoring, it does not appear that any part of %H' surface is safe from major earthquakes. ", condition: info.colony.stage < 1 },
 				{ key: "BFSEP-QUKH7", text: "The frequency of major earthquakes on %H is too great for even non-land species to easily construct permanent habitats.", condition: true },
 				{ key: "BFSEP-QUKH8", text: "Settlement of %H is restricted to the few seismically stable areas.", condition: info.colony.stage > 1 },
 				{ key: "BFSEP-QUKH9", text: "%H has frequent major earthquakes, and no safe settlement sites have yet been identified.", condition: !info.colony.founded },
@@ -2796,11 +2820,11 @@
 				{ key: "BFSEP-QUKM3", text: "Surface settlements have been constructed away from fault lines to protect them from earthquakes.", condition: sur },
 				{ key: "BFSEP-QUKM4", text: "Inaccuracies in early surveying lead to %NN %Y being founded very close to the major %N fault. The buildings have been significantly reinforced.", condition: sur && info.colony.founded < 5 },
 				{ key: "BFSEP-QUKM5", text: "The original aquatic settlements on %H were not greatly bothered by earthquakes, though later land settlements avoid fault lines.", condition: info.colony.species[0] == "Lobster" },
-				{ key: "BFSEP-QUKM6", text: "The original lightweight %I settlements were not significantly affected by %S earthquakes, and the ability to fly away also helped.", condition: info.colony.species[0] == "Bird" || info.colony.species[0] == "Insect" },
+				{ key: "BFSEP-QUKM6", text: "The original lightweight %I settlements were not significantly affected by %H' earthquakes, and the ability to fly away also helped.", condition: info.colony.species[0] == "Bird" || info.colony.species[0] == "Insect" },
 				{ key: "BFSEP-QUKM7", text: "The seismic instability of %H, while manageable by most species, has required special care in strengthening the %IR tunnels.", condition: sub  },
 				{ key: "BFSEP-QUKM8", text: "The seismic activity on %H has restricted significant colonisation to %IS and %I1S only.", condition: !sur && !sub && info.colony.species.length > 1 },
-				{ key: "BFSEP-QUKM9", text: "The flying %IS are not significantly affected by %S earthquakes.", condition: !sur && !sub && info.colony.species.length == 1 && info.colony.species[0] != "Lobster" },
-				{ key: "BFSEP-QUKM10", text: "%S earthquakes are rarely felt in the deep ocean cities of the planet.", condition: !sur && !sub && info.colony.species.length == 1 && info.colony.species[0] == "Lobster" },
+				{ key: "BFSEP-QUKM9", text: "The flying %IS are not significantly affected by %H' earthquakes.", condition: !sur && !sub && info.colony.species.length == 1 && info.colony.species[0] != "Lobster" },
+				{ key: "BFSEP-QUKM10", text: "%H' earthquakes are rarely felt in the deep ocean cities of the planet.", condition: !sur && !sub && info.colony.species.length == 1 && info.colony.species[0] == "Lobster" },
 			];
 
 			do {
@@ -2835,7 +2859,7 @@
 			block.importance = 20;
 			opts = [
 				{ key: "BFSEP-QUKN1", text: "The surface of %H is extremely stable, with no quakes above terajoule magnitude recorded.", condition: true },
-				{ key: "BFSEP-QUKN2", text: "The near-perfect stability of %S crust has made it ideal for the %IRS.", condition: info.colony.species.indexOf("Rodent") != -1 },
+				{ key: "BFSEP-QUKN2", text: "The near-perfect stability of %H' crust has made it ideal for the %IRS.", condition: info.colony.species.indexOf("Rodent") != -1 },
 			];
 			do {
 				do {
@@ -2870,7 +2894,7 @@
 				{ key: "BFSEP-WINX6", text: "Heating from %U combined with a relatively slow daily rotation causes extremely stormy weather patterns.", condition: info.planet.rotationalVelocity < 0.0007 },
 				{ key: "BFSEP-WINX7", text: "The mostly oceanic surface allows extremely powerful and long-lasting storms to form.", condition: info.planet.landFraction < 0.1 },
 				{ key: "BFSEP-WINX8", text: "The highly ionised atmosphere of %H is dangerous for ships to enter, and makes even orbital stations too costly to be viable.", condition: !info.colony.founded },
-				{ key: "BFSEP-WINX9", text: "%S atmosphere is highly corrosive and subject to intense winds.", condition: !info.colony.founded },
+				{ key: "BFSEP-WINX9", text: "%H' atmosphere is highly corrosive and subject to intense winds.", condition: !info.colony.founded },
 			];
 
 			do {
@@ -2894,7 +2918,7 @@
 				{ key: "BFSEP-WINH3", text: "The settlements of those who came to %H later are integrated into the original %IR tunnels to protect them from storms.", condition: first && !only },
 				{ key: "BFSEP-WINH4", text: "The intense lightning of %H made shielding the original settlements difficult.", condition: contains && !first },
 				{ key: "BFSEP-WINH5", text: "Settlement is restricted to polar areas where the storms are less intense.", condition: !contains },
-				{ key: "BFSEP-WINH6", text: "Most of %S surface is subject to frequent hurricanes.", condition: true },
+				{ key: "BFSEP-WINH6", text: "Most of %H' surface is subject to frequent hurricanes.", condition: true },
 				{ key: "BFSEP-WINH7", text: "The electrical storms of %H are often intense enough to be spotted from orbit.", condition: true },
 			];
 			
@@ -2914,8 +2938,8 @@
 				{ key: "BFSEP-WINL1", text: "The storms of %H can be a risk to natural flight, but are generally forecast sufficiently in advance", condition: true },
 				{ key: "BFSEP-WINL2", text: "%IS settled %H despite its high winds because of its otherwise good environment.", condition: info.colony.species.length == 0 && info.habitability[info.colony.species[0]] > 80 },
 				{ key: "BFSEP-WINL3", text: "The high winds of %H occasionally disrupt surface-orbit traffic, though usually for no more than a local day.", condition: true },
-				{ key: "BFSEP-WINL4", text: "The usual lightweight %IB settlements have had to be specially reinforced to resist %S high winds.", condition: info.colony.species.indexOf("Bird") > -1 },
-				{ key: "BFSEP-WINL5", text: "The usual lightweight %II settlements have had to be specially reinforced to resist %S high winds.", condition: info.colony.species.indexOf("Insect") > -1 },
+				{ key: "BFSEP-WINL4", text: "The usual lightweight %IB settlements have had to be specially reinforced to resist %H' high winds.", condition: info.colony.species.indexOf("Bird") > -1 },
+				{ key: "BFSEP-WINL5", text: "The usual lightweight %II settlements have had to be specially reinforced to resist %H' high winds.", condition: info.colony.species.indexOf("Insect") > -1 },
 				{ key: "BFSEP-WINL6", text: "The wet season on %H is known for its spectacular storms.", condition: info.economy.type == "Tourism" }
 			];
 
@@ -3052,7 +3076,7 @@
 					{ key: "BFSEP-MINM4", text: "%H has an above average level of economically valuable metals.", condition: true },
 					{ key: "BFSEP-MINM5", text: "In addition to a pleasant environment, %H has reasonably high mineral reserves.", condition: info.habitability.best > 80 },
 					{ key: "BFSEP-MINM6", text: "The moderate reserves of %M on %H have so far not been economical to extract.", condition: info.habitability.best < 40 },
-					{ key: "BFSEP-MINM7", text: "While the %H system has high quantities of %M, they are generally deep below %S surface and would be costly to extract.", condition: true },
+					{ key: "BFSEP-MINM7", text: "While the %H system has high quantities of %M, they are generally deep below %H' surface and would be costly to extract.", condition: true },
 					{ key: "BFSEP-MINM8", text: "%H has some deposits of economic minerals, but not in sufficient concentrations to yet be cost-effective to extract.", condition: true }
 				];				
 
@@ -3091,9 +3115,9 @@
 			var idealp = ideal.map(function(x) { return info.species.pluralName(x); });
 			block.importance = 45*ideal.length;
 			opts = [
-				{ key: "BFSEP-HABP1", text: "%S environment is ideally suited to "+idealp[0]+".", condition: ideal.length == 1 },
+				{ key: "BFSEP-HABP1", text: "%H' environment is ideally suited to "+idealp[0]+".", condition: ideal.length == 1 },
 				{ key: "BFSEP-HABP2", text: "%H has a great resemblence to the "+ideals[0]+" home world.", condition: ideal.length == 1 },
-				{ key: "BFSEP-HABP3", text: "Almost all of %S surface is suitable for "+ideals[0]+" habitation.", condition: ideal.length == 1 },
+				{ key: "BFSEP-HABP3", text: "Almost all of %H' surface is suitable for "+ideals[0]+" habitation.", condition: ideal.length == 1 },
 				{ key: "BFSEP-HABP4", text: "There are few systems better than %U for "+idealp[0]+".", condition: ideal.length == 1 },
 				{ key: "BFSEP-HABP5", text: "%H is extremely unusual in having ideal habitation conditions for both "+idealp[0]+" and "+idealp[1]+".", condition: ideal.length > 1 }
 			];
@@ -3269,7 +3293,7 @@
 				{ key: "BFUEP-HUDL2", text: "There are frequent rumours that this isolated system, three jumps from the nearest station, contains some secret installation. So far none have been substantiated.", condition: info.connected.length == 1 },
 				{ key: "BFUEP-HUDO2", text: "A lack of support for colonisation in this area has left %U one of the most remote systems in the eight charts.", condition: info.bottle == 0 && info.connected.length > 1 && info.planet.mineralWealth < 0.25 && info.habitability.best < 90 },
 				{ key: "BFUEP-HUDO3", text: "The system's distance from nearby stations makes the cost of extracting and transporting its minerals prohibitive for now.", condition: info.planet.mineralWealth > 0.25 },
-				{ key: "BFUEP-HUDO4", text: "%S great distance from existing settlements has left it uninhabited despite its suitable environment.", condition: info.habitability.best > 90 },
+				{ key: "BFUEP-HUDO4", text: "%H' great distance from existing settlements has left it uninhabited despite its suitable environment.", condition: info.habitability.best > 90 },
 				{ key: "BFUEP-HUDO5", text: "With its harsh environment, lack of natural resources, and lack of nearby inhabited systems, %U is one of the least visited systems in the eight charts.", condition: info.bottle == 0 && info.connected.length > 1 && info.planet.mineralWealth < 0.25 && info.habitability.best < 70 },
 			];
 
@@ -3320,8 +3344,8 @@
 				{ key: "BFGAS-CAPL2", text: "The original shares in the planet's wealth have over time become concentrated in the hands of a few hundred people.", condition: true },
 				{ key: "BFGAS-CAPL3", text: "Bribery of legislators is extremely common on %H, with billions of credits openly changing hands over votes on the more important laws.", condition: true },
 				{ key: "BFGAS-CAPL4", text: "The current ruler of %H, %ND, has been content to take a hands-off approach and leave governance of the system to their wealthy benefactors.", condition: true },
-				{ key: "BFGAS-CAPL5", text: "Low taxation and loose regulation has allowed a small number of %S citizens to accumulate vast wealth. The majority, however, struggle to afford necessities.", condition: true },
-				{ key: "BFGAS-CAPL6", text: "A fragmented government has allowed many of %S richest people to avoid laws they find inconvenient by moving to other parts of the planet.", condition: true },
+				{ key: "BFGAS-CAPL5", text: "Low taxation and loose regulation has allowed a small number of %H' citizens to accumulate vast wealth. The majority, however, struggle to afford necessities.", condition: true },
+				{ key: "BFGAS-CAPL6", text: "A fragmented government has allowed many of %H' richest people to avoid laws they find inconvenient by moving to other parts of the planet.", condition: true },
 				{ key: "BFGAS-CAPL7", text: "Everything has a price on %H, with the small central government largely funded through the sale of legal exception vouchers.", condition: true },
 			];
 			break;
@@ -3339,12 +3363,12 @@
 		case "Timocracy":
 			opts = [
 				{ key: "BFGAS-TIMO1", text: "Following widespread tax evasion nearly bankrupting the %H government, it became possible for positions up to cabinet level to be bought for a suitable price, most of which was put into the department's annual budget.", condition: true },
-				{ key: "BFGAS-TIMO2", text: "While in law %S government is democratic, the requirement for full citizens to own at least %X %L"+(info.r.rand(4)+1)+" credits of assets has led to its reclassification by the USC.", condition: true },
+				{ key: "BFGAS-TIMO2", text: "While in law %H' government is democratic, the requirement for full citizens to own at least %X %L"+(info.r.rand(4)+1)+" credits of assets has led to its reclassification by the USC.", condition: true },
 				{ key: "BFGAS-TIMO3", text: "Government funding is raised on %H by the auctioning of laws. For the relatively small sum of %X %L"+(info.r.rand(3))+" credits, a law may be put to the vote. The for and against sides then place competing bids for its adoption or rejection.", condition: true },
 				{ key: "BFGAS-TIMO4", text: "A property qualification of %X %L"+(info.r.rand(4)+1)+" credits of taxable wealth restricts voting on %H to a wealthy minority.", condition: true },
 				{ key: "BFGAS-TIMO5", text: "Individual votes on %H can be purchased for around one hundred credits, or lower for local laws. Most are bought in bulk by political and corporate consortia.", condition: true },
 				{ key: "BFGAS-TIMO6", text: "The original settlers of %H issued %X %L1 shares in the planetary government - one each - as voting rights. There was no mechanism for issuing new shares, however, and the existing shares currently change hands for over %X %L"+(info.r.rand(info.colony.stage))+" credits each.", condition: info.colony.stage > 3 },
-				{ key: "BFGAS-TIMO7", text: "Following several scandals, the councillors of %S government unionised, and now publish an agreed cost scale for bribes and other paid legislative duties. Undercutting ones colleagues is punished severely.", condition: true },
+				{ key: "BFGAS-TIMO7", text: "Following several scandals, the councillors of %H' government unionised, and now publish an agreed cost scale for bribes and other paid legislative duties. Undercutting ones colleagues is punished severely.", condition: true },
 			];
 			break;
 		case "Republican Democracy":
@@ -3354,15 +3378,15 @@
 				{ key: "BFGAS-REDE3", text: "Regional elections on %H provide senators to the legislature, which appoints the executive from within its membership.", condition: true },
 				{ key: "BFGAS-REDE4", text: "The vast majority of seats in the %H government belong to the "+info.names.party1+" and "+info.names.party2+" parties.", condition: true },
 				{ key: "BFGAS-REDE5", text: "The "+info.names.party1+" party has held a majority of the seats in the government since the %D11 elections.", condition: true },
-				{ key: "BFGAS-REDE6", text: "Elections to %S unicameral legislature are held every %X planetary years, with elections to the planetary executive held half-way between.", condition: true },
-				{ key: "BFGAS-REDE7", text: "The majority of %S political parties are aligned with either the "+info.names.party1+" or "+info.names.party2+" coalitions.", condition: true },
+				{ key: "BFGAS-REDE6", text: "Elections to %H' unicameral legislature are held every %X planetary years, with elections to the planetary executive held half-way between.", condition: true },
+				{ key: "BFGAS-REDE7", text: "The majority of %H' political parties are aligned with either the "+info.names.party1+" or "+info.names.party2+" coalitions.", condition: true },
 			];
 			break;
 		case "Federal Democracy":
 			opts = [
 				{ key: "BFGAS-FEDE1", text: "Government on %H operates in a tiered structure. Citizens elect representatives to their local governments, and those representatives elect the regional councillors, who elect the planetary senators.", condition: true },
-				{ key: "BFGAS-FEDE2", text: "Representatives of %S %XL regions meet in %NC to elect the planetary government.", condition: info.colony.stage > 2 },
-				{ key: "BFGAS-FEDE3", text: "The responsibilities of %S different layers of government are strictly demarcated. The planetary government is not allowed to pass laws affecting areas in the competence of a local or regional government.", condition: true },
+				{ key: "BFGAS-FEDE2", text: "Representatives of %H' %XL regions meet in %NC to elect the planetary government.", condition: info.colony.stage > 2 },
+				{ key: "BFGAS-FEDE3", text: "The responsibilities of %H' different layers of government are strictly demarcated. The planetary government is not allowed to pass laws affecting areas in the competence of a local or regional government.", condition: true },
 				{ key: "BFGAS-FEDE4", text: "The constitution of %H places increasingly stricter requirements on the passing of laws the greater their area of effect. In general most planetary laws are passed by two-thirds of regions passing identical laws, rather than directly at the planetary level.", condition: true },
 				{ key: "BFGAS-FEDE5", text: "Laws in %H are drafted at a planetary level, and then must be approved by at least three quarters of the local assemblies, making up majorities of all regional areas.", condition: true },
 				{ key: "BFGAS-FEDE6", text: "The planetary government only manages intersystem trade and diplomacy, with all other matters delegated to autonomous regional governments.", condition: true },
@@ -3372,7 +3396,7 @@
 			break;
 		case "Demarchy":
 			opts = [
-				{ key: "BFGAS-DEMA1", text: "The ministers of %S government are selected by lot from the planetary population every %XS years.", condition: true },
+				{ key: "BFGAS-DEMA1", text: "The ministers of %H' government are selected by lot from the planetary population every %XS years.", condition: true },
 				{ key: "BFGAS-DEMA2", text: "While conventional elections are used to appoint the drafters of laws on %H, the adoption of laws is decided by panels randomly selected from the population.", condition: true },
 				{ key: "BFGAS-DEMA3", text: "Each governmental decision on %H is placed before a randomly selected citizen, who can either approve, reject or pass the decision to another.", condition: true },
 				{ key: "BFGAS-DEMA4", text: "All government officials on %H are chosen randomly from those who put themselves forward for election.", condition: true },
@@ -3385,7 +3409,7 @@
 			opts = [
 				{ key: "BFGAS-DIDE1", text: "All legislative decisions on %H are made by a direct vote of those affected, with votes taking place every %XL days.", condition: true },
 				{ key: "BFGAS-DIDE2", text: "%H uses direct democracy for government decisions. To keep this manageable, as many decisions as possible have been delegated to local levels.", condition: true },
-				{ key: "BFGAS-DIDE3", text: "The democratic traditions of %S founders continue today, with any issue not able to achieve the support of at least eighty percent of the government being put to a public vote.", condition: info.colony.stage > 3 },
+				{ key: "BFGAS-DIDE3", text: "The democratic traditions of %H' founders continue today, with any issue not able to achieve the support of at least eighty percent of the government being put to a public vote.", condition: info.colony.stage > 3 },
 				{ key: "BFGAS-DIDE4", text: "%H lacks a government in the conventional sense, with all legislative and intersystem decisions being taken by referendum.", condition: true },
 				{ key: "BFGAS-DIDE5", text: "Concerns over individual accumulation of power led the %H settlers to place low limits on the authority of their politicians, with all significant decisions voted on by the population as a whole.", condition: true },
 				{ key: "BFGAS-DIDE6", text: "All government decisions on %H are subject to being overruled by the people. A petition of %XS thousand citizens - the number chosen when the colony was founded - will put a decision to a public vote.", condition: true },
@@ -3396,7 +3420,7 @@
 			opts = [
 				{ key: "BFGAS-DICT1", text: "The current ruler of %H, %ND, has theoretically absolute control over the planet.", condition: true },
 				{ key: "BFGAS-DICT2", text: "The %H governing council consists of a small number of military, industrial and technological leaders appointed by their predecessors.", condition: true },
-				{ key: "BFGAS-DICT3", text: "A series of weak and corrupt governments in the early kDs of %S history led to the institution of a sole dictatorship. Succession is by successful assassination of the current office holder.", condition: true },
+				{ key: "BFGAS-DICT3", text: "A series of weak and corrupt governments in the early kDs of %H' history led to the institution of a sole dictatorship. Succession is by successful assassination of the current office holder.", condition: true },
 				{ key: "BFGAS-DICT4", text: "%ND is the undisputed leader of %H, with their charisma and restriction of alternative views combining to give them substantial personal influence over and above their normal powers.", condition: true },
 				{ key: "BFGAS-DICT5", text: "While day-to-day decisions are made by an extensive legislative and executive structure, %ND may personally overrule any decisions and dismiss government members who displease them.", condition: true },
 				{ key: "BFGAS-DICT6", text: "A council of %XL members each with their own powerful personal armies keeps an uneasy peace on %H, with the council's decisions being final.", condition: true },
@@ -3407,7 +3431,7 @@
 			opts = [
 				{ key: "BFGAS-TECH1", text: "The government on %H is subservient to the powerful research institutions, on whose behalf it manages the day to day business of the planet.", condition: true },
 				{ key: "BFGAS-TECH2", text: "%H is ruled by the heads of its %XL largest research organisations.", condition: true },
-				{ key: "BFGAS-TECH3", text: "The income brought in by the new discoveries of %S research centres collectively gives them near-total control over %H.", condition: true },
+				{ key: "BFGAS-TECH3", text: "The income brought in by the new discoveries of %H' research centres collectively gives them near-total control over %H.", condition: true },
 			];
 			break;
 		case "Feudal Realm":
@@ -3481,7 +3505,7 @@
 				{ key: "BFGAS-WOCO1", text: "All businesses on %H are owned by their workers, who collectively decide on their direction and production. A small elected government adjudicates inter-business disputes and pays for planet-wide services.", condition: true },
 				{ key: "BFGAS-WOCO2", text: "%H is controlled by a single workers' cooperative, which through consensus decision making operates the colony.", condition: info.colony.stage < 4 },
 				{ key: "BFGAS-WOCO3", text: "The workers' cooperatives on %H operate the planet's industry to provide for all residents, with profits from intersystem trade being reinvested.", condition: true },
-				{ key: "BFGAS-WOCO4", text: "%S cooperatives provide as high a standard of living to all their employees as possible, with no difference in pay between workers and their managers.", condition: true },
+				{ key: "BFGAS-WOCO4", text: "%H' cooperatives provide as high a standard of living to all their employees as possible, with no difference in pay between workers and their managers.", condition: true },
 				{ key: "BFGAS-WOCO5", text: "There is no formal government on %H, but representatives of the various workers' organisations will represent the system if required.", condition: true },
 				{ key: "BFGAS-WOCO6", text: "The influential "+info.names.party1+" and "+info.names.party2+" movements, originally set up to help coordinate activites between the cooperatives, now also hold considerable sway within many of them, and their leaders, rather than the workers, hold the majority of the power.", condition: true },
 				{ key: "BFGAS-WOCO7", text: "Production on %H is managed by around %X hundred workers' organisations, each specialising in one area.", condition: true },
@@ -3503,7 +3527,7 @@
 				{ key: "BFGAS-QUAR5", text: "An unknown epidemic killed most of the refugees who fled %H after the attack. The world has been quarantined for investigation.", condition: info.colony.attacked > 0 },
 				// note: these four aren't currently used, as
 				// only the economy type is Quarantine in these cases
-				{ key: "BFGAS-QUAR6", text: "Following the destruction of the settlements by the invaders, %S surface has exhibited unusual properties. The system has been placed under USC quarantine as a precautionary measure.", condition: info.colony.attacked == 3 },
+				{ key: "BFGAS-QUAR6", text: "Following the destruction of the settlements by the invaders, %H' surface has exhibited unusual properties. The system has been placed under USC quarantine as a precautionary measure.", condition: info.colony.attacked == 3 },
 				{ key: "BFGAS-QUAR7", text: "Unexpected side-effects of environmental modification have caused problems on %H. While the situation is stabilised, surface-orbit transfers are strictly controlled.", condition: info.colony.attacked == 0 && info.economy.reason == "Terraforming" },
 				{ key: "BFGAS-QUAR8", text: "The planet is currently carrying out the "+nth(info.r.rand(3)+1)+" phase of its environmental modification programme, and landing is currently strictly restricted.", condition: info.colony.attacked == 0 && info.economy.reason == "Terraforming"  },
 				{ key: "BFGAS-QUAR9", text: "The surface has been evacuated and sealed after an environmental modification plant ran out of control. The plant has been shut down and it is hoped that the situation will soon return to normal.", condition: info.colony.attacked == 0 && info.economy.reason == "Terraforming"  },
@@ -3568,7 +3592,7 @@
 		case "United Species Embassy":
 			opts = [
 				{ key: "BFGAS-USE1", text: "%H is a USC embassy world, and the primary USC administration for all non-native species in this chart is carried out from this system.", condition: true },
-				{ key: "BFGAS-USE2", text: "As a USC embassy, %H contains independent regions for each species, with a separate USC council in the capital %NY.", condition: true },
+				{ key: "BFGAS-USE2", text: "As a USC embassy, %H contains independent regions for each species, with a separate USC council in the capital %NC.", condition: true },
 				{ key: "BFGAS-USE3", text: "Representatives of each homeworld outside the chart are available at the USC embassies for both intra- and inter-species business.", condition: true },
 			];
 			break;
@@ -3580,7 +3604,7 @@
 				{ key: "BFGAS-CVWR4", text: "It is believed that nearby systems are supplying arms to the %H rebels.", condition: info.politics.regionAccession == 2 },
 				{ key: "BFGAS-CVWR5", text: "It is believed that nearby systems are supplying arms to the %H loyalists.", condition: info.politics.regionAccession == 2 },
 				{ key: "BFGAS-CVWR6", text: "A military coup has overthrown the government of %H. A resistance movement loyal to the old regime is currently fighting back in several settlements as well as orbital space, and the system should be considered extremely dangerous.", condition: true },
-				{ key: "BFGAS-CVWR7", text: "%S civil war has at least %XL sides, as alliances between various military and paramilitary groups constantly shift. The capital, %NY, is currently in ruins after extensive fighting there.", condition: true }
+				{ key: "BFGAS-CVWR7", text: "%H' civil war has at least %XL sides, as alliances between various military and paramilitary groups constantly shift. The capital, %NC, is currently in ruins after extensive fighting there.", condition: true }
 			];
 			break;
 		case "Criminal Rule":
@@ -3769,16 +3793,16 @@
 				{ key: "BFEI-COLO7", text: "Recent settlements such as %H do not have the industrial base to produce many specialist goods. The advanced fabrics used in protective clothing must all be imported, and the threat of the planet's %C means replacements are frequently needed.", condition: info.colony.founded >= 7 },
 			];
 			break;
-		case "Cultural": // ~125
+		case "Cultural": // ~70
 			opts = [
 				{ key: "BFEI-CULT1", text: "High-quality raw materials for artworks are prized on %H, with %QI being particularly popular.", condition: info.r.randf() < 0.5 },
 				{ key: "BFEI-CULT2", text: "The %QO of %H are widely-regarded, with reproductions being popular on many worlds, and originals sometimes selling for millions of credits", condition: info.r.randf() < 0.5 },
 				{ key: "BFEI-CULT3", text: "%H produces many luxury goods containing reproductions of its famous %QO, and imports the same from other worlds.", condition: info.r.randf() < 0.5 },
-				{ key: "BFEI-CULT4", text: "The continuing search for originality leads many of %S artists to experiment with mind-altering substances. Translating the results into something comprehensible to sober individuals is often a challenge, however.", condition: info.r.randf() < 0.5 },
-				{ key: "BFEI-CULT5", text: "%S economy is stable and largely self-sustaining, producing a large surplus. The majority of this surplus is spent on cultural enrichment, with the planet's %QO being particularly well-regarded.", condition: info.politics.governmentType != "Cultural Reachers" && info.r.randf() < 0.5 },
-				{ key: "BFEI-CULT6", text: "With day-to-day survival no longer a concern for %S inhabitants, many spend their time on the production of art. The system needs a constant supply of %QI to be used in their %QO.", condition: info.r.randf() < 0.5 && info.colony.attacked == 0 },
+				{ key: "BFEI-CULT4", text: "The continuing search for originality leads many of %H' artists to experiment with mind-altering substances. Translating the results into something comprehensible to sober individuals is often a challenge, however.", condition: info.r.randf() < 0.5 },
+				{ key: "BFEI-CULT5", text: "%H' economy is stable and largely self-sustaining, producing a large surplus. The majority of this surplus is spent on cultural enrichment, with the planet's %QO being particularly well-regarded.", condition: info.politics.governmentType != "Cultural Reachers" && info.r.randf() < 0.5 },
+				{ key: "BFEI-CULT6", text: "With day-to-day survival no longer a concern for %H' inhabitants, many spend their time on the production of art. The system needs a constant supply of %QI to be used in their %QO.", condition: info.r.randf() < 0.5 && info.colony.attacked == 0 },
 				{ key: "BFEI-CULT7", text: "The exploration of artistic limits on %H is of great interest to social researchers who regularly review the system's work.", condition: info.r.randf() < 0.5 },
-				{ key: "BFEI-CULT8", text: "Many long-established worlds turn to the appreciation of art. %S people seek out a wide range of experiences from other worlds, and their own %QO are favourably reviewed.", condition: info.colony.founded < 5 && info.colony.attacked == 0  },
+				{ key: "BFEI-CULT8", text: "Many long-established worlds turn to the appreciation of art. %H' people seek out a wide range of experiences from other worlds, and their own %QO are favourably reviewed.", condition: info.colony.founded < 5 && info.colony.attacked == 0  },
 				{ key: "BFEI-CULT9", text: "The invader attack on %H shook the settlers badly, and they have produced many %QO while attempting to comprehend their situation.", condition: info.colony.attacked >= 1 },
 				{ key: "BFEI-CULT10", text: "%H produces many artworks, though other than its %QO they are rarely appreciated off-world.", condition: info.colony.species.length == 1 },
 				{ key: "BFEI-CULT11", text: "The artists of %H are renowned for their imaginative use of %QI.", condition: info.r.randf() < 0.5 },
@@ -3791,9 +3815,9 @@
 		case "Farming": // ~175
 			block.importance = 24; // very common, downgrade slightly
 			opts = [
-				{ key: "BFEI-FARM1", text: "To avoid damaging %S environment, the planet contains very little heavy industry. Tools and machinery for the farmers must often be imported from other systems.", condition: true },
+				{ key: "BFEI-FARM1", text: "To avoid damaging %H' environment, the planet contains very little heavy industry. Tools and machinery for the farmers must often be imported from other systems.", condition: true },
 				{ key: "BFEI-FARM2", text: "The farms of %H produce much of the area's luxury foods, with modern fertilisers often having to be imported to meet the growing demand.", condition: true },
-				{ key: "BFEI-FARM3", text: "%S underwater farms produce beautiful corals for use in decorations and jewellery.", condition: info.colony.species.indexOf("Lobster") != -1 },
+				{ key: "BFEI-FARM3", text: "%H' underwater farms produce beautiful corals for use in decorations and jewellery.", condition: info.colony.species.indexOf("Lobster") != -1 },
 				{ key: "BFEI-FARM4", text: "%H has an unusual species of native %C, which can be farmed to produce a fur-like substance in demand in the colder systems.", condition: true },
 				{ key: "BFEI-FARM5", text: "The %CA of %H are very versatile, with the farming settlements using them for food, materials and occasionally selling them off-world.", condition: true },
 				{ key: "BFEI-FARM6", text: "The conditions on %H are ideal for growing many fabric crops, and the good quality makes them popular with fashion designers across the chart.", condition: true },
@@ -3816,7 +3840,7 @@
 				{ key: "BFEI-GRMN4", text: "The crust of %H contains many metamorphic rocks and gemstones which are either unique or rarely found elsewhere, and are highly valued for their decorative nature.", condition: true },
 				{ key: "BFEI-GRMN5", text: "Telepresence devices are in high demand on %H to allow the mining of valuable minerals without needing to personally venture out onto the planet's hostile surface.", condition: info.habitability.best < 40 },
 				{ key: "BFEI-GRMN6", text: "The mining operations at %H require a constant supply of machinery to expand the operations, and spare parts to repair older equipment.", condition: true },
-				{ key: "BFEI-GRMN7", text: "Tools for mining %S valuable mineral ores continually wear out and need replacing, but the system lacks the production capacity to do much of this locally.", condition: true },
+				{ key: "BFEI-GRMN7", text: "Tools for mining %H' valuable mineral ores continually wear out and need replacing, but the system lacks the production capacity to do much of this locally.", condition: true },
 				{ key: "BFEI-GRMN8", text: "Mining on %H provides easy access to many common mineral ores, as well as a few precious metals such as %M.", condition: true },
 			];
 			break;
@@ -3834,8 +3858,8 @@
 				{ key: "BFEI-PROD2", text: "Refined metals, plastics, and organic materials are used in the factories of %H to make a range of machinery and tools.", condition: true },
 				{ key: "BFEI-PROD3", text: "%H specialises in producing radiation shields, and imports large quantities of high quality ceramics and metals every day.", condition: true },
 				{ key: "BFEI-PROD4", text: "Textiles produced on farming worlds or in synthetic plants are converted into functional clothing on %H. Their environmental suits are always in demand.", condition: true },
-				{ key: "BFEI-PROD5", text: "%S factories produce some of the highest quality tools and machinery in the eight charts. They work closely with engineering research institutes, and regularly send performance data of new designs back there.", condition: true },
-				{ key: "BFEI-PROD6", text: "High quality refined materials such as metal alloys, ceramics and plastics are constantly required by %S factories. Experiments in domestic production have generally been less profitable than shipping from more specialist systems.", condition: true },
+				{ key: "BFEI-PROD5", text: "%H' factories produce some of the highest quality tools and machinery in the eight charts. They work closely with engineering research institutes, and regularly send performance data of new designs back there.", condition: true },
+				{ key: "BFEI-PROD6", text: "High quality refined materials such as metal alloys, ceramics and plastics are constantly required by %H' factories. Experiments in domestic production have generally been less profitable than shipping from more specialist systems.", condition: true },
 				{ key: "BFEI-PROD7", text: "The facilities at %H are able to synthesise advanced medicines capable of treating many of the most severe diseases. Transporting these medicines to where they are needed is often a logistical challenge.", condition: true },
 			];
 			break;
@@ -3853,7 +3877,7 @@
 		case "Refining": // ~50
 			opts = [
 				{ key: "BFEI-REFN1", text: "The refining plants in this system convert both locally-mined and imported ore into pure metals and alloys.", condition: true },
-				{ key: "BFEI-REFN2", text: "%S refining industry produces much of the fuel used by spacecraft in the chart. The high-energy reactions needed to produce it mean that the plant machinery must be replaced frequently.", condition: true },
+				{ key: "BFEI-REFN2", text: "%H' refining industry produces much of the fuel used by spacecraft in the chart. The high-energy reactions needed to produce it mean that the plant machinery must be replaced frequently.", condition: true },
 				{ key: "BFEI-REFN3", text: "Oils and other hydrocarbons are converted into a range of useful plastics on %H, before being sold on to more advanced production systems.", condition: true },
 				{ key: "BFEI-REFN4", text: "Ore from mining systems is brought to %H and processed. Precious metals such as %M are refined to a pure form, while other ores are used to make alloys for ship hulls and industrial purposes.", condition: true },
 				{ key: "BFEI-REFN5", text: "The giant refineries of %H produce vast quantities of chemicals, from ship fuel, to fertiliser, to industrial plastics.", condition: true },
@@ -3868,7 +3892,8 @@
 				{ key: "BFEI-RESB2", text: "The wilderness of %H is under observation as part of a USC-funded research project. The planetary inhabitants are restricted to researchers and their support staff.", condition: info.economy.reason == "Wilderness" },
 				{ key: "BFEI-RESB3", text: "%H contains one of the most respected biological research facilities in the eight charts. Many new medicines and drugs have been developed here, and it is also heavily involved in the improvement of environmental manipulation technologies.", condition: info.colony.stage > 3 },
 				{ key: "BFEI-RESB4", text: "The research institutes on %H host one of the largest catalogues of biological data in the eight charts, collecting samples and recordings of animals and plants, as well as importing a large amount of computing hardware to process this data.", condition: info.colony.stage > 3 },
-				{ key: "BFEI-RESB5", text: "%S orbital station contains a small research installation observing the planet below. Planetary settlements are restricted to data collection sites and supporting infrastructure.", condition: info.economy.reason == "Wilderness" },
+				{ key: "BFEI-RESB5", text: "%H' orbital station contains a small research installation observing the planet below. Planetary settlements are restricted to data collection sites and supporting infrastructure.", condition: info.economy.reason == "Wilderness" },
+				{ key: "BFEI-RESB6", text: "The largely unmodified environment of %H is of great interest to researchers, and most of the previous colonists have been replaced by observation stations.", condition: info.economy.reason == "Wilderness" },
 			];
 			break;
 		case "Research (Comp)": // ~15
@@ -3877,7 +3902,7 @@
 				{ key: "BFEI-RESC1", text: "The system imports as many metals and fabrication tools as it can afford to build its own designs of advanced computer. While they have not yet produced a transapient AI, they have made a few breakthroughs in sensor and computing technology the sale of which keeps their economy going.", condition: info.politics.governmentType == "Transapientism" },
 				{ key: "BFEI-RESC2", text: "The research carried out into AI on %H has not yet produced a working system, but they have made advancements in the area of computer sensing, allowing them to sell advanced sensors and telepresence kits.", condition: info.politics.governmentType == "Transapientism" },
 				{ key: "BFEI-RESC3", text: "The computing research institutes at %H require a constant supply of precision machinery and precious metals to prototype new computing technologies.", condition: info.politics.governmentType != "Transapientism" },
-				{ key: "BFEI-RESC4", text: "%S computing research has made many breakthroughs, and for a price the latest advanced computers may be purchased here. Most go to other research systems to help with their data processing, or to the military.", condition: info.politics.governmentType != "Transapientism" },
+				{ key: "BFEI-RESC4", text: "%H' computing research has made many breakthroughs, and for a price the latest advanced computers may be purchased here. Most go to other research systems to help with their data processing, or to the military.", condition: info.politics.governmentType != "Transapientism" },
 				{ key: "BFEI-RESC5", text: "Computing technology is widely used in all aspects of life, and the need to make smaller or faster computers remains. The prototypes produced here are generally initially too expensive to be built commercially, but over time the cost will decrease.", condition: info.politics.governmentType != "Transapientism" }
 			];
 			break;
@@ -3898,7 +3923,7 @@
 				{ key: "BFEI-RESM3", text: "The invasion required rapid advancement in USC military technology, and %H was chosen in %D10E to receive billions of credits of research funding. Data about the performance of weapons in the field is collected and used to build the next generation.", condition: info.economy.reason != "Military" && info.economy.reason != "Ruins" },
 				{ key: "BFEI-RESM4", text: "%H builds some of the latest prototypes of ship and weapon technology, carrying out R&D contracts for both the USC and major system militaries around the eight charts.", condition: info.economy.reason != "Military" && info.economy.reason != "Ruins" },
 				{ key: "BFEI-RESM5", text: "The effects of the destruction on %H are carefully studied by USC military researchers in the hope of understanding more about the invaders' assault weapons.", condition: info.economy.reason == "Ruins" },
-				{ key: "BFEI-RESM6", text: "%S research base contains a small shipyard where the latest prototype military craft are produced. Prototype versions of the Espadon and Tabarzin fighters were built here during the invasion.", condition: info.economy.reason == "Military" },
+				{ key: "BFEI-RESM6", text: "%H' research base contains a small shipyard where the latest prototype military craft are produced. Prototype versions of the Espadon and Tabarzin fighters were built here during the invasion.", condition: info.economy.reason == "Military" },
 				{ key: "BFEI-RESM7", text: "The destruction of %H by the invaders used weapons unknown to the USC, and data retrieved from the few survivors is inconclusive. Researchers are scouring the system for any clues that can be found about what happened here.", condition: info.economy.reason == "Ruins" },
 			];
 			break;
@@ -3907,7 +3932,7 @@
 			opts = [
 				{ key: "BFEI-RESS1", text: "%H is most famous for its pure science research, especially in physics, chemistry and astronomy. The system imports the latest machinery and computers to carry out its research.", condition: true },
 				{ key: "BFEI-RESS2", text: "The research institutes of %H are constantly pushing back the boundaries of knowledge. Most of their discoveries are tens if not hundreds of kilodays from having practical use, though some with potential may be taken to other more applied research worlds.", condition: true },
-				{ key: "BFEI-RESS3", text: "Specialising in witchspace theory, %S researchers are working on understanding the mysteries of this travel form, including the unusual topology of the eight charts. With the recent invasion using a poorly understood witchspace method, their research has gained considerable urgency.", condition: true },
+				{ key: "BFEI-RESS3", text: "Specialising in witchspace theory, %H' researchers are working on understanding the mysteries of this travel form, including the unusual topology of the eight charts. With the recent invasion using a poorly understood witchspace method, their research has gained considerable urgency.", condition: true },
 			];
 			break;
 		case "Research (Soc)": // ~15
@@ -3920,17 +3945,83 @@
 			break;
 		case "Salvage": // ~25
 			block.importance = 40;
+			opts = [
+				{ key: "BFEI-SLVG1", text: "The invader assault on %H left many settlements completely destroyed. Salvage teams search the ruins, looking for intact items which can be returned to next-of-kin or sold. High power sensors are required to carry out the search.", condition: info.economy.reason == "Ruins" },
+				{ key: "BFEI-SLVG2", text: "The surface of %H is littered with debris after a collision between two colony ships in the upper atmosphere. Fast growing vegetation has obscured the sites and made recovery difficult, so portable sensor packages are required.", condition: info.economy.reason == "Wilderness" },
+				{ key: "BFEI-SLVG3", text: "While %H itself was largely ignored, the %U system was the site of several battles during the invasion. Salvaging the wrecks is a dangerous task but can be lucrative. Sensors and radiation shielding are in high demand.", condition: info.economy.reason == "Outsiders" },
+				{ key: "BFEI-SLVG4", text: "The battle over %H left many wrecked ships, both USC and invader, drifting through the system. Tracking down these ships for salvage is a difficult task, but the military-grade materials are often reusable.", condition: info.economy.reason == "Ruins" },
+				{ key: "BFEI-SLVG5", text: "Early indecision around settlement sites has left many small villages reclaimed by wilderness. Archaeologists will pay well for artefacts and data from these sites, but many are now extremely difficult to find.", condition: info.economy.reason == "Wilderness" },
+				{ key: "BFEI-SLVG6", text: "There is little economically viable at %H and the inhabitants are constantly in need of new tools, food and clothes. The remains of several failed business ventures and settlements are scattered throughout the system, and the sale of materials scavenged from these provides enough money to keep them alive.", condition: info.economy.reason == "Outsiders" },
+				{ key: "BFEI-SLVG7", text: "The inhabitants of %H aim to live in harmony with their surroundings and their settlements are small. Import of basic tools and clothes is often necessary, but the soil is good for making a range of decorative and industrial ceramics.", condition: info.economy.reason == "Wilderness" },
+			];
+			break;
+		case "Service": // ~100
+			block.importance = 23;
+			opts = [
+				{ key: "BFEI-SERV1", text: "%H is best-known for its %S industry. While the planet is largely self-sufficient, computing and telepresence hardware is often imported from elsewhere. Manufacturing is limited to low-impact luxury goods.", condition: true },
+				{ key: "BFEI-SERV2", text: "The %S industry requires good-quality telepresence tools to manage its off-world communications. While the world has no conventional exports, communication data is regularly packaged up for transport, and has the advantage of not needing a slow freighter to carry it.", condition: true },
+				{ key: "BFEI-SERV3", text: "As %H expanded, its economy has been rebalanced to self-sufficiency and service provision. Trade in tangible goods is relatively low, with luxuries and fashionable clothing being the main cargoes.", condition: true },
+				{ key: "BFEI-SERV4", text: "Service economies such as %H have relatively few imports and exports, but are hubs for intersystem couriers.", condition: true },
+				{ key: "BFEI-SERV5", text: "The delays introduced by intersystem communication make exporting services from %H' %S industry a challenge. Fast couriers can make a good living transporting information and other small packages to and from the system.", condition: true },
+				{ key: "BFEI-SERV6", text: "Following a planetary recession, the %NB reorganised the system to provide %S services to the region. This has been considerably more profitable than the previous manufacturing industry, though a few luxury goods are still produced here.", condition: info.planet.governmentCategory == "Corporate" },
+				{ key: "BFEI-SERV7", text: "%H provides %S services to most of the systems in this chart, and many corporate headquarters are based in or near this system for easy access.", condition: true }
+			];
 			break;
 		case "Shipyard": // ~15
-			block.importance = 40;
+			block.importance = 80;
+			checkKey("BFEI-SHIP1",0);
+			checkKey("BFEI-SHIP2",0);
+			checkKey("BFEI-SHIP3",0);
+			checkKey("BFEI-SHIP4",0);
+			checkKey("BFEI-SHIP5",0);
+			checkKey("BFEI-SHIP6",0);
+			var fidx = usedKeys["BFEI-SHIP1"]+usedKeys["BFEI-SHIP4"];
+			var hidx = 5+usedKeys["BFEI-SHIP2"]+usedKeys["BFEI-SHIP5"];
+			var midx = 13+usedKeys["BFEI-SHIP3"]+usedKeys["BFEI-SHIP6"];
+			opts = [
+				{ key: "BFEI-SHIP1", text: "The shipyards of %H specialise in fighter designs, with the well-known "+expandShips[fidx]+" design originally developed at the %NB yards.", condition: fidx<5 },
+				{ key: "BFEI-SHIP2", text: "Transports and freighters like the %NB's "+expandShips[hidx]+" require vast quantities of material to construct, and the system imports vast quantities of strong alloys, ceramics and plastics to do so.", condition: hidx<13 },
+				{ key: "BFEI-SHIP3", text: "The %NB yards specialise in ships for the independent market, with the "+expandShips[midx]+" being their most successful design. A range of upgrades and spare parts is exported from the system to stock stations and depots across the chart.", condition: midx<19 },
+				{ key: "BFEI-SHIP4", text: "The shipyards at %H largely license other designs, though the "+expandShips[fidx]+" fighter was one of their rare local successes, and producing spare parts and weapons for it is highly profitable for the system.", condition: fidx<5 },
+				{ key: "BFEI-SHIP5", text: "The now common "+expandShips[hidx]+" was first built at the %NB shipyards orbiting %H. Sales of this ship and spare parts, as well as weapons for its escort craft, make the system extremely wealthy.", condition: hidx<13 },
+				{ key: "BFEI-SHIP6", text: "The "+expandShips[midx]+" design has very precise internal layouts to accommodate a maximum of equipment and cargo. The %NB shipyards at %H have partnerships with refineries and factories across the chart to produce materials and machinery to the high standards required.", condition: midx<19 }
+			];
 			break;
-		case "Survival": // ~15 (not including uninhabited)
-			block.importance = 40;
+		case "Survival": // ~50 (not including uninhabited)
+			opts = [
+				{ key: "BFEI-SURV1", text: "There is no operational production in the %U system. Spare parts, clothes, food, and tools are all required by the remaining inhabitants, but their capacity to pay is severely limited.", condition: true },
+				{ key: "BFEI-SURV2", text: "Some survivors of the invasion are believed to still be living in the ruined cities. Basic survival equipment is required, as the USC has not been able to restore local production yet, and even food is sometimes difficult to come by.", condition: info.economy.reason == "Ruins" },
+				{ key: "BFEI-SURV3", text: "This system is home to those who have left USC society for one reason or another. Without any productive industry they are dependent on what little they can barter from passing ships. The settlement is of interest to social researchers for its persistence in these conditions.", condition: info.economy.reason == "Outsiders" },
+				{ key: "BFEI-SURV4", text: "The few remaining inhabitants of the %U system are dependent on other systems for all supplies. Work on repairing their hydroponics facilities is proceeding very slowly due to a lack of tools and materials.", condition: true },
+				{ key: "BFEI-SURV5", text: "The lack of order in %H has caused all production to be suspended. The remaining inhabitants continue to fight over the remaining supplies, and are often willing to barter for food, weapons and tools.", condition: info.politics.governmentCategory == "Disordered" },
+				{ key: "BFEI-SURV6", text: "The invasion destroyed almost all production facilities in the system. The survivors are in desperate need of food, clothes, tools and other basic supplies.", condition: info.colony.attacked >= 1 },
+				{ key: "BFEI-SURV7", text: "Failure to maintain radiation shielding has left many of the settlements and facilities unusable. Repairing the shielding would allow the colony to recover, but what little income they can now produce is traded for food and other essentials of survival.", condition: info.planet.surfaceRadiation > 0.3 },
+			];
 			break;
 		case "Terraforming": // ~40
-			block.importance = 40;
+			opts = [
+				{ key: "BFEI-TERR1", text: "The farmers of %H are making use of limited environmental modification technology to improve productivity. While this continues, surplus production is suspended. Biosciences researchers are extremely interested in the results.", condition: info.economy.reason == "Agriculture I" },
+				{ key: "BFEI-TERR2", text: "After a severe crop failure, %H has turned to environmental modification technology to boost yields. The modifiers, tools to maintain them, and suitable protective clothing are all required to continue this programme.", condition: info.economy.reason == "Agriculture I" },
+				{ key: "BFEI-TERR3", text: "While already inhabitable, the settlers are using environmental modification technologies to move %H closer to species norms.", condition: info.economy.reason == "Agriculture I" },
+				{ key: "BFEI-TERR4", text: "The use of environmental modification on %H is carefully controlled, but is gradually making the soils more fertile. The colony expects to be able to start producing food and other plant-based goods in export quantities in around %XS ten kD.", condition: info.economy.reason == "Agriculture I" },
+				{ key: "BFEI-TERR5", text: "Use of environmental modification technology is gradually making %H inhabitable for its %I occupants. While the process continues, the modification plants need maintenance and protection from external radiation.", condition: info.economy.reason == "Terraforming" },
+				{ key: "BFEI-TERR6", text: "The operation of environmental modification on %H is of great interest to researchers as the process of converting the world into one more suitable for %I occupancy continues.", condition: info.economy.reason == "Terraforming" && info.colony.founded == 8 },
+				{ key: "BFEI-TERR7", text: "Protective clothing for the environmental modification operators needs regular replacement as the substances released by the plants permeate their surroundings before diffusing into the atmosphere.", condition: info.economy.reason == "Terraforming" },
+			];
 			break;
-		case "Tourism": // ~100
+		case "Tourism": // ~40
+			opts = [
+				{ key: "BFEI-TOUR1", text: "While %H is itself relatively unremarkable the %U system as a whole contains many remarkable sights and those wealthy enough to afford intersystem tourism often visit here. Reproductions of the famous %QOs inspired by the system's %F are popular among those unable to visit themselves.", condition: true },
+				{ key: "BFEI-TOUR2", text: "The %F of %U attract many visitors, and fresh entertainment packages are regularly delivered to the system to keep the tourists occupied on the long journeys between them.", condition: true },
+				{ key: "BFEI-TOUR3", text: "The shimmering ice caps of %H are visited by hundreds of thousands of off-world tourists every kD. Souvenir fur outfits based on the native cold-weather clothing are popular exports.", condition: info.planet.temperature < 10 },
+				{ key: "BFEI-TOUR4", text: "%H' bleak deserts are a popular tourist attraction whose vast emptiness is believed to expand the mind. Other mind-expanding items to help people along regularly find their way to the surface.", condition: info.planet.temperature > 25 },
+				{ key: "BFEI-TOUR5", text: "The deep natural caves of %H are more extensive than many %IR habitats, and guided tours of the larger caverns are very popular. The system imports caving clothes and equipment from nearby systems, rather than allow heavy industry onto the surface.", condition: info.planet.percentLand > 30 },
+				{ key: "BFEI-TOUR6", text: "The aurorae of %H are visible from space, but visitors often also stop on the surface to view them from below, before flying through them in specially-shielded craft.", condition: info.star.instability > 0.2 || info.planet.surfaceRadiation > 0.2 },
+				{ key: "BFEI-TOUR7", text: "The scattered islands in %H' vast oceans are attractive to off-world visitors looking for solitude in their holidays. Corals harvested from the surrounding waters are the world's main export.", condition: info.planet.percentLand < 20 },
+				{ key: "BFEI-TOUR8", text: "Art inspired by the %FN of %H is popular around the region, and encourages visitors to the system to see it themselves. Clothes and entertainment packages are imported to sell on to the tourists at a significant markup.", condition: true },				
+				{ key: "BFEI-TOUR9", text: "The %FA on %H are famous throughout the chart and receive many visitors every kD.", condition: true },				
+				{ key: "BFEI-TOUR10", text: "%H is well-known for its %FA, and the temporary tourist population of the planet is around a third of the permanent residents. Income from the tourist trade means that the system needs little conventional exports, though transport of souvenirs allows freighters to fill their holds regardless.", condition: true },				
+			];
 			break;
 		}
 
