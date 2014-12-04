@@ -2246,10 +2246,17 @@ random.setStart(325000);
 				capital: descgen.capitalcityName(i,j,$,random,species),
 				gap: descgen.gapName(i,j,$,random,species),
 				party1: namegen.partyName(random),
-				party2: namegen.partyName(random)
+				party2: namegen.partyName(random),
+				art: descgen.artName(i,j,$,random,species),
+				sport: descgen.artName(i,j,$,random,species),
+				news: descgen.newsName(i,j,$,random,species),
+				otherOrg: descgen.otherName(i,j,$,random,species)
 			};
 			$.set(i,j,"names",names);
 			var descblocks = descgen.getDescBlocks(i,j,$,random,species);
+			// in case later work wants to depend on the presence of a particular element, which can include hidden blocks
+			$.set(i,j,"descriptionElements",descblocks.map(function(b) { return b.key; }).join(","));
+
 			var lenacc = 0;
 			var useblocks = 0;
 			var blocks = [];
@@ -2271,13 +2278,29 @@ random.setStart(325000);
 				}
 			});
 			$.set(i,j,"description",blocks.map(function(b) { return b.text; }).join(" ... "));
-			// in case later work wants to depend on the presence of a particular element
-			$.set(i,j,"descriptionElements",blocks.map(function(b) { return b.key; }).join(","));
+			$.set(i,j,"descriptionElementsUsed",blocks.map(function(b) { return b.key; }).join(","));
 		}
 	}
 	descgen.debug();
 }());
 
+// used about 100k so far, so give room to double.
+random.setStart(550000);
+
+// checkpoint random
+(function() {
+	for (i=0;i<$.galaxies;i++) {
+		for (j=0;j<$.systems;j++) {
+			if ($.get(i,j,"descriptionElementsUsed").match(/BGFI-NEBULA/)) {
+				$.set(i,j,"starCount",random.rand(500)+800);
+				$.set(i,j,"nebulaCount",random.rand(5000)+2500);
+			} else {
+				$.set(i,j,"starCount",random.rand(5000)+8000);
+				$.set(i,j,"nebulaCount",random.rand(50)+25);
+			}
+		}
+	}	
+}());
 
 
 (function() {

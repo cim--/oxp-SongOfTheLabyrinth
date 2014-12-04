@@ -92,6 +92,10 @@
 	var expandTourismArtifical = ["striking buildings","historic cities","bright casinos","diverse festivals","sporting championships","traditional artforms","renowned museums","gourmet cuisine","endless parties","unusual intoxicants"];
 
 	var expandServiceEconomy = ["banking","communications","journalism","insurance","legal","consultancy","technology","computing","information","entertainment"];
+	var expandSport = ["aerobatics","archery","volleyball","netball","cricket","snowboarding","abseiling","wrestling","martial arts","billiards","gymnastics","yachting","octathlon","triskaidekathon","weightlifting","racing","mining"];
+	var expandSportAdjective = ["","","","","underwater ","subterranean ","airborne ","orbital ","asteroid ","ice ","beach ","solar "];
+	var expandNews = ["Times","Broadcast","Report","Nebula","Defender","Network","Correspondent","Comments","Gazette","Journal","Informer","Medium","Visual","Analyst","Messenger","Estate","Herald","Review"];
+	var expandNewsPrefix = ["Daily","Hourly","Kilodaily","United","Chart","Miners'","Farmers'","Artists'","Salvagers'","Traders'","Workers'","Researchers'","Tourists'","Business"];
 
 	
 	var expand = function(info,string) {
@@ -108,6 +112,10 @@
 		string = string.replace(/%NG/g,info.names.gap);
 		string = string.replace(/%NVG/g,info.names.criminalGroup);
 		string = string.replace(/%NV/g,info.names.criminal);
+		string = string.replace(/%NS/g,info.names.sport);
+		string = string.replace(/%NA/g,info.names.art);
+		string = string.replace(/%NJ/g,info.names.news);
+		string = string.replace(/%NO/g,info.names.otherOrg);
 
 		// some specifics here
 		var sl = info.species.list();
@@ -116,6 +124,7 @@
 		}
 		string = string.replace(/%IB/g,info.species.name("Bird"));
 		string = string.replace(/%II/g,info.species.name("Insect"));
+		string = string.replace(/%IL/g,info.species.name("Lobster"));
 		string = string.replace(/%IRS/g,info.species.pluralName("Rodent"));
 		string = string.replace(/%IR/g,info.species.name("Rodent"));
 		if (info.colony.species.length > 0) {
@@ -130,8 +139,15 @@
 			string = string.replace(/%IS/g,info.species.pluralName(info.colony.species[0]));
 			string = string.replace(/%I/g,info.species.name(info.colony.species[0]));
 			string = string.replace(/%O/g,state.home[info.colony.species[0]]?state.home[info.colony.species[0]]:"their homeworld");
-			string = string.replace(/%NN/g,info.species.retrieveName(info.colony.species[0],info.r));
-			string = string.replace(/%N/g,info.species.word(info.colony.species[0],info.r));
+			if (string.match(/%NN/)) {
+				string = string.replace(/%NN/g,info.species.retrieveName(info.colony.species[0],info.r));
+			}
+			if (string.match(/%NF/)) {
+				string = string.replace(/%NF/g,info.species.retrieveName(info.colony.species[0],info.r)+" "+info.species.retrieveName(info.colony.species[0],info.r));
+			}
+			if (string.match(/%N/)) {
+				string = string.replace(/%N/g,info.species.word(info.colony.species[0],info.r));
+			}
 		}
 		if (string.match(/%B1/)) {
 			string = string.replace(/%B1/g,expandBridge[info.r.rand(expandBridge.length)]);
@@ -203,6 +219,9 @@
 		} 
 		if (string.match(/%QO/)) {
 			string = string.replace(/%QO/g,expandArtType[info.r.rand(expandArtType.length)]);
+		} 
+		if (string.match(/%QS/)) {
+			string = string.replace(/%QS/g,expandSportAdjective[info.r.rand(expandSportAdjective.length)]+expandSport[info.r.rand(expandSport.length)]);
 		} 
 		// invasion population loss
 		string = string.replace(/%L7/g,"one billion");
@@ -313,6 +332,18 @@
 
 	var descgen = {};
 
+	descgen.otherName = function(i,j,p,r,s) {
+		var spec = p.get(i,j,"colony").species[0];
+		if (!spec) { spec = s.getNative(i,r); }
+		var result;
+		if (r.randf() < 0.5) {
+			result = s.word(spec,r);
+		} else {
+			result = s.retrieveName(spec,r);
+		}
+		return result;
+	};
+
 	descgen.companyName = function(i,j,p,r,s) {
 		var spec = p.get(i,j,"colony").species[0];
 		if (!spec) { spec = s.getNative(i,r); }
@@ -342,6 +373,32 @@
 		result = expandCriminal[r.rand(expandCriminal.length)];
 		result += " "+s.retrieveName(spec,r);
 		return result;
+	};
+
+	descgen.sportName = function(i,j,p,r,s) {
+		return expandSportAdjective[r.rand(expandSportAdjective.length)]+expandSport[r.rand(expandSport.length)];
+	};
+
+	descgen.artName = function(i,j,p,r,s) {
+		return expandArtType[r.rand(expandArtType.length)];
+	};
+
+
+	descgen.newsName = function(i,j,p,r,s) {
+		var choice = r.randf();
+		var prefix = "";
+		if (choice < 0.4) {
+			var spec = p.get(i,j,"colony").species[0];
+			if (!spec) { spec = s.getNative(i,r); }
+			prefix = s.word(spec,r);
+		} else if (choice < 0.8) {
+			prefix = p.get(i,j,"name");
+		} else if (choice < 0.9) {
+			prefix = expandNewsPrefix[r.rand(expandNewsPrefix.length)];
+		} else {
+			prefix = expandNews[r.rand(expandNews.length)]+" and";
+		}
+		return prefix+" "+expandNews[r.rand(expandNews.length)];
 	};
 
 	
@@ -2441,6 +2498,7 @@
 				{ key: "BFBS-WACC7", text: "A workers' revolt on %H with the aim of joining the system to "+r1.name+" has currently seized control of major settlements including %N %Y.", condition: r1.subCategory == "Collective" && info.colony.stage > 1},
 				{ key: "BFBS-WACC8", text: "The planet is currently the subject of a hostile takeover by the "+r1.name+" regional corporations.", condition: r1.subCategory == "Corporate" },
 				{ key: "BFBS-WACC9", text: "%H' membership of "+r1.name+" has been suspended after the military overturned the results of a closely-contested election to appoint %NW to the presidency.", condition: r1.subCategory == "Democratic" },
+				{ key: "BFBS-WACC10", text: "Following the death of President %NN, the system has been violently divided between forces loyal to their two deputies, who take strongly pro- and anti-"+r1.name+" lines.", condition: r1.subCategory == "Hierarchical" },
 			];
 
 			do {
@@ -3796,20 +3854,20 @@
 		case "Cultural": // ~70
 			opts = [
 				{ key: "BFEI-CULT1", text: "High-quality raw materials for artworks are prized on %H, with %QI being particularly popular.", condition: info.r.randf() < 0.5 },
-				{ key: "BFEI-CULT2", text: "The %QO of %H are widely-regarded, with reproductions being popular on many worlds, and originals sometimes selling for millions of credits", condition: info.r.randf() < 0.5 },
-				{ key: "BFEI-CULT3", text: "%H produces many luxury goods containing reproductions of its famous %QO, and imports the same from other worlds.", condition: info.r.randf() < 0.5 },
+				{ key: "BFEI-CULT2", text: "The %NA of %H are widely-regarded, with reproductions being popular on many worlds, and originals sometimes selling for millions of credits", condition: info.r.randf() < 0.5 },
+				{ key: "BFEI-CULT3", text: "%H produces many luxury goods containing reproductions of its famous %NA, and imports the same from other worlds.", condition: info.r.randf() < 0.5 },
 				{ key: "BFEI-CULT4", text: "The continuing search for originality leads many of %H' artists to experiment with mind-altering substances. Translating the results into something comprehensible to sober individuals is often a challenge, however.", condition: info.r.randf() < 0.5 },
-				{ key: "BFEI-CULT5", text: "%H' economy is stable and largely self-sustaining, producing a large surplus. The majority of this surplus is spent on cultural enrichment, with the planet's %QO being particularly well-regarded.", condition: info.politics.governmentType != "Cultural Reachers" && info.r.randf() < 0.5 },
-				{ key: "BFEI-CULT6", text: "With day-to-day survival no longer a concern for %H' inhabitants, many spend their time on the production of art. The system needs a constant supply of %QI to be used in their %QO.", condition: info.r.randf() < 0.5 && info.colony.attacked == 0 },
+				{ key: "BFEI-CULT5", text: "%H' economy is stable and largely self-sustaining, producing a large surplus. The majority of this surplus is spent on cultural enrichment, with the planet's %NA being particularly well-regarded.", condition: info.politics.governmentType != "Cultural Reachers" && info.r.randf() < 0.5 },
+				{ key: "BFEI-CULT6", text: "With day-to-day survival no longer a concern for %H' inhabitants, many spend their time on the production of art. The system needs a constant supply of %QI to be used in their %NA.", condition: info.r.randf() < 0.5 && info.colony.attacked == 0 },
 				{ key: "BFEI-CULT7", text: "The exploration of artistic limits on %H is of great interest to social researchers who regularly review the system's work.", condition: info.r.randf() < 0.5 },
-				{ key: "BFEI-CULT8", text: "Many long-established worlds turn to the appreciation of art. %H' people seek out a wide range of experiences from other worlds, and their own %QO are favourably reviewed.", condition: info.colony.founded < 5 && info.colony.attacked == 0  },
-				{ key: "BFEI-CULT9", text: "The invader attack on %H shook the settlers badly, and they have produced many %QO while attempting to comprehend their situation.", condition: info.colony.attacked >= 1 },
-				{ key: "BFEI-CULT10", text: "%H produces many artworks, though other than its %QO they are rarely appreciated off-world.", condition: info.colony.species.length == 1 },
+				{ key: "BFEI-CULT8", text: "Many long-established worlds turn to the appreciation of art. %H' people seek out a wide range of experiences from other worlds, and their own %NA are favourably reviewed.", condition: info.colony.founded < 5 && info.colony.attacked == 0  },
+				{ key: "BFEI-CULT9", text: "The invader attack on %H shook the settlers badly, and they have produced many %NA while attempting to comprehend their situation.", condition: info.colony.attacked >= 1 },
+				{ key: "BFEI-CULT10", text: "%H produces many artworks, though other than its %NA they are rarely appreciated off-world.", condition: info.colony.species.length == 1 },
 				{ key: "BFEI-CULT11", text: "The artists of %H are renowned for their imaginative use of %QI.", condition: info.r.randf() < 0.5 },
 				{ key: "BFEI-CULT12", text: "The citizens of %H import clothes and food from across the chart, looking to combine them into unique experiences.", condition: info.r.randf() < 0.5 },
 				{ key: "BFEI-CULT13", text: "%H produces many fine luxury goods inspired by their thriving artistic community.", condition: info.r.randf() < 0.5 && info.colony.attacked == 0 },
 				{ key: "BFEI-CULT14", text: "The settlers of %H have attempted to find solace in art after the damage caused to their world during the invasion.", condition: info.colony.attacked >= 1 },
-				{ key: "BFEI-CULT15", text: "While not renowned for its own artworks, %H uses its wealth to collect art from across the chart. The current fashion for %QO has led to very high auction prices.", condition: info.politics.governmentType != "Cultural Reachers" },
+				{ key: "BFEI-CULT15", text: "While not renowned for its own artworks, %H uses its wealth to collect art from across the chart. The current fashion for %NA has led to very high auction prices.", condition: info.politics.governmentType != "Cultural Reachers" },
 			];
 			break;
 		case "Farming": // ~175
@@ -4011,7 +4069,7 @@
 			break;
 		case "Tourism": // ~40
 			opts = [
-				{ key: "BFEI-TOUR1", text: "While %H is itself relatively unremarkable the %U system as a whole contains many remarkable sights and those wealthy enough to afford intersystem tourism often visit here. Reproductions of the famous %QOs inspired by the system's %F are popular among those unable to visit themselves.", condition: true },
+				{ key: "BFEI-TOUR1", text: "While %H is itself relatively unremarkable the %U system as a whole contains many remarkable sights and those wealthy enough to afford intersystem tourism often visit here. Reproductions of the famous %NAs inspired by the system's %F are popular among those unable to visit themselves.", condition: true },
 				{ key: "BFEI-TOUR2", text: "The %F of %U attract many visitors, and fresh entertainment packages are regularly delivered to the system to keep the tourists occupied on the long journeys between them.", condition: true },
 				{ key: "BFEI-TOUR3", text: "The shimmering ice caps of %H are visited by hundreds of thousands of off-world tourists every kD. Souvenir fur outfits based on the native cold-weather clothing are popular exports.", condition: info.planet.temperature < 10 },
 				{ key: "BFEI-TOUR4", text: "%H' bleak deserts are a popular tourist attraction whose vast emptiness is believed to expand the mind. Other mind-expanding items to help people along regularly find their way to the surface.", condition: info.planet.temperature > 25 },
@@ -4047,6 +4105,58 @@
 		return blocks;
 	};
 
+
+	var blocksForGeneralInterest = function(info) {
+		var blocks = [];
+		var block = {
+			importance: info.r.rand(15+(3*info.colony.stage)),
+			displayOrder: 12,
+			key: "",
+			text: ""	
+		};
+
+		/* Total needed will be ~100 with current importance
+		 * levels. Should probably try to extend and increase the
+		 * importance levels. */
+		opts = [
+			{ key: "BFGI-SPORT1", text: "The inhabitants of %H are keen fans of %NS.", limit: 10, condition: true},
+			{ key: "BFGI-SPORT2", text: "%H has regularly sent teams to intersystem %NS competitions, winning in %D"+(info.r.rand(3)+7)+".", limit: 10, condition: info.colony.founded < 7 },
+			{ key: "BFGI-SPORT3", text: "The %NS champion %NF is one of %H' most famous citizens, winning several competitions in %D"+(info.r.rand(4)+8)+".", limit: 10, condition: info.colony.founded < 9 },
+			{ key: "BFGI-SPORT4", text: "A cross-chart %NS league is hosted at %H every %XS kD.", limit: 10, condition: true },
+			{ key: "BFGI-PRISON", text: "The outer system houses a high-security prison for criminals guilty of offences against the USC itself.", limit: 2, condition: true },
+			{ key: "BFGI-NEWS1", text: "The system is the headquarters of the renowned %NJ news organisation.", limit: 5, condition: true },
+			{ key: "BFGI-NEWS2", text: "The popular %NJ journalists have their headquarters in %U.", limit: 5, condition: true },
+			{ key: "BFGI-NEWS3", text: "The controversial reporters of the %NJ operate out of %H.", limit: 5, condition: true },
+			{ key: "BFGI-ART1", text: "%NF, the contentious %NA artist, was born in %H.", limit: 5, condition: true },
+			{ key: "BFGI-ART2", text: "Award-winning artist %NF, most famous for their %NA %N, carried out most of the work on it in this system.", limit: 5, condition: true },
+			{ key: "BFGI-MEMORIAL", text: "A memorial to those who died in the invasion is being constructed in this system.", limit: 8, condition: true },
+			{ key: "BFGI-IMPLICIT", text: "The inhabitants have heard all the jokes about their planet's name before, and tend to react violently to further repetition.", limit: 1, condition: true },
+			{ key: "BFGI-ENLIGHTENMENT", text: "The system is home to the Enlightenment of %NO, who hold that the truly enlightened are able to visit witchspace without ships and return.", limit: 1, condition: true },
+			{ key: "BFGI-REFUGEES", text: "The %NO refugees, having survived the invasion and been welcomed here, have organised to raise funds for the millions of other refugees stranded through the charts.", limit: 1, condition: true },
+			{ key: "BFGI-GENERATION", text: "%H is the base of the %NO Generationalists, who believe that the only chance to escape a return of the invaders is to build a generation ship capable of re-crossing Biya's Gap", limit: 1, condition: info.galaxy == 1 },
+			{ key: "BFGI-NEBULA", text: "%U is surrounded by a dense nebula, which blocks out the light from nearby stars.", limit: 4, condition: true },
+			{ key: "BFGI-ARCHAEOLOGY", text: "There is heavily disputed evidence that %H may once have had technological native life. The %NO Survey has been thoroughly searching the system since the first discovery in %D6.", limit: 1, condition: info.galaxy == 2 && info.habitability.best > 55 },
+			{ key: "BFGI-SHELL", text: "Unusual plankton in the waters of %H dye %IL exoskeletons an iridescent rainbow of colours.", limit: 1, condition: info.colony.species.indexOf("Lobster") > -1 && info.habitability.best > 70},
+			{ key: "BFGI-TREASURE", text: "The %U system is rumoured to be the resting place of the %NO treasure, named after the wealthy crime lord who accumulated billions of credits worth of stolen artefacts before their assassination in %D8.", limit: 1, condition: true},
+			{ key: "BFGI-MAZE", text: "The interior of the main orbital station at %H has been laid out as a giant maze.", limit: 1, condition: true},
+			{ key: "BFGI-TESTZONE", text: "Rumours that the USC military use %U for testing their next-generation warships and fighters remain unproven.", limit: 5, condition: true},
+		];
+
+		do {
+			do {
+				opt = opts[info.r.rand(opts.length)];
+				block.key = opt.key;
+				block.text = opt.text;
+			} while (!opt.condition);
+			// with so many at limit 1, no point in reporting errors
+		} while (!checkKey(block.key,opt.limit-1));
+
+		if (block.text) {
+			blocks.push(block);
+		}
+
+		return blocks;
+	};
 
 
 
@@ -4246,6 +4356,9 @@
 		}
 
 		// Random flavour for inhabited systems about their culture or geography
+		if (info.colony.stage > 0 && info.colony.homeWorld == 0) {
+			blocks = blocks.concat(blocksForGeneralInterest(info));
+		}
 
 		
 

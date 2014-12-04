@@ -629,6 +629,9 @@
 		result += $plist("cloud_color",color(info.planet.cloudColour));
 		result += $plist("polar_cloud_color",color(info.planet.polarCloudColour));
 
+		result += $plist("sky_n_stars",info.starCount);
+		result += $plist("sky_n_blurs",info.nebulaCount);
+
 		result += $plist("population",info.colony.stage*10); // unread
 		result += $plist("population_description",info.colony.populationDescription);
 		if (info.colony.stage > 0) { 
@@ -658,7 +661,8 @@
 		}
 
 		result += $plist("description",info.description);
-		result += $plist("description_elements",info.descriptionElements);
+		result += $plist("sotw_description_elements",info.descriptionElements);
+		result += $plist("sotw_description_elements_used",info.descriptionElementsUsed);
 
 		if (this.$debug) {
 //			result += $plist("government",govtDebugNum(info.politics.governmentType));
