@@ -1,0 +1,84 @@
+{
+	"sotw-mixed-alloys" = {
+		name = "Mixed Alloys";
+		// todo, add other classes to categorise the comment text
+		classes = ("sotw-ex-salvage","sotw-ex-refining","sotw-im-production","sotw-im-shipyard","sotw-im-resmil","sotw-im-reseng","sotw-im-rescom","sotw-priceband-three","sotw-quantity-common","sotw-demand-bulk");
+		comment = "Metal alloys are generally produced from ores in refinery systems, though recycling and salvage also places them on the market. They are continually in demand at production systems and shipyards, as well as by some research institutes.";
+		market_script = "sotw-market-manager.js";
+	};
+
+	
+
+/*Animals
+
+Artworks
+
+Ceramics
+
+Clothes
+
+Computers
+
+Corals
+
+Entertainment
+
+Fertiliser
+
+Firearms
+
+Food
+
+Fuel
+
+Furs
+
+Gems
+
+Luxuries
+
+Machinery
+
+Medicine
+
+Narcotics
+
+Oil
+
+Ores
+
+Plants
+
+Plastics
+
+Precious Metals
+
+Rad shield
+
+Rocks (must have 'minerals' good key)
+
+Rescuees (must have 'slaves' good key)
+
+Sciequip
+
+Sensors
+
+Ship parts
+
+Spare parts
+
+Telepresence
+
+Terraforming
+
+Textiles
+
+Tools
+
+Travellers
+
+Weapons*/
+	
+
+
+}
