@@ -75,7 +75,7 @@ random.setStart(6000); // allows reducing of $.galaxies for testing, allows plen
 				sradfactor = 2;
 				shabfactor = 1.75;
 				minfactor = 0.8;
-				basecolour = [0.5,0.85,0.95];
+				basecolour = [0.6,0.85,0.95];
 				star.sequence = "Class A";
 				star.brightness = 20 + random.rand(60);
 				break;
@@ -93,7 +93,7 @@ random.setStart(6000); // allows reducing of $.galaxies for testing, allows plen
 				sradfactor = 1;
 				shabfactor = 1;
 				minfactor = 0.5;
-				basecolour = [0.9,0.9,0.7];
+				basecolour = [0.9,0.9,0.4];
 				star.sequence = "Class G";
 				star.brightness = 0.75 + random.randf()*0.5;
 				break;
@@ -102,7 +102,7 @@ random.setStart(6000); // allows reducing of $.galaxies for testing, allows plen
 				sradfactor = 0.8;
 				shabfactor = 0.7;
 				minfactor = 0.4;
-				basecolour = [0.9,0.8,0.6];
+				basecolour = [0.9,0.8,0.3];
 				star.sequence = "Class K";
 				star.brightness = 0.15 + random.randf()*0.25;
 				break;
@@ -111,16 +111,16 @@ random.setStart(6000); // allows reducing of $.galaxies for testing, allows plen
 				sradfactor = 0.6;
 				shabfactor = 0.5; 
 				minfactor = 0.3;
-				basecolour = [0.95,0.75,0.7];
+				basecolour = [0.95,0.65,0.6];
 				star.sequence = "Class M";
 				star.brightness = 0.05 + random.randf()*0.1;
 				break;
 			case 15:
 				// "giant"; 
-				sradfactor = 10; // should be closer to 50 but need to redo the populator first
+				sradfactor = 10; // should be closer to 50 but 10 is big enough
 				shabfactor = 10;
 				minfactor = 0.1; 
-				basecolour = [0.95,0.7,0.65];
+				basecolour = [0.95,0.25,0.25];
 				star.sequence = "Red giant";
 				star.brightness = 100 + random.rand(600);
 				break;
@@ -131,16 +131,16 @@ random.setStart(6000); // allows reducing of $.galaxies for testing, allows plen
 				sradfactor = 0.3;
 				shabfactor = 0.4;
 				minfactor = 0.2;  
-				basecolour = [0.95,0.75,0.7];
+				basecolour = [0.95,0.45,0.4];
 			}
 
-			star.radius = Math.floor(80000 * (0.9+(0.2*random.randf())) * sradfactor);
+			star.radius = Math.floor(800000 * (0.9+(0.2*random.randf())) * sradfactor);
 			/* Mostly <0.3, a few in 0.4..0.6, extremely rare 0.6..0.9 */
 			star.instability = (random.randf() * random.randf() * random.randf());
 			if (star.sequence == "Class M dwarf") {
 				star.instability /= 10;
 			}
-			star.coronaFlare = 0.1+((star.instability / 2) + (random.randf()/10));
+			star.coronaFlare = 0.05+((star.instability / 4) + (random.randf()/20));
 			if (star.sequence == "Red giant") {
 				star.coronaFlare += 0.7;
 				star.instability += 0.2;
@@ -171,7 +171,7 @@ random.setStart(35000); // guess ~13 total above random numbers max
 
 // 19 rands per system so far
 (function () {
-	var au = 7.5E6;
+	var au = 7.5E7;
 	for (i=0;i<$.galaxies;i++) {
 		for (j=0;j<$.systems;j++) {
 			var star = $.get(i,j,"star");

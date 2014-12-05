@@ -9,4 +9,5 @@
 The setting is similar to the original Oolite setting, but provides more detail in the politics, economy and history of the region, and is of a set of charts which have been inhabited for less time - many systems are still unsettled or only lightly populated.";
 	"author" = "cim";
 	"license" = "CC-BY-SA 4.0";
+	"tags" = ("oolite-scenario-only");
 }

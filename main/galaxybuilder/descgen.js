@@ -659,7 +659,7 @@
 				{key: "BFIC-MIN13", text: "Much of %H' %M is buried deep beneath the ice caps, but enough was accessible to early settlers that a few mines were operational by %D2", condition: info.planet.percentIce > 0.5 },
 				{key: "BFIC-MIN14", text: "The initial outpost was established here in %D2 to assist supply lines and carry out asteroid mining.", condition: info.economy.type != "Ground Mining" },
 				{key: "BFIC-MIN15", text: "%H was founded as one of the %IS's earliest extraction systems", condition: true },
-				{key: "BFIC-MIN16", text: "%H's low gravity and high mineral wealth made it an attractive mining planet", condition: info.planet.surfaceGravity < 0.7 },
+				{key: "BFIC-MIN16", text: "%H' low gravity and high mineral wealth made it an attractive mining planet", condition: info.planet.surfaceGravity < 0.7 },
 				{key: "BFIC-MIN17", text: "After a couple of failed attempts, mining operations began in earnest in %D2.", condition: true },
 				{key: "BFIC-MIN18", text: "%H was an early %I mining system.", condition: true },
 				{key: "BFIC-MIN19", text: "%M first brought settlers to %H in %D2.", condition: true },
@@ -1024,7 +1024,7 @@
 				{ key: "BFEUJ-MIN9", text: "%I1S joined the extraction operations here in %D5", condition: info.colony.species.length == 2 },
 				{ key: "BFEUJ-MIN10", text: "The colony expanded significantly in %D5 with the construction of several surface habitats.", condition: true },
 				{ key: "BFEUJ-MIN11", text: "Asteroid mining in %U picked up significantly in %D5 after a %I1 surveyor discovered additional %M-rich rocks in the system's outer %N belt.", condition: info.economy.type == "Asteroid Mining" },
-				{ key: "BFEUJ-MIN12", text: "After a series of accidents in %H's %N mine, "+info.species.name(event.species)+" specialists were brought in to carry out a full refit.", condition: info.economy.type == "Ground Mining" },
+				{ key: "BFEUJ-MIN12", text: "After a series of accidents in %H' %N mine, "+info.species.name(event.species)+" specialists were brought in to carry out a full refit.", condition: info.economy.type == "Ground Mining" },
 				{ key: "BFEUJ-MIN13", text: "The early mining operations at %H were more often than not unsuccessful despite the large %M concentrations. The departure of disillusioned miners and their replacement with new hopefuls throughout the early unification period gave the system its current multi-species demographics.", condition: info.colony.species.length >= 4 },
 				{ key: "BFEUJ-MIN14", text: "In %D5, with yields slowly dropping, the "+info.species.pluralName(event.species)+" sponsored the installation of the system's first refinery. The ability to sell low-mass high-value refined products restored the system to profitability.", condition: info.economy.type == "Refining" } 
 			];
@@ -1055,7 +1055,7 @@
 					{ key: "BFEUJ-JHAB9", text: "Taking advantage of the existing supply lines, the "+info.species.pluralName(event.species)+" joined the small colony on %H in %D5, more than doubling the population.", condition: true },
 					{ key: "BFEUJ-JHAB10", text: "The superb natural environment of %H attracted colonists from many species to the %U system.", condition: info.habitability.best == 100 },
 					{ key: "BFEUJ-JHAB11", text: "In the early unification period, even a long-established colony had a population thousands of times smaller than a homeworld, and massive population growth could sometimes happen overnight, as it did here when hundreds of thousands of "+info.species.name(event.species)+" settlers arrived in %D5.", condition: true },
-					{ key: "BFEUJ-JHAB12", text: "%H's population expanded significantly in %D5 with the arrival of additional "+info.species.name(event.species)+" workers.", condition: true }
+					{ key: "BFEUJ-JHAB12", text: "%H' population expanded significantly in %D5 with the arrival of additional "+info.species.name(event.species)+" workers.", condition: true }
 					/* TODO: maybe some species-specific entries? */
 				];
 
@@ -1838,7 +1838,7 @@
 				{ key: "BFCG-RSB5", text: "Concerns over the impact of the %H colony on the native life have led it to be scaled back on several occasions, most significantly in %D"+lastred+".", condition: info.habitability.best > 90 },
 				{ key: "BFCG-RSB6", text: "Falling profits caused the %NB to transfer most of its workers to other systems for the second time in %D"+lastred+".", condition: info.politics.governmentType == "Corporate" },
 				{ key: "BFCG-RSB7", text: "%U has entered an active phase twice during the colony's history, requiring a partial evacuation of the system. The last such event took place in %D"+lastred+".", condition: info.star.instability > 0.3 },
-				{ key: "BFCG-RSB8", text: "While %H's great beauty attracts many visitors to view it from orbit, it is not generally regarded as a pleasant place to live. The tourist transports often leave with more passengers than they came with, though the %N incident, when over one hundred thousand %IS hijacked a large freighter and fled the system in %D"+lastred+" has not been repeated.", condition: info.economy.type == "Tourism" }
+				{ key: "BFCG-RSB8", text: "While %H' great beauty attracts many visitors to view it from orbit, it is not generally regarded as a pleasant place to live. The tourist transports often leave with more passengers than they came with, though the %N incident, when over one hundred thousand %IS hijacked a large freighter and fled the system in %D"+lastred+" has not been repeated.", condition: info.economy.type == "Tourism" }
 			];
 
 			do {
@@ -1989,7 +1989,7 @@
 			opts = [
 				{ key: "BFCI-EMB1", text: "The embassy world of %H coordinated the USC's military activities in this chart during the invasion. After a fierce battle, the invaders forced the remains of the "+fleetnth(info.r)+" Fleet to withdraw, and destroyed all settlements in the system.", condition: info.colony.attacked == 3 },
 				{ key: "BFCI-EMB2", text: "One of the first major losses to the invasion was the destruction of the settlements on %H in %D10E, before the USC fleets were properly equipped and prepared for the fight. A small orbital station is all that has so far been rebuilt of the USC embassy.", condition: info.colony.attacked == 2 },
-				{ key: "BFCI-EMB3", text: "The USC embassy worlds were the core of the response to the invasion, coordinating fleet movements across the chart. In %D10, the "+fleetnth(info.r)+" Fleet was lured away from its position by a series of strikes on nearby systems, and a hit and run assault bombarded %H's major cities, killing over %X %L"+event.oldSize+".", condition: info.colony.attacked == 1 },
+				{ key: "BFCI-EMB3", text: "The USC embassy worlds were the core of the response to the invasion, coordinating fleet movements across the chart. In %D10, the "+fleetnth(info.r)+" Fleet was lured away from its position by a series of strikes on nearby systems, and a hit and run assault bombarded %H' major cities, killing over %X %L"+event.oldSize+".", condition: info.colony.attacked == 1 },
 				{ key: "BFCI-EMB4", text: "A major invader offensive succeeded in breaking through USC lines to assault %H in %D10. Almost %X %L"+event.oldSize+" people were successfully evacuated from the system as the attack began, destroying major communications and military installations through the system.", condition: info.colony.attacked == 1 },
 			];
 
@@ -2032,7 +2032,7 @@
 				{ key: "BFCI-ASS1", text: "The settlements at %H were destroyed in %D10 with the loss of %X %L"+event.oldSize+" lives. The USC "+fleetnth(info.r)+" Fleet later retook the system, which remains uninhabited except for a small refuelling depot.", condition: true },
 				{ key: "BFCI-ASS2", text: "The %U system was the site of some of the toughest fighting of the invasion, with the USC "+fleetnth(info.r)+" Fleet and local forces successfully forcing the invaders to retreat in %D10 without significant damage to the orbital station.", condition: event.oldSize == 1 },
 				{ key: "BFCI-ASS3", text: "%X %L"+event.oldSize+" people were evacuated from the %U system as invasion looked likely. In the end the system was spared, but so far only the orbital stations have been reactivated.", condition: true },
-				{ key: "BFCI-ASS4", text: "%H's sole major settlement, %NC, was destroyed in a surprise strike by invader bombers who bypassed the well-defended orbital station. Over %L"+event.oldSize+" people died in the bombing.", condition: true },
+				{ key: "BFCI-ASS4", text: "%H' sole major settlement, %NC, was destroyed in a surprise strike by invader bombers who bypassed the well-defended orbital station. Over %L"+event.oldSize+" people died in the bombing.", condition: true },
 				{ key: "BFCI-ASS5", text: "The colony on %H was completely wiped out as part of the initial assaults by the invaders in 1126 kD. The current orbital station was established as a USC supply depot when they retook the system in %D10.", condition: true },
 				{ key: "BFCI-ASS6", text: "The strategic position of the system meant that it changed hands several times during the invasion. The civilian population was entirely evacuated during the initial assault in %D10.", condition: info.bottle > 0 },
 				{ key: "BFCI-ASS7", text: "The majority of the USC "+fleetnth(info.r)+" Fleet was destroyed trying to defend %H from the invaders in %D10. While the orbital station survived with severe damage, over one %X %L"+event.oldSize+" people died in attacks on the surface habitats.", condition: info.economy.type == "Salvage" },
@@ -2065,12 +2065,12 @@
 				{ key: "BFCI-RAID7", text: "One of the greatest USC failures during the invasion was the defence of %U, where the "+fleetnth(info.r)+" Fleet was almost completely destroyed, and %X %L"+event.oldSize+" people died as the planet itself was bombarded.", condition: event.oldSize > 5 },
 				{ key: "BFCI-RAID8", text: "%H was bombarded from orbit in a hit and run attack in %D10. The majority of the system's %X %L"+event.oldSize+" inhabitants died in the assault or in the days that followed as the system was too small to be a priority for the USC's overstretched relief transports.", condition: event.oldSize < 4 },
 				{ key: "BFCI-RAID9", text: "The %U system's strategic location meant that it changed hands several times over the course of the invasion. The civilian population was evacuated early on, and has only recently been able to return.", condition: info.bottle > 0 },
-				{ key: "BFCI-RAID10", text: "In %D10 the invaders broke through USC lines and attacked %H's lightly-defended settlements. Almost %X %L"+event.oldSize+" died before the "+fleetnth(info.r)+" Fleet could be diverted to provide reinforcements.", condition: info.habitability.best > 90 },
+				{ key: "BFCI-RAID10", text: "In %D10 the invaders broke through USC lines and attacked %H' lightly-defended settlements. Almost %X %L"+event.oldSize+" died before the "+fleetnth(info.r)+" Fleet could be diverted to provide reinforcements.", condition: info.habitability.best > 90 },
 				{ key: "BFCI-RAID11", text: "%H was the centre of around a hundred days of intense fighting in %D10, in which several thousand invader and USC warships were destroyed, and much of the planet's surface was bombed. Orbital space remains dangerously full of wreckage.", condition: info.economy.type == "Salvage" },
-				{ key: "BFCI-RAID12", text: "The majority of %H's %X %L"+event.oldSize+" population was evacuated in %D10, as the planet's research facilities were expected to be a high-priority target.", condition: info.economy.type.match(/Research/) },
+				{ key: "BFCI-RAID12", text: "The majority of %H' %X %L"+event.oldSize+" population was evacuated in %D10, as the planet's research facilities were expected to be a high-priority target.", condition: info.economy.type.match(/Research/) },
 				{ key: "BFCI-RAID13", text: "The shipyards of %H were in %D10 responsible for servicing the "+fleetnth(info.r)+" Fleet. When an invading force arrived the defenders only had sufficient force to protect either the shipyard or the planet. USC authorities made the call to protect the shipyard, and %X %L"+event.oldSize+" died in the bombardment of the planet before reinforcements could arrive.", condition: info.economy.type == "Shipyard" },
 				{ key: "BFCI-RAID14", text: "The evacuation of %H was underway when invading forces arrived in %D10. Over a third of the %X %L"+event.oldSize+" fleeing citizens lost their lives as the slow freighters made easy targets.", condition: true },
-				{ key: "BFCI-RAID15", text: "The invading forces used biological weapons to kill over ninety percent of %H's population in %D10. The survivors have been quarantined on the surface to prevent the contagion spreading further.", condition: info.economy.type == "Quarantine" },
+				{ key: "BFCI-RAID15", text: "The invading forces used biological weapons to kill over ninety percent of %H' population in %D10. The survivors have been quarantined on the surface to prevent the contagion spreading further.", condition: info.economy.type == "Quarantine" },
 				{ key: "BFCI-RAID16", text: "Around %X %L"+event.oldSize+" died in a strike on this system in %D10.", condition: true }
 			];
 
@@ -2464,7 +2464,7 @@
 			opts = [
 				{ key: "BFBS-ACC1", text: "%H is currently negotiating to join the "+r1.name+" systems.", condition: true },
 				{ key: "BFBS-ACC2", text: "A referendum on joining the "+r1.name+" region passed in %D10, and this is now being discussed.", condition: info.politics.governmentCategory == "Democratic" },
-				{ key: "BFBS-ACC3", text: "Many of the shareholders of %H's biggest %Bs are from the "+r1.name+" and it has often been suggested that the %U system should be formally included in the region.", condition: info.politics.governmentCategory == "Corporate" },
+				{ key: "BFBS-ACC3", text: "Many of the shareholders of %H' biggest %Bs are from the "+r1.name+" and it has often been suggested that the %U system should be formally included in the region.", condition: info.politics.governmentCategory == "Corporate" },
 				{ key: "BFBS-ACC4", text: "Workers' movements on %H regularly cooperate with their counterparts in the "+r1.name+" systems, and formal membership is under consideration.", condition: info.politics.governmentCategory == "Collective" },
 				{ key: "BFBS-ACC5", text: "The %U system is under the de facto rule of "+r1.name+", but so far the expansion of the region has not been formalised.", condition: info.politics.governmentCategory == "Hierarchical" },
 				{ key: "BFBS-ACC6", text: "The accession of %H to the "+r1.name+" systems is currently being considered.", condition: true },
@@ -2598,7 +2598,7 @@
 			opts = [
 				{ key: "BFSEP-TEMC1", text: "The mean surface temperature is "+Math.floor(273+info.planet.temperature)+"K.", condition: true },
 				{ key: "BFSEP-TEMC2", text: "The cold surface of %H has a few warm spots near the equator, and this is where the settlements are concentrated.", condition: info.colony.stage > 1 },
-				{ key: "BFSEP-TEMC3", text: "Mining in %H's icy environment is challenging, with many of the most valuable deposits buried beneath kilometre-thick permafrost.", condition: info.colony.stage > 0 && info.planet.mineralWealth > 0.45 },
+				{ key: "BFSEP-TEMC3", text: "Mining in %H' icy environment is challenging, with many of the most valuable deposits buried beneath kilometre-thick permafrost.", condition: info.colony.stage > 0 && info.planet.mineralWealth > 0.45 },
 				{ key: "BFSEP-TEMC4", text: "Exploratory surveys suggest significant %M reserves are locked beneath the polar ice caps of %H, but it is currently not economical to retrieve them.", condition: !info.colony.founded && info.planet.mineralWealth > 0.45 },
 				{ key: "BFSEP-TEMC5", text: "A cold and forbidding world, %H is nevertheless considered at least theoretically habitable.", condition: info.habitability.best > 10 },
 				{ key: "BFSEP-TEMC6", text: "Survival on the surface outside the relatively mild equatorial regions requires heavy protective clothing.", condition: info.colony.stage > 1 },
@@ -2666,7 +2666,7 @@
 				{ key: "BFSEP-TEMH8", text: "Even with costly environmental manipulation tools, %H is unlikely to ever be fit for more than a few isolated polar settlements.", condition: info.habitability.best < 60 },
 				{ key: "BFSEP-TEMH9", text: "The construction of %NC in %H' intense heat posed many challenges for the original engineers.", condition: info.colony.stage > 1 },
 				{ key: "BFSEP-TEMH10", text: "%U has turned most of %H' into a barren wasteland.", condition: info.planet.cloudAlpha > 0 && info.planet.percentLand > 0.5 },
-				{ key: "BFSEP-TEMH11", text: "The high surface temperatures cause significant evaporation from %H's oceans, covering the world in thick clouds.", condition: info.planet.cloudAlpha > 2 && info.planet.percentLand < 0.5 },
+				{ key: "BFSEP-TEMH11", text: "The high surface temperatures cause significant evaporation from %H' oceans, covering the world in thick clouds.", condition: info.planet.cloudAlpha > 2 && info.planet.percentLand < 0.5 },
 				{ key: "BFSEP-TEMH12", text: "The warm oceans of %H moderate the surface temperature, which still remains uncomfortably high.", condition: info.planet.percentLand < 0.2 },
 				{ key: "BFSEP-TEMH13", text: "Few species can tolerate the temperatures in even the colder regions of %H for long, and the system remains uninhabited.", condition: info.planet.cloudAlpha > 0 && !info.colony.founded },
 				{ key: "BFSEP-TEMH14", text: "At an average of "+(273+info.planet.temperature)+"K, the surface is too hot for productive habitation.", condition: !info.colony.founded }
@@ -2729,7 +2729,7 @@
 				{ key: "BFSEP-RADE5", text: "The %H surface is uninhabitable due to intense radiation, and the orbital station requires regular maintenance to remove damaged shielding.", condition: info.colony.stage == 1 },
 				{ key: "BFSEP-RADE6", text: "Landing on %H is not advised due to high surface radiation levels.", condition: true },
 				{ key: "BFSEP-RADE7", text: "Effectively shielding the mining operations from the intense radiation is a substantial challenge.", condition: info.planet.mineralWealth > 0.45 && info.colony.stage > 0 },
-				{ key: "BFSEP-RADE8", text: "The cost of radiation shielding makes extraction of %H's %M deposits impractical.", condition: !info.colony.founded && info.planet.mineralWealth > 0.45 },
+				{ key: "BFSEP-RADE8", text: "The cost of radiation shielding makes extraction of %H' %M deposits impractical.", condition: !info.colony.founded && info.planet.mineralWealth > 0.45 },
 				{ key: "BFSEP-RADE9", text: "The crust of %H is thick with Uranium and other radioactive elements. The strongly ionising radiation is virtually impossible to adequately shield against.", condition: true },
 				{ key: "BFSEP-RADE10", text: "At "+info.planet.surfaceRadiation.toFixed(1)+" Fd, the surface radiation levels on %H are some of the highest recorded on a habitable zone planet.", condition: true },
 			];
@@ -3111,7 +3111,7 @@
 				block.importance = 25;
 				opts = [
 					{ key: "BFSEP-MINH1", text: "Surveys have discovered significant deposits of %M on %H.", condition: true },
-					{ key: "BFSEP-MINH2", text: "%H's surface is rich in valuable minerals.", condition: true },
+					{ key: "BFSEP-MINH2", text: "%H' surface is rich in valuable minerals.", condition: true },
 					{ key: "BFSEP-MINH3", text: "The %U system is believed to have substantial metal reserves.", condition: true },
 					{ key: "BFSEP-MINH4", text: "The system's asteroids are particularly high in %M.", condition: true }
 				];

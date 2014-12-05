@@ -1,0 +1,15 @@
+(
+	/* First stage: as this scenario excludes the primary
+	 * world-scripts.plist file to get rid of the core missions, bring
+	 * back in the core worldscripts which are still needed. */
+
+	/* AI Construction libraries */
+	"oolite-priorityai.js",
+
+	/* Interfaces */
+	"oolite-primable-equipment-manager.js",
+	"oolite-registership.js"
+
+	/* Second stage: SOTW's own scripts */
+
+)

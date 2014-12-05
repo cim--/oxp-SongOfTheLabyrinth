@@ -1,8 +1,33 @@
 {
+	// TODO, add other classes to categorise the comment text
+
+	// classes needed in Oolite core
+	"alloys" = {
+		name = "Scrap Metal";
+		classes = ("sotw-ex-salvage","sotw-im-refining","sotw-quantity-high","sotw-priceband-3","sotw-demand-medium","sotw-supply-medium","sotw-volatility-low");
+		comment = "Recycled and salvaged scrap metal is collected for shipping to refineries, where the valuable elements may be extracted for reuse. Fragments of hull plating from derelict ships are usually so damaged that this is the only use for them.";
+		market_script = "sotw-market-manager.js";
+	};
+
+	"minerals" = {
+		name = "Rock Fragments";
+		classes = ("sotw-im-asteroidmining","sotw-quantity-medium","sotw-priceband-2","sotw-demand-medium","sotw-supply-low","sotw-volatility-low");
+		comment = "Unsorted rock fragments from asteroid mining. Asteroid mining systems will tend to have facilities for breaking these up to extract valuable ores, or the larger mining ships can carry their own.";
+		market_script = "sotw-market-manager.js";
+	};
+
+	"slaves" = {
+		name = "Escape Pods";
+		classes = ("sotw-priceband-4","sotw-quantity-bulk","sotw-demand-high","sotw-supply-none","sotw-volatility-none");
+		comment = "Escape pods ejected from damaged ships. There is a standard fee for rescue of these pods, though in many cases this will be supplemented significantly by a reward.";
+		market_script = "sotw-market-manager.js";
+	};
+
+	// normal trade goods
+
 	"sotw-mixed-alloys" = {
 		name = "Mixed Alloys";
-		// todo, add other classes to categorise the comment text
-		classes = ("sotw-ex-salvage","sotw-ex-refining","sotw-im-production","sotw-im-shipyard","sotw-im-resmil","sotw-im-reseng","sotw-im-rescom","sotw-priceband-three","sotw-quantity-common","sotw-demand-bulk");
+		classes = ("sotw-ex-salvage","sotw-ex-refining","sotw-im-production","sotw-im-shipyard","sotw-im-researchmil","sotw-im-researcheng","sotw-im-researchcomp","sotw-priceband-3","sotw-demand-high","sotw-supply-high","sotw-volatility-low");
 		comment = "Metal alloys are generally produced from ores in refinery systems, though recycling and salvage also places them on the market. They are continually in demand at production systems and shipyards, as well as by some research institutes.";
 		market_script = "sotw-market-manager.js";
 	};
@@ -54,10 +79,6 @@ Plastics
 Precious Metals
 
 Rad shield
-
-Rocks (must have 'minerals' good key)
-
-Rescuees (must have 'slaves' good key)
 
 Sciequip
 
