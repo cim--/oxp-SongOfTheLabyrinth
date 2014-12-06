@@ -27,20 +27,69 @@
 
 	"sotw-mixed-alloys" = {
 		name = "Mixed Alloys";
-		classes = ("sotw-ex-salvage","sotw-ex-refining","sotw-im-production","sotw-im-shipyard","sotw-im-researchmil","sotw-im-researcheng","sotw-im-researchcomp","sotw-priceband-3","sotw-demand-high","sotw-supply-high","sotw-volatility-low");
+		classes = ("sotw-ex-salvage","sotw-ex-refining","sotw-im-production","sotw-im-shipyard","sotw-im-researchmil","sotw-im-researcheng","sotw-im-researchcomp","sotw-priceband-4","sotw-demand-high","sotw-supply-high","sotw-volatility-low","sotw-quantity-medium");
 		comment = "Metal alloys are generally produced from ores in refinery systems, though recycling and salvage also places them on the market. They are continually in demand at production systems and shipyards, as well as by some research institutes.";
 		market_script = "sotw-market-manager.js";
 	};
 
+	"sotw-animals" = {
+		name = "Animals";
+		classes = ("sotw-ex-farming","sotw-ex-colonisation","sotw-im-researchbio","sotw-priceband-13","sotw-demand-low","sotw-supply-medium","sotw-volatility-high","sotw-quantity-low");
+		comment = "Live non-sapient animals for transport between systems. Available on many habitable worlds, sometimes farmed intentionally, and sometimes collected by colonists especially on newer worlds. Biological research institutes will sometimes pay a good price for specimens. The cargo containers include full life-support systems adapted to the carried animal to transport them in safety and reasonably humane conditions.";
+		market_script = "sotw-market-manager.js";
+	};
 	
+	"sotw-artworks" = {
+		name = "Artworks";
+		classes = ("sotw-ex-tourism","sotw-ex-cultural","sotw-im-cultural","sotw-ex-researchsoc","sotw-im-researchsoc","sotw-volatility-high","sotw-priceband-7","sotw-demand-medium","sotw-supply-medium","sotw-quantity-low");
+		comment = "Copies or recordings of various forms of art. These are generally traded between the various cultural worlds but may be of interest to collectors anywhere.";
+		market_script = "sotw-market-manager.js";
+	};
 
-/*Animals
+	"sotw-ceramics-ind" = {
+		name = "Industrial Ceramics";
+		classes = ("sotw-ex-salvage","sotw-ex-refining","sotw-im-production","sotw-im-shipyard","sotw-im-researchmil","sotw-im-researcheng","sotw-volatility-low","sotw-priceband-5","sotw-supply-medium","sotw-demand-medium","sotw-quantity-high");
+		comment = "Industrial ceramics used in a wide range of applications, including heat and radiation shielding, body armour, chemical processing and building materials. Generally produced by refineries to precise specifications.";
+		market_script = "sotw-market-manager.js";
+	};
 
-Artworks
+	"sotw-ceramics-art" = {
+		name = "Artistic Ceramics";
+		classes = ("sotw-ex-farming","sotw-im-cultural","sotw-volatility-medium","sotw-priceband-4","sotw-supply-low","sotw-demand-low","sotw-quantity-low");
+		comment = "Ceramics in both set and unset forms suitable for artistic uses. Generally produced by traditional methods from rich clay soils and sold to the specialist art market.";
+		market_script = "sotw-market-manager.js";
+	};
 
-Ceramics
+	"sotw-clothes-basic" = {
+		name = "Mixed Clothing";
+		classes = ("sotw-ex-production","sotw-ex-cultural","sotw-im-survival","sotw-im-salvage","sotw-im-tourism","sotw-im-terraforming","sotw-im-service","sotw-im-cultural","sotw-volatility-low","sotw-priceband-3","sotw-supply-high","sotw-demand-high","sotw-quantity-high");
+		comment = "Normal clothing intended for use in non-hazardous environments. Generally purchased by systems which do not have the local resources to produce sufficient themselves, or by richer systems wishing to experience alternative fashions.";
+		market_script = "sotw-market-manager.js";
+	};
+	
+	"sotw-computers-basic" = {
+		name = "Computers";
+		classes = ("sotw-ex-production","sotw-im-service","sotw-volatility-low","sotw-priceband-6","sotw-supply-medium","sotw-demand-medium","sotw-quantity-medium");
+		comment = "General purpose computers and similar devices for civilian domestic and business use.";
+		market_script = "sotw-market-manager.js";
+	};
 
-Clothes
+	"sotw-computers-flight" = {
+		name = "Flight Computers";
+		classes = ("sotw-ex-shipyard","sotw-im-military","sotw-volatility-medium","sotw-priceband-9","sotw-supply-medium","sotw-demand-low","sotw-quantity-low");
+		comment = "Components and hardware for computing aboard ship, including navigation and witchspace calculations, flight control, trading and communications, and weapons systems. The increased price over normal hardware is mainly due to hardening against adverse conditions.";
+		market_script = "sotw-market-manager.js";
+	};
+
+	"sotw-computers-research" = {
+		name = "Research Computers";
+		classes = ("sotw-ex-researchcomp","sotw-im-researchbio","sotw-im-researchsci","sotw-volatility-high","sotw-priceband-18","sotw-supply-low","sotw-demand-low","sotw-quantity-rare");
+		comment = "Highly specialised computing hardware for supercomputing. Generally only required in significant quantities by research institutes, especially in the pure scientific fields.";
+		market_script = "sotw-market-manager.js";
+	};
+
+
+/*
 
 Computers
 

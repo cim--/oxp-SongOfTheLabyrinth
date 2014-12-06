@@ -12,18 +12,18 @@ this.updateGeneralCommodityDefinition = function(marketdef, station, system) {
 	var pricebands = [
 		[1,5], // 0
 		[1,10], // 1
-		[3,25], // 2 (min)
-		[8,50], // 3
-		[15,80], // 4
-		[35,150], // 5
-		[60,250], // 6
-		[100,350], // 7
+		[3,25], // 2 (min): Rock Fragments
+		[8,50], // 3: Scrap Metal, Mixed Clothes
+		[15,80], // 4: Escape Pods, Mixed Alloys, Artistic Ceramics
+		[35,150], // 5: Industrial Ceramics
+		[60,250], // 6: Computers
+		[100,350], // 7: Artworks
 		[200,500], // 8
-		[325,700], // 9
+		[325,700], // 9: Flight Computers
 		[450,900], // 10
 		[600,1100], // 11
 		[800,1350], // 12
-		[1000,1600], // 13
+		[1000,1600], // 13: Animals
 		[1250,1850], // 14
 		[1500,2150], // 15
 		[1800,2500], // 16
@@ -70,7 +70,17 @@ this.updateGeneralCommodityDefinition = function(marketdef, station, system) {
 	var ecname = sysinfo.economy_description;
 	var eckey = ecname.replace(/[^A-Za-z]+/g,"").toLowerCase();
 	var imported = false; var exported = false;
-	if (classes.indexOf("sotw-im-"+eckey) != -1) {
+	if (classes.indexOf("sotw-im-"+eckey) != -1 && classes.indexOf("sotw-ex-"+eckey) != -1) {
+		var cyclepos = (clock.seconds % 864000) & 255; // 10 day steps, 256 step cycle
+		if (cyclepos & system) {
+			priceband += tvolfactor;
+			imported = true;
+		} else {
+			priceband -= tvolfactor;
+			exported = true;
+		}
+		// will either import or export, and sometimes switch
+	} else if (classes.indexOf("sotw-im-"+eckey) != -1) {
 		priceband += tvolfactor;
 		imported = true;
 	} else if (classes.indexOf("sotw-ex-"+eckey) != -1) {
@@ -79,28 +89,7 @@ this.updateGeneralCommodityDefinition = function(marketdef, station, system) {
 	}
 	priceband += volatility*(Math.random()-Math.random());
 	
-	var pbfrac = priceband-Math.floor(priceband);
-	if (Math.random() < pbfrac) {
-		// round up
-		priceband = Math.floor(priceband+1);
-	} else {
-		// round down
-		priceband = Math.floor(priceband);
-	}
-
-	var bandpos = -1;
-	for (i=0;i<rolls;i++) {
-		// -0.5 to make abs() work
-		var roll = Math.random()-0.5;
-		if (Math.abs(roll) < Math.abs(bandpos)) {
-			bandpos = roll;
-		}
-	}
-	bandpos += 0.5; // add 0.5 back on
-
-	var price = (pricebands[priceband][0]*(1-bandpos))+(pricebands[priceband][1]*bandpos); // interpolate price
-	marketdef.price = Math.floor(price*10); // convert to decicredits
-	
+	// work out quantity next
 	var productivity = parseInt(sysinfo.productivity);
 	var pzeroes = Math.floor(Math.log(productivity)/Math.log(10));
 
@@ -117,34 +106,49 @@ this.updateGeneralCommodityDefinition = function(marketdef, station, system) {
 		pzeroes += 1;
 		tvolfactor = 1;
 	} else if (classes.indexOf("sotw-demand-low") != -1 && imported) {
-		pzeroes += 0;
+		pzeroes -= 0;
 		tvolfactor = -0.5;
 	} else if (classes.indexOf("sotw-supply-low") != -1 && exported) {
-		pzeroes += 0;
+		pzeroes -= 0;
 		tvolfactor = 0.5;
 	} else if (classes.indexOf("sotw-supply-none") != -1) {
-		pzeroes += 0;
+		pzeroes += 0; // no change
 		tvolfactor = -100;
 	} else {
 		// neither import nor export
-		pzeroes += 0;
-		tvolfactor = -0.3; // tend to low-ish quantities
+		pzeroes -= 1;
+		tvolfactor = -0.3*security; // tend to low-ish quantities
 	}
 	tvolfactor /= security; // again, bigger more stable markets tend to centre
 
-
-	if (classes.indexOf("sotw-quantity-bulk")) {
+	if (classes.indexOf("sotw-quantity-bulk") != -1) {
 		pzeroes += 2;
-	} else if (classes.indexOf("sotw-quantity-high")) {
+	} else if (classes.indexOf("sotw-quantity-high") != -1) {
 		pzeroes += 1;
-	} else if (classes.indexOf("sotw-quantity-medium")) {
+	} else if (classes.indexOf("sotw-quantity-medium") != -1) {
 		pzeroes += 0;
-	} else if (classes.indexOf("sotw-quantity-low")) {
+	} else if (classes.indexOf("sotw-quantity-low") != -1) {
 		pzeroes -= 1;
-	} else if (classes.indexOf("sotw-quantity-rare")) {
+	} else if (classes.indexOf("sotw-quantity-rare") != -1) {
 		pzeroes -= 2;
 	}
 	
+	if (priceband > pzeroes*3) {
+		// priceband might be adjusted later but it doesn't matter
+		// here capacity for expensive goods significantly reduced in
+		// smaller systems. (and very expensive everywhere)
+		if (exported) {
+			pzeroes -= 1;
+		} else {
+			pzeroes -= 3;
+		}
+	}
+	if (eckey == "survival") {
+		// very limited ability to pay for anything
+		priceband -= 1;
+		pzeroes -= 1;
+	}
+
 	if (pzeroes < 1) { pzeroes = 1; }
 
 	var capacity = Math.pow(2,pzeroes);
@@ -163,10 +167,46 @@ this.updateGeneralCommodityDefinition = function(marketdef, station, system) {
 	if (bandpos < 0) { bandpos = 0; }
 	if (bandpos > 1) { bandpos = 1; }
 
-	var quantity = Math.floor(capacity * bandpos);
+	var quantity = Math.floor((capacity/2) * bandpos);
 
 	marketdef.quantity = quantity;
 
+	// back to price calculations
+	if (quantity == 0) {
+		if (!imported) {
+			priceband -= 2;
+		} else if (productivity < 100) {
+			// might want it, but not rich enough to pay for it
+			priceband -= 1;
+		}
+	}
+
+
+	var pbfrac = priceband-Math.floor(priceband);
+	if (Math.random() < pbfrac) {
+		// round up
+		priceband = Math.floor(priceband+1);
+	} else {
+		// round down
+		priceband = Math.floor(priceband);
+	}
+	if (priceband < 0) {
+		priceband = 0;
+	}
+
+	var bandpos = -1;
+	for (i=0;i<rolls;i++) {
+		// -0.5 to make abs() work
+		var roll = Math.random()-0.5;
+		if (Math.abs(roll) < Math.abs(bandpos)) {
+			bandpos = roll;
+		}
+	}
+	bandpos += 0.5; // add 0.5 back on
+
+	var price = (pricebands[priceband][0]*(1-bandpos))+(pricebands[priceband][1]*bandpos); // interpolate price
+	marketdef.price = Math.floor(price*10); // convert to decicredits
+	
 	log(marketdef.name,marketdef.price,marketdef.quantity,marketdef.capacity);
 
 	return marketdef;

@@ -1,4 +1,8 @@
 {
+/* Scenario restriction
+id:oolite.oxp.cim.sotw.main;exc:trade-goods.plist;exc:world-scripts.plist
+Likely to need to exclude some more plists later
+*/
 	"identifier" = "oolite.oxp.cim.sotw.main";
 	"required_oolite_version" = "1.81";
 	"title" = "Song of the Witch";
