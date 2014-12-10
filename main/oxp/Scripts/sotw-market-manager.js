@@ -12,24 +12,24 @@ this.updateGeneralCommodityDefinition = function(marketdef, station, system) {
 	var pricebands = [
 		[1,5], // 0
 		[1,10], // 1
-		[3,25], // 2 (min): Rock Fragments
-		[8,50], // 3: Scrap Metal, Mixed Clothes
-		[15,80], // 4: Escape Pods, Mixed Alloys, Artistic Ceramics
-		[35,150], // 5: Industrial Ceramics
-		[60,250], // 6: Computers
-		[100,350], // 7: Artworks
-		[200,500], // 8
-		[325,700], // 9: Flight Computers
-		[450,900], // 10
-		[600,1100], // 11
-		[800,1350], // 12
+		[3,25], // 2 (min): Rock Fragments, Fuel
+		[8,50], // 3: Scrap Metal, Mixed Clothes, Entertainment Packages, Mixed Food, Spare Parts, Mixed Fabrics
+		[15,80], // 4: Artistic Ceramics, Fertiliser, Oil, Metal Ores, Tools
+		[35,150], // 5: Industrial Ceramics, Mixed Alloys
+		[60,250], // 6: Computers, Medicine, Escape Pods, Mixed Plastics
+		[100,350], // 7: Artworks, Animal Fabrics, Narcotics
+		[200,500], // 8: Firearms, Machinery, Ship Hardware
+		[325,700], // 9: Flight Computers, Plants, Radiation Shield
+		[450,900], // 10: Luxury Food, Luxury Goods, Sensors
+		[600,1100], // 11: Corals, Telepresence
+		[800,1350], // 12: Ship Weapons
 		[1000,1600], // 13: Animals
-		[1250,1850], // 14
-		[1500,2150], // 15
+		[1250,1850], // 14: Precious Metals
+		[1500,2150], // 15: Gems
 		[1800,2500], // 16
-		[2100,2900], // 17
+		[2100,2900], // 17: Terraformers
 		[2400,3400], // 18
-		[2750,3850], // 19
+		[2750,3850], // 19: Scientific Equipment
 		[3200,4400], // 20 (max)
 		[3700,5000], // 21
 		[4300,5700], // 22
@@ -66,9 +66,12 @@ this.updateGeneralCommodityDefinition = function(marketdef, station, system) {
 	volatility /= security;
 	tvolfactor /= security;
 
+	var productivity = parseInt(sysinfo.productivity);
 
 	var ecname = sysinfo.economy_description;
+	var ecreason = sysinfo.sotw_economy_reason;
 	var eckey = ecname.replace(/[^A-Za-z]+/g,"").toLowerCase();
+	var ecrkey = ecreason.replace(/[^A-Za-z]+/g,"").toLowerCase();
 	var imported = false; var exported = false;
 	if (classes.indexOf("sotw-im-"+eckey) != -1 && classes.indexOf("sotw-ex-"+eckey) != -1) {
 		var cyclepos = (clock.seconds % 864000) & 255; // 10 day steps, 256 step cycle
@@ -86,11 +89,77 @@ this.updateGeneralCommodityDefinition = function(marketdef, station, system) {
 	} else if (classes.indexOf("sotw-ex-"+eckey) != -1) {
 		priceband -= tvolfactor;
 		exported = true;
+	} else {
+		// neither import nor export but there may be special factors
+		if (classes.indexOf("sotw-imr-"+ecrkey) != -1) {
+			priceband += tvolfactor/2;
+			imported = true;
+		} else if (classes.indexOf("sotw-exr-"+ecrkey) != -1) {
+			priceband -= tvolfactor/2;
+			exported = true;
+		} else {
+			/* special tags, not necessarily symmetric. Add as
+			 * needed. Each good should have at most one special
+			 * tag */
+			
+			if (classes.indexOf("sotw-ims-radiation") != -1 && parseFloat(sysinfo.sotw_planet_surface_radiation) > 0.3) {
+				// high radiation imports
+				priceband += tvolfactor;
+				imported = true;
+			} else if (classes.indexOf("sotw-ims-cold") != -1 && parseFloat(sysinfo.sotw_planet_surface_temperature) < 5) {
+				// low temperature imports
+				priceband += tvolfactor;
+				imported = true;
+			} else if (classes.indexOf("sotw-exs-ocean") != -1 && parseFloat(sysinfo.sotw_habitability_best) > 80 && parseFloat(sysinfo.percent_land) < 30) {
+				// habitable ocean worlds
+				priceband -= tvolfactor/2;
+				exported = true;
+			} else if (classes.indexOf("sotw-ims-unstable") != -1 && (security <= 2 || sysinfo.sotw_government_category == "Disordered")) {
+				// unstable governments
+				priceband += tvolfactor/2;
+				imported = true;
+			} else if (classes.indexOf("sotw-ims-nohab") != -1 && parseFloat(sysinfo.sotw_habitability_best) < 60) {
+				// uninhabitable worlds
+				priceband += tvolfactor/2;
+				imported = true;
+			} else if (classes.indexOf("sotw-exs-oilmining") != -1 && parseFloat(sysinfo.sotw_habitability_best) > 60 && eckey == "groundmining") {
+				// oil-rich worlds
+				priceband -= tvolfactor;
+				exported = true;
+			} else if (classes.indexOf("sotw-exs-hab") != -1 && parseFloat(sysinfo.sotw_habitability_best) > 60) {
+				// inhabitable worlds
+				priceband -= tvolfactor/2;
+				exported = true;
+			} else if (classes.indexOf("sotw-exs-minrich") != -1 && parseFloat(sysinfo.sotw_mineral_wealth) > 0.45) {
+				// mineral rich worlds
+				priceband -= tvolfactor/2;
+				exported = true;
+			} else if (classes.indexOf("sotw-exs-tech") != -1 && sysinfo.techlevel > 8) {
+				// inhabitable worlds
+				priceband -= tvolfactor/2;
+				exported = true;
+			} else if (classes.indexOf("sotw-ims-isolation") != -1 && sysinfo.government_description == "Isolationist") {
+				// inhabitable worlds
+				priceband += tvolfactor;
+				exported = true;
+
+
+
+
+
+
+
+
+			} else if (classes.indexOf("sotw-ims-rich") != -1 && productivity > 1E6) {
+				// rich worlds. This one should be the last check
+				priceband += tvolfactor/2;
+				imported = true;
+			}
+		}
 	}
 	priceband += volatility*(Math.random()-Math.random());
 	
 	// work out quantity next
-	var productivity = parseInt(sysinfo.productivity);
 	var pzeroes = Math.floor(Math.log(productivity)/Math.log(10));
 
 	if (classes.indexOf("sotw-demand-high") != -1 && imported) {
@@ -116,15 +185,22 @@ this.updateGeneralCommodityDefinition = function(marketdef, station, system) {
 		tvolfactor = -100;
 	} else {
 		// neither import nor export
-		pzeroes -= 1;
-		tvolfactor = -0.3*security; // tend to low-ish quantities
+		if (classes.indexOf("sotw-specialist-good")) {
+			pzeroes -= 1;
+			tvolfactor = -0.3*security; // tend to low-ish quantities
+		}
 	}
 	tvolfactor /= security; // again, bigger more stable markets tend to centre
 
 	if (classes.indexOf("sotw-quantity-bulk") != -1) {
 		pzeroes += 2;
+		if (pzeroes < 4) {
+			pzeroes = 4;
+		}
+		tvolfactor += 0.5; // available almost anywhere
 	} else if (classes.indexOf("sotw-quantity-high") != -1) {
 		pzeroes += 1;
+		tvolfactor += 0.25; // available almost anywhere
 	} else if (classes.indexOf("sotw-quantity-medium") != -1) {
 		pzeroes += 0;
 	} else if (classes.indexOf("sotw-quantity-low") != -1) {
@@ -143,13 +219,14 @@ this.updateGeneralCommodityDefinition = function(marketdef, station, system) {
 			pzeroes -= 3;
 		}
 	}
+	if (pzeroes < 2) { pzeroes = 2; }
+
 	if (eckey == "survival") {
 		// very limited ability to pay for anything
 		priceband -= 1;
 		pzeroes -= 1;
 	}
 
-	if (pzeroes < 1) { pzeroes = 1; }
 
 	var capacity = Math.pow(2,pzeroes);
 	marketdef.capacity = capacity;
@@ -167,7 +244,7 @@ this.updateGeneralCommodityDefinition = function(marketdef, station, system) {
 	if (bandpos < 0) { bandpos = 0; }
 	if (bandpos > 1) { bandpos = 1; }
 
-	var quantity = Math.floor((capacity/2) * bandpos);
+	var quantity = Math.floor((capacity*(1+Math.random())/2) * bandpos);
 
 	marketdef.quantity = quantity;
 

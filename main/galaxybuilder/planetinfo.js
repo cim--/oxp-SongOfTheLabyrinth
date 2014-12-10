@@ -656,22 +656,28 @@
 		result += $plist("government",info.politics.stability);
 		if (info.colony.stage > 0) {
 			result += $plist("government_description",info.politics.governmentType);
+			result += $plist("sotw_government_category",info.politics.governmentCategory);
 		} else {
 			result += $plist("government_description","None");
+			result += $plist("sotw_government_category","None");
 		}
 
 		result += $plist("description",info.description);
 		result += $plist("sotw_description_elements",info.descriptionElements);
 		result += $plist("sotw_description_elements_used",info.descriptionElementsUsed);
 
+		result += $plist("sotw_planet_surface_radiation",fix(info.planet.surfaceRadiation,3));
+		result += $plist("sotw_planet_surface_temperature",fix(info.planet.temperature,0));
+		result += $plist("sotw_mineral_wealth",fix(info.planet.mineralWealth,2));
+		result += $plist("sotw_habitability_best",fix(info.habitability.best,1));
+		result += $plist("sotw_economy_reason",info.economy.reason);
+		
+
 		if (this.$debug) {
 //			result += $plist("government",govtDebugNum(info.politics.governmentType));
 //			result += $plist("government",info.colony.stage);
 //			result += $plist("government",info.politics.region?(info.politics.region%4)+2:(info.colony.contested||info.colony.independentHub?7:0));
-			result += $plist("mineral_wealth",fix(info.planet.mineralWealth,2));
 			result += $plist("founded",info.colony.founded);
-			result += $plist("planet_surface_temperature",fix(info.planet.temperature,0));
-			result += $plist("planet_surface_radiation",fix(info.planet.surfaceRadiation,3));
 			result += $plist("planet_surface_gravity",fix(info.planet.surfaceGravity,2));
 			result += $plist("planet_seismic_instability",fix(info.planet.seismicInstability,3));
 			result += $plist("undist",info.uninhabitedDistance);
@@ -680,7 +686,6 @@
 			result += $plist("independent_hub",info.colony.independentHub);
 			result += $plist("accession",info.politics.accession);
 			result += $plist("military_base",info.colony.militaryBase);
-			result += $plist("economy_reason",info.economy.reason);
 			result += $plist("planet_wind_speeds",fix(info.planet.windFactor,3));
 			result += $plist("star_instability",fix(info.star.instability,2));
 			result += $plist("hab_b",fix(info.habitability.Bird,1));
@@ -692,7 +697,6 @@
 			result += $plist("hab_lo",fix(info.habitability.Lobster,1));
 			result += $plist("hab_r",fix(info.habitability.Rodent,1));
 			result += $plist("hab_worst",fix(info.habitability.worst,1));
-			result += $plist("hab_best",fix(info.habitability.best,1));
 //			result += $plist("description","Habitability: "+fix(info.habitability.worst,0)+"-"+fix(info.habitability.average,0)+"-"+fix(info.habitability.best,0)+". Sun: "+info.star.sequence+". Radiation: "+fix(info.planet.surfaceRadiation,3)+". Minerals: "+fix(info.planet.mineralWealth,2)+". Earthquakes: "+fix(info.planet.seismicInstability,3)+". Flares: "+fix(info.star.instability,2)+". Land: "+fix(info.planet.landFraction,2)+". Wind speed: "+fix(info.planet.windFactor,2)+". Temperature: "+fix(info.planet.temperature,0)+". Gravity: "+fix(info.planet.surfaceGravity,2)+". Attacked: "+info.colony.attacked+". Military: "+info.colony.militaryBase+". Economy Reason: "+info.economy.reason+". Bottleneck: "+planetinfo.bottleneckType(g,s)+". Orbits: "+info.star.name);
 		}
 
