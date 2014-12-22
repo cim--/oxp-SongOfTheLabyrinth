@@ -1,5 +1,15 @@
 (
 	(
+		0, 0, "Refit Ship",
+		"EQ_SOTW_RECONFIGURE",
+		"Reconfigure allocation of internal space to engines, thrusters, shields, generators and capacitors.",
+		{
+			available_to_all = true;
+			condition_script = "sotw-conditions.js";
+		}
+	),
+
+	(
 		1, 1, "Combat Computer",
 		"EQ_SOTW_COMBAT_COMPUTER",
 		"Electronics covering combat-oriented systems, including target tracking, analysis, and locking.",
@@ -8,6 +18,146 @@
 			condition_script = "sotw-conditions.js";
 			provides = ("EQ_SCANNER_SHOW_MISSILE_TARGET","EQ_MULTI_TARGET","EQ_TARGET_MEMORY","EQ_INTEGRATED_TARGETING_SYSTEM");
 		}
-	)
+	),
+
+
+	(
+		1, 1, "Cross-chart Witchdrive",
+		"EQ_SOTW_GAL_DRIVE",
+		"A witchdrive precise enough to travel through the cross-chart witchspace structures.",
+		{
+			available_to_all = true;
+			condition_script = "sotw-conditions.js";
+			provides = ("EQ_GAL_DRIVE");
+		}
+	),
+
+/* Engine components */
+	(
+		2, 1000, "Engine 1",
+		"EQ_SOTW_COMPONENT_ENGINE1",
+		"Small engine",
+		{
+			available_to_all = true;
+			can_carry_multiple = true;
+			condition_script = "sotw-conditions.js";
+			script_info = {
+				"sotw_engine" = 24;
+				"sotw_esuse" = 18;
+				"sotw_desuse" = 18;
+				"sotw_enuse" = 0.05;
+			};
+		}
+	),	
+	(
+		4, 6000, "Engine 2",
+		"EQ_SOTW_COMPONENT_ENGINE2",
+		"Medium engine",
+		{
+			available_to_all = true;
+			can_carry_multiple = true;
+			condition_script = "sotw-conditions.js";
+			script_info = {
+				"sotw_engine" = 120;
+				"sotw_esuse" = 80;
+				"sotw_desuse" = 80;
+				"sotw_enuse" = 0.2;
+			};
+		}
+	),
+	(
+		8, 37500, "Engine 3",
+		"EQ_SOTW_COMPONENT_ENGINE3",
+		"Large engine",
+		{
+			available_to_all = true;
+			can_carry_multiple = true;
+			condition_script = "sotw-conditions.js";
+			script_info = {
+				"sotw_engine" = 600;
+				"sotw_esuse" = 350;
+				"sotw_desuse" = 350;
+				"sotw_enuse" = 0.75;
+			};
+		}
+	),
+	(
+		12, 225000, "Engine 4",
+		"EQ_SOTW_COMPONENT_ENGINE4",
+		"Huge engine",
+		{
+			available_to_all = true;
+			can_carry_multiple = true;
+			condition_script = "sotw-conditions.js";
+			script_info = {
+				"sotw_engine" = 3000;
+				"sotw_esuse" = 1600;
+				"sotw_desuse" = 1600;
+				"sotw_enuse" = 2.75;
+			};
+		}
+	),
+
+/* Thruster components */
+	(
+		2, 1000, "Thruster 1",
+		"EQ_SOTW_COMPONENT_THRUSTER1",
+		"Small thruster",
+		{
+			available_to_all = true;
+			can_carry_multiple = true;
+			condition_script = "sotw-conditions.js";
+			script_info = {
+				"sotw_thruster" = 40;
+				"sotw_esuse" = 15;
+				"sotw_enuse" = 0.05;
+			};
+		}
+	),	
+	(
+		4, 6000, "Thruster 2",
+		"EQ_SOTW_COMPONENT_THRUSTER2",
+		"Medium thruster",
+		{
+			available_to_all = true;
+			can_carry_multiple = true;
+			condition_script = "sotw-conditions.js";
+			script_info = {
+				"sotw_thruster" = 200;
+				"sotw_esuse" = 60;
+				"sotw_enuse" = 0.2;
+			};
+		}
+	),
+	(
+		8, 37500, "Thruster 3",
+		"EQ_SOTW_COMPONENT_THRUSTER3",
+		"Large thruster",
+		{
+			available_to_all = true;
+			can_carry_multiple = true;
+			condition_script = "sotw-conditions.js";
+			script_info = {
+				"sotw_thruster" = 1000;
+				"sotw_esuse" = 250;
+				"sotw_enuse" = 0.75;
+			};
+		}
+	),
+	(
+		12, 225000, "Thruster 4",
+		"EQ_SOTW_COMPONENT_THRUSTER4",
+		"Huge thruster",
+		{
+			available_to_all = true;
+			can_carry_multiple = true;
+			condition_script = "sotw-conditions.js";
+			script_info = {
+				"sotw_thruster" = 5000;
+				"sotw_esuse" = 1200;
+				"sotw_enuse" = 2.75;
+			};
+		}
+	),
 
 )

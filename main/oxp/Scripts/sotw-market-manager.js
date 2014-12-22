@@ -284,7 +284,7 @@ this.updateGeneralCommodityDefinition = function(marketdef, station, system) {
 	var price = (pricebands[priceband][0]*(1-bandpos))+(pricebands[priceband][1]*bandpos); // interpolate price
 	marketdef.price = Math.floor(price*10); // convert to decicredits
 	
-	log(marketdef.name,marketdef.price,marketdef.quantity,marketdef.capacity);
+//	log(marketdef.name,marketdef.price,marketdef.quantity,marketdef.capacity);
 
 	return marketdef;
 };

@@ -87,7 +87,7 @@
 					   "Jackal","Atlas","Kodiak","Coyote","Corsac","Helarctos"]; //6
 
 	var expandTourismSpace = ["asteroid belts","gas giants","ring systems","sunspots","historic stations","varied moons"];
-	var expandTourismNatural = ["native %C","vast forests","serene plains","jagged mountains","tranquil lakes","extensive walking trails", //6 (generic)
+	var expandTourismNatural = ["native %C","vast forests","serene plains","jagged mountains","tranquil lakes","extensive walking trails","giant craters", //7 (generic)
 								"shimmering ice caps","bleak deserts","deep caverns","spectacular aurorae","scattered islands"];
 	var expandTourismArtifical = ["striking buildings","historic cities","bright casinos","diverse festivals","sporting championships","traditional artforms","renowned museums","gourmet cuisine","endless parties","unusual intoxicants"];
 
@@ -186,7 +186,7 @@
 			string = string.replace(/%G/g,expandGovernment[info.r.rand(expandGovernment.length)]);
 		}
 		if (string.match(/%FN/)) {
-			string = string.replace(/%FN/g,expandTourismNatural[info.r.rand(6)]);
+			string = string.replace(/%FN/g,expandTourismNatural[info.r.rand(7)]);
 		}
 		if (string.match(/%FA/)) {
 			string = string.replace(/%FA/g,expandTourismArtifical[info.r.rand(expandTourismArtifical.length)]);
@@ -4027,6 +4027,7 @@
 			break;
 		case "Shipyard": // ~15
 			block.importance = 80;
+
 			checkKey("BFEI-SHIP1",0);
 			checkKey("BFEI-SHIP2",0);
 			checkKey("BFEI-SHIP3",0);
@@ -4109,11 +4110,13 @@
 	var blocksForGeneralInterest = function(info) {
 		var blocks = [];
 		var block = {
-			importance: info.r.rand(15+(3*info.colony.stage)),
+			importance: info.r.rand(16+(3*info.colony.stage)),
 			displayOrder: 12,
 			key: "",
 			text: ""	
 		};
+
+		checkKey("BFGI-RACE",0);
 
 		/* Total needed will be ~100 with current importance
 		 * levels. Should probably try to extend and increase the
@@ -4140,6 +4143,12 @@
 			{ key: "BFGI-TREASURE", text: "The %U system is rumoured to be the resting place of the %NO treasure, named after the wealthy crime lord who accumulated billions of credits worth of stolen artefacts before their assassination in %D8.", limit: 1, condition: true},
 			{ key: "BFGI-MAZE", text: "The interior of the main orbital station at %H has been laid out as a giant maze.", limit: 1, condition: true},
 			{ key: "BFGI-TESTZONE", text: "Rumours that the USC military use %U for testing their next-generation warships and fighters remain unproven.", limit: 5, condition: true},
+			{ key: "BFGI-MIXED1", text: "%H is a founding member of the Veto Reformists", limit: 3, condition: info.colony.species.length >= 3 },
+			{ key: "BFGI-MIXED2", text: "%H' representatives sit with the Veto Reformists in the USC.", limit: 3, condition: info.colony.species.length >= 3 },
+			{ key: "BFGI-MIXED3", text: "While not a formal member, %H often sides with the Veto Reformists in USC decisions.", limit: 3, condition: info.colony.species.length >= 3 },
+			{ key: "BFGI-RACE", text: "%H is the "+nth(usedKeys["BFGI-TOUR"])+" system on the cross-chart Endurance Race", limit: 8, condition: true },
+			{ key: "BFGI-CRIME", text: "The deep reaches of the %U system are rumoured to be home to the feared cross-chart "+info.names.criminalGroup+" crime syndicate.", limit: 4, condition: info.politics.governmentCategory != "Disordered" },
+			{ key: "BFGI-SHROUD", text: "A thick dust cloud surrounds %U cutting out light from all but the brightest stars.", limit: 2, condition: true }
 		];
 
 		do {

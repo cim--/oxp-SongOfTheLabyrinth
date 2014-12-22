@@ -61,7 +61,14 @@
 		"pre","pra","pri","pro","pru","pry",
 		"sta","ste","sti","sto","stu","sty",
 		"ach","ech","ich","och",
-		"ack","eck","ick","ock"
+		"ack","eck","ick","ock",
+		"pan","pen","pin","pon","pun",
+		"can","cin","con",
+		"tam","tem","tim","tom",
+		"bar","ber","bir","bor","bur",
+		"abb","ebb","ibb","obb","ubb",
+		"all","ell","ill","oll","ull",
+		"ast","est","ist","ost","ust"
 	];
 
 	var wordmap = {

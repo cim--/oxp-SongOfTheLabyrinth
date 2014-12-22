@@ -117,7 +117,9 @@ random.setStart(6000); // allows reducing of $.galaxies for testing, allows plen
 				break;
 			case 15:
 				// "giant"; 
-				sradfactor = 10; // should be closer to 50 but 10 is big enough
+				sradfactor = 10;
+				// should be closer to 50, but past ~2.7E9 Oolite
+				// stops being able to display things properly
 				shabfactor = 10;
 				minfactor = 0.1; 
 				basecolour = [0.95,0.25,0.25];
@@ -2293,10 +2295,16 @@ random.setStart(550000);
 		for (j=0;j<$.systems;j++) {
 			if ($.get(i,j,"descriptionElementsUsed").match(/BGFI-NEBULA/)) {
 				$.set(i,j,"starCount",random.rand(500)+800);
-				$.set(i,j,"nebulaCount",random.rand(5000)+2500);
+				$.set(i,j,"nebulaCount",random.rand(500)+300);
+				$.set(i,j,"nebulaColours",[random.randf(),random.randf(),random.randf(),random.randf(),random.randf(),random.randf()]);
+			} else if ($.get(i,j,"descriptionElementsUsed").match(/BGFI-SHROUD/)) {
+				$.set(i,j,"starCount",random.rand(50)+80);
+				$.set(i,j,"nebulaCount",random.rand(500)+300);
+				$.set(i,j,"nebulaColours",[random.randf()/5,random.randf()/5,random.randf()/5,random.randf()/5,random.randf()/5,random.randf()/5]);
 			} else {
 				$.set(i,j,"starCount",random.rand(5000)+8000);
 				$.set(i,j,"nebulaCount",random.rand(50)+25);
+				$.set(i,j,"nebulaColours",[]);
 			}
 		}
 	}	

@@ -1,0 +1,5 @@
+{
+	"cim.sotw.debug" = yes;
+	"cim.sotw.error" = yes;
+	"cim.sotw.notice" = yes;
+}

@@ -8,8 +8,9 @@
 
 	/* Interfaces */
 	"oolite-primable-equipment-manager.js",
-	"oolite-registership.js"
+	"oolite-registership.js", // for now
 
 	/* Second stage: SOTW's own scripts */
-
+	"sotw-ship-refit.js"
+	
 )

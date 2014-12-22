@@ -6,4 +6,7 @@
 	"chart_crosshair_color" = "0.0 1.0 0.0 0.3";
 	"chart_connection_color" = "0.5 0.5 0.5 0.5";
 
+	"selected_row_color" = "greenColor";
+	"selected_row_background_color" = "blackColor";
+
 }

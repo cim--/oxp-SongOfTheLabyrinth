@@ -1,0 +1,118 @@
+{
+	allow_big_gui = 1;
+	dials = (
+		{ // DES use
+			selector = "drawCustomBar:";
+			data_source = "sotw_desuse_bar";
+			x_origin = -1;
+			y_origin = 0;
+			x = 16;
+			y = -192;
+			color_low = "greenColor";
+			color_medium = "greenColor";
+			color_high = "yellowColor";
+			color_surround = "0.2 0.2 0.2";
+			draw_surround = 1;
+			width = 16;
+			height = 88;
+		},
+		{ // ES use
+			selector = "drawCustomBar:";
+			data_source = "sotw_esuse_bar";
+			x_origin = -1;
+			y_origin = 0;
+			x = 16;
+			y = 64;
+			color_low = "greenColor";
+			color_medium = "greenColor";
+			color_high = "yellowColor";
+			color_surround = "0.2 0.2 0.2";
+			draw_surround = 1;
+			width = 16;
+			height = 352;
+		},
+		{ // Speed
+			selector = "drawCustomText:";
+			data_source = "sotw_maxspeed_str";
+			x_origin = 1;
+			y_origin = 0;
+			x = -60;
+			y = 224;
+			height = 12;
+			width = 12;
+			color = "greenColor";
+		},
+		{ // Turn
+			selector = "drawCustomText:";
+			data_source = "sotw_maxturn_str";
+			x_origin = 1;
+			y_origin = 0;
+			x = -60;
+			y = 188;
+			height = 12;
+			width = 12;
+			color = "greenColor";
+		}
+	);
+	legends = (
+		{
+			text = "DES";
+			x_origin = -1;
+			y_origin = 0;
+			x = 4;
+			y = -252;
+			height = 12;
+			width = 12;
+			color = "0.2 0.8 0.2";
+		},
+		{
+			text = "ES";
+			x_origin = -1;
+			y_origin = 0;
+			x = 8;
+			y = -128;
+			height = 12;
+			width = 12;
+			color = "0.2 0.8 0.2";
+		},
+		{
+			text = "Max Speed";
+			x_origin = 1;
+			y_origin = 0;
+			x = -60;
+			y = 236;
+			height = 12;
+			width = 12;
+			color = "0.2 0.8 0.2";
+		},
+		{
+			text = "Max Turn";
+			x_origin = 1;
+			y_origin = 0;
+			x = -60;
+			y = 204;
+			height = 12;
+			width = 12;
+			color = "0.2 0.8 0.2";
+		}
+		
+	);
+	multi_function_displays = (
+		// never shown, just preserves MFD settings from main HUD
+		{
+			width = 198;
+			height = 132;
+			x = -156;
+			y = -72;
+			y_origin = 1;
+		},
+		{
+			width = 198;
+			height = 132;
+			x = 156;
+			y = -72;
+			y_origin = 1;
+		}
+	);
+	overall_alpha = 1.0;
+}

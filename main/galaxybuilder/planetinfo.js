@@ -631,6 +631,11 @@
 
 		result += $plist("sky_n_stars",info.starCount);
 		result += $plist("sky_n_blurs",info.nebulaCount);
+		if (info.nebulaColours.length > 0) {
+			result += $plist("nebula_color_1",color(info.nebulaColours.slice(0,3)));
+			result += $plist("nebula_color_2",color(info.nebulaColours.slice(3)));
+			result += $plist("sky_blur_scale",30);
+		}
 
 		result += $plist("population",info.colony.stage*10); // unread
 		result += $plist("population_description",info.colony.populationDescription);
