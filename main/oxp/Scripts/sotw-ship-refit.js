@@ -9,6 +9,31 @@ this.$colorEnabled = "0.4 0.9 0.4";
 this.$esuse = 0;
 this.$desuse = 0;
 this.$enregen = 0;
+this.$shieldBias = 0;
+
+
+this.startUp = function() {
+	if (missionVariables.sotw_refit_shieldbias) {
+		this.$shieldBias = missionVariables.sotw_refit_shieldbias;
+	} 
+}
+
+this.startUpComplete = function() {
+	// now enable these methods
+	this.equipmentAdded = function(eqKey) {
+		this._evaluateRefit();
+	}
+	
+	this.equipmentRemoved = function(eqKey) {
+		this._evaluateRefit();
+	}
+
+	this._evaluateRefit();
+}
+
+this.playerWillSaveGame = function() {
+	missionVariables.sotw_refit_shieldbias = this.$shieldBias;
+}
 
 
 this.playerBoughtEquipment = function(eqKey) {
@@ -20,14 +45,6 @@ this.playerBoughtEquipment = function(eqKey) {
 }
 
 
-this.equipmentAdded = function(eqKey) {
-	this._evaluateRefit();
-}
-
-
-this.equipmentRemoved = function(eqKey) {
-	this._evaluateRefit();
-}
 
 
 
@@ -51,6 +68,8 @@ this._evaluateRefit = function() {
 	this.$enuse = 0;
 	this._evaluateRefitEngines();
 	this._evaluateRefitThrusters();
+	this._evaluateRefitShields();	
+	this._evaluateRefitGenerators();
 	log(this.$logstring,"ES: "+this.$esuse+", DES: "+this.$desuse);
 }
 
@@ -62,6 +81,11 @@ this._evaluateRefitSpace = function(eqs,pse) {
 		}
 		if (pse.scriptInfo && pse.scriptInfo.sotw_enuse) {
 			this.$enuse -= (eqs.EQUIPMENT_OK)*(pse.scriptInfo.sotw_enuse);
+			if (this.$enuse > 0) {
+				player.ship.energyRechargeRate = this.$enuse;
+			} else {
+				player.ship.energyRechargeRate = 0;
+			}
 		}
 		if (pse.scriptInfo && pse.scriptInfo.sotw_desuse) {
 			this.$desuse += (eqs.EQUIPMENT_OK + eqs.EQUIPMENT_DAMAGED)*(pse.scriptInfo.sotw_desuse);
@@ -117,6 +141,41 @@ this._evaluateRefitThrusters = function() {
 }
 
 
+this._evaluateRefitShields = function() {
+	var shdpower = 0;
+	var mass = player.ship.scriptInfo.sotw_mass ? player.ship.scriptInfo.sotw_mass : 1600; // temporary until shipdata sorted out
+	var chg = 0; var ct = 0;
+	for (var i=1;i<4;i++) {
+		var key = "EQ_SOTW_COMPONENT_SHIELD"+i;
+		var eqs = player.ship.equipmentStatus(key,true);
+		var pse = EquipmentInfo.infoForKey(key);
+
+		if (eqs.EQUIPMENT_OK > 0) {
+			if (pse.scriptInfo && pse.scriptInfo.sotw_shield) {
+				chg += i; ct++;
+				shdpower += eqs.EQUIPMENT_OK * parseFloat(pse.scriptInfo.sotw_shield);
+			}
+		}
+		this._evaluateRefitSpace(eqs,pse);
+	}
+	chg /= ct;
+	player.ship.maxForwardShield = 640 * shdpower * (1+this.$shieldBias) / mass;
+	player.ship.maxAftShield = 640 * shdpower * (1-this.$shieldBias) / mass;
+	player.ship.forwardShieldRechargeRate = player.ship.aftShieldRechargeRate = chg * chg;
+}
+
+
+this._evaluateRefitGenerators = function() {
+	for (var i=1;i<4;i++) {
+		var key = "EQ_SOTW_COMPONENT_GENERATOR"+i;
+		var eqs = player.ship.equipmentStatus(key,true);
+		var pse = EquipmentInfo.infoForKey(key);
+		// space and energy is all these need
+		this._evaluateRefitSpace(eqs,pse);
+	}
+}
+
+
 
 this._updateHUD = function() {
 	player.ship.hud = "sotw_hud_refit.plist";
@@ -129,6 +188,20 @@ this._updateHUD = function() {
 	player.ship.setCustomHUDDial("sotw_desuse_bar",this.$desuse/this.$desuseMax);
 	player.ship.setCustomHUDDial("sotw_maxspeed_str",Math.floor(player.ship.maxSpeed)+" m/s");
 	player.ship.setCustomHUDDial("sotw_maxturn_str",player.ship.maxPitch.toFixed(2)+" r/s");
+	player.ship.setCustomHUDDial("sotw_maxfshield_str",Math.floor(player.ship.maxForwardShield));
+	player.ship.setCustomHUDDial("sotw_maxashield_str",Math.floor(player.ship.maxAftShield));
+	player.ship.setCustomHUDDial("sotw_shieldbias_ind",this.$shieldBias);
+
+	var genspare = 0;
+	if (this.$enuse > 0) {
+		// spare energy
+		genspare = Math.log(this.$enuse+1)/5;
+	} else if (this.$enuse < 0) {
+		// too little energy
+		genspare = -Math.log((-this.$enuse)+1)/5;
+	}
+	player.ship.setCustomHUDDial("sotw_genspare_ind",genspare);
+	player.ship.setCustomHUDDial("sotw_genpower_str",this.$enuse.toFixed(1));
 }
 
 
@@ -145,8 +218,16 @@ this._equipmentManagerScreen = function(defaultChoice) {
 			"03_shields": this._genChoice("Refit Shields"),
 			"04_generators": this._genChoice("Refit Generators"),
 			"05_capacitors": this._genChoice("Refit Capacitors"),
-			"99_save": this._genChoice("Apply Configuration")
 		};
+		if (this.$enuse > 0) {
+			choices["99_save"] = this._genChoice("Apply Configuration");
+		} else {
+			choices["99_save"] = {
+				text: "Insufficient generators",
+				unselectable: true,
+				color: this.$colorDisabled
+			};
+		}
 		break;
 	case "01_engines":
 		title = "Refit Engines";
@@ -177,6 +258,39 @@ this._equipmentManagerScreen = function(defaultChoice) {
 			"27_rem_thruster3": this._remChoice("EQ_SOTW_COMPONENT_THRUSTER3"),
 			"28_rem_thruster4": this._remChoice("EQ_SOTW_COMPONENT_THRUSTER4"),
 			"29_clear_thruster": this._genChoice("Remove all thrusters"),
+			"98_home": this._genChoice("Return to main refit screen")
+		};
+		break;
+	case "03_shields":
+		title = "Refit Shields";
+		message = "Select the shields to use in this refit. You must have sufficient cash to purchase the shields, and sufficient space in your ship to install them (see the ES bar to the left).\n\nLarger shields are more efficient, but if they are damaged in combat you will lose more defence as a result.\n\n"+this._infoTable("EQ_SOTW_COMPONENT_SHIELD","sotw_shield");
+		choices = {
+			"30_add_shield1": this._addChoice("EQ_SOTW_COMPONENT_SHIELD1"),
+			"31_add_shield2": this._addChoice("EQ_SOTW_COMPONENT_SHIELD2"),
+			"32_add_shield3": this._addChoice("EQ_SOTW_COMPONENT_SHIELD3"),
+			"33_add_shield4": this._addChoice("EQ_SOTW_COMPONENT_SHIELD4"),
+			"34_adjust_shield": this._genChoice("Adjust shield bias"),
+			"35_rem_shield1": this._remChoice("EQ_SOTW_COMPONENT_SHIELD1"),
+			"36_rem_shield2": this._remChoice("EQ_SOTW_COMPONENT_SHIELD2"),
+			"37_rem_shield3": this._remChoice("EQ_SOTW_COMPONENT_SHIELD3"),
+			"38_rem_shield4": this._remChoice("EQ_SOTW_COMPONENT_SHIELD4"),
+			"39_clear_shield": this._genChoice("Remove all shields"),
+			"98_home": this._genChoice("Return to main refit screen")
+		};
+		break;
+	case "04_generators":
+		title = "Refit Generators";
+		message = "Select the generators to use in this refit. You must have sufficient cash to purchase the generators, and sufficient space in your ship to install them (see the ES bar to the left).\n\nLarger generators are more efficient, but if they are damaged in combat you will lose more energy as a result.\n\n"+this._infoTable("EQ_SOTW_COMPONENT_GENERATOR","sotw_generator");
+		choices = {
+			"40_add_generator1": this._addChoice("EQ_SOTW_COMPONENT_GENERATOR1"),
+			"41_add_generator2": this._addChoice("EQ_SOTW_COMPONENT_GENERATOR2"),
+			"42_add_generator3": this._addChoice("EQ_SOTW_COMPONENT_GENERATOR3"),
+			"43_add_generator4": this._addChoice("EQ_SOTW_COMPONENT_GENERATOR4"),
+			"45_rem_generator1": this._remChoice("EQ_SOTW_COMPONENT_GENERATOR1"),
+			"46_rem_generator2": this._remChoice("EQ_SOTW_COMPONENT_GENERATOR2"),
+			"47_rem_generator3": this._remChoice("EQ_SOTW_COMPONENT_GENERATOR3"),
+			"48_rem_generator4": this._remChoice("EQ_SOTW_COMPONENT_GENERATOR4"),
+			"49_clear_generator": this._genChoice("Remove all generators"),
 			"98_home": this._genChoice("Return to main refit screen")
 		};
 		break;
@@ -266,6 +380,74 @@ this._equipmentManagerCallback = function(choice) {
 		break;
 	case "29_clear_thruster":
 		this._clearApply("EQ_SOTW_COMPONENT_THRUSTER");
+		break;
+	case "03_shields":
+		this.$emstate = "03_shields";
+		break;
+	case "30_add_shield1":
+		this._addApply("EQ_SOTW_COMPONENT_SHIELD1");
+		break;
+	case "31_add_shield2":
+		this._addApply("EQ_SOTW_COMPONENT_SHIELD2");
+		break;
+	case "32_add_shield3":
+		this._addApply("EQ_SOTW_COMPONENT_SHIELD3");
+		break;
+	case "33_add_shield4":
+		this._addApply("EQ_SOTW_COMPONENT_SHIELD4");
+		break;
+	case "34_adjust_shield":
+		if (this.$shieldBias <= 0.8) {
+			this.$shieldBias += 0.1;
+		} else {
+			this.$shieldBias = -0.9;
+		}
+		this._evaluateRefit();
+		break;
+	case "35_rem_shield1":
+		this._remApply("EQ_SOTW_COMPONENT_SHIELD1");
+		break;
+	case "36_rem_shield2":
+		this._remApply("EQ_SOTW_COMPONENT_SHIELD2");
+		break;
+	case "37_rem_shield3":
+		this._remApply("EQ_SOTW_COMPONENT_SHIELD3");
+		break;
+	case "38_rem_shield4":
+		this._remApply("EQ_SOTW_COMPONENT_SHIELD4");
+		break;
+	case "39_clear_shield":
+		this._clearApply("EQ_SOTW_COMPONENT_SHIELD");
+		break;
+	case "04_generators":
+		this.$emstate = "04_generators";
+		break;
+	case "40_add_generator1":
+		this._addApply("EQ_SOTW_COMPONENT_GENERATOR1");
+		break;
+	case "41_add_generator2":
+		this._addApply("EQ_SOTW_COMPONENT_GENERATOR2");
+		break;
+	case "42_add_generator3":
+		this._addApply("EQ_SOTW_COMPONENT_GENERATOR3");
+		break;
+	case "43_add_generator4":
+		this._addApply("EQ_SOTW_COMPONENT_GENERATOR4");
+		break;
+	case "45_rem_generator1":
+		this._remApply("EQ_SOTW_COMPONENT_GENERATOR1");
+		break;
+	case "46_rem_generator2":
+		this._remApply("EQ_SOTW_COMPONENT_GENERATOR2");
+		break;
+	case "47_rem_generator3":
+		this._remApply("EQ_SOTW_COMPONENT_GENERATOR3");
+		break;
+	case "48_rem_generator4":
+		this._remApply("EQ_SOTW_COMPONENT_GENERATOR4");
+		break;
+	case "49_clear_generator":
+		this._clearApply("EQ_SOTW_COMPONENT_GENERATOR");
 		break;
 	}
 	this._equipmentManagerScreen(choice);
@@ -365,20 +547,20 @@ this._infoTable = function(prefix,property) {
 	for (i=0;i<=4;i++) {
 		var result = "";
 		result += table[i][0];
-		result = this._pad(result,10);
+		result = this._pad(result,8);
 		result += table[i][1];
-		result = this._pad(result,15);
+		result = this._pad(result,13);
 		result += table[i][2];
-		result = this._pad(result,20);
+		result = this._pad(result,18);
 		result += table[i][3];
-		result = this._pad(result,25);
+		result = this._pad(result,23);
 		result += table[i][4];
-		result = this._pad(result,30);
+		result = this._pad(result,28);
 		result += table[i][5];
 		result += "\n";
 		results += result;
 	}
-	results += "\nYou have "+player.credits+"₢ and "+this.$esuseFree+"/"+this.$esuseMax+" space ("+this.$desuseFree+"/"+this.$desuseMax+" drive space).";
+	results += "\nYou have "+player.credits.toFixed(1)+"₢ and "+this.$esuseFree+"/"+this.$esuseMax+" space ("+this.$desuseFree+"/"+this.$desuseMax+" drive space).";
 	return results;
 }
 

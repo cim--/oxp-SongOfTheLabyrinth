@@ -7,7 +7,7 @@
 			x_origin = -1;
 			y_origin = 0;
 			x = 16;
-			y = -192;
+			y = -184;
 			color_low = "greenColor";
 			color_medium = "greenColor";
 			color_high = "yellowColor";
@@ -36,8 +36,8 @@
 			data_source = "sotw_maxspeed_str";
 			x_origin = 1;
 			y_origin = 0;
-			x = -60;
-			y = 224;
+			x = -56;
+			y = 212;
 			height = 12;
 			width = 12;
 			color = "greenColor";
@@ -47,12 +47,71 @@
 			data_source = "sotw_maxturn_str";
 			x_origin = 1;
 			y_origin = 0;
-			x = -60;
-			y = 188;
+			x = -56;
+			y = 184;
 			height = 12;
 			width = 12;
 			color = "greenColor";
-		}
+		},
+		{ // F Shield
+			selector = "drawCustomText:";
+			data_source = "sotw_maxfshield_str";
+			x_origin = 1;
+			y_origin = 0;
+			x = -56;
+			y = 152;
+			height = 12;
+			width = 12;
+			color = "greenColor";
+		},
+		{ // A Shield
+			selector = "drawCustomText:";
+			data_source = "sotw_maxashield_str";
+			x_origin = 1;
+			y_origin = 0;
+			x = -56;
+			y = 52;
+			height = 12;
+			width = 12;
+			color = "greenColor";
+		},
+		{ // Shield bias
+			selector = "drawCustomIndicator:";
+			data_source = "sotw_shieldbias_ind";
+			x_origin = 1;
+			y_origin = 0;
+			x = -32;
+			y = 116;
+			height = 64;
+			width = 8;
+			color = "0.2 0.8 0.2";
+			color_surround = "0.2 0.2 0.2";
+			draw_surround = 1;
+		},
+		{ // Generator
+			selector = "drawCustomText:";
+			data_source = "sotw_genpower_str";
+			x_origin = 1;
+			y_origin = 0;
+			x = -56;
+			y = 20;
+			height = 12;
+			width = 12;
+			color = "greenColor";
+		},
+		{ // Energy bias
+			selector = "drawCustomIndicator:";
+			data_source = "sotw_genspare_ind";
+			x_origin = -1;
+			y_origin = 0;
+			x = 48;
+			y = -184;
+			height = 88;
+			width = 8;
+			color = "0.2 0.8 0.2";
+			color_surround = "0.2 0.2 0.2";
+			draw_surround = 1;
+		},
 	);
 	legends = (
 		{
@@ -60,7 +119,17 @@
 			x_origin = -1;
 			y_origin = 0;
 			x = 4;
-			y = -252;
+			y = -244;
+			height = 12;
+			width = 12;
+			color = "0.2 0.8 0.2";
+		},
+		{
+			text = "GEN";
+			x_origin = -1;
+			y_origin = 0;
+			x = 36;
+			y = -244;
 			height = 12;
 			width = 12;
 			color = "0.2 0.8 0.2";
@@ -80,7 +149,7 @@
 			x_origin = 1;
 			y_origin = 0;
 			x = -60;
-			y = 236;
+			y = 224;
 			height = 12;
 			width = 12;
 			color = "0.2 0.8 0.2";
@@ -90,11 +159,43 @@
 			x_origin = 1;
 			y_origin = 0;
 			x = -60;
-			y = 204;
+			y = 196;
+			height = 12;
+			width = 12;
+			color = "0.2 0.8 0.2";
+		},
+		{
+			text = "F.Shield";
+			x_origin = 1;
+			y_origin = 0;
+			x = -60;
+			y = 164;
+			height = 12;
+			width = 12;
+			color = "0.2 0.8 0.2";
+		},
+		{
+			text = "A.Shield";
+			x_origin = 1;
+			y_origin = 0;
+			x = -60;
+			y = 64;
+			height = 12;
+			width = 12;
+			color = "0.2 0.8 0.2";
+		},
+		{
+			text = "Generation";
+			x_origin = 1;
+			y_origin = 0;
+			x = -60;
+			y = 32;
 			height = 12;
 			width = 12;
 			color = "0.2 0.8 0.2";
 		}
+
+
 		
 	);
 	multi_function_displays = (

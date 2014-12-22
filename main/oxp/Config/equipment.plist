@@ -160,4 +160,129 @@
 		}
 	),
 
+/* Shield components */
+	(
+		2, 1000, "Shield 1",
+		"EQ_SOTW_COMPONENT_SHIELD1",
+		"Small shield",
+		{
+			available_to_all = true;
+			can_carry_multiple = true;
+			condition_script = "sotw-conditions.js";
+			script_info = {
+				"sotw_shield" = 25;
+				"sotw_esuse" = 20;
+				"sotw_enuse" = 0.2;
+			};
+		}
+	),	
+	(
+		4, 6000, "Shield 2",
+		"EQ_SOTW_COMPONENT_SHIELD2",
+		"Medium shield",
+		{
+			available_to_all = true;
+			can_carry_multiple = true;
+			condition_script = "sotw-conditions.js";
+			script_info = {
+				"sotw_shield" = 100;
+				"sotw_esuse" = 85;
+				"sotw_enuse" = 0.8;
+			};
+		}
+	),
+	(
+		8, 37500, "Shield 3",
+		"EQ_SOTW_COMPONENT_SHIELD3",
+		"Large shield",
+		{
+			available_to_all = true;
+			can_carry_multiple = true;
+			condition_script = "sotw-conditions.js";
+			script_info = {
+				"sotw_shield" = 500;
+				"sotw_esuse" = 350;
+				"sotw_enuse" = 3.0;
+			};
+		}
+	),
+	(
+		12, 225000, "Shield 4",
+		"EQ_SOTW_COMPONENT_SHIELD4",
+		"Huge shield",
+		{
+			available_to_all = true;
+			can_carry_multiple = true;
+			condition_script = "sotw-conditions.js";
+			script_info = {
+				"sotw_shield" = 2500;
+				"sotw_esuse" = 1600;
+				"sotw_enuse" = 15.0;
+			};
+		}
+	),
+
+/* Generator components */
+	(
+		2, 1000, "Generator 1",
+		"EQ_SOTW_COMPONENT_GENERATOR1",
+		"Small generator",
+		{
+			available_to_all = true;
+			can_carry_multiple = true;
+			condition_script = "sotw-conditions.js";
+			script_info = {
+				"sotw_generator" = 0.8;
+				"sotw_esuse" = 40;
+				"sotw_enuse" = -0.8;
+			};
+		}
+	),	
+	(
+		4, 6000, "Generator 2",
+		"EQ_SOTW_COMPONENT_GENERATOR2",
+		"Medium generator",
+		{
+			available_to_all = true;
+			can_carry_multiple = true;
+			condition_script = "sotw-conditions.js";
+			script_info = {
+				"sotw_generator" = 3.0;
+				"sotw_esuse" = 135;
+				"sotw_enuse" = -3.0;
+			};
+		}
+	),
+	(
+		8, 37500, "Generator 3",
+		"EQ_SOTW_COMPONENT_GENERATOR3",
+		"Large generator",
+		{
+			available_to_all = true;
+			can_carry_multiple = true;
+			condition_script = "sotw-conditions.js";
+			script_info = {
+				"sotw_generator" = 12.0;
+				"sotw_esuse" = 500;
+				"sotw_enuse" = -12.0;
+			};
+		}
+	),
+	(
+		12, 225000, "Generator 4",
+		"EQ_SOTW_COMPONENT_GENERATOR4",
+		"Huge generator",
+		{
+			available_to_all = true;
+			can_carry_multiple = true;
+			condition_script = "sotw-conditions.js";
+			script_info = {
+				"sotw_generator" = 35.0;
+				"sotw_esuse" = 1250;
+				"sotw_enuse" = -35.0;
+			};
+		}
+	),
+
+
 )
