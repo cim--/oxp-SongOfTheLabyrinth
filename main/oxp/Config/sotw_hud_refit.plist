@@ -80,7 +80,7 @@
 			data_source = "sotw_shieldbias_ind";
 			x_origin = 1;
 			y_origin = 0;
-			x = -32;
+			x = -40;
 			y = 116;
 			height = 64;
 			width = 8;
@@ -142,6 +142,20 @@
 			y = -36;
 			height = 8;
 			width = 8;
+		},
+		{ // Fuel bar
+			selector = "drawFuelBar:";
+			x_origin = 1;
+			y_origin = 0;
+			x = -32;
+			y = -52;
+			width = 40;
+			height = 12;
+			draw_surround = 1;
+			color_surround = "0.2 0.2 0.2";
+			color_low = "0.8 0.0 0.0"; // insufficient fuel
+			color_medium = "0.0 0.5 0.0"; // bar
+			color_high = "0.0 0.8 0.0"; // sufficient fuel
 		}
 	);
 	legends = (

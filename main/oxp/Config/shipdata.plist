@@ -1,0 +1,147 @@
+{
+	
+
+	/* Multi-role traders */
+
+	/* Kodiak. Uses Cobra III for now */
+	"sotw-kodiak-template" = {
+		"is_template" = 1;
+
+		// Model-specific keys
+		aft_eject_position = "0.0 -13.25 -23.8";
+		custom_views =
+		(
+			{
+				view_description = "Rear View";
+				view_orientation = "1.0 0.0 0.0 0.0";
+				view_position = "0.0 30.0 -200.0";
+				weapon_facing = "FORWARD";
+			},
+			{
+				view_description = "Rear Right View";
+				view_orientation = "0.9239 0.0 0.3827 0.0";
+				view_position = "141.42 30.0 -141.42";
+				weapon_facing = "FORWARD";
+			},
+			{
+				view_description = "Right View";
+				view_orientation = "0.7071 0.0 0.7071 0.0";
+				view_position = "200.0 30.0 0.0";
+				weapon_facing = "FORWARD";
+			},
+			{
+				view_description = "Front Right View";
+				view_orientation = "0.3827 0.0 0.9239 0.0";
+				view_position = "141.42 30.0 141.42";
+				weapon_facing = "FORWARD";
+			},
+			{
+				view_description = "Front View";
+				view_orientation = "0.0 0.0 1.0 0.0";
+				view_position = "0.0 30.0 200.0";
+				weapon_facing = "FORWARD";
+			},
+			{
+				view_description = "Front Left View";
+				view_orientation = "0.3827 0.0 -0.9239 0.0";
+				view_position = "-141.42 30.0 141.42";
+				weapon_facing = "FORWARD";
+			},
+			{
+				view_description = "Left View";
+				view_orientation = "0.7071 0.0 -0.7071 0.0";
+				view_position = "-200.0 30.0 0.0";
+				weapon_facing = "FORWARD";
+			},
+			{
+				view_description = "Rear Left View";
+				view_orientation = "0.9239 0.0 -0.3827 0.0";
+				view_position = "-141.42 30.0 -141.42";
+				weapon_facing = "FORWARD";
+			},
+			{
+				view_description = "Top View";
+				view_orientation = "-0.7071 0.7071 0.0 0.0";
+				view_position = "0.0 200.0 -15.0";
+				weapon_facing = "FORWARD";
+			},
+			{
+				view_description = "Bottom View";
+				view_orientation = "0.0 0.0 0.7071 0.7071";
+				view_position = "0.0 -200.0 -15.0";
+				weapon_facing = "FORWARD";
+			}
+		);
+		exhaust = 
+		(		
+			"10.7601 6.3008 -33.8587  6.3 5.6 1.0",
+			"-10.7601 6.3008 -33.8587 6.3 5.6 1.0"
+		);
+		frangible = 0;
+		materials = 
+		{ 
+			"Hull" = 
+			{ 
+				diffuse_map = "oolite_cobra3_diffuse.png"; 
+				specular_color = ( 0.2, 0.2, 0.2 );
+				shininess = 5; 
+				emission_map = { name = "oolite_cobra3_diffuse.png"; extract_channel = "a"; }; 
+				emission_modulate_color = (0.9926, 0.9686, 0.7325, 1.0);
+			};
+			"Gun" = 
+				{ 
+					diffuse_map = "oolite_cobra3_subents.png"; 
+					specular_color = ( 0.2, 0.2, 0.2 ); 
+					shininess = 5; 
+				};			
+		};
+		model = "oolite_cobra3.dat";
+		scoop_position = "0.0 -5.5 25.0";
+		view_position_aft = "0.0 6.0 -35.5";
+		view_position_forward = "0.0 7.25 31.0";
+		view_position_port = "-35.5 7.5 0.0";
+		view_position_starboard = "35.5 7.5 0.0";
+		weapon_position_aft = "0.0 0.0 -33.5";
+		weapon_position_forward = "-0.0961 0.9367 43.4655";
+		weapon_position_port = "-47.4 -2.3 0.0";
+		weapon_position_starboard = "47.4 -2.3 0.0";
+
+		// General keys
+		auto_ai = yes;
+		auto_weapons = yes;
+		cargo_type = "CARGO_NOT_CARGO";
+		max_cargo = 20;
+		max_missiles = 2;
+		name = "Kodiak";
+		weapon_facings = 15;
+
+		"script_info" = {
+			"sotw_mass" = 1600;
+			"sotw_es" = 2200;
+			"sotw_des" = 350;
+		};
+
+	};
+
+	"sotw-kodiak-npc" = {
+		"like_ship" = "sotw-kodiak-template";
+		max_flight_speed = 300;
+		max_flight_pitch = 0.62;
+		max_flight_roll = 1.24;
+		max_flight_yaw = 0.31;
+		thrust = 8.6;
+		max_energy = 576; // 160 + 160 + 256
+		energy_recharge_rate = 4;
+		hyperspace_motor = yes;
+		has_ecm = yes;
+		
+	};
+
+	"sotw-kodiak-player" = {
+		"like_ship" = "sotw-kodiak-template";
+		"roles" = "player";
+		
+	};
+
+
+}

@@ -52,7 +52,19 @@ this.playerBoughtEquipment = function(eqKey) {
 		this.$emstate = "98_home";
 		this.$changesMade = false;
 		this._equipmentManagerScreen();
+	} else if (eqKey == "EQ_SOTW_REFUEL_CARRIED") {
+		player.ship.removeEquipment("EQ_SOTW_REFUEL_CARRIED");
+		player.ship.fuel = 7;
+		manifest["sotw-fuel"]--;
+	} else if (eqKey == "EQ_SOTW_REFUEL_MARKET") {
+		player.ship.removeEquipment("EQ_SOTW_REFUEL_MARKET");
+		player.ship.fuel = 7;
+		player.ship.dockedStation.setMarketQuantity("sotw-fuel",player.ship.dockedStation.market["sotw-fuel"].quantity-1);
+	} else if (eqKey == "EQ_SOTW_REFUEL_PRIVATE") {
+		player.ship.removeEquipment("EQ_SOTW_REFUEL_PRIVATE");
+		this._fuelHagglingScreen("");
 	}
+
 }
 
 
@@ -122,7 +134,7 @@ this._evaluateRefitSpace = function(eqs,pse) {
 
 this._evaluateRefitEngines = function() {
 	var engpower = 0;
-	var mass = player.ship.scriptInfo.sotw_mass ? player.ship.scriptInfo.sotw_mass : 1600; // temporary until shipdata sorted out
+	var mass = player.ship.scriptInfo.sotw_mass ? parseInt(player.ship.scriptInfo.sotw_mass) : 1600; // temporary until shipdata sorted out
 	for (var i=1;i<4;i++) {
 		var key = "EQ_SOTW_COMPONENT_ENGINE"+i;
 		var eqs = player.ship.equipmentStatus(key,true);
@@ -145,7 +157,7 @@ this._evaluateRefitEngines = function() {
 
 this._evaluateRefitThrusters = function() {
 	var thrpower = 0;
-	var mass = player.ship.scriptInfo.sotw_mass ? player.ship.scriptInfo.sotw_mass : 1600; // temporary until shipdata sorted out
+	var mass = player.ship.scriptInfo.sotw_mass ? parseInt(player.ship.scriptInfo.sotw_mass) : 1600; // temporary until shipdata sorted out
 	for (var i=1;i<4;i++) {
 		var key = "EQ_SOTW_COMPONENT_THRUSTER"+i;
 		var eqs = player.ship.equipmentStatus(key,true);
@@ -169,7 +181,7 @@ this._evaluateRefitThrusters = function() {
 
 this._evaluateRefitShields = function() {
 	var shdpower = 0;
-	var mass = player.ship.scriptInfo.sotw_mass ? player.ship.scriptInfo.sotw_mass : 1600; // temporary until shipdata sorted out
+	var mass = player.ship.scriptInfo.sotw_mass ? parseInt(player.ship.scriptInfo.sotw_mass) : 1600; // temporary until shipdata sorted out
 	var chg = 0; var ct = 0;
 	for (var i=1;i<4;i++) {
 		var key = "EQ_SOTW_COMPONENT_SHIELD"+i;
@@ -204,7 +216,7 @@ this._evaluateRefitGenerators = function() {
 
 this._evaluateRefitCapacitors = function() {
 	var cappower = 0;
-	var mass = player.ship.scriptInfo.sotw_mass ? player.ship.scriptInfo.sotw_mass : 1600; // temporary until shipdata sorted out
+	var mass = player.ship.scriptInfo.sotw_mass ? parseInt(player.ship.scriptInfo.sotw_mass) : 1600; // temporary until shipdata sorted out
 	for (var i=1;i<4;i++) {
 		var key = "EQ_SOTW_COMPONENT_CAPACITOR"+i;
 		var eqs = player.ship.equipmentStatus(key,true);
@@ -221,6 +233,9 @@ this._evaluateRefitCapacitors = function() {
 		cappower = 0.05;
 	}
 	player.ship.maxEnergy = cappower*64;
+	if (player.ship.dockedStation) {
+		player.ship.energy = player.ship.maxEnergy;
+	}
 }
 
 
@@ -241,8 +256,8 @@ this._evaluateRefitWitchdrives = function() {
 
 
 this._updateHUD = function() {
-	this.$esuseMax = player.ship.scriptInfo && player.ship.scriptInfo.sotw_es ? player.ship.scriptInfo.sotw_es : 2200;
-	this.$desuseMax = player.ship.scriptInfo && player.ship.scriptInfo.sotw_des ? player.ship.scriptInfo.sotw_des : 350;
+	this.$esuseMax = player.ship.scriptInfo && parseInt(player.ship.scriptInfo.sotw_es) ? player.ship.scriptInfo.sotw_es : 2200;
+	this.$desuseMax = player.ship.scriptInfo && parseInt(player.ship.scriptInfo.sotw_des) ? player.ship.scriptInfo.sotw_des : 350;
 	this.$esuseFree = this.$esuseMax - this.$esuse;
 	this.$desuseFree = this.$desuseMax - this.$desuse;
 
@@ -735,4 +750,67 @@ this._pad = function(str,length) {
 		current = defaultFont.measureString(str);
 	}
 	return str;
+}
+
+
+
+this._fuelHagglingScreen = function(errortext) {
+	mission.runScreen({
+		title: "Purchase fuel privately",
+		message: errortext+"To purchase fuel privately, you need to specify a premium price above the local market price, to encourage someone to sell to you. Low premiums are likely to be answered when the next trade ship carrying fuel docks, as this will sell to you before the local market. A larger premium may convince another ship docked here to sell you fuel directly, though depending on the local ships this premium may need to be very large to compensate them for an uncertain wait for the next fuel shipment.\n\nThe current market price for fuel is "+((player.ship.dockedStation.market["sotw-fuel"].price/10).toFixed(1))+"₢. Please specify the premium you will pay above this below. You currently have "+player.credits.toFixed(1)+"₢ available.",
+		textEntry: true,
+		screenID: "sotw_refuel",
+		exitScreen: "GUI_SCREEN_EQUIP_SHIP",
+		allowInterrupt: false
+	},this._fuelHagglingCallback);
+}
+
+
+this._fuelHagglingCallback = function(choice) {
+	var amount = parseFloat(choice);
+	if (amount < 0) {
+		this._fuelHagglingScreen("**ERROR**: offered premium may not be negative.\n\n");
+	} else if (amount > player.credits) {
+		this._fuelHagglingScreen("**ERROR**: offered premium must be supported by your current balance.\n\n");
+	} else {
+		player.credits -= amount;
+		player.ship.fuel = 7;
+		var hc = Math.max(1,system.info.systemsInRange(7));
+		var pp = Math.max(1,system.info.population/10); // = colony stage
+		// threshold for getting from a ship with spares
+		// note market price is in dc but amount is in c, so
+		// there's an invisible factor of 10 in there
+		// typically would need to double or triple the nominal market price
+		var pt1 = (player.ship.dockedStation.market["sotw-fuel"].price)*Math.random()/Math.sqrt(hc*pp);
+		// threshold for putting someone else in your position
+		// typically 5-10 times market price
+		var pt2 = pt1 * (1+(5*Math.random()));
+		var r, delay, delaystr, answerer;
+		if (amount < pt1) {
+			r = Math.floor(Math.random()*14*24/Math.sqrt(hc*pp))+1;
+			delay = r*3600;
+			delaystr = r+" hour"+(r>1?"s":"");
+			answerer = "Your purchase offer is accepted by the station market after "+delaystr+".";
+			// takes ages: (14 days / Math.sqrt(hc*pp)).rand
+		} else if (amount < pt2) {
+			// takes a few hours (24 hours * rand)
+			r = Math.floor(Math.random()*24)+1;
+			delay = r*3600;
+			delaystr = r+" hour"+(r>1?"s":"");
+			answerer = "Your purchase offer is accepted by another ship after "+delaystr+".";
+		} else {
+			// almost instant (60 minutes * rand)
+			r = Math.floor(Math.random()*60)+1;
+			delay = r*60;
+			delaystr = r+" minute"+(r>1?"s":"");
+			answerer = "Your purchase offer is accepted by another ship after "+delaystr+".";
+		}
+		mission.runScreen({
+			title: "Offer Accepted",
+			message: answerer,
+			screenID: "sotw_refuel",
+			exitScreen: "GUI_SCREEN_EQUIP_SHIP",
+			allowInterrupt: true
+		});
+	}
 }

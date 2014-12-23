@@ -1,0 +1,16 @@
+{
+	"sotw-kodiak-player" = {
+		chance = 0.5;
+		optional_equipment = ();
+		price = 100000;
+		"standard_equipment" =
+		{
+			extras = "";
+			"forward_weapon_type" = "EQ_WEAPON_NONE";
+			missiles = 0;
+		};
+		techlevel = 7;
+		"weapon_facings" = 15;
+	};
+
+}
