@@ -29,7 +29,18 @@ this.startUpComplete = function() {
 	}
 
 	this._evaluateRefit();
+	player.ship.hud = "sotw_hud_refit.plist";
 }
+
+
+this.shipDockedWithStation = function() {
+	player.ship.hud = "sotw_hud_refit.plist";
+}
+
+this.shipWillLaunchFromStation = function() {
+	player.ship.hud = null;
+}
+
 
 this.playerWillSaveGame = function() {
 	missionVariables.sotw_refit_shieldbias = this.$shieldBias;
@@ -70,7 +81,22 @@ this._evaluateRefit = function() {
 	this._evaluateRefitThrusters();
 	this._evaluateRefitShields();	
 	this._evaluateRefitGenerators();
+	this._evaluateRefitCapacitors();
+	this._evaluateRefitWitchdrives();
+	this._evaluateOtherEquipment();
 	log(this.$logstring,"ES: "+this.$esuse+", DES: "+this.$desuse);
+	this._updateHUD();
+}
+
+
+this._evaluateOtherEquipment = function() {
+	var key, keys = ["EQ_SOTW_COMBAT_COMPUTER","EQ_SOTW_NAVIGATION_COMPUTER"];
+	
+	while (key = keys.shift()) {
+		var eqs = player.ship.equipmentStatus(key,true);
+		var pse = EquipmentInfo.infoForKey(key);
+		this._evaluateRefitSpace(eqs,pse);
+	}
 }
 
 
@@ -176,9 +202,45 @@ this._evaluateRefitGenerators = function() {
 }
 
 
+this._evaluateRefitCapacitors = function() {
+	var cappower = 0;
+	var mass = player.ship.scriptInfo.sotw_mass ? player.ship.scriptInfo.sotw_mass : 1600; // temporary until shipdata sorted out
+	for (var i=1;i<4;i++) {
+		var key = "EQ_SOTW_COMPONENT_CAPACITOR"+i;
+		var eqs = player.ship.equipmentStatus(key,true);
+		var pse = EquipmentInfo.infoForKey(key);
+
+		if (eqs.EQUIPMENT_OK > 0) {
+			if (pse.scriptInfo && pse.scriptInfo.sotw_capacitor) {
+				cappower += eqs.EQUIPMENT_OK * parseFloat(pse.scriptInfo.sotw_capacitor);
+			}
+		}
+		this._evaluateRefitSpace(eqs,pse);
+	}
+	if (cappower < 0.05) {
+		cappower = 0.05;
+	}
+	player.ship.maxEnergy = cappower*64;
+}
+
+
+this._evaluateRefitWitchdrives = function() {
+	var wd = false;
+	for (var i=1;i<=2;i++) {
+		var key = "EQ_SOTW_COMPONENT_WITCHDRIVE"+i;
+		var eqs = player.ship.equipmentStatus(key,true);
+		var pse = EquipmentInfo.infoForKey(key);
+
+		if (eqs.EQUIPMENT_OK > 0) {
+			wd = true;
+		}
+		this._evaluateRefitSpace(eqs,pse);
+	}
+	player.ship.hyperspaceSpinTime = wd ? 15 : -1;
+}
+
 
 this._updateHUD = function() {
-	player.ship.hud = "sotw_hud_refit.plist";
 	this.$esuseMax = player.ship.scriptInfo && player.ship.scriptInfo.sotw_es ? player.ship.scriptInfo.sotw_es : 2200;
 	this.$desuseMax = player.ship.scriptInfo && player.ship.scriptInfo.sotw_des ? player.ship.scriptInfo.sotw_des : 350;
 	this.$esuseFree = this.$esuseMax - this.$esuse;
@@ -202,11 +264,23 @@ this._updateHUD = function() {
 	}
 	player.ship.setCustomHUDDial("sotw_genspare_ind",genspare);
 	player.ship.setCustomHUDDial("sotw_genpower_str",this.$enuse.toFixed(1));
+	player.ship.setCustomHUDDial("sotw_cappower_str",(player.ship.maxEnergy/64).toFixed(2));
+	player.ship.setCustomHUDDial("sotw_witchdrive_light",this.equipColor("EQ_SOTW_WITCHDRIVE"));
+	player.ship.setCustomHUDDial("sotw_galdrive_light",this.equipColor("EQ_GAL_DRIVE"));
 }
 
 
+this.equipColor = function(key) {
+	if (player.ship.hasEquipmentProviding(key)) {
+		return "0.0 1.0 0.0 1.0";
+	} else {
+		return "0.5 0.5 0.5 0.3";
+	}
+}
+
+
+
 this._equipmentManagerScreen = function(defaultChoice) {
-	this._updateHUD();
 	var title, message, choices;
 	switch (this.$emstate) {
 	case "98_home":
@@ -218,6 +292,7 @@ this._equipmentManagerScreen = function(defaultChoice) {
 			"03_shields": this._genChoice("Refit Shields"),
 			"04_generators": this._genChoice("Refit Generators"),
 			"05_capacitors": this._genChoice("Refit Capacitors"),
+			"06_witchdrives": this._genChoice("Refit Witchdrive"),
 		};
 		if (this.$enuse > 0) {
 			choices["99_save"] = this._genChoice("Apply Configuration");
@@ -231,7 +306,7 @@ this._equipmentManagerScreen = function(defaultChoice) {
 		break;
 	case "01_engines":
 		title = "Refit Engines";
-		message = "Select the engines to use in this refit. You must have sufficient cash to purchase the engines, and sufficient space in your ship's drive area to install them (see the DES bar to the left).\n\nLarger engines are more efficient, but if they are damaged in combat you will lose more power as a result.\n\n"+this._infoTable("EQ_SOTW_COMPONENT_ENGINE","sotw_engine");
+		message = "Select the engines to use in this refit. You must have sufficient cash to purchase the engines, and sufficient space in your ship's drive area to install them (see the DES bar to the left).\n\nLarger engines are more efficient, but if they are damaged in combat you will lose more power as a result.\n\n"+this._infoTable("EQ_SOTW_COMPONENT_ENGINE","sotw_engine",4);
 		choices = {
 			"10_add_engine1": this._addChoice("EQ_SOTW_COMPONENT_ENGINE1"),
 			"11_add_engine2": this._addChoice("EQ_SOTW_COMPONENT_ENGINE2"),
@@ -247,7 +322,7 @@ this._equipmentManagerScreen = function(defaultChoice) {
 		break;
 	case "02_thrusters":
 		title = "Refit Thrusters";
-		message = "Select the thrusters to use in this refit. You must have sufficient cash to purchase the thrusters, and sufficient space in your ship to install them (see the ES bar to the left).\n\nLarger thrusters are more efficient, but if they are damaged in combat you will lose more control as a result.\n\n"+this._infoTable("EQ_SOTW_COMPONENT_THRUSTER","sotw_thruster");
+		message = "Select the thrusters to use in this refit. You must have sufficient cash to purchase the thrusters, and sufficient space in your ship to install them (see the ES bar to the left).\n\nLarger thrusters are more efficient, but if they are damaged in combat you will lose more control as a result.\n\n"+this._infoTable("EQ_SOTW_COMPONENT_THRUSTER","sotw_thruster",4);
 		choices = {
 			"20_add_thruster1": this._addChoice("EQ_SOTW_COMPONENT_THRUSTER1"),
 			"21_add_thruster2": this._addChoice("EQ_SOTW_COMPONENT_THRUSTER2"),
@@ -263,7 +338,7 @@ this._equipmentManagerScreen = function(defaultChoice) {
 		break;
 	case "03_shields":
 		title = "Refit Shields";
-		message = "Select the shields to use in this refit. You must have sufficient cash to purchase the shields, and sufficient space in your ship to install them (see the ES bar to the left).\n\nLarger shields are more efficient, but if they are damaged in combat you will lose more defence as a result.\n\n"+this._infoTable("EQ_SOTW_COMPONENT_SHIELD","sotw_shield");
+		message = "Select the shields to use in this refit. You must have sufficient cash to purchase the shields, and sufficient space in your ship to install them (see the ES bar to the left).\n\nLarger shields are more efficient, but if they are damaged in combat you will lose more defence as a result.\n\n"+this._infoTable("EQ_SOTW_COMPONENT_SHIELD","sotw_shield",4);
 		choices = {
 			"30_add_shield1": this._addChoice("EQ_SOTW_COMPONENT_SHIELD1"),
 			"31_add_shield2": this._addChoice("EQ_SOTW_COMPONENT_SHIELD2"),
@@ -280,7 +355,7 @@ this._equipmentManagerScreen = function(defaultChoice) {
 		break;
 	case "04_generators":
 		title = "Refit Generators";
-		message = "Select the generators to use in this refit. You must have sufficient cash to purchase the generators, and sufficient space in your ship to install them (see the ES bar to the left).\n\nLarger generators are more efficient, but if they are damaged in combat you will lose more energy as a result.\n\n"+this._infoTable("EQ_SOTW_COMPONENT_GENERATOR","sotw_generator");
+		message = "Select the generators to use in this refit. You must have sufficient cash to purchase the generators, and sufficient space in your ship to install them (see the ES bar to the left).\n\nLarger generators are more efficient, but if they are damaged in combat you will lose more energy as a result.\n\n"+this._infoTable("EQ_SOTW_COMPONENT_GENERATOR","sotw_generator",4);
 		choices = {
 			"40_add_generator1": this._addChoice("EQ_SOTW_COMPONENT_GENERATOR1"),
 			"41_add_generator2": this._addChoice("EQ_SOTW_COMPONENT_GENERATOR2"),
@@ -291,6 +366,34 @@ this._equipmentManagerScreen = function(defaultChoice) {
 			"47_rem_generator3": this._remChoice("EQ_SOTW_COMPONENT_GENERATOR3"),
 			"48_rem_generator4": this._remChoice("EQ_SOTW_COMPONENT_GENERATOR4"),
 			"49_clear_generator": this._genChoice("Remove all generators"),
+			"98_home": this._genChoice("Return to main refit screen")
+		};
+		break;
+	case "05_capacitors":
+		title = "Refit Capacitors";
+		message = "Select the capacitors to use in this refit. You must have sufficient cash to purchase the capacitors, and sufficient space in your ship to install them (see the ES bar to the left).\n\nLarger capacitors are more efficient, but if they are damaged in combat you will lose more energy as a result.\n\n"+this._infoTable("EQ_SOTW_COMPONENT_CAPACITOR","sotw_capacitor",4);
+		choices = {
+			"50_add_capacitor1": this._addChoice("EQ_SOTW_COMPONENT_CAPACITOR1"),
+			"51_add_capacitor2": this._addChoice("EQ_SOTW_COMPONENT_CAPACITOR2"),
+			"52_add_capacitor3": this._addChoice("EQ_SOTW_COMPONENT_CAPACITOR3"),
+			"53_add_capacitor4": this._addChoice("EQ_SOTW_COMPONENT_CAPACITOR4"),
+			"55_rem_capacitor1": this._remChoice("EQ_SOTW_COMPONENT_CAPACITOR1"),
+			"56_rem_capacitor2": this._remChoice("EQ_SOTW_COMPONENT_CAPACITOR2"),
+			"57_rem_capacitor3": this._remChoice("EQ_SOTW_COMPONENT_CAPACITOR3"),
+			"58_rem_capacitor4": this._remChoice("EQ_SOTW_COMPONENT_CAPACITOR4"),
+			"59_clear_capacitor": this._genChoice("Remove all capacitors"),
+			"98_home": this._genChoice("Return to main refit screen")
+		};
+		break;
+	case "06_witchdrives":
+		title = "Refit Witchdrive";
+		message = "Select the witchdrive unit to fit to the ship. Multiple witchdrives may be fitted, though this only provides redundancy in the event of damage and does not increase performance. Ships without witchdrives may only enter witchspace by following another ship through a wormhole.\n\n"+this._infoTable("EQ_SOTW_COMPONENT_WITCHDRIVE",false,2);
+		choices = {
+			"60_add_witchdrive1": this._addChoice("EQ_SOTW_COMPONENT_WITCHDRIVE1"),
+			"61_add_witchdrive2": this._addChoice("EQ_SOTW_COMPONENT_WITCHDRIVE2"),
+			"65_rem_witchdrive1": this._remChoice("EQ_SOTW_COMPONENT_WITCHDRIVE1"),
+			"66_rem_witchdrive2": this._remChoice("EQ_SOTW_COMPONENT_WITCHDRIVE2"),
+			"69_clear_witchdrive": this._genChoice("Remove all witchdrives"),
 			"98_home": this._genChoice("Return to main refit screen")
 		};
 		break;
@@ -316,7 +419,6 @@ this._equipmentManagerCallback = function(choice) {
 			clock.addSeconds(86400);
 		}
 		player.ship.removeEquipment("EQ_SOTW_RECONFIGURE");
-		player.ship.hud = null;
 		return;
 	case "98_home":
 		this.$emstate = "98_home";
@@ -449,6 +551,54 @@ this._equipmentManagerCallback = function(choice) {
 	case "49_clear_generator":
 		this._clearApply("EQ_SOTW_COMPONENT_GENERATOR");
 		break;
+	case "05_capacitors":
+		this.$emstate = "05_capacitors";
+		break;
+	case "50_add_capacitor1":
+		this._addApply("EQ_SOTW_COMPONENT_CAPACITOR1");
+		break;
+	case "51_add_capacitor2":
+		this._addApply("EQ_SOTW_COMPONENT_CAPACITOR2");
+		break;
+	case "52_add_capacitor3":
+		this._addApply("EQ_SOTW_COMPONENT_CAPACITOR3");
+		break;
+	case "53_add_capacitor4":
+		this._addApply("EQ_SOTW_COMPONENT_CAPACITOR4");
+		break;
+	case "55_rem_capacitor1":
+		this._remApply("EQ_SOTW_COMPONENT_CAPACITOR1");
+		break;
+	case "56_rem_capacitor2":
+		this._remApply("EQ_SOTW_COMPONENT_CAPACITOR2");
+		break;
+	case "57_rem_capacitor3":
+		this._remApply("EQ_SOTW_COMPONENT_CAPACITOR3");
+		break;
+	case "58_rem_capacitor4":
+		this._remApply("EQ_SOTW_COMPONENT_CAPACITOR4");
+		break;
+	case "59_clear_capacitor":
+		this._clearApply("EQ_SOTW_COMPONENT_CAPACITOR");
+		break;
+	case "06_witchdrives":
+		this.$emstate = "06_witchdrives";
+		break;
+	case "60_add_witchdrive1":
+		this._addApply("EQ_SOTW_COMPONENT_WITCHDRIVE1");
+		break;
+	case "61_add_witchdrive2":
+		this._addApply("EQ_SOTW_COMPONENT_WITCHDRIVE2");
+		break;
+	case "65_rem_witchdrive1":
+		this._remApply("EQ_SOTW_COMPONENT_WITCHDRIVE1");
+		break;
+	case "66_rem_witchdrive2":
+		this._remApply("EQ_SOTW_COMPONENT_WITCHDRIVE2");
+		break;
+	case "69_clear_witchdrive":
+		this._clearApply("EQ_SOTW_COMPONENT_WITCHDRIVE");
+		break;
 	}
 	this._equipmentManagerScreen(choice);
 
@@ -534,22 +684,30 @@ this._genChoice = function(str) {
 	};
 }
 
-this._infoTable = function(prefix,property) {
+this._infoTable = function(prefix,property,len) {
 	var table = [];
-	table[0] = ["Name","Price","TL","Power","Size","Fitted"];
-	for (var i=1;i<=4;i++) {
+	if (property) {
+		table[0] = ["Name","Price","TL","Power","Size","Fitted"];
+	} else {
+		table[0] = ["Name","Price","TL","","Size","Fitted"];
+	}
+	for (var i=1;i<=len;i++) {
 		var eq = EquipmentInfo.infoForKey(prefix+""+i);
 		var pse = player.ship.equipmentStatus(prefix+""+i,true);
 		var ct = pse.EQUIPMENT_OK + pse.EQUIPMENT_DAMAGED;
-		table[i] = [eq.name,(eq.price/10).toFixed(1),eq.techLevel+1,eq.scriptInfo[property],eq.scriptInfo.sotw_esuse,ct];
+		if (property) {
+			table[i] = [eq.name,(eq.price/10).toFixed(1),eq.techLevel+1,eq.scriptInfo[property],eq.scriptInfo.sotw_esuse,ct];
+		} else {
+			table[i] = [eq.name,(eq.price/10).toFixed(1),eq.techLevel+1,"",eq.scriptInfo.sotw_esuse,ct];
+		}
 	}
 	var results = "";
-	for (i=0;i<=4;i++) {
+	for (i=0;i<=len;i++) {
 		var result = "";
 		result += table[i][0];
-		result = this._pad(result,8);
+		result = this._pad(result,10);
 		result += table[i][1];
-		result = this._pad(result,13);
+		result = this._pad(result,16);
 		result += table[i][2];
 		result = this._pad(result,18);
 		result += table[i][3];

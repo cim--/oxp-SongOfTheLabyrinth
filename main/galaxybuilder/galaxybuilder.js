@@ -2283,7 +2283,7 @@ random.setStart(325000);
 			$.set(i,j,"descriptionElementsUsed",blocks.map(function(b) { return b.key; }).join(","));
 		}
 	}
-	descgen.debug();
+//	descgen.debug();
 }());
 
 // used about 100k so far, so give room to double.

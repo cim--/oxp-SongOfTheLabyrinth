@@ -10,27 +10,35 @@
 	),
 
 	(
-		1, 1, "Combat Computer",
+		4, 5000, "Combat Computer",
 		"EQ_SOTW_COMBAT_COMPUTER",
 		"Electronics covering combat-oriented systems, including target tracking, analysis, and locking.",
 		{
 			available_to_all = true;
 			condition_script = "sotw-conditions.js";
 			provides = ("EQ_SCANNER_SHOW_MISSILE_TARGET","EQ_MULTI_TARGET","EQ_TARGET_MEMORY","EQ_INTEGRATED_TARGETING_SYSTEM");
+			script_info = {
+				"sotw_esuse" = 10;
+				"sotw_enuse" = 0.25;
+			};
 		}
 	),
 
-
 	(
-		1, 1, "Cross-chart Witchdrive",
-		"EQ_SOTW_GAL_DRIVE",
-		"A witchdrive precise enough to travel through the cross-chart witchspace structures.",
+		4, 2500, "Navigation Computer",
+		"EQ_SOTW_NAVIGATION_COMPUTER",
+		"Electronics covering navigation-oriented systems, including both in-system and witchspace navigation.",
 		{
 			available_to_all = true;
 			condition_script = "sotw-conditions.js";
-			provides = ("EQ_GAL_DRIVE");
+			provides = ("EQ_ADVANCED_COMPASS","EQ_ADVANCED_NAVIGATIONAL_ARRAY");
+			script_info = {
+				"sotw_esuse" = 10;
+				"sotw_enuse" = 0.05;
+			};
 		}
 	),
+
 
 /* Engine components */
 	(
@@ -280,6 +288,93 @@
 				"sotw_generator" = 35.0;
 				"sotw_esuse" = 1250;
 				"sotw_enuse" = -35.0;
+			};
+		}
+	),
+
+/* Capacitor components */
+	(
+		2, 1000, "Capacitor 1",
+		"EQ_SOTW_COMPONENT_CAPACITOR1",
+		"Small capacitor",
+		{
+			available_to_all = true;
+			can_carry_multiple = true;
+			condition_script = "sotw-conditions.js";
+			script_info = {
+				"sotw_capacitor" = 0.25;
+				"sotw_esuse" = 30;
+			};
+		}
+	),	
+	(
+		4, 6000, "Capacitor 2",
+		"EQ_SOTW_COMPONENT_CAPACITOR2",
+		"Medium capacitor",
+		{
+			available_to_all = true;
+			can_carry_multiple = true;
+			condition_script = "sotw-conditions.js";
+			script_info = {
+				"sotw_capacitor" = 1;
+				"sotw_esuse" = 100;
+			};
+		}
+	),
+	(
+		8, 37500, "Capacitor 3",
+		"EQ_SOTW_COMPONENT_CAPACITOR3",
+		"Large capacitor",
+		{
+			available_to_all = true;
+			can_carry_multiple = true;
+			condition_script = "sotw-conditions.js";
+			script_info = {
+				"sotw_capacitor" = 4;
+				"sotw_esuse" = 375;
+			};
+		}
+	),
+	(
+		12, 225000, "Capacitor 4",
+		"EQ_SOTW_COMPONENT_CAPACITOR4",
+		"Huge capacitor",
+		{
+			available_to_all = true;
+			can_carry_multiple = true;
+			condition_script = "sotw-conditions.js";
+			script_info = {
+				"sotw_capacitor" = 16;
+				"sotw_esuse" = 1400;
+			};
+		}
+	),
+/* Witchdrive components */
+	(
+		4, 1000, "Standard Witchdrive",
+		"EQ_SOTW_COMPONENT_WITCHDRIVE1",
+		"Standard witchdrive with a range of 7 LY.",
+		{
+			available_to_all = true;
+			can_carry_multiple = true;
+			condition_script = "sotw-conditions.js";
+			provides = ("EQ_SOTW_WITCHDRIVE");
+			script_info = {
+				"sotw_esuse" = 100;
+			};
+		}
+	),	
+	(
+		8, 6000, "Cross-chart Witchdrive",
+		"EQ_SOTW_COMPONENT_WITCHDRIVE2",
+		"Provides cross-chart witchspace capability in addition to a standard 7 LY jump capability.",
+		{
+			available_to_all = true;
+			can_carry_multiple = true;
+			condition_script = "sotw-conditions.js";
+			provides = ("EQ_GAL_DRIVE","EQ_SOTW_WITCHDRIVE");
+			script_info = {
+				"sotw_esuse" = 400;
 			};
 		}
 	),

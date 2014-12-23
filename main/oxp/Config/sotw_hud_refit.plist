@@ -99,6 +99,17 @@
 			width = 12;
 			color = "greenColor";
 		},
+		{ // Capacitor
+			selector = "drawCustomText:";
+			data_source = "sotw_cappower_str";
+			x_origin = 1;
+			y_origin = 0;
+			x = -56;
+			y = -12;
+			height = 12;
+			width = 12;
+			color = "greenColor";
+		},
 		{ // Energy bias
 			selector = "drawCustomIndicator:";
 			data_source = "sotw_genspare_ind";
@@ -112,6 +123,26 @@
 			color_surround = "0.2 0.2 0.2";
 			draw_surround = 1;
 		},
+		{ // Witchdrive
+			selector = "drawCustomLight:";
+			data_source = "sotw_witchdrive_light";
+			x_origin = 1;
+			y_origin = 0;
+			x = -42;
+			y = -36;
+			height = 8;
+			width = 8;
+		},
+		{ // Galdrive
+			selector = "drawCustomLight:";
+			data_source = "sotw_galdrive_light";
+			x_origin = 1;
+			y_origin = 0;
+			x = -14;
+			y = -36;
+			height = 8;
+			width = 8;
+		}
 	);
 	legends = (
 		{
@@ -193,9 +224,47 @@
 			height = 12;
 			width = 12;
 			color = "0.2 0.8 0.2";
+		},
+		{
+			text = "Capacitors";
+			x_origin = 1;
+			y_origin = 0;
+			x = -60;
+			y = 0;
+			height = 12;
+			width = 12;
+			color = "0.2 0.8 0.2";
+		},
+		{
+			text = "Witchdrive";
+			x_origin = 1;
+			y_origin = 0;
+			x = -60;
+			y = -32;
+			height = 12;
+			width = 12;
+			color = "0.2 0.8 0.2";
+		},
+		{
+			text = "S";
+			x_origin = 1;
+			y_origin = 0;
+			x = -56;
+			y = -44;
+			height = 12;
+			width = 12;
+			color = "0.2 0.8 0.2";
+		},
+		{
+			text = "CC";
+			x_origin = 1;
+			y_origin = 0;
+			x = -36;
+			y = -44;
+			height = 12;
+			width = 12;
+			color = "0.2 0.8 0.2";
 		}
-
-
 		
 	);
 	multi_function_displays = (
