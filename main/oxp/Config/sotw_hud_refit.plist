@@ -156,6 +156,15 @@
 			color_low = "0.8 0.0 0.0"; // insufficient fuel
 			color_medium = "0.0 0.5 0.0"; // bar
 			color_high = "0.0 0.8 0.0"; // sufficient fuel
+		},
+
+		{	// fps counter, x and y give the location, the size defines the character size
+			height		= 18;
+			selector	= "drawFPSInfoCounter:";
+			width		= 18;
+			x		= -256;
+			y		= -20;
+			y_origin	= 1;
 		}
 	);
 	legends = (

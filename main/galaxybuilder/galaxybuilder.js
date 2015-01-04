@@ -24,6 +24,9 @@ Calculate main planet temperature. Main planet is the most habitable in the syst
 Calculate main planet ocean %
 Calculate per-species habitability %
 Mark species homeworlds
+Planet scale 1/100 (normal Oolite)
+Star scale 1/1000
+System scale 1/4000 (makes the star scale look right from the planets)
 */
 
 random.setStart(0); // for clarity
@@ -117,10 +120,10 @@ random.setStart(6000); // allows reducing of $.galaxies for testing, allows plen
 				break;
 			case 15:
 				// "giant"; 
-				sradfactor = 10;
+				sradfactor = 50;
 				// should be closer to 50, but past ~2.7E9 Oolite
 				// stops being able to display things properly
-				shabfactor = 10;
+				shabfactor = 50;
 				minfactor = 0.1; 
 				basecolour = [0.95,0.25,0.25];
 				star.sequence = "Red giant";
@@ -130,13 +133,13 @@ random.setStart(6000); // allows reducing of $.galaxies for testing, allows plen
 				// "dwarf";
 				star.sequence = "Class M dwarf";
 				star.brightness = 0.001 + random.randf()*0.009;
-				sradfactor = 0.3;
+				sradfactor = 0.2;
 				shabfactor = 0.4;
 				minfactor = 0.2;  
 				basecolour = [0.95,0.45,0.4];
 			}
 
-			star.radius = Math.floor(800000 * (0.9+(0.2*random.randf())) * sradfactor);
+			star.radius = Math.floor(700000 * (0.9+(0.2*random.randf())) * sradfactor);
 			/* Mostly <0.3, a few in 0.4..0.6, extremely rare 0.6..0.9 */
 			star.instability = (random.randf() * random.randf() * random.randf());
 			if (star.sequence == "Class M dwarf") {
@@ -173,7 +176,7 @@ random.setStart(35000); // guess ~13 total above random numbers max
 
 // 19 rands per system so far
 (function () {
-	var au = 7.5E7;
+	var au = 4E7;
 	for (i=0;i<$.galaxies;i++) {
 		for (j=0;j<$.systems;j++) {
 			var star = $.get(i,j,"star");

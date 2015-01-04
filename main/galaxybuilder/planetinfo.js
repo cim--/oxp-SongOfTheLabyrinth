@@ -667,6 +667,8 @@
 			result += $plist("sotw_government_category","None");
 		}
 
+		result += $plist("station","sotw-outpost-station"); // temporary
+
 		result += $plist("description",info.description);
 		result += $plist("sotw_description_elements",info.descriptionElements);
 		result += $plist("sotw_description_elements_used",info.descriptionElementsUsed);

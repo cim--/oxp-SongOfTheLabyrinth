@@ -11,6 +11,7 @@
 	"oolite-registership.js", // for now
 
 	/* Second stage: SOTW's own scripts */
-	"sotw-ship-refit.js"
+	"sotw-ship-refit.js", // ship refitting
+	"sotw-priority-ai.js" // priority AI extensions
 	
 )

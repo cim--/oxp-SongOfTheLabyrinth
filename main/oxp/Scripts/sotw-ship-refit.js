@@ -11,6 +11,7 @@ this.$desuse = 0;
 this.$enregen = 0;
 this.$shieldBias = 0;
 
+this.$evaluateDisable = 0;
 
 this.startUp = function() {
 	if (missionVariables.sotw_refit_shieldbias) {
@@ -67,7 +68,27 @@ this.playerBoughtEquipment = function(eqKey) {
 
 }
 
-
+this.playerBoughtNewShip = function(shipkey) {
+	this._updateHUD(); // updates maximums for condition scripts
+	var seq = player.ship.scriptInfo.sotw_standard_fit;
+	this.$evaluateDisable = 1;
+	var comps = ["ENGINE","THRUSTER","SHIELD","GENERATOR","CAPACITOR","WITCHDRIVE"];
+	for (var i=0;i<6;i++) {
+		log(this.name,seq[i]);
+		var layout = seq[i].split(":");
+		var lim = (i==5)?2:4;
+		for (var j=0;j<lim;j++) {
+			for (var k=0;k<layout[j];k++) {
+				var idx = j+1;
+				log(this.name,"EQ_SOTW_COMPONENT_"+comps[i]+idx);
+				log(this.name,player.ship.awardEquipment("EQ_SOTW_COMPONENT_"+comps[i]+idx));
+			}
+		}
+	}
+	this.$evaluateDisable = 0;
+	this._evaluateRefit();
+	player.ship.hud = "sotw_hud_refit.plist";
+}
 
 
 
@@ -86,6 +107,7 @@ this._clearEquipment = function() {
 
 
 this._evaluateRefit = function() {
+	if (this.$evaluateDisable) { return; }
 	this.$esuse = 0;
 	this.$desuse = 0;
 	this.$enuse = 0;
