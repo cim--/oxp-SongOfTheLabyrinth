@@ -412,6 +412,19 @@
 	),
 
 /* Weapons */
+    (
+		1, 1000, "Light Missile",
+		"EQ_MISSILE", // for compatibility with internals of Oolite
+		"Standard lightweight fully active homing missile",
+		{
+			available_to_all = true;
+			condition_script = "sotw-conditions.js";
+			requires_empty_pylon = true;
+			damage_probability = 0;
+		}
+	),	
+
+
 	( // from core definition, needs to have this name
 		1, 200, "Unmount and sell all pylon mounted weapons",
 		"EQ_MISSILE_REMOVAL",

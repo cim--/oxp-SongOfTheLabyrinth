@@ -1,5 +1,3 @@
-"use strict";
-
 this.name = "SOTW Market Manager";
 
 this.updateGeneralCommodityDefinition = function(marketdef, station, system) {

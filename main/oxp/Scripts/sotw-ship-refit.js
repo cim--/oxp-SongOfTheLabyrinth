@@ -1,5 +1,3 @@
-"use strict";
-
 this.name = "SOTW Ship Refit";
 
 this.$logstring = "cim.sotw.debug";

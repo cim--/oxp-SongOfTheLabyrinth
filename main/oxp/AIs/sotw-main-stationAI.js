@@ -7,6 +7,7 @@ this.aiStarted = function() {
 
 	ai.setParameter("oolite_flag_listenForDistressCall",true);
 	ai.setParameter("sotw_desiredSecurityLevel",system.info.government*2);
+	ai.setParameter("sotw_defenseShipStrength",system.info.government);
 
 	ai.setCommunicationsRole("sotw_mainStation");
 
@@ -34,7 +35,6 @@ this.aiStarted = function() {
 		},
 		/* Scan */
 		{
-			preconfiguration: ai.configurationCheckScanner,
 			condition: ai.conditionScannerContainsSalvage,
 			behaviour: ai.sotw_behaviourStationLaunchSalvager,
 			reconsider: 60 // long delay to avoid launching too many at once

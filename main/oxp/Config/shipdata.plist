@@ -115,6 +115,7 @@
 		cargo_type = "CARGO_NOT_CARGO";
 		max_cargo = 0;
 		max_missiles = 2;
+		missiles = 2;
 		name = "Firangi";
 		weapon_facings = 3;
 
@@ -256,6 +257,7 @@
 		cargo_type = "CARGO_NOT_CARGO";
 		max_cargo = 25;
 		max_missiles = 2;
+		missiles = 2;
 		name = "Lena";
 		weapon_facings = 3;
 
@@ -402,6 +404,7 @@
 		cargo_type = "CARGO_NOT_CARGO";
 		max_cargo = 20;
 		max_missiles = 2;
+		missiles = 2;
 		name = "Kodiak";
 		weapon_facings = 15;
 
@@ -552,6 +555,7 @@
 		cargo_type = "CARGO_NOT_CARGO";
 		max_cargo = 375;
 		max_missiles = 2;
+		missiles = 2;
 		name = "Charolais";
 		weapon_facings = 15;
 
@@ -592,7 +596,7 @@
 	/* Tmp: and everywhere else for now */
 	"sotw-outpost-station" = {
 		ai_type = "sotw-main-stationAI.js"; //tmp
-		allegiance = "galcop";
+		allegiance = "planetary";
 		cargo_type = "CARGO_NOT_CARGO";
 		energy_recharge_rate = 100;
 		forward_weapon_type = "WEAPON_NONE";
@@ -631,6 +635,7 @@
 		roles = "sotw-outpost-station station";
 		rotating = no;
 		scan_class = "CLASS_STATION";
+		script = "sotw-station-script.js";
 		subentities = 
 		( 
 			{ 
@@ -830,6 +835,48 @@
 	};	
 
 /* Specials required to be defined */
+
+   // required until own missiles are defined
+	"oolite_template_missile" = 
+	{
+		ai_type = "oolite-missileAI.js";
+		cargo_type = "CARGO_NOT_CARGO";
+		energy_recharge_rate = 0;
+		exhaust = ("0.0 0.32581 -9.87154 2.0 2.0 1.5");
+		explosion_type = ("oolite-builtin-slowcloud","oolite-builtin-fastspark","oolite-builtin-flash"); // not for detonation mode
+		forward_weapon_type = "WEAPON_NONE";
+		materials = 
+		{ 
+			"Hull" = 
+			{ 
+				diffuse_map = "oolite_missile_diffuse.png"; 
+				specular_color = ( 0.2, 0.2, 0.2 );
+				shininess = 10; 
+				emission_map = { name = "oolite_missile_diffuse.png"; extract_channel = "a"; }; 
+				emission_modulate_color = (1.0, 0.1, 0.0); 				
+			}; 
+		};
+		max_energy = 5;
+		max_flight_pitch = 8;
+		max_flight_roll = 10;
+		max_flight_speed = 750;
+		missiles = 0;
+		model = "oolite_missile.dat";
+		name = "Missile";
+		roles = "missile EQ_MISSILE";
+		scan_class = "CLASS_MISSILE";
+		script_info = 
+		{
+			oolite_missile_blastPower = 180;
+			oolite_missile_blastRadius = 32.5;
+			oolite_missile_blastShaping = 0.1;
+			oolite_missile_proximity = 25;
+			oolite_missile_range = 30000;
+		};
+		thrust = 250;
+		unpiloted = yes;
+		weapon_energy = 4500;
+	};
 
 	// required until own asteroids are defined
 	"oolite_template_asteroid" =

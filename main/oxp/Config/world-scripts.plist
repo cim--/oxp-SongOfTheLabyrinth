@@ -12,6 +12,7 @@
 
 	/* Second stage: SOTW's own scripts */
 	"sotw-ship-refit.js", // ship refitting
-	"sotw-priority-ai.js" // priority AI extensions
+	"sotw-priority-ai.js", // priority AI extensions
+	"sotw-populator.js" // populator scripts
 	
 )
