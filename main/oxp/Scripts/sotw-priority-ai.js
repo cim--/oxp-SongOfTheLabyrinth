@@ -24,7 +24,7 @@ this.startUp = function() {
 		}
 	};
 
-	lib.prototype.conditionStationHasEnoughDefense = function() {
+	lib.prototype.sotw_conditionStationHasEnoughDefense = function() {
 		// should have one patrolling ship per security level
 		// (sotw_desiredSecurityLevel parameter) in some systems there
 		// may be some stationary defense drones too, which will count
@@ -157,11 +157,30 @@ this.startUp = function() {
 	lib.prototype.sotw_waypointsStationPatrol = function() {
 		// needs to depend on station security level
 		// stations with more ships on patrol can have more complex routes
-		var gc = this.ship.group.count;
-		var patrol = this.ship.entityPersonality % 4;
-		if (gc < 6) {
-			// do not allow far patrols
+		var patrol = this.getParameter("sotw_patrolZoneNumber");
+		if (!patrol) {
+			var gs = this.ship.group.ships;
+			var nums = [];
+			// find patrol numbers for other ships in groups (1-indexed)
+			for (var i=gs.length-1;i>=0;i--) {
+				if (gs[i].AIScript.oolite_priorityai) {
+					var pzn = gs[i].AIScript.oolite_priorityai.getParameter("sotw_patrolZoneNumber");
+					if (pzn) {
+						nums.push(pzn);
+					}
+				}
+			}
+			patrol = 1;
+			while (nums.indexOf(patrol) != -1) {
+				++patrol;
+			}
+			// patrol is now first free number
+			this.setParameter("sotw_patrolZoneNumber",patrol);
+		}
+		if (patrol <= 6) {
 			patrol &= 1;
+		} else {
+			patrol &= 3;
 		}
 		var centre, speed, radius, vx, vy;
 		var station = this.ship.group.leader;
@@ -170,7 +189,7 @@ this.startUp = function() {
 			// nearby circular patrol
 			centre = station.position;
 			speed = 200;
-			radius = 20E3;
+			radius = 12.5E3;
 			vx = station.vectorForward;
 			vy = station.vectorRight;
 			break;
@@ -178,7 +197,7 @@ this.startUp = function() {
 			// nearby witchpoint direction patrol
 			// TODO: point towards most common traffic direction
 			// not necessarily main planet witchpoint
-			centre = station.position.subtract(station.position.direction().multiply(20E3));
+			centre = station.position.subtract(station.position.direction().multiply(15E3));
 			speed = 200;
 			radius = 5E3;
 			vx = station.position.direction().cross(new Vector3D(0,0,1)).direction();
@@ -188,13 +207,13 @@ this.startUp = function() {
 			// far circular patrol
 			centre = station.position;
 			speed = 200;
-			radius = 45E3;
+			radius = 30E3;
 			vx = station.vectorForward;
 			vy = station.vectorUp;
 			break;
 		case 3:
 			// far witchpoint direction patrol
-			centre = station.position.subtract(station.position.direction().multiply(40E3));
+			centre = station.position.subtract(station.position.direction().multiply(30E3));
 			speed = 200;
 			radius = 5E3;
 			vx = station.position.direction().cross(new Vector3D(0,0,1)).direction();

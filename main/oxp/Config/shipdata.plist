@@ -140,7 +140,8 @@
 		max_energy = 460; // 166 + 166 + 128
 		energy_recharge_rate = 2.2;
 		hyperspace_motor = no;
-		
+		forward_weapon_type = "EQ_WEAPON_SOTW_LIGHTPULSE";
+
 	};
 
 	"sotw-firangi-player" = {
