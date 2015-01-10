@@ -594,7 +594,11 @@
 		}
 
 		var result = "\""+g+" "+s+"\" = {\n";
+		result += $plist("layer",1);
 		result += $plist("coordinates",info.coordinates[0]+" "+info.coordinates[1]);
+		result += $plist("random_seed",info.seed);
+
+
 		if (info.colony.stage > 0 || info.colony.founded > 0) {
 			result += $plist("name",info.name);
 			result += $plist("planet_name",info.name);
@@ -610,6 +614,7 @@
 		result += $plist("sun_color",color(info.star.colour));
 		result += $plist("sun_distance",info.planet.orbitalRadius);
 		result += $plist("sun_name",info.star.name);
+		result += $plist("sun_vector",color(info.star.vector));
 
 		result += $plist("planet_distance",fix(info.planet.zpos,0));
 		result += $plist("radius",fix(info.planet.radius,0));
@@ -649,8 +654,10 @@
 					}
 				).join(", "));
 			}
+			result += $plist("inhabitant","Inhabited");
 		} else {
 			result += $plist("inhabitants","Uninhabited");
+			result += $plist("inhabitant","Uninhabited");
 		}
 		result += $plist("techlevel",info.colony.techLevel?info.colony.techLevel-1:0); 
 
@@ -667,7 +674,8 @@
 			result += $plist("sotw_government_category","None");
 		}
 
-		result += $plist("station","sotw-outpost-station"); // temporary
+		result += $plist("station",info.station.type); // temporary
+		result += $plist("station_vector",color(info.station.vector));
 
 		result += $plist("description",info.description);
 		result += $plist("sotw_description_elements",info.descriptionElements);

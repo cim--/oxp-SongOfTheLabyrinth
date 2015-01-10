@@ -63,7 +63,7 @@ random.setStart(0); // for clarity
 
 random.setStart(6000); // allows reducing of $.galaxies for testing, allows plenty of twin breaking
 
-// 7 rands per star so far
+// 9 rands per star so far
 (function () {
 	for (i=0;i<$.galaxies;i++) {
 		for (j=0;j<$.systems;j++) {
@@ -156,6 +156,12 @@ random.setStart(6000); // allows reducing of $.galaxies for testing, allows plen
 			star.mineralFactor = minfactor;
 			star.constellation = "";
 			star.name = "";
+			var sunz = random.randf()-0.5;
+			if (random.randf() < 0.5) {
+				star.vector = [Math.sqrt(1-(sunz*sunz)),0,sunz];
+			} else {
+				star.vector = [-Math.sqrt(1-(sunz*sunz)),0,sunz];
+			}
 
 			// star colour
 			var adj = (random.randf()*0.05)-0.025;
@@ -259,7 +265,7 @@ random.setStart(35000); // guess ~13 total above random numbers max
 
 			planet.surfaceGravity = ((planet.radius/6400)*(0.8+(random.randf()*0.4)));
 
-			planet.zpos = Math.floor(400000+random.rand(600000));
+			planet.zpos = Math.floor((500000*planet.surfaceGravity)+random.rand(100000));
 
 			var avel = random.randf()*random.randf()*random.randf()*random.randf();
 			var arv;
@@ -2292,7 +2298,7 @@ random.setStart(325000);
 // used about 100k so far, so give room to double.
 random.setStart(550000);
 
-// checkpoint random
+// set various general system properties
 (function() {
 	for (i=0;i<$.galaxies;i++) {
 		for (j=0;j<$.systems;j++) {
@@ -2309,15 +2315,45 @@ random.setStart(550000);
 				$.set(i,j,"nebulaCount",random.rand(50)+25);
 				$.set(i,j,"nebulaColours",[]);
 			}
+			var vx = random.randf()-0.5;
+			var vy = random.randf()-0.5;
+			var vz = random.randf()-0.5;
+			var fact = Math.sqrt((vx*vx)+(vy*vy)+(vz*vz));
+			$.set(i,j,"station",{
+				vector: [vx/fact,vy/fact,vz/fact],
+				// TODO: more station types!
+				// Note: at some point this will need moving out
+				// of this loop into its own loop to stop breaking vectors
+				type: "sotw-outpost-station"
+			});
+			var seed = [];
+			for (k=0;k<6;k++) {
+				seed[k] = random.rand(256);
+			}
+			$.set(i,j,"seed",seed.join(" "));
 		}
 	}	
 }());
 
+random.setStart(580000);
 
 (function() {
 	console.error(random.getPlace());
 	$.$debug = 1;
-	var planetinfoplist = "{\n";
+	var planetinfoplist = '{\n'+
+		'	"interstellar space" =\n'+
+		'	{\n'+
+		'		sky_n_stars = 13000;\n'+
+		'		sky_n_blurs = 75;\n'+
+		'	};\n'+
+		'\n'+
+		'	"universal" = \n'+
+		'	{\n'+
+		'		sky_color_1 = (0.75,0.8,1);\n'+
+		'		sky_color_2 = (1.0,0.85,0.6);\n'+
+		'		stations_require_docking_clearance = yes;\n'+
+		'	};\n';
+
 	for (i=0;i<$.galaxies;i++) {
 		for (j=0;j<$.systems;j++) {
 			planetinfoplist += $.dump(i,j,species);

@@ -3353,6 +3353,8 @@
 				{ key: "BFUEP-HUDO3", text: "The system's distance from nearby stations makes the cost of extracting and transporting its minerals prohibitive for now.", condition: info.planet.mineralWealth > 0.25 },
 				{ key: "BFUEP-HUDO4", text: "%H' great distance from existing settlements has left it uninhabited despite its suitable environment.", condition: info.habitability.best > 90 },
 				{ key: "BFUEP-HUDO5", text: "With its harsh environment, lack of natural resources, and lack of nearby inhabited systems, %U is one of the least visited systems in the eight charts.", condition: info.bottle == 0 && info.connected.length > 1 && info.planet.mineralWealth < 0.25 && info.habitability.best < 70 },
+				{ key: "BFUEP-HUDO6", text: "The %U system is far from any official settlement, and is rarely visited.", condition: true },
+				{ key: "BFUEP-HUDO7", text: "While the %U system has significant deposits of accessible %M, colonisation attempts have so far failed due to the great distance from supporting systems.", condition: info.planet.mineralWealth > 0.25 },
 			];
 
 			do {
@@ -3952,6 +3954,8 @@
 				{ key: "BFEI-RESB4", text: "The research institutes on %H host one of the largest catalogues of biological data in the eight charts, collecting samples and recordings of animals and plants, as well as importing a large amount of computing hardware to process this data.", condition: info.colony.stage > 3 },
 				{ key: "BFEI-RESB5", text: "%H' orbital station contains a small research installation observing the planet below. Planetary settlements are restricted to data collection sites and supporting infrastructure.", condition: info.economy.reason == "Wilderness" },
 				{ key: "BFEI-RESB6", text: "The largely unmodified environment of %H is of great interest to researchers, and most of the previous colonists have been replaced by observation stations.", condition: info.economy.reason == "Wilderness" },
+				{ key: "BFEI-RESB7", text: "Biological and medical research has become a major speciality of %H, and it is estimated that around %XL%X percent of the system's population is employed directly or indirectly by the research facilities.", condition: info.colony.stage > 3 },
+				{ key: "BFEI-RESB8", text: "%H' native life is extremely unusual, and is mostly observed from a distance in orbital research platforms. Landing is strictly controlled to avoid disruption to the ecosystem.", condition: info.economy.reason == "Native Life" },
 			];
 			break;
 		case "Research (Comp)": // ~15
@@ -3990,7 +3994,9 @@
 			opts = [
 				{ key: "BFEI-RESS1", text: "%H is most famous for its pure science research, especially in physics, chemistry and astronomy. The system imports the latest machinery and computers to carry out its research.", condition: true },
 				{ key: "BFEI-RESS2", text: "The research institutes of %H are constantly pushing back the boundaries of knowledge. Most of their discoveries are tens if not hundreds of kilodays from having practical use, though some with potential may be taken to other more applied research worlds.", condition: true },
-				{ key: "BFEI-RESS3", text: "Specialising in witchspace theory, %H' researchers are working on understanding the mysteries of this travel form, including the unusual topology of the eight charts. With the recent invasion using a poorly understood witchspace method, their research has gained considerable urgency.", condition: true },
+				{ key: "BFEI-RESS3", text: "Specialising in witchspace theory, %H' researchers are working on understanding the mysteries of this travel form, including the unusual topology of the eight charts. With the recent invaders havin witchspace capabilities long thought impossible, their research has gained considerable urgency.", condition: true },
+				{ key: "BFEI-RESS4", text: "%H specialises in astronomy, and the telescopes it designs are being placed in systems around the edge of the chart to look for rogue planets large enough to be used as a witchspace anchor.", condition: true },
+				{ key: "BFEI-RESS5", text: "Pure science researchers from around the region have long been drawn to %H through the government's extensive funding for their work.", condition: true },
 			];
 			break;
 		case "Research (Soc)": // ~15
@@ -3999,6 +4005,7 @@
 				{ key: "BFEI-RESO1", text: "%H is well-respected for its research institutes' studies of society across the eight charts. They regularly obtain loaned artworks and luxuries from other worlds as part of their studies.", condition: true },
 				{ key: "BFEI-RESO2", text: "The rapid meeting of eight species following the discovery of cross-chart witchspace caused many major changes in all their societies, and the emergence of many new societies. On %H, researchers try to examine the impact of these changes, to assist future decisions.", condition: true },
 				{ key: "BFEI-RESO3", text: "The invasion brought the largest changes in collective psychology since unification. Researchers on %H attempt to understand how society is coping with the threat of a return, and how best to prepare people for another war if it comes.", condition: true },
+				{ key: "BFEI-RESO4", text: "%H' research institutes have produced some of the most respected studies on the conflict between the species-centric homeworld and USC governance and the interspecies cultures of more recent settlements.", condition: true },
 			];
 			break;
 		case "Salvage": // ~25
