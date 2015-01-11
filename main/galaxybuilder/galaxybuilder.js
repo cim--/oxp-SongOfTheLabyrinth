@@ -2351,7 +2351,6 @@ random.setStart(580000);
 		'	{\n'+
 		'		sky_color_1 = (0.75,0.8,1);\n'+
 		'		sky_color_2 = (1.0,0.85,0.6);\n'+
-		'		stations_require_docking_clearance = yes;\n'+
 		'	};\n';
 
 	for (i=0;i<$.galaxies;i++) {

@@ -643,22 +643,26 @@
 		}
 
 		result += $plist("population",info.colony.stage*10); // unread
-		result += $plist("population_description",info.colony.populationDescription);
+		var inhabitants = "";
 		if (info.colony.stage > 0) { 
 			if (info.colony.species.length > 3) {
-				result += $plist("inhabitants","Mixed species");
+				inhabitants = "Mixed species";
 			} else {
-				result += $plist("inhabitants",info.colony.species.map(
+				inhabitants = info.colony.species.map(
 					function(x) {
 						return sp.name(x);
 					}
-				).join(", "));
+				).join(", ");
 			}
 			result += $plist("inhabitant","Inhabited");
 		} else {
-			result += $plist("inhabitants","Uninhabited");
-			result += $plist("inhabitant","Uninhabited");
+			inhabitants = "";
+			result += $plist("inhabitant","");
+			result += $plist("populator","uninhabitedSystemWillPopulate");
 		}
+		result += $plist("population_description",info.colony.populationDescription+"\n"+inhabitants);
+		result += $plist("inhabitants",inhabitants);
+
 		result += $plist("techlevel",info.colony.techLevel?info.colony.techLevel-1:0); 
 
 		result += $plist("economy",info.economy.icon);

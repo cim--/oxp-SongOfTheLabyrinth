@@ -39,6 +39,12 @@ this.startUp = function() {
 		return has >= this.getParameter("sotw_desiredSecurityLevel");
 	};
 
+	/* Configurations */
+
+	lib.prototype.sotw_configurationSelectShuttleDestination = function() {
+		// TODO
+	};
+
 	/* Behaviours */
 
 	lib.prototype.sotw_behaviourStationFight = function() {
@@ -149,6 +155,36 @@ this.startUp = function() {
 	/* Event handlers and response sets */
 	// need to override a few core definitions here, for simplicity
 
+	// CORE Override - use factions rather than roles
+	lib.prototype.ignorePlayerFriendlyFire = function()
+	{
+		var whom = player.ship;
+		if (whom.target == this.ship)
+		{
+			return false; // was probably intentional
+		}
+		if (this.getParameter("oolite_lastAssist") == whom)
+		{
+			// player has helped this ship in this fight so is probably on the same side.
+			if (Math.random() < 0.5)
+			{
+				// don't forgive too often
+				this.setParameter("oolite_lastAssist",null);
+			}
+			return true;
+		}
+		// player could have meant to do that
+		if (!this.getParameter("oolite_playerFriendlyFireAlready"))
+		{
+			var relation = this.sotw_utilCompareFactions(this.ship.script.$sotwFaction,player.ship.script.$sotwFaction);
+			if (relation >= 1) {
+				// only allow one!
+				this.setParameter("oolite_playerFriendlyFireAlready",true);
+				return true;
+			}
+		}
+		return false;
+	}
 
 
 
@@ -157,79 +193,36 @@ this.startUp = function() {
 	lib.prototype.sotw_waypointsStationPatrol = function() {
 		// needs to depend on station security level
 		// stations with more ships on patrol can have more complex routes
-		var patrol = this.getParameter("sotw_patrolZoneNumber");
-		if (!patrol) {
-			var gs = this.ship.group.ships;
-			var nums = [];
-			// find patrol numbers for other ships in groups (1-indexed)
-			for (var i=gs.length-1;i>=0;i--) {
-				if (gs[i].AIScript.oolite_priorityai) {
-					var pzn = gs[i].AIScript.oolite_priorityai.getParameter("sotw_patrolZoneNumber");
-					if (pzn) {
-						nums.push(pzn);
-					}
+		var patrol = this.ship.script.$sotwPatrolZoneNumber;
+		var gs = this.ship.group.ships;
+		var nums = [];
+		var onpatrol = 1;
+		// find patrol numbers for other ships in groups (1-indexed)
+		for (var i=gs.length-1;i>=0;i--) {
+			if (gs[i].AIScript.oolite_priorityai) {
+				var pzn = gs[i].script.$sotwPatrolZoneNumber;
+				if (pzn) {
+					nums.push(pzn);
+					onpatrol++;
 				}
 			}
+		}
+		if (!patrol) {
 			patrol = 1;
 			while (nums.indexOf(patrol) != -1) {
 				++patrol;
 			}
 			// patrol is now first free number
-			this.setParameter("sotw_patrolZoneNumber",patrol);
+			this.ship.script.$sotwPatrolZoneNumber = patrol;
 		}
-		if (patrol <= 6) {
-			patrol &= 1;
-		} else {
-			patrol &= 3;
-		}
-		var centre, speed, radius, vx, vy;
-		var station = this.ship.group.leader;
-		switch (patrol) {
-		case 0:
-			// nearby circular patrol
-			centre = station.position;
-			speed = 200;
-			radius = 12.5E3;
-			vx = station.vectorForward;
-			vy = station.vectorRight;
-			break;
-		case 1:
-			// nearby witchpoint direction patrol
-			// TODO: point towards most common traffic direction
-			// not necessarily main planet witchpoint
-			centre = station.position.subtract(station.position.direction().multiply(15E3));
-			speed = 200;
-			radius = 5E3;
-			vx = station.position.direction().cross(new Vector3D(0,0,1)).direction();
-			vy = station.position.direction().cross(vx).direction();
-			break;
-		case 2:
-			// far circular patrol
-			centre = station.position;
-			speed = 200;
-			radius = 30E3;
-			vx = station.vectorForward;
-			vy = station.vectorUp;
-			break;
-		case 3:
-			// far witchpoint direction patrol
-			centre = station.position.subtract(station.position.direction().multiply(30E3));
-			speed = 200;
-			radius = 5E3;
-			vx = station.position.direction().cross(new Vector3D(0,0,1)).direction();
-			vy = station.position.direction().cross(vx).direction();
-			break;
-		}
-		
-		var aspeed = speed/radius;
-		var angle = clock.absoluteSeconds*aspeed;
-		var sinx = vx.multiply(Math.sin(angle)*radius);
-		var cosx = vy.multiply(Math.cos(angle)*radius);
-		var pos = centre.add(sinx).add(cosx);
 
+		var station = this.ship.group.leader;
+		
+		// check length each time - will reorganise if ships lost
+		var pos = pop._stationPatrolLocation(station,patrol,onpatrol);
+		
 		this.setParameter("oolite_waypointRange",500);
 		this.setParameter("oolite_waypoint",pos);
-		system.setWaypoint("sotw_patrol"+patrol,pos,[1,0,0,0],{size:100,beaconCode:patrol});
 	};
 
 };

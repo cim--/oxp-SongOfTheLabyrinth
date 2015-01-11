@@ -1037,7 +1037,7 @@
 		explosion_type = ("oolite-builtin-slowcloud","oolite-builtin-fastspark");
 		forward_weapon_type = "WEAPON_NONE";
 		heat_insulation = 0.3;
-		is_template = 1;
+//		is_template = 1;
 		materials =
 		{
 			"Hull" =
