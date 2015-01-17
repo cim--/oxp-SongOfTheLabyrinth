@@ -1908,6 +1908,15 @@ random.setStart(245000);
 		}
 	}
 
+// set up trade route information now that economies are finalised
+	for (i=0;i<$.galaxies;i++) {
+		for (j=0;j<$.systems;j++) {
+			$.setUpTradeRoutes(i,j,random);
+		}
+		for (j=0;j<$.systems;j++) {
+			$.checkTradeImports(i,j,random);
+		}
+	}	
 
 }());
 
@@ -1953,6 +1962,7 @@ random.setStart(260000);
 				if (economy.type == "Shipyard") { st += 1; }
 				if (economy.type == "Tourism") { st += 1; }
 				if (economy.type == "Survival") { st -= 5; }
+				st += economy.tradeStatus; // possibly backward causation
 				if (politics.governmentType == "Martial Law") { st += 2; }
 				else if (politics.governmentCategory == "Hierarchical") { st += 1; }
 				if (politics.governmentCategory == "Disordered") { st -= 2; }
@@ -2337,6 +2347,7 @@ random.setStart(550000);
 }());
 
 random.setStart(580000);
+
 
 (function() {
 	console.error(random.getPlace());

@@ -40,7 +40,7 @@ this.updateGeneralCommodityDefinition = function(marketdef, station, system) {
 			break;
 		}
 	}
-	
+
 	// rolls = random numbers, pick closest to centre
 	// volatility = chance of moving an entire price band
 	var volatility = 0; var rolls = 5;
@@ -68,6 +68,7 @@ this.updateGeneralCommodityDefinition = function(marketdef, station, system) {
 
 	var ecname = sysinfo.economy_description;
 	var ecreason = sysinfo.sotw_economy_reason;
+	var ecstatus = parseInt(sysinfo.sotw_economy_status);
 	var eckey = ecname.replace(/[^A-Za-z]+/g,"").toLowerCase();
 	var ecrkey = ecreason.replace(/[^A-Za-z]+/g,"").toLowerCase();
 	var imported = false; var exported = false;
@@ -142,12 +143,6 @@ this.updateGeneralCommodityDefinition = function(marketdef, station, system) {
 				exported = true;
 
 
-
-
-
-
-
-
 			} else if (classes.indexOf("sotw-ims-rich") != -1 && productivity > 1E6) {
 				// rich worlds. This one should be the last check
 				priceband += tvolfactor/2;
@@ -188,6 +183,12 @@ this.updateGeneralCommodityDefinition = function(marketdef, station, system) {
 			tvolfactor = -0.3*security; // tend to low-ish quantities
 		}
 	}
+	if (exported && ecstatus == 1) {
+		pzeroes += 1; // quantity bonus
+	} else if (imported && ecstatus == -1) {
+		pzeroes -= 2; // big quantity penalty
+	}
+
 	tvolfactor /= security; // again, bigger more stable markets tend to centre
 
 	if (classes.indexOf("sotw-quantity-bulk") != -1) {
@@ -244,6 +245,7 @@ this.updateGeneralCommodityDefinition = function(marketdef, station, system) {
 
 	var quantity = Math.floor((capacity*(1+Math.random())/2) * bandpos);
 
+
 	marketdef.quantity = quantity;
 
 	// back to price calculations
@@ -278,6 +280,10 @@ this.updateGeneralCommodityDefinition = function(marketdef, station, system) {
 		}
 	}
 	bandpos += 0.5; // add 0.5 back on
+	if (imported && ecstatus == -1 && quantity == 0) {
+		bandpos += Math.random(); // arrival of goods is rare; price volatile
+		// this can take it over 1, but extrapolate rather than increment band
+	}
 
 	var price = (pricebands[priceband][0]*(1-bandpos))+(pricebands[priceband][1]*bandpos); // interpolate price
 	marketdef.price = Math.floor(price*10); // convert to decicredits

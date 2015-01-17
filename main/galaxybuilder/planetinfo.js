@@ -28,6 +28,7 @@
 
 
 	var planetdata = [[],[],[],[],[],[],[],[]];
+	var tradeRoutes = [[],[],[],[],[],[],[],[]];
 
 	// region 0 should never be asked for
 	var regiondata = [{}];
@@ -127,6 +128,30 @@
 		"Research (Soc)": 7,
 		"Research (Comp)": 7,
 		"Research (Sci)": 7
+	};
+
+	var economyExportToTable = {
+		"Survival": [],
+		"Salvage": ["Survival","Asteroid Mining","Ground Mining"],
+		"Quarantine": [],
+		"Military": [],
+		"Tourism": ["Cultural"],
+		"Service": ["Cultural","Research (Soc)"],
+		"Colonisation": ["Cultural","Research (Bio)"],
+		"Farming": ["Survival","Salvage","Ast Mining","Colonisation","Service","Cultural","Tourism","Research (Bio)","Quarantine"],
+		"Terraforming": [],
+		"Asteroid Mining": ["Refining","Cultural"],
+		"Ground Mining": ["Refining","Cultural"],
+		"Refining": ["Farming","Cultural","Military","Research (Mil)","Research (Eng)","Shipyard","Production"],
+		"Cultural": ["Tourism","Service","Research (Soc)"],
+		"Production": ["Farming","Service","Terraforming","Research (Sci)","Research (Eng)","Shipyard","Refining","Ground Mining"],
+		"Shipyard": ["Salvage","Asteroid Mining","Military"],
+		"Research (Mil)": ["Military"],
+		"Research (Bio)": ["Survival","Quarantine","Terraforming"],
+		"Research (Eng)": ["Research (Sci)","Research (Comp)","Research (Mil)","Military"],
+		"Research (Soc)": [],
+		"Research (Comp)": ["Research (Sci)","Research (Bio)"],
+		"Research (Sci)": []
 	};
 
 	var planetinfo = {};
@@ -570,6 +595,72 @@
 	planetinfo.$historyStep = 0;
 
 
+	planetinfo.setUpTradeRoutes = function(g,s,r) {
+		if (planetdata[g][s].colony.stage == 0) {
+			planetdata[g][s].economy.tradeStatus = -2;
+			return;
+		}
+		var etype = planetdata[g][s].economy.type;
+		
+		if (economyExportToTable[etype].length == 0) {
+			planetdata[g][s].economy.tradeStatus = 0;
+			// no exports
+			return;
+		}
+
+		var distThreshold = 400;
+
+		var options = [];
+		for (var i=0;i<=255;i++) {
+			if (s==i) { continue; }
+			var dist = planetinfo.distance(g,i,s);
+			if (dist < distThreshold && economyExportToTable[etype].indexOf(planetdata[g][i].economy.type) != -1) {
+				options.push({id:i, type:planetdata[g][i].economy.type, dist: dist, prod:planetdata[g][i].economy.productivity});
+			}
+		}
+		options.sort(function(a,b) {
+			return a.dist - b.dist;
+		});
+		var needed = planetdata[g][s].economy.productivity;
+		while (needed > 0 && options.length > 0) {
+			var option = options.shift();
+			needed -= option.prod;
+			tradeRoutes[g].push({from: s, to: option.id});
+		}
+		if (needed > 0) {
+			// produces plenty of exports
+			planetdata[g][s].economy.tradeStatus = 1;
+		} else {
+			// normal trade status
+			planetdata[g][s].economy.tradeStatus = 0;
+			// will check if it's actually -1 later
+		}
+	};
+
+	planetinfo.checkTradeImports = function(g,s,r) {
+		if (planetdata[g][s].colony.stage == 0) {
+			return;
+		}
+		var acc = 0;
+		for (var i=tradeRoutes[g].length-1;i>=0;i--) {
+			if (tradeRoutes[g][i].to == s) {
+				acc += planetdata[g][tradeRoutes[g][i].from].economy.productivity;
+			}
+		}
+		var req = planetdata[g][s].economy.productivity/100;
+
+		if (acc < req) {
+			planetdata[g][s].economy.tradeStatus--;
+			// 'produces plenty of exports' will fall back to normal
+			// as there's not enough raw materials for a big surplus
+			// normal wil fall back to '-1: insufficient imports'
+			/*if (planetdata[g][s].colony.stage > 3 && acc > 0) {
+				console.log("Insufficient imports in "+planetdata[g][s].economy.type+" - needed "+req+", has "+(100*acc/req).toFixed(1)+"%");
+			}*/
+		}
+	};
+
+
 	planetinfo.dump = function(g,s,sp) {
 		var fix = function(a,b) {
 			return a.toFixed(b);
@@ -669,6 +760,7 @@
 		result += $plist("economy",info.economy.icon);
 		result += $plist("economy_description",info.economy.type);
 		result += $plist("productivity",Math.ceil(info.economy.productivity/1E6));
+		result += $plist("sotw_economy_status",info.economy.tradeStatus);
 
 		result += $plist("government",info.politics.stability);
 		if (info.colony.stage > 0) {

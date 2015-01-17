@@ -3401,6 +3401,7 @@
 				{ key: "BFUEP-HUDO6", text: "The %U system is far from any official settlement, and is rarely visited.", condition: true },
 				{ key: "BFUEP-HUDO7", text: "While the %U system has significant deposits of accessible %M, colonisation attempts have so far failed due to the great distance from supporting systems.", condition: info.planet.mineralWealth > 0.25 },
 				{ key: "BFUEP-HUDO8", text: "While the occasional independent prospector has landed on %H to fill their hold with its good %M ore, the distance from settled space has made it uneconomical for permanent operations.", condition: info.planet.mineralWealth > 0.25 },
+				{ key: "BFUEP-HUDO9", text: "With no mineral wealth, a poor environment, and its great distance from inhabited systems, no plans to place even a resupply station in %U have been filed with the USC.", condition: info.bottle == 0 && info.connected.length > 1 && info.planet.mineralWealth < 0.25 && info.habitability.best < 90 },
 			];
 
 			do {
