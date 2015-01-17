@@ -116,6 +116,7 @@
 		string = string.replace(/%NA/g,info.names.art);
 		string = string.replace(/%NJ/g,info.names.news);
 		string = string.replace(/%NO/g,info.names.otherOrg);
+		string = string.replace(/%NH/g,info.names.localHero);
 
 		// some specifics here
 		var sl = info.species.list();
@@ -250,6 +251,9 @@
 			string = string.replace(/%D2/g,(info.r.rand(250)+150)+" kD");
 		}
 		// initial colonisation 2
+		if (string.match(/%D3L/)) {
+			string = string.replace(/%D3/g,(info.r.rand(25)+425)+" kD");
+		}
 		if (string.match(/%D3/)) {
 			string = string.replace(/%D3/g,(info.r.rand(150)+400)+" kD");
 		}
@@ -341,6 +345,14 @@
 		} else {
 			result = s.retrieveName(spec,r);
 		}
+		return result;
+	};
+
+	descgen.heroName = function(i,j,p,r,s) {
+		var spec = p.get(i,j,"colony").species[0];
+		if (!spec) { spec = s.getNative(i,r); }
+		var result;
+		result = s.retrieveName(spec,r)+" "+s.retrieveName(spec,r);
 		return result;
 	};
 
@@ -1496,6 +1508,7 @@
 				{ key: "BFTC-OUT10", text: "The %U system has been home to a range of inhabitants since around %D8, but no permanent installations appear to have been constructed.", condition: info.politics.governmentCategory == "Disordered" && info.colony.attacked == 0 },
 				{ key: "BFTC-OUT11", text: "A small orbital station was placed in orbit around %H in %D8.", condition: info.politics.governmentCategory == "Disordered" && info.colony.attacked >= 1 },
 				{ key: "BFTC-OUT12", text: "%H was placed under quarantine in %D8L as a precautionary measure after a surface exploration party following up aerial mineral surveys disappeared without trace. So far investigations into the incident have not been conclusive, and the quarantine remains.", condition: info.politics.governmentType == "Quarantine" },
+				{ key: "BFTC-OUT13", text: "The first permanent habitation of the %U system was built by several anti-USC groups in %D8. Diplomatic relations have become more positive recently.", condition: info.politics.governmentCategory != "Atypical" },
 			];
 
 			do {
@@ -2039,7 +2052,8 @@
 				{ key: "BFCI-ASS8", text: "An invader feint in %D10 caused the USC to divert half of the "+fleetnth(info.r)+" Fleet to evacuating the system. By the time the %X %L"+event.oldSize+" inhabitants had been taken to safety, it was obvious that the attack would never materialise, but the transports were too urgently needed elsewhere to take them back.", condition: info.economy.type != "Quarantine" },
 				{ key: "BFCI-ASS9", text: "The initial strikes on %H destroyed the mining stations, leading to severe %M shortages. A basic mining station was re-established as soon as the system was secured by the USC in %D10.", condition: info.planet.mineralWealth > 0.45 },
 				{ key: "BFCI-ASS10", text: "The inhabitants of %H had historically avoided contact with the USC, and so they were taken by surprise when the invaders attacked in %D10E kD. Over %X %L"+event.oldSize+" people were killed or forced to flee before help could arrive.", condition: info.colony.outsiders == 1 },
-				{ key: "BFCI-ASS11", text: "The majority of the system population was killed in %D10 as the invaders struck at key systems across the chart.", condition: true }
+				{ key: "BFCI-ASS11", text: "The majority of the system population was killed in %D10 as the invaders struck at key systems across the chart.", condition: true },
+				{ key: "BFCI-ASS12", text: "The surface of %H was bombarded and all its orbital stations were destroyed in %D10. The current station was towed from its old orbit around an outer planet as a temporary measure.", condition: info.economy.type != "Quarantine" },
 			];
 
 			do {
@@ -3034,7 +3048,8 @@
 				{ key: "BFSEP-STARX7", text: "Despite the significant and unpredictable changes in stellar output, %H remains habitable.", condition: info.habitability.best > 70 },
 				{ key: "BFSEP-STARX8", text: "The settlements on %H are adapted to %U's variability and intense solar flares.", condition: info.colony.stage > 1 },
 				{ key: "BFSEP-STARX9", text: "The expense of shielding against the dangerous solar flares of %U has made colonising this system uneconomical.", condition: !info.colony.founded },
-				{ key: "BFSEP-STARX10", text: "Large solar flares from %U are extremely common. Ships travelling close to the star should be extremely cautious.", condition: true }
+				{ key: "BFSEP-STARX10", text: "Large solar flares from %U are extremely common. Ships travelling close to the star should be extremely cautious.", condition: true },
+				{ key: "BFSEP-STARX11", text: "%U is a variable star and the climate of its planets is considered too unstable for successful colonisation.", condition: !info.colony.founded }
 			];
 			
 			do {
@@ -3340,8 +3355,38 @@
 			key: "",
 			text: ""
 		};
-		if (info.isolation == 3)
-		{
+		if (info.isolation > 4) {
+			block.importance += 30;
+			opts = [
+				{ key: "BFUEP-HXDX1", text: "Five jumps from the nearest inhabited system, %U is also known as the Forsaken Star. Travelling there alone and returning safely is seen as a rite of passage for pilots in the chart.", condition: true }
+]
+			do {
+				do {
+					opt = opts[info.r.rand(opts.length)];
+					block.key = opt.key;
+					block.text = opt.text;
+				} while (!opt.condition);
+			} while (!checkKey(block.key,0,true));
+
+
+		} else if (info.isolation == 4) {
+			block.importance += 10;
+			opts = [
+				{ key: "BFUEP-HXDB1", text: "The routes passing through %U are long and distant from help and resupply. Many convoys have gone missing here recently.", condition: info.bottle > 0 },
+				{ key: "BFUEP-HXDL1", text: "The %U system is almost disconnected from the rest of the chart, and combined with its isolated location several jumps from the nearest inhabited system, it is visited only by occasional survey ships.", condition: info.connected.length == 1 },
+				{ key: "BFUEP-HXDO1", text: "The planet %H was briefly considered for habitation in %D6, but the lack of nearby inhabited systems meant that it was rejected. The situation has not improved for it since.", condition: info.bottle == 0 && info.connected.length > 1 },
+				{ key: "BFUEP-HXDO2", text: "Attempts to establish settlements near %U have all failed, with resupply ships reporting abandoned or destroyed stations. It is believed that some criminal organisation is operating in this or a neighbouring system, but its distance makes organising a search for it difficult.", condition: info.bottle == 0 && info.connected.length > 1 }
+			];
+
+			do {
+				do {
+					opt = opts[info.r.rand(opts.length)];
+					block.key = opt.key;
+					block.text = opt.text;
+				} while (!opt.condition);
+			} while (!checkKey(block.key,1,true));
+
+		} else if (info.isolation == 3) {
 			// ~15
 			opts = [
 				{ key: "BFUEP-HUDB1", text: "The trade route passing through %U involves an extremely long journey through uninhabited systems, and only well-organised convoys or very well-equipped ships have the endurance for it.", condition: info.bottle > 0 },
@@ -3355,6 +3400,7 @@
 				{ key: "BFUEP-HUDO5", text: "With its harsh environment, lack of natural resources, and lack of nearby inhabited systems, %U is one of the least visited systems in the eight charts.", condition: info.bottle == 0 && info.connected.length > 1 && info.planet.mineralWealth < 0.25 && info.habitability.best < 70 },
 				{ key: "BFUEP-HUDO6", text: "The %U system is far from any official settlement, and is rarely visited.", condition: true },
 				{ key: "BFUEP-HUDO7", text: "While the %U system has significant deposits of accessible %M, colonisation attempts have so far failed due to the great distance from supporting systems.", condition: info.planet.mineralWealth > 0.25 },
+				{ key: "BFUEP-HUDO8", text: "While the occasional independent prospector has landed on %H to fill their hold with its good %M ore, the distance from settled space has made it uneconomical for permanent operations.", condition: info.planet.mineralWealth > 0.25 },
 			];
 
 			do {
@@ -3994,7 +4040,7 @@
 			opts = [
 				{ key: "BFEI-RESS1", text: "%H is most famous for its pure science research, especially in physics, chemistry and astronomy. The system imports the latest machinery and computers to carry out its research.", condition: true },
 				{ key: "BFEI-RESS2", text: "The research institutes of %H are constantly pushing back the boundaries of knowledge. Most of their discoveries are tens if not hundreds of kilodays from having practical use, though some with potential may be taken to other more applied research worlds.", condition: true },
-				{ key: "BFEI-RESS3", text: "Specialising in witchspace theory, %H' researchers are working on understanding the mysteries of this travel form, including the unusual topology of the eight charts. With the recent invaders havin witchspace capabilities long thought impossible, their research has gained considerable urgency.", condition: true },
+				{ key: "BFEI-RESS3", text: "Specialising in witchspace theory, %H' researchers are working on understanding the mysteries of this travel form, including the unusual topology of the eight charts. With the recent invaders having witchspace capabilities long thought impossible, their research has gained considerable urgency.", condition: true },
 				{ key: "BFEI-RESS4", text: "%H specialises in astronomy, and the telescopes it designs are being placed in systems around the edge of the chart to look for rogue planets large enough to be used as a witchspace anchor.", condition: true },
 				{ key: "BFEI-RESS5", text: "Pure science researchers from around the region have long been drawn to %H through the government's extensive funding for their work.", condition: true },
 			];
@@ -4145,7 +4191,8 @@
 			{ key: "BFGI-REFUGEES", text: "The %NO refugees, having survived the invasion and been welcomed here, have organised to raise funds for the millions of other refugees stranded through the charts.", limit: 1, condition: true },
 			{ key: "BFGI-GENERATION", text: "%H is the base of the %NO Generationalists, who believe that the only chance to escape a return of the invaders is to build a generation ship capable of re-crossing Biya's Gap", limit: 1, condition: info.galaxy == 1 },
 			{ key: "BFGI-NEBULA", text: "%U is surrounded by a dense nebula, which blocks out the light from nearby stars.", limit: 4, condition: true },
-			{ key: "BFGI-ARCHAEOLOGY", text: "There is heavily disputed evidence that %H may once have had technological native life. The %NO Survey has been thoroughly searching the system since the first discovery in %D6.", limit: 1, condition: info.galaxy == 2 && info.habitability.best > 55 },
+			{ key: "BFGI-ARCHAEOLOGY1", text: "There is heavily disputed evidence that %H may once have had technological native life. The %NO Survey has been thoroughly searching the system since the first discovery in %D6.", limit: 1, condition: info.galaxy == 2 && info.habitability.best > 55 },
+			{ key: "BFGI-ARCHAEOLOGY2", text: "Spaceship wreckage not resembling any USC design has recently been found on the outskirts of the %U system. An archaeological team is currently investigating.", limit: 1, condition: info.galaxy == 2 },
 			{ key: "BFGI-SHELL", text: "Unusual plankton in the waters of %H dye %IL exoskeletons an iridescent rainbow of colours.", limit: 1, condition: info.colony.species.indexOf("Lobster") > -1 && info.habitability.best > 70},
 			{ key: "BFGI-TREASURE", text: "The %U system is rumoured to be the resting place of the %NO treasure, named after the wealthy crime lord who accumulated billions of credits worth of stolen artefacts before their assassination in %D8.", limit: 1, condition: true},
 			{ key: "BFGI-MAZE", text: "The interior of the main orbital station at %H has been laid out as a giant maze.", limit: 1, condition: true},
@@ -4155,7 +4202,11 @@
 			{ key: "BFGI-MIXED3", text: "While not a formal member, %H often sides with the Veto Reformists in USC decisions.", limit: 3, condition: info.colony.species.length >= 3 },
 			{ key: "BFGI-RACE", text: "%H is the "+nth(usedKeys["BFGI-TOUR"])+" system on the cross-chart Endurance Race", limit: 8, condition: true },
 			{ key: "BFGI-CRIME", text: "The deep reaches of the %U system are rumoured to be home to the feared cross-chart "+info.names.criminalGroup+" crime syndicate.", limit: 4, condition: info.politics.governmentCategory != "Disordered" },
-			{ key: "BFGI-SHROUD", text: "A thick dust cloud surrounds %U cutting out light from all but the brightest stars.", limit: 2, condition: true }
+			{ key: "BFGI-SHROUD", text: "A thick dust cloud surrounds %U cutting out light from all but the brightest stars.", limit: 2, condition: true },
+			{ key: "BFGI-HERO1", text: "Homeworld of %NH, the most famous fighter pilot of the USC fleets during the invasion. Credited with over seven hundred confirmed kills, including two carriers, she is believed to have been killed defending the 2nd Fleet from an ambush in 1141 kD.", limit: 1, condition: true },
+			{ key: "BFGI-HERO2", text: "This otherwise unremarkable system is the birthplace of %NH, who chaired the committee to draft the original USC Treaty. Major celebrations are held on the anniversary of the signing.", limit: 1, condition: info.colony.founded < 4 },
+			{ key: "BFGI-HERO3", text: "%NH, lead scientist on the project to develop the cross-chart witchdrive, was born in this system in %D3L.", limit: 1, condition: info.galaxy == 0 && info.colony.founded < 4 },
+			{ key: "BFGI-HERO4", text: "The revolutionary %NH, writer of 'Reaching Together', is said to have been inspired to found the Cultural Reaching movement while working as a refuelling technician at %H station in %D5.", limit: 1, condition: info.colony.founded < 6 }
 		];
 
 		do {

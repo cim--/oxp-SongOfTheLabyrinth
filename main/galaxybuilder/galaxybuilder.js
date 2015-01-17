@@ -2261,7 +2261,8 @@ random.setStart(325000);
 				art: descgen.artName(i,j,$,random,species),
 				sport: descgen.artName(i,j,$,random,species),
 				news: descgen.newsName(i,j,$,random,species),
-				otherOrg: descgen.otherName(i,j,$,random,species)
+				otherOrg: descgen.otherName(i,j,$,random,species),
+				localHero: descgen.heroName(i,j,$,random,species),
 			};
 			$.set(i,j,"names",names);
 			var descblocks = descgen.getDescBlocks(i,j,$,random,species);

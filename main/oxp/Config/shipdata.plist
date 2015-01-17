@@ -633,6 +633,7 @@
 		missiles = 0;
 		model = "oolite_coriolis.dat";
 		name = "Outpost Station";
+		"requires_docking_clearance" = yes;
 		roles = "sotw-outpost-station station";
 		rotating = no;
 		scan_class = "CLASS_STATION";

@@ -659,6 +659,7 @@
 			inhabitants = "";
 			result += $plist("inhabitant","");
 			result += $plist("populator","uninhabitedSystemWillPopulate");
+			result += $plist("repopulator","uninhabitedSystemWillRepopulate");
 		}
 		result += $plist("population_description",info.colony.populationDescription+"\n"+inhabitants);
 		result += $plist("inhabitants",inhabitants);

@@ -41,9 +41,7 @@ this.startUp = function() {
 
 	/* Configurations */
 
-	lib.prototype.sotw_configurationSelectShuttleDestination = function() {
-		// TODO
-	};
+
 
 	/* Behaviours */
 
@@ -60,6 +58,30 @@ this.startUp = function() {
 
 	lib.prototype.sotw_behaviourStationRespondToDistressCall = function() {
 		// check factions of both parties, then take action
+		var aggressor = this.getParameter("oolite_distressAggressor");
+		var sender = this.getParameter("oolite_distressSender");
+		var f1 = this.ship.script.$sotwFaction;
+		var fa = aggressor.script.$sotwFaction;
+		var fs = sender.script.$sotwFaction;
+		var coma = this.sotw_utilCompareFactions(f1,fa);
+		var coms = this.sotw_utilCompareFactions(f1,fs);
+		if (coma > coms) {
+			// reverse the two
+			var tmp = sender;
+			sender = aggressor;
+			aggressor = tmp;
+			tmp = coms;
+			coms = coma;
+			coma = tmp;
+		}
+		if (coms >= 0 && coma <= 1) {
+			this.ship.addDefenseTarget(aggressor);
+			if (!this.ship.hasHostileTarget) {
+				this.ship.alertCondition = 3;
+				this.ship.target = aggressor;
+			}
+		}
+
 		var handlers = {};
 		this.responsesAddStation(handlers);
 		this.applyHandlers(handlers);
@@ -151,6 +173,23 @@ this.startUp = function() {
 	lib.prototype.sotw_utilWarnTarget = function() {
 		// TODO: actually warn target
 	};
+
+	// Core utility override
+	lib.prototype.friendlyStation = function(station) {
+		var f1 = this.ship.script.$sotwFaction;
+		var f2 = station.script.$sotwFaction;
+		var compare = this.sotw_utilCompareFactions(f1,f2);
+		return compare >= 0;
+	};
+
+	// Core utility override
+	lib.prototype.hostileStation = function(station) {
+		var f1 = this.ship.script.$sotwFaction;
+		var f2 = station.script.$sotwFaction;
+		var compare = this.sotw_utilCompareFactions(f1,f2);
+		return compare <= -2;
+	};
+
 
 	/* Event handlers and response sets */
 	// need to override a few core definitions here, for simplicity
