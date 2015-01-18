@@ -39,8 +39,27 @@ this.startUp = function() {
 		return has >= this.getParameter("sotw_desiredSecurityLevel");
 	};
 
+	lib.prototype.sotw_conditionFreighterWantsToTrade = function() {
+		return this.getParameter("sotw_freighterObjective") == "TRADE";
+	};
+
+	lib.prototype.sotw_conditionFreighterWantsToResupply = function() {
+		return this.getParameter("sotw_freighterObjective") == "RESUPPLY";
+	};
+
+	lib.prototype.sotw_conditionFreighterWantsToTravel = function() {
+		return this.getParameter("sotw_freighterObjective") == "TRAVEL";
+	};
+
+	lib.prototype.sotw_conditionFreighterWantsToSurvive = function() {
+		return this.getParameter("sotw_freighterObjective") == "SURVIVE";
+	};
+
 	/* Configurations */
 
+	lib.prototype.sotw_configurationFreighterAbortMission = function() {
+		return this.getParameter("sotw_freighterObjective") == "SURVIVE";
+	};
 
 
 	/* Behaviours */

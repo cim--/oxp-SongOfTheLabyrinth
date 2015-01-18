@@ -1988,6 +1988,12 @@ random.setStart(260000);
 		// uninhabited system stability
 		$.uninhabitedDistances(i);
 	}
+
+	// now that system stability is known, can set up trade route paths
+	for (i=0;i<$.galaxies;i++) {
+		$.makeTradeRoutePaths(i);
+	}
+	
 }());
 
 random.setStart(265000);

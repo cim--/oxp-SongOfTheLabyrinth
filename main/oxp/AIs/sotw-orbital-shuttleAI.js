@@ -13,7 +13,8 @@ this.aiStarted = function() {
 	ai.setPriorities([
 		{
 			condition: ai.conditionInCombat,
-			behaviour: ai.behaviourFleeCombat
+			behaviour: ai.behaviourFleeCombat,
+			reconsider: 10
 		},
 		{
 			condition: ai.conditionHostileStationNearby,

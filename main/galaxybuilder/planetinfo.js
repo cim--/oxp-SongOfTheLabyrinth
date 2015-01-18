@@ -39,6 +39,11 @@
 		return "\t\""+k+"\" = \""+v+"\";\n";
 	}
 
+	var $plistarray = function(k,v) {
+		return "\t\""+k+"\" = \""+v.join(";")+"\";\n";
+	}
+
+
 	for (var g=0;g<8;g++) {
 		for (var i=0;i<256;i++) {
 			planetdata[g][i] = {};
@@ -614,7 +619,7 @@
 		for (var i=0;i<=255;i++) {
 			if (s==i) { continue; }
 			var dist = planetinfo.distance(g,i,s);
-			if (dist < distThreshold && economyExportToTable[etype].indexOf(planetdata[g][i].economy.type) != -1) {
+			if (dist < distThreshold && planetdata[g][i].colony.stage > 0 && economyExportToTable[etype].indexOf(planetdata[g][i].economy.type) != -1) {
 				options.push({id:i, type:planetdata[g][i].economy.type, dist: dist, prod:planetdata[g][i].economy.productivity});
 			}
 		}
@@ -659,6 +664,132 @@
 			}*/
 		}
 	};
+
+	planetinfo.tradeRouteImports = function(g,s) {
+		var imports = [];
+		for (var i=tradeRoutes[g].length-1;i>=0;i--) {
+			if (tradeRoutes[g][i].to == s) {
+				imports.push(tradeRoutes[g][i].from);
+			}
+		}
+		return imports;
+	};
+
+	planetinfo.tradeRouteExports = function(g,s) {
+		var exports = [];
+		for (var i=tradeRoutes[g].length-1;i>=0;i--) {
+			if (tradeRoutes[g][i].from == s) {
+				exports.push(tradeRoutes[g][i].to);
+			}
+		}
+		return exports;
+	};
+
+	planetinfo.tradeRouteMembers = function(g,s) {
+		var routes = [];
+		for (var i=tradeRoutes[g].length-1;i>=0;i--) {
+			if (tradeRoutes[g][i].path.indexOf(s) != -1) {
+				routes.push(tradeRoutes[g][i].path.join(","));
+			}
+		}
+		return routes;
+	};
+
+
+	planetinfo.makeTradeRoutePaths = function(g) {
+		console.log("Making trade routes for chart "+g);
+		// this could be optimised quite a bit, but it runs
+		// fast enough anyway
+		for (var i=tradeRoutes[g].length-1;i>=0;i--) {
+			var route = planetinfo.makeTradeRoutePath(g,tradeRoutes[g][i]);
+			tradeRoutes[g][i].path = route;
+		}
+	};
+
+	planetinfo.loptSorter = function(a,b) {
+		return a.cost - b.cost;
+	}
+
+	planetinfo.makeTradeRoutePath = function(g,route) {
+		var routeList = {};
+		var start = route.from;
+		var used = [];
+		var stack = [start];
+		routeList[start] = {from:-1, cost: 0};
+		var best = 1E9;
+		do {
+			var consider = stack.shift();
+//			console.log("-- considering "+consider);
+			var costsofar = routeList[consider].cost;
+			var opts = planetdata[g][consider].connectedSystems;
+			var lopts = [];
+			for (var i=0;i<opts.length;i++) {
+				var opt = opts[i];
+//				console.log("--- adjacent "+opt);
+				if (used.indexOf(opt) == -1) {
+//					console.log("--- unused "+opt);
+					var cost = planetinfo.tradeRouteJumpCost(g,consider,opt);
+					lopts.push({id: opt, cost: cost});
+				}
+			}
+			lopts.sort(planetinfo.loptSorter);
+
+			for (i=0;i<lopts.length;i++) {
+				var lopt = lopts[i];
+				var lcost = costsofar+lopt.cost;
+				if (lcost < best) {
+//					console.log(lopt.id+" => "+routeList[lopt.id]);
+					if (!routeList[lopt.id]) {
+						stack.push(lopt.id);
+						routeList[lopt.id] = {from: consider, cost: lcost};
+//						console.log(lopt.id+" <= "+consider+" ("+lcost+")");
+					} else if (lcost < routeList[lopt.id].cost) {
+						routeList[lopt.id] = {from: consider, cost: lcost};
+//						console.log(lopt.id+" <= "+consider+" ("+lcost+")");
+					}
+					if (lopt.id == route.to) {
+						if (lcost < best) {
+//							console.log("Best route so far "+best);
+							best = lcost;
+						}
+					}
+				}
+			}
+			used.push(consider);
+
+		} while(stack.length > 0);
+		var next, entry = route.to;
+		var result = [];
+		do {
+			result.push(entry);
+//			console.log("Route => "+entry)
+			next = routeList[entry].from;
+			entry = next;
+		} while (next != -1);
+		return result.reverse();
+	};
+
+	planetinfo.tradeRouteJumpCost = function(g,consider,opt) {
+		var cost = planetinfo.distance(g,consider,opt);
+		if (planetdata[g][opt].colony.stage == 0) {
+			cost += 100;
+			if (planetdata[g][consider].colony.stage == 0) {
+				// try to avoid jumping through more than
+				// one empty system at once - too easy to 
+				// get stranded.
+				cost += 200;
+				// intentionally cumulative with above
+				// (*mostly* doesn't make much difference
+				// since avoiding this usually involves a ridiculous
+				// detour
+			}
+		} else {
+			var stab = planetdata[g][opt].politics.stability;
+			cost += ((8-stab)*(8-stab))
+		}
+		return cost;
+	};
+
 
 
 	planetinfo.dump = function(g,s,sp) {
@@ -761,6 +892,9 @@
 		result += $plist("economy_description",info.economy.type);
 		result += $plist("productivity",Math.ceil(info.economy.productivity/1E6));
 		result += $plist("sotw_economy_status",info.economy.tradeStatus);
+		result += $plistarray("sotw_economy_importsfrom",planetinfo.tradeRouteImports(g,s));
+		result += $plistarray("sotw_economy_exportsto",planetinfo.tradeRouteExports(g,s));
+		result += $plistarray("sotw_economy_onroutes",planetinfo.tradeRouteMembers(g,s));
 
 		result += $plist("government",info.politics.stability);
 		if (info.colony.stage > 0) {
