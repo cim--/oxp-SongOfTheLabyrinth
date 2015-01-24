@@ -26,6 +26,7 @@
 	var mediumMineralPoint = 0.25;
 	var highHabPoint
 
+	var invasioncasualties = 0;
 
 	var planetdata = [[],[],[],[],[],[],[],[]];
 	var tradeRoutes = [[],[],[],[],[],[],[],[]];
@@ -439,7 +440,37 @@
 		}
 	};
 
-	planetinfo.raidColony = function(g,s,t) {
+	var cascount = function(st,r) {
+		var pop, prand = (r.rand(90)+10)/10;
+		switch (st) {
+		case 0:
+			pop = 1E3 * prand; 
+			break;
+		case 1:
+			pop = 1E4 * prand; 
+			break;
+		case 2:
+			pop = 1E5 * prand; 
+			break;
+		case 3:
+			pop = 1E6 * prand; 
+			break;
+		case 4:
+			pop = 1E7 * prand; 
+			break;
+		case 5:
+			pop = 1E8 * prand; 
+			break;
+		case 6:
+		case 7:
+			// a stage 6 colony is just a stage 5 with more influence
+			pop = 1E9 * prand; 
+			break;
+		}
+		return pop;
+	}
+
+	planetinfo.raidColony = function(g,s,t,r) {
 		planetinfo.reduceColonyStage(g,s,true);
 		var colony = planetinfo.get(g,s,"colony");
 		colony.techLevel -= t;
@@ -448,12 +479,17 @@
 		}
 		colony.attacked = 1;
 		planetinfo.addHistoryItem(g,s,{ type: "raided", newSize: colony.stage, oldSize: colony.stage+1 });
+		if (colony.stage == 6) {
+			invasioncasualties += 0.5*cascount(colony.stage+1,r);
+		} else {
+			invasioncasualties += 0.9*cascount(colony.stage+1,r);
+		}
 	};
 
-	planetinfo.assaultColony = function(g,s,t) {
+	planetinfo.assaultColony = function(g,s,t,r) {
 		var colony = planetinfo.get(g,s,"colony");
 		planetinfo.addHistoryItem(g,s,{ type: "assaulted", newSize: 1, oldSize: colony.stage });
-
+		invasioncasualties += cascount(colony.stage,r);
 		while (colony.stage > 1) {
 			planetinfo.reduceColonyStage(g,s,true);
 		}
@@ -464,9 +500,10 @@
 		colony.attacked = 2;
 	};
 
-	planetinfo.destroyColony = function(g,s) {
+	planetinfo.destroyColony = function(g,s,r) {
 		var colony = planetinfo.get(g,s,"colony");
 		planetinfo.addHistoryItem(g,s,{ type: "destroyed", oldSize: colony.stage });
+		invasioncasualties += cascount(colony.stage,r);
 		colony.stage = 0;
 		colony.population = 0;
 //		colony.species = []; // needed for later records
@@ -982,6 +1019,10 @@
 			return "0.3 0.3 0.7 0.5";
 		}
 	};
+
+	planetinfo.dumpInvasionCost = function() {
+		console.log("Invasion killed or displaced: "+invasioncasualties);
+	}
 
 	planetinfo.dumpRegionLinks = function(r) {
 		var p1,p2;

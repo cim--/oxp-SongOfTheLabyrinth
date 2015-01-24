@@ -2004,6 +2004,8 @@
 				{ key: "BFCI-EMB2", text: "One of the first major losses to the invasion was the destruction of the settlements on %H in %D10E, before the USC fleets were properly equipped and prepared for the fight. A small orbital station is all that has so far been rebuilt of the USC embassy.", condition: info.colony.attacked == 2 },
 				{ key: "BFCI-EMB3", text: "The USC embassy worlds were the core of the response to the invasion, coordinating fleet movements across the chart. In %D10, the "+fleetnth(info.r)+" Fleet was lured away from its position by a series of strikes on nearby systems, and a hit and run assault bombarded %H' major cities, killing over %X %L"+event.oldSize+".", condition: info.colony.attacked == 1 },
 				{ key: "BFCI-EMB4", text: "A major invader offensive succeeded in breaking through USC lines to assault %H in %D10. Almost %X %L"+event.oldSize+" people were successfully evacuated from the system as the attack began, destroying major communications and military installations through the system.", condition: info.colony.attacked == 1 },
+				{ key: "BFCI-EMB5", text: "The USC suffered a major setback in its fight against the invasion when a surprise assault on %H smashed through the unprepared defenders and bombarded most of the planet's surface. Captain %NH famously rallied the remains of the defence fleet, and was able to protect the capital %NC until reinforcements could arrive.", condition: info.colony.attacked == 1 },
+				{ key: "BFCI-EMB6", text: "The strategic importance of the %U system meant that it was a battleground for most of the invasion. While the invaders never managed to gain full control of the system, raids did get through and most of the surface settlements were bombarded repeatedly.", condition: info.colony.attacked == 1 },
 			];
 
 			do {
@@ -2054,6 +2056,8 @@
 				{ key: "BFCI-ASS10", text: "The inhabitants of %H had historically avoided contact with the USC, and so they were taken by surprise when the invaders attacked in %D10E kD. Over %X %L"+event.oldSize+" people were killed or forced to flee before help could arrive.", condition: info.colony.outsiders == 1 },
 				{ key: "BFCI-ASS11", text: "The majority of the system population was killed in %D10 as the invaders struck at key systems across the chart.", condition: true },
 				{ key: "BFCI-ASS12", text: "The surface of %H was bombarded and all its orbital stations were destroyed in %D10. The current station was towed from its old orbit around an outer planet as a temporary measure.", condition: info.economy.type != "Quarantine" },
+				{ key: "BFCI-ASS13", text: "The invasion released lethal bioweapons onto the surface of %H, and the few surviving settlements are strictly quarantined to prevent infection.", condition: info.economy.type == "Quarantine" },
+				{ key: "BFCI-ASS14", text: "In %D10, around %L"+event.oldSize+" people were evacuated from %H ahead of an oncoming invader fleet. %X %L more died on the surface due to a shortage of transports.", condition: info.economy.type != "Quarantine" },
 			];
 
 			do {
@@ -3875,7 +3879,6 @@
 				// hab level for species there in any numbers
 			}
 		}
-
 		switch (info.economy.type) {
 		case "Asteroid Mining": // ~70
 			opts = [
@@ -4097,7 +4100,8 @@
 				{ key: "BFEI-SHIP3", text: "The %NB yards specialise in ships for the independent market, with the "+expandShips[midx]+" being their most successful design. A range of upgrades and spare parts is exported from the system to stock stations and depots across the chart.", condition: midx<19 },
 				{ key: "BFEI-SHIP4", text: "The shipyards at %H largely license other designs, though the "+expandShips[fidx]+" fighter was one of their rare local successes, and producing spare parts and weapons for it is highly profitable for the system.", condition: fidx<5 },
 				{ key: "BFEI-SHIP5", text: "The now common "+expandShips[hidx]+" was first built at the %NB shipyards orbiting %H. Sales of this ship and spare parts, as well as weapons for its escort craft, make the system extremely wealthy.", condition: hidx<13 },
-				{ key: "BFEI-SHIP6", text: "The "+expandShips[midx]+" design has very precise internal layouts to accommodate a maximum of equipment and cargo. The %NB shipyards at %H have partnerships with refineries and factories across the chart to produce materials and machinery to the high standards required.", condition: midx<19 }
+				{ key: "BFEI-SHIP6", text: "The "+expandShips[midx]+" design has very precise internal layouts to accommodate a maximum of equipment and cargo. The %NB shipyards at %H have partnerships with refineries and factories across the chart to produce materials and machinery to the high standards required.", condition: midx<19 },
+				{ key: "BFEI-SHIP7", text: "The %NB shipyards are yet to have a major design success of their own, but are well known for their competent manufacture under license of many famous designs such as the "+expandShips[midx-3]+" and "+expandShips[hidx-2]+".", condition: fidx>=5 && hidx>=13 && midx>=19 }
 			];
 			break;
 		case "Survival": // ~50 (not including uninhabited)
@@ -4357,7 +4361,6 @@
 		if (info.colony.militaryBase == 1) {
 			blocks = blocks.concat(blocksForMilitaryBase(info));
 		}
-
 		// Regional
 		//  +++ is regional capital
 		//  ++ is regional influential non-capital

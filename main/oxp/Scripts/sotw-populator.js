@@ -6,6 +6,29 @@ this.name = "SOTW Populator Script";
 
 this.systemWillPopulate = function() {
 
+	// remake trade routes array
+	this.$tradeRoutes = [];
+	this.$tradeRouteTotalWeight = 0;
+	if (system.info.sotw_economy_onroutes != "") {
+		var routes = system.info.sotw_economy_onroutes.split(";");
+		for (var i=0;i<routes.length;i++) {
+			var route = routes[i].split(",");
+			var rstart = route[0];
+			var rend = route[route.length-1];
+			var rscale = Math.min(
+				System.infoForSystem(galaxyNumber,rstart).productivity,
+				System.infoForSystem(galaxyNumber,rend).productivity
+			);
+			this.$tradeRouteTotalWeight += rscale;
+			this.$tradeRoutes.push({
+				start: rstart,
+				end: rend,
+				weight: rscale
+			});
+		}
+	}
+	log(this.name,"Trade route density "+this.$tradeRouteTotalWeight);
+
 	system.setPopulator("sotw-witchpoint",{
 		callback: this._setupWitchpoints,
 		priority: 5,
@@ -25,10 +48,13 @@ this.systemWillPopulate = function() {
 // every 20 seconds
 this.systemWillRepopulate = function() {
 	if (system.info.population > 10) {
-		// 10 = uninhabited system
+		// 10 = uninhabited planet, orbital only
 		this._repopulateShuttles();
 	}
-
+	if (system.info.sotw_economy_onroutes != "") {
+		// no point if there's no actual routes
+		this._repopulateFreighters();
+	}
 };
 
 // system populator utils
@@ -92,6 +118,45 @@ this._repopulateShuttles = function() {
 }
 
 
+this._repopulateFreighters = function() {
+	// top trade route is probably about 10 million weight
+	// and ~1 every 20 minutes would be reasonable there
+	// so 1 every 20 seconds would require about 600 million weight
+	var trchance = this.$tradeRouteTotalWeight / 600E6;
+//	log(this.name,"Freighter chance = 1/"+Math.floor(1/trchance));
+	// an *average* trade route, though, is probably around 40 thousand weight
+	// and gets one freighter every few days - these ships are *important*
+	if (Math.random() < trchance) {
+		this._addFreighter([0,0,0]);
+	}
+}
+
+
+this._addFreighter = function(position) {
+	// TODO: the ship should get an escort group
+	// TODO: should decide route *first* and adjust the freighter
+	// size accordingly - but that can wait until there's more than
+	// one freighter
+	// TODO: if the route *starts* here should handle it a bit differently
+	var ship = this._addShipsToSpace(position,"sotw-freighter","sotw-long-range-trader",1,50)[0];
+	if (ship) {
+		
+		var route = Math.random()*this.$tradeRouteTotalWeight;
+		var acc = 0;
+		for (var i=0;i<this.$tradeRoutes.length;i++) {
+			acc += this.$tradeRoutes[i].weight;
+			if (acc >= route) {
+				ship.homeSystem = this.$tradeRoutes[i].start;
+				ship.destinationSystem = this.$tradeRoutes[i].end;
+				log(this.name,"Freighter heading from "+System.infoForSystem(galaxyNumber,ship.homeSystem).name+" to "+System.infoForSystem(galaxyNumber,ship.destinationSystem).name);
+				break;
+			}
+		}
+		
+	}
+};
+
+
 // TODO: uninhabited system populator goes here
 
 
@@ -131,7 +196,7 @@ this.$aiMap = {
 	"sotw-station-defense-ship": "sotw-station-defenseAI.js",
 	"sotw-station-defense-platform": "sotw-station-defenseAI.js",
 	"sotw-shuttle": "sotw-orbital-shuttleAI.js",
-
+	"sotw-long-range-trader": "sotw-traderoute-freighterAI.js"
 };
 
 this._launchShipFromStation = function(station, shipRole) {
@@ -139,12 +204,12 @@ this._launchShipFromStation = function(station, shipRole) {
 };
 
 this._setUpShipAs = function(ship, primaryRole) {
-	log(this.name,"Setting "+ship.displayName+" as "+primaryRole); 
+//	log(this.name,"Setting "+ship.displayName+" as "+primaryRole); 
 	ship.primaryRole = primaryRole;
 	if (ship.autoAI) {
 		var ai = this.$aiMap[primaryRole];
 		if (ai) {
-			log(this.name,"Setting AI "+ai);
+//			log(this.name,"Setting AI "+ai);
 			ship.setAI(ai);
 		}
 	}
@@ -346,6 +411,10 @@ this._stationPatrolLocation = function(station,patrolidx,outof) {
 		break;
 	}
 	
+	if (!vx) {
+		log(this.name,"No vx: at "+station+" patrol "+patrolidx+" out of "+outof);
+	}
+
 	var aspeed = speed/radius;
 	var angle = clock.absoluteSeconds*aspeed;
 	var sinx = vx.multiply(Math.sin(angle)*radius);

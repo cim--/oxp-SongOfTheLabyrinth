@@ -1192,7 +1192,7 @@ Non-homeworld systems at the colony stage cap have a 5% chance of gaining d4 TL 
 	$.$historyStep = 10;
 	var colony;
 	var speclist = species.list();
-
+	var rc = 0 , rce = 0,ac = 0,dc = 0;
 	for(i=0;i<$.galaxies;i++) {
 		for (j=0;j<$.systems;j++) {
 			// colonies under attack
@@ -1205,11 +1205,17 @@ Non-homeworld systems at the colony stage cap have a 5% chance of gaining d4 TL 
 				} else if (choice < 20 || colony.stage == 7) {
 					// nothing
 				} else if (choice < 40) {
-					$.raidColony(i,j,1+random.rand(6)); // 20% of raid
+					$.raidColony(i,j,1+random.rand(6),random); // 20% of raid
+					rc++;
+					if (colony.embassy) {
+						rce++;
+					}
 				} else if (choice < 45) {
-					$.assaultColony(i,j,1+random.rand(4)); // 5% chance of assault - planet is depopulated, some orbital infrastructure remains or rebuilt
+					$.assaultColony(i,j,1+random.rand(4),random); // 5% chance of assault - planet is depopulated, some orbital infrastructure remains or rebuilt
+					ac++;
 				} else if (choice == 45) {
-					$.destroyColony(i,j); // 1% chance of total destruction
+					$.destroyColony(i,j,random); // 1% chance of total destruction
+					dc++;
 				}
 				
 				if ($.colonyAtMaxSize(i,j,true)) {
@@ -1226,6 +1232,7 @@ Non-homeworld systems at the colony stage cap have a 5% chance of gaining d4 TL 
 
 		}
 	}
+	console.log("Invasion counts: "+rc+" ("+rce+") "+ac+" "+dc);
 }());
 
 random.setStart(220000);
@@ -1236,6 +1243,7 @@ random.setStart(220000);
 (function() {
 	$.$historyStep = 11;
 	var colony;
+	var totalPopulation = 0;
 	for(i=0;i<$.galaxies;i++) {
 		for (j=0;j<$.systems;j++) {
 			colony = $.get(i,j,"colony");
@@ -1277,11 +1285,12 @@ random.setStart(220000);
 			}
 			colony.population = pop;
 			colony.populationDescription = pdesc;
-			
+			totalPopulation += pop;
 			$.economyType(i,j,random.rand(6),random.randf(),random);
 
 		}
 	}
+	console.log("Total population: "+totalPopulation);
 }());
 
 random.setStart(230000);
@@ -2264,6 +2273,7 @@ random.setStart(325000);
 	 * higher charts */
 	for (j=0;j<$.systems;j++) {
 		for (i=0;i<$.galaxies;i++) {
+//			console.log(i+" "+j);
 			var names = {
 				company: descgen.companyName(i,j,$,random,species),
 				dictator: descgen.dictatorName(i,j,$,random,species),
@@ -2311,6 +2321,7 @@ random.setStart(325000);
 	}
 //	descgen.debug();
 }());
+console.log("Generated system descriptions");
 
 // used about 100k so far, so give room to double.
 random.setStart(550000);
@@ -2391,5 +2402,7 @@ random.setStart(580000);
 	}
 	descriptionplist += "\n";
 	fs.writeFileSync("build/descriptions.plist.regional",descriptionplist);
+
+	$.dumpInvasionCost();
 
 }());

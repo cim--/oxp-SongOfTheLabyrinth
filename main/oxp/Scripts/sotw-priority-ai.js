@@ -1,3 +1,5 @@
+"use strict";
+
 this.name = "SOTW Priority AI Extensions";
 
 this.startUp = function() {
@@ -55,14 +57,301 @@ this.startUp = function() {
 		return this.getParameter("sotw_freighterObjective") == "SURVIVE";
 	};
 
-	/* Configurations */
+	lib.prototype.sotw_conditionFreighterResupplierAssigned = function() {
+		var re = this.getParameter("sotw_freighterResupplyShip");
+		if (re && re.isValid && re.status == "STATUS_IN_FLIGHT") {
+			return true;
+		} else if (re) {
+			this.setParameter("sotw_freighterResupplyShip",null);
+		}
+		return false;
+	};
 
-	lib.prototype.sotw_configurationFreighterAbortMission = function() {
-		return this.getParameter("sotw_freighterObjective") == "SURVIVE";
+	lib.prototype.sotw_conditionFreighterResupplierDocked = function() {
+		var re = this.getParameter("sotw_freighterResupplyShip");
+		if (re && re.isValid && re.status == "STATUS_IN_FLIGHT") {
+			if (this.ship.speed == 0 && re.speed == 0) {
+				if (this.distance(re) < this.ship.collisionRadius + re.collisionRadius + 20) {
+					if (this.ship.collisionExceptions.indexOf(re) > -1) {
+						return true;
+					}
+				}
+			}
+		} else if (re) {
+			this.setParameter("sotw_freighterResupplyShip",null);
+		}
+		return false;
 	};
 
 
+	lib.prototype.sotw_conditionNeedsResupply = function() {
+		var sl = this.getParameter("sotw_resupplyLevel");
+		return (sl > 0);
+	};
+
+	lib.prototype.sotw_conditionInResupplyRange = function() {
+		var station = this.getParameter("oolite_selectedStation");
+		if (station && this.distance(station) < 20E3)
+		{
+			var resupplyPoint = station.position.add(this.sotw_utilPersonalVector().multiply(10E3+station.collisionRadius));
+			return (this.distance(resupplyPoint) < 2E3);
+		}
+		return false;
+	};
+
+	lib.prototype.sotw_conditionRefuellingStationExists = function() {
+		var ss = system.stations;
+		for (var i=0;i<ss.length;i++) {
+			if (this.friendlyStation(ss[i])) {
+				/* TODO: will eventually need condition about whether
+				 * the station is open for general business */
+				if (ss[i].market["sotw-fuel"].quantity > 0) {
+					return true;
+				}
+			}
+		}
+		return false;
+	};
+
+	lib.prototype.sotw_conditionNearRefuellingStation = function() {
+		var ss = system.stations;
+		for (var i=0;i<ss.length;i++) {
+			if (this.friendlyStation(ss[i])) {
+				/* TODO: will eventually need condition about whether
+				 * the station is open for general business */
+				if (ss[i].market["sotw-fuel"].quantity > 0) {
+					if (this.distance(ss[i]) < 20E3) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	};
+
+	lib.prototype.sotw_conditionMainTradingStationExists = function() {
+		/* TODO: more than just one station linked to main market */
+		return this.friendlyStation(system.mainStation);
+	};
+
+	lib.prototype.sotw_conditionIsMoving = function() {
+		return this.ship.speed > 0;
+	};
+
+	lib.prototype.sotw_conditionHasFuelForJump = function() {
+		var next = this.getParameter("sotw_nextSystem");
+		var dist = system.info.distanceToSystem(System.infoForSystem(galaxyNumber,next));
+		return this.ship.fuel >= dist;
+	};
+	
+	lib.prototype.sotw_conditionHasFuelAboard = function() {
+		// TODO: actually track fuel carried
+		return true;
+	};
+
+	lib.prototype.sotw_conditionWitchspaceCountdownComplete = function() {
+		var cstart = this.getParameter("sotw_witchspaceCountdownStarted");
+		return (cstart && clock.absoluteSeconds - cstart > 15);
+	};
+
+	lib.prototype.sotw_conditionRefuellingCountdownComplete = function() {
+		var cstart = this.getParameter("sotw_refuellingCountdownStarted");
+		return ((cstart) && ((clock.absoluteSeconds - cstart) > 300));
+	};
+
+	lib.prototype.sotw_conditionInClearSpace = function() {
+		if (this.ship.position.magnitude() < 100E3) {
+			return false;
+		}
+		var scanned = this.ship.checkScanner(true);
+		for (var i=0;i<scanned.length;i++) {
+			if (scanned.group != this.ship.group) {
+				return false;
+			}
+		}
+		return true;
+	};
+
+	/* Configurations */
+
+	// spread them out around the station, rather than having them all pile up
+	// on the witchpoint side
+	lib.prototype.sotw_configurationSetDestinationToResupplyPoint = function() {
+		var station = this.getParameter("oolite_selectedStation");
+		this.ship.destination = station.position.add(this.sotw_utilPersonalVector().multiply(10E3+station.collisionRadius));
+		this.ship.desiredRange = 100;
+		this.ship.desiredSpeed = this.cruiseSpeed();
+	};
+
+	lib.prototype.sotw_configurationSetDestinationToClearSpace = function() {
+		// clear out of the orbital plane
+		var pos = this.ship.position;
+		if (Math.abs(pos.y) < 25E3) {
+			if (Math.random() < 0.5) {
+				this.ship.destination = [pos.x,pos.y-75E3,pos.z];
+			} else {
+				this.ship.destination = [pos.x,pos.y+75E3,pos.z];
+			}
+		} else {
+			this.ship.destination = [pos.x,pos.y*2,pos.z];
+		}
+		this.ship.desiredRange = 1000;
+		this.ship.desiredSpeed = this.cruiseSpeed();
+	};
+
+	lib.prototype.sotw_configurationSelectMainTradingStation = function() {
+		// TODO: more options than this
+		this.setParameter("oolite_selectedStation",system.mainStation);
+	};
+
+	lib.prototype.sotw_configurationSelectRefuellingStation = function() {
+		var opts = [];
+		var ss = system.stations;
+		for (var i=0;i<ss.length;i++) {
+			if (this.friendlyStation(ss[i])) {
+				if (ss[i].market["sotw-fuel"].quantity > 0) {
+					opts.push(ss[i]);
+				}
+			}
+		}
+		if (ss.length > 0) {
+			this.setParameter("oolite_selectedStation",opts[Math.floor(Math.random()*opts.length)]);
+		}
+	};
+
+	lib.prototype.sotw_configurationSetTradeRouteNextSystem = function() {
+		var next = this.getParameter("sotw_nextSystem");
+		if (next === null || next == system.ID) {
+			var routes = system.info.sotw_economy_onroutes.split(";");
+			for (var i=0;i<routes.length;i++) {
+				var route = routes[i].split(",");
+				if (parseInt(route[route.length-1]) == this.ship.destinationSystem) {
+					for (var j=0;j<route.length;j++) {
+						if (route[j] == system.ID) {
+							this.setParameter("sotw_nextSystem",route[j+1]);
+							return;
+						}
+					}
+				}
+			}
+			// get here, then not on the trade route to the destination system
+			// odd... shouldn't happen
+			// TODO: use conventional route planning to find the next
+			// system towards the destination - will pick up the trade
+			// route eventually!
+		}
+
+	};
+
+	lib.prototype.sotw_configurationFreighterNewTradeRoute = function() {
+		this.setParameter("sotw_freighterObjective","TRAVEL");
+		this.ship.homeSystem = system.ID;
+		
+		var exports = system.info.sotw_economy_exportsto.split(";");
+		if (system.info.sotw_economy_exportsto.split != "") {
+			this.ship.destinationSystem = parseInt(exports[Math.floor(Math.random()*exports.length)]);
+		} else {
+			var dist = 7;
+			do {
+				var systems = system.info.systemsInRange(dist);
+				for (var i=0;i<systems.length;i++) {
+					if (systems[i].sotw_economy.exportsto != "") {
+						// travel to the nearest system that
+						// does export something
+						this.ship.destinationSystem = systems[i];
+						return;
+					}
+				}
+				dist += 7;
+			} while (dist < 100);
+		}
+	}
+
+	lib.prototype.sotw_configurationFreighterAbortMission = function() {
+		this.setParameter("sotw_freighterObjective","SURVIVE");
+	};
+
+	lib.prototype.sotw_configurationFreighterObjectiveTravel = function() {
+		this.setParameter("sotw_freighterObjective","TRAVEL");
+	};
+
+	lib.prototype.sotw_configurationBeginWitchspaceCountdown = function() {
+		// also discards stale countdowns
+		if (!this.getParameter("sotw_witchspaceCountdownStarted") || this.getParameter("sotw_witchspaceCountdownStarted") - clock.absoluteSeconds > 60) {
+			this.setParameter("sotw_witchspaceCountdownStarted",clock.absoluteSeconds);
+		}
+		this.ship.destination = this.ship.position.add(this.ship.vectorForward.multiply(1E6));
+		this.ship.desiredSpeed = this.cruiseSpeed();
+		this.ship.desiredRange = 1E3;
+	};
+
+	lib.prototype.sotw_configurationBeginRefuellingCountdown = function() {
+		// also discards stale countdowns
+		if (!this.getParameter("sotw_refuellingCountdownStarted") || this.getParameter("sotw_refuellingCountdownStarted") - clock.absoluteSeconds > 900) {
+			this.setParameter("sotw_refuellingCountdownStarted",clock.absoluteSeconds);
+		}
+	};
+
+	lib.prototype.sotw_configurationRefuel = function() {
+		/* TODO: consume a tonne of fuel from hold to do this */
+		this.ship.fuel = 7;
+	}
+
 	/* Behaviours */
+
+	lib.prototype.sotw_behaviourChargeWitchspaceDrive = function() {
+		// for now, just fly forward-ish
+		this.behaviourApproachDestination();
+	};
+
+	lib.prototype.sotw_behaviourEnterWitchspace = function() {
+		var destID = this.getParameter("sotw_nextSystem");
+		var result = this.ship.exitSystem(destID);
+		this.setParameter("sotw_witchspaceCountdownStarted",null);
+		// if it doesn't, we'll get blocked
+		if (result)
+		{
+			this.ship.notifyGroupOfWormhole();
+		}
+		var handlers = {};
+		this.responsesAddStandard(handlers);
+		this.applyHandlers(handlers);
+	};
+
+	lib.prototype.sotw_behaviourRequestResupply = function() {
+		var s = this.getParameter("oolite_selectedStation");
+		if (s.alertCondition > 1) {
+			// not right now!
+			return;
+		}
+		var resupply = pop.launchShipsFromStation(s,"sotw-transport-insystem","sotw-freighter-resupply",true,1,10)[0];
+		if (resupply) {
+			this.setParameter("sotw_freighterResupplyShip",resupply);
+		}
+		var handlers = {};
+		this.responsesAddStandard(handlers);
+		this.applyHandlers(handlers);
+	};
+
+
+	lib.prototype.sotw_behaviourTransferResupply = function() {
+		var needs = this.getParameter("sotw_resupplyLevel");
+		var resupply = this.getParameter("sotw_freighterResupplyShip");
+		var has = resupply.AIScript.oolite_priorityai.getParameter("sotw_resupplyLevel");
+		if (needs > 0 && has > 0) {
+			// transfer one unit of cargo
+			// TODO: actually swap hold cargo based on what this ship wants
+			this.setParameter("sotw_resupplyLevel",needs-1);
+			resupply.AIScript.oolite_priorityai.setParameter("sotw_resupplyLevel",has-1);
+			// and start refuelling
+			this.sotw_configurationBeginRefuellingCountdown();
+		}
+		var handlers = {};
+		this.responsesAddStandard(handlers);
+		this.applyHandlers(handlers);
+	};
+
+	/* -- Station behaviours */
 
 	lib.prototype.sotw_behaviourStationFight = function() {
 		if (!this.__ltcache.sotw_launched_ship) {
@@ -193,6 +482,17 @@ this.startUp = function() {
 		// TODO: actually warn target
 	};
 
+	lib.prototype.sotw_utilPersonalVector = function() {
+		var v = this.getParameter("sotw_personalVector");
+		if (!v) {
+			v = Vector3D.randomDirection();
+			this.setParameter("sotw_personalVector",v);
+		}
+		return v;
+	};
+
+
+
 	// Core utility override
 	lib.prototype.friendlyStation = function(station) {
 		var f1 = this.ship.script.$sotwFaction;
@@ -244,7 +544,107 @@ this.startUp = function() {
 		return false;
 	}
 
+	/* Templates */
 
+	lib.prototype.sotw_templateApproachStation = function() {
+		/* TODO: torus drive support */
+		return [
+			{
+				label: "Approach station",
+				configuration: this.configurationSetDestinationToSelectedStation,
+				behaviour: this.behaviourApproachDestination,
+				reconsider: 30
+			}
+		];
+	};
+
+
+	lib.prototype.sotw_templateResupplyOperation = function() {
+		/* 1) Come to complete stop
+		 * 2) If no resupplier, request one
+		 * 3) If resupplier docked, transfer one unit of resupply
+		 * 4) Otherwise wait
+		 */
+		return [
+			{
+				label: "Approach designated resupply point",
+				notcondition: this.sotw_conditionInResupplyRange,
+				configuration: this.sotw_configurationSetDestinationToResupplyPoint,
+				behaviour: this.behaviourApproachDestination,
+				reconsider: 20
+			},
+			{
+				label: "Stop close to station",
+				condition: this.sotw_conditionIsMoving,
+				behaviour: this.behaviourWaitHere,
+				reconsider: 20
+			},
+			{
+				label: "Request resupply ship",
+				condition: this.sotw_conditionFreighterResupplierAssigned,
+				behaviour: this.sotw_behaviourRequestResupply,
+				reconsider: 60 // it'll take a while for one to get here, anyway
+			},
+			{
+				label: "Carry out resupply transfers",
+				condition: this.sotw_conditionFreighterResupplierDocked,
+				behaviour: this.sotw_behaviourTransferResupply,
+				reconsider: 60
+			},
+			{
+				label: "Wait",
+				behaviour: this.behaviourWaitHere,
+				reconsider: 60
+			}
+		];
+	};
+
+	lib.prototype.sotw_templateMakeWitchspaceJump = function() {
+		return [
+			{
+				label: "Complete witchspace countdown",
+				condition: this.sotw_conditionWitchspaceCountdownComplete,
+				behaviour: this.sotw_behaviourEnterWitchspace,
+				reconsider: 5
+			},
+			{
+				label: "Begin witchspace countdown",
+				configuration: this.sotw_configurationBeginWitchspaceCountdown,
+				behaviour: this.sotw_behaviourChargeWitchspaceDrive,
+				reconsider: 15
+			}
+		];
+	};
+
+	lib.prototype.sotw_templateRefuelInFlight = function() {
+		return [
+			{
+				// if refuelling countdown complete
+				// set fuel to full and reconsider
+				label: "Complete refuelling operation",
+				condition: this.sotw_conditionRefuellingCountdownComplete,
+				configuration: this.sotw_configurationRefuel,
+				behaviour: this.behaviourWaitHere,
+				reconsider: 5
+			},
+			{
+				label: "Reach clear space and refuel",
+				preconfiguration: this.sotw_configurationBeginRefuellingCountdown,
+				condition: this.sotw_conditionInClearSpace,
+				// if refuelling countdown not started, start it
+				// if too near witchpoint, fly forwards
+				configuration: this.sotw_configurationSetDestinationToClearSpace,
+				behaviour: this.behaviourApproachDestination,
+				reconsider: 60
+			},
+			{
+				label: "Wait and refuel",
+				// else stop and wait
+				behaviour: this.behaviourWaitHere,
+				reconsider: 60
+			}
+		];
+	}
 
 	/* Waypoint generators */
 

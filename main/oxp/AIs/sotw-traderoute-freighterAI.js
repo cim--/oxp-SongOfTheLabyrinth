@@ -1,7 +1,5 @@
 "use strict";
 
-// so far this is a copy of the Oolite one. Changes are likely to be
-// necessary later.
 this.name = "SOTW Freighter (Trade Route) AI";
 
 this.aiStarted = function() {
@@ -12,10 +10,18 @@ this.aiStarted = function() {
 	if (system.info.population > 0) {
 		if (system.ID == this.ship.destinationSystem) {
 			ai.setParameter("sotw_freighterObjective","TRADE");
+			ai.setParameter("sotw_resupplyLevel",this.ship.cargoSpaceCapacity);
 		} else if (system.ID == this.ship.homeSystem) {
 			ai.setParameter("sotw_freighterObjective","TRADE");
+			if (this.ship.position.magnitude() < 25E3) {
+				// this freighter is about to begin a trade route
+				ai.setParameter("sotw_resupplyLevel",this.ship.cargoSpaceCapacity);
+			} else {
+				ai.setParameter("sotw_resupplyLevel",Math.floor(Math.random()*this.ship.cargoSpaceCapacity));
+			}
 		} else {
 			ai.setParameter("sotw_freighterObjective","RESUPPLY");
+			ai.setParameter("sotw_resupplyLevel",1);
 		}
 	} else {
 		ai.setParameter("sotw_freighterObjective","TRAVEL");
@@ -30,7 +36,31 @@ this.aiStarted = function() {
 	 *  - if resupply level is zero, set objective to TRAVEL
 	 */
 	var pri_resupply = [
-
+		{
+			notcondition: ai.sotw_conditionNeedsResupply,
+			configuration: ai.sotw_configurationFreighterObjectiveTravel,
+			behaviour: ai.behaviourWaitHere,
+			reconsider: 120 // let the resupply ship get clear
+		},
+		{
+			condition: ai.conditionSelectedStationNearby,
+			truebranch: ai.sotw_templateResupplyOperation()
+		},
+		{
+			condition: ai.conditionHasSelectedStation,
+			truebranch: ai.sotw_templateApproachStation()
+		},
+		{
+			condition: ai.sotw_conditionRefuellingStationExists,
+			configuration: ai.sotw_configurationSelectRefuellingStation,
+			truebranch: ai.sotw_templateApproachStation()
+		},
+		{
+			// no refuelling possible here - move on
+			configuration: ai.sotw_configurationFreighterObjectiveTravel,
+			behaviour: ai.behaviourWaitHere,
+			reconsider: 5 
+		}	
 	];
 
 	/* Trade:
@@ -47,9 +77,35 @@ this.aiStarted = function() {
           system [1], and homeSystem to here.
 	 * [1] base on the size of the trade route versus the size of the
 	   freighter, if there's a lot of choice.
+	 * [1] if no exports from system, set destination to nearest
+	 * system with exports
 	 */
 	var pri_trade = [
-
+		{
+			notcondition: ai.sotw_conditionNeedsResupply,
+			configuration: ai.sotw_configurationFreighterNewTradeRoute,
+			behaviour: ai.behaviourWaitHere,
+			reconsider: 120 // let the resupply ship get clear
+		},
+		{
+			condition: ai.conditionSelectedStationNearby,
+			truebranch: ai.sotw_templateResupplyOperation()
+		},
+		{
+			condition: ai.conditionHasSelectedStation,
+			truebranch: ai.sotw_templateApproachStation()
+		},
+		{
+			condition: ai.sotw_conditionMainTradingStationExists,
+			configuration: ai.sotw_configurationSelectMainTradingStation,
+			truebranch: ai.sotw_templateApproachStation()
+		},
+		{
+			// no trading possible here - panic!
+			configuration: ai.sotw_configurationFreighterAbortMission,
+			behaviour: ai.behaviourWaitHere,
+			reconsider: 5 
+		}	
 	];
 
 
@@ -61,20 +117,39 @@ this.aiStarted = function() {
 	 * SURVIVE)
 	 */
 	var pri_travel = [
-
+		{
+			preconfiguration: ai.sotw_configurationSetTradeRouteNextSystem,
+			condition: ai.sotw_conditionHasFuelForJump,
+			truebranch: ai.sotw_templateMakeWitchspaceJump()
+		},
+		{
+			condition: ai.sotw_conditionHasFuelAboard,
+			truebranch: ai.sotw_templateRefuelInFlight()
+		},
+		{
+			// out of fuel supplies - panic!
+			configuration: ai.sotw_configurationFreighterAbortMission,
+			behaviour: ai.behaviourWaitHere,
+			reconsider: 5 
+		}
 	];
 
 	/* Survive: (this is a fallback option in case the freighter ends
 	   up somewhere strange, or an outbreak of war makes their trade
 	   route impossible, or whatever)
-	 * - if in a system with a friendly station, set objective to TRADE
+	 * - if in a system with a friendly (main, for now) station, set
+         objective to TRADE
 	 * - if has fuel
 	 * -- if in a system adjacent to an inhabited system, jump to it
 	 * -- otherwise jump to a system with a lower isolation number
 	 * - otherwise refuel.
 	 */
 	var pri_survive = [
-
+		// TODO: TEMPORARY!
+		{
+			behaviour: ai.behaviourWaitHere,
+			reconsider: 60
+		}
 	];
 
 	ai.setPriorities([
@@ -108,7 +183,7 @@ this.aiStarted = function() {
 		// emergency fallback if the current objective becomes impossible
 		{
 			configuration: ai.sotw_configurationFreighterAbortMission,
-			behaviour: ai.behaviourReconsider:
+			behaviour: ai.behaviourReconsider
 		}
 	]);
 }
