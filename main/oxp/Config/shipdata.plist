@@ -538,7 +538,7 @@
 			};	
 		missile_launch_position = "0.0 2.322665 56.223506";	
 		model = "oolite_boa.dat";
-		model_scale_factor = 2.0; //
+		model_scale_factor = 3.0; //
 		scoop_position = "0.0 3.029881 49.396415";
 		view_position_aft = "0.0 3.894413 -51.6227";
 		view_position_forward = "0.0 9.71333 54.7745";

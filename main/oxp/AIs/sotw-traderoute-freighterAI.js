@@ -37,25 +37,30 @@ this.aiStarted = function() {
 	 */
 	var pri_resupply = [
 		{
+			label: "Resupply complete?",
 			notcondition: ai.sotw_conditionNeedsResupply,
 			configuration: ai.sotw_configurationFreighterObjectiveTravel,
 			behaviour: ai.behaviourWaitHere,
 			reconsider: 120 // let the resupply ship get clear
 		},
 		{
+			label: "Station nearby?",
 			condition: ai.conditionSelectedStationNearby,
 			truebranch: ai.sotw_templateResupplyOperation()
 		},
 		{
+			label: "Approach station?",
 			condition: ai.conditionHasSelectedStation,
 			truebranch: ai.sotw_templateApproachStation()
 		},
 		{
+			label: "Select station",
 			condition: ai.sotw_conditionRefuellingStationExists,
 			configuration: ai.sotw_configurationSelectRefuellingStation,
 			truebranch: ai.sotw_templateApproachStation()
 		},
 		{
+			label: "Panic",
 			// no refuelling possible here - move on
 			configuration: ai.sotw_configurationFreighterObjectiveTravel,
 			behaviour: ai.behaviourWaitHere,
@@ -82,25 +87,30 @@ this.aiStarted = function() {
 	 */
 	var pri_trade = [
 		{
+			label: "Select trade route",
 			notcondition: ai.sotw_conditionNeedsResupply,
 			configuration: ai.sotw_configurationFreighterNewTradeRoute,
 			behaviour: ai.behaviourWaitHere,
 			reconsider: 120 // let the resupply ship get clear
 		},
 		{
+			label: "Resupply at station",
 			condition: ai.conditionSelectedStationNearby,
 			truebranch: ai.sotw_templateResupplyOperation()
 		},
 		{
+			label: "Approach station",
 			condition: ai.conditionHasSelectedStation,
 			truebranch: ai.sotw_templateApproachStation()
 		},
 		{
+			label: "Select station",
 			condition: ai.sotw_conditionMainTradingStationExists,
 			configuration: ai.sotw_configurationSelectMainTradingStation,
 			truebranch: ai.sotw_templateApproachStation()
 		},
 		{
+			label: "Panic",
 			// no trading possible here - panic!
 			configuration: ai.sotw_configurationFreighterAbortMission,
 			behaviour: ai.behaviourWaitHere,
@@ -118,15 +128,18 @@ this.aiStarted = function() {
 	 */
 	var pri_travel = [
 		{
+			label: "Jump to next system",
 			preconfiguration: ai.sotw_configurationSetTradeRouteNextSystem,
 			condition: ai.sotw_conditionHasFuelForJump,
 			truebranch: ai.sotw_templateMakeWitchspaceJump()
 		},
 		{
+			label: "Refuel",
 			condition: ai.sotw_conditionHasFuelAboard,
 			truebranch: ai.sotw_templateRefuelInFlight()
 		},
 		{
+			label: "Panic",
 			// out of fuel supplies - panic!
 			configuration: ai.sotw_configurationFreighterAbortMission,
 			behaviour: ai.behaviourWaitHere,
@@ -165,18 +178,22 @@ this.aiStarted = function() {
 			reconsider: 20
 		},
 		{
+			label: "Try to resupply",
 			condition: ai.sotw_conditionFreighterWantsToResupply,
 			truebranch: pri_resupply,
 		}, 
 		{
+			label: "Try to travel",
 			condition: ai.sotw_conditionFreighterWantsToTravel,
 			truebranch: pri_travel,
 		}, 
 		{
+			label: "Try to trade",
 			condition: ai.sotw_conditionFreighterWantsToTrade,
 			truebranch: pri_trade,
 		}, 
 		{
+			label: "Try to survive",
 			condition: ai.sotw_conditionFreighterWantsToSurvive,
 			truebranch: pri_survive,
 		}, 

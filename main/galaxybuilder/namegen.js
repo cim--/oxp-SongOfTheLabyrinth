@@ -12,7 +12,7 @@
 	];
 
 	var constellationPositionsGeneric = [
-		"Eye","Height","Point","Rise","Jewel","Gem","Glow","Centre","Tool","Gap"
+		"Eye","Height","Point","Rise","Jewel","Gem","Glow","Centre","Tool","Gap","End","Beginning","Curl","Dancer","Well","Girdle","Arrow"
 	];
 	var constellationPositionsLizard = [
 		"Scale","Tongue","Arm","Foot","Leg","Tail","Beam","Hand","Head"
@@ -24,10 +24,10 @@
 		"Ear","Nose","Arm","Leg","Tail","Paw","Claw","Back","Head","Whisker"
 	];
 	var constellationPositionsBird = [
-		"Wing","Feather","Flight","Beak","Head","Talon","Branch","Wind"
+		"Wing","Feather","Flight","Beak","Head","Talon","Branch","Wind","Nest","Egg"
 	];
 	var constellationPositionsFrog = [
-		"Leg","Foot","Pond","Shore","Mud","Leaf","Leap"
+		"Leg","Foot","Pond","Shore","Mud","Leaf","Leap","Bank"
 	];
 	var constellationPositionsLobster = [
 		"Shell","Claw","Pincer","Wave","Crest","Depth","Fin","Hoof","Carapace","Mandible","Calm"
@@ -39,10 +39,10 @@
 	var sequenceConcepts = ["Alpha","Beta","Gamma","Delta","Epsilon","Zeta","Eta","Theta","Iota","Kappa","Lambda","Mu","Nu","Xi","Omicron","Pi","Rho","Sigma","Tau","Upsilon","Phi","Chi","Psi","Omega"];
 
 	var paradiseConcepts = [
-		"Paradise","Utopia","Dreamland","Eternity","Enchantment","Harmony","Serenity","Tranquility","Sanctuary","Beauty","Bliss","Delight"
+		"Paradise","Utopia","Dreamland","Eternity","Enchantment","Harmony","Serenity","Tranquility","Sanctuary","Beauty","Bliss","Delight","Gift","Reward"
 	];
 	var brightConcepts = [
-		"Eye","Life","Light","Jewel","Gem","Chance","Hope","Breath","Orb","Marble","Wanderer","Beacon","Gleam","Harvest","Earth","Air","Soul","Heart","Spirit","Force","Mover","Traveller","Fortune","Faith","Radiance","Shine","Aurora"
+		"Eye","Life","Light","Jewel","Gem","Chance","Hope","Breath","Orb","Marble","Wanderer","Beacon","Gleam","Harvest","Earth","Air","Soul","Heart","Spirit","Force","Mover","Traveller","Fortune","Faith","Radiance","Shine","Aurora","Mirror"
 	];
 	var greenConcepts = [
 		"Land","Grove","Wilds","Haven","Shelter","Home","Terminus","Settlement","Colony","Outpost","Work","Bond","Port"
@@ -54,7 +54,7 @@
 		"Ice","Glaze","Rime","Winter"
 	];
 	var harshConcepts = [
-		"Bleakness","Labour","Punishment","Toil","Grave","Tomb","Wreck","Ruin","Folly","Hubris","Pride"
+		"Bleakness","Labour","Punishment","Toil","Grave","Tomb","Wreck","Ruin","Folly","Hubris","Pride","Loss","Hole"
 	];
 	var radiationConcepts = [
 		"Burn","Beacon","Blight","Scorch","Revenge"
@@ -79,7 +79,7 @@
 	];
 
 	var corporateConcepts = [
-		"Market","Bazaar","Profit","Yield","Harvest","Winnings","Acquisition","Grant","Claim","Share","Board","Income","Asset","Credit","Stock","Purchase","Contract"
+		"Market","Bazaar","Profit","Yield","Harvest","Winnings","Acquisition","Grant","Claim","Share","Board","Income","Asset","Credit","Stock","Purchase","Contract","Premium","Bonus","Wage","Wages"
 	];
 	var corporateOrganisationConcepts = [
 		"Corporation","Incorporation","Conglomerate","Consortium","Syndicate"
@@ -89,10 +89,10 @@
 		"Choice","Option","Voice","Song","Breath","Majority","Decision","Ballot","Vote","Preference","Score","Council","Senate","Chamber","Legislature","Cabinet","Plebiscite"
 	];
 	var hierarchicalConcepts = [
-		"Order","Throne","Seat","Crown","Sceptre","Seal","Orb","Sphere","Command","Supremacy","Stand","Citadel","Fortress","Leadership","Royal","Might","Victory","Empire"
+		"Order","Throne","Seat","Crown","Sceptre","Seal","Orb","Sphere","Command","Supremacy","Stand","Citadel","Fortress","Leadership","Royal","Might","Victory","Empire","Tribute"
 	];
 	var collectiveConcepts = [
-		"Unity","Unison","Harmony","Equity","Liberty","Labour","Work","Accord","Collective","Equality","Community","Society","Peace","Tenacity","Help","Support","Union","Commonwealth","Commons","Combine"
+		"Unity","Unison","Harmony","Equity","Liberty","Labour","Work","Accord","Collective","Equality","Community","Society","Peace","Tenacity","Help","Support","Union","Commonwealth","Commons","Combine","Camaradarie","Comrades","Solidarity"
 	];
 	var experimentalConcepts = [
 		"Chance","Proof","Trial","Claim","Attempt","Testament","Exhibit","Witness","Revolution"
@@ -171,27 +171,27 @@
 	];
 
 	var tradezoneConcepts = [
-		"Free Trade Area","Mercantile","Merchants","Market","Bazaar","Exchange","Fair","Interchange","Switch","Contract","Bargain","Covenant","Concord"
+		"Free Trade Area","Mercantile","Merchants","Market","Bazaar","Exchange","Fair","Interchange","Switch","Contract","Bargain","Covenant","Concord","Marketplace","Bank","Galleria"
 	];
 
 	var regionalConcepts = [
-		"Cluster","Nebula","Reach","Stars","Suns","District","Domain","Zone","Discovery","Battlefield","Constellation","Borders","Outlands","Halo","Sweep","Margin","Forge","Asterism","Foundry","Prospect","Retreat","Links","Heights","Ports","Stations","Cloister","Group","Watchers","Observers"
+		"Cluster","Nebula","Reach","Stars","Suns","District","Domain","Zone","Discovery","Battlefield","Constellation","Borders","Outlands","Halo","Sweep","Margin","Forge","Asterism","Foundry","Prospect","Retreat","Links","Heights","Ports","Stations","Cloister","Group","Watchers","Observers","Cauldron","Sparks"
 	];
 
 	var pairConcepts = [
-		"Pair","Duo","Twins","Mirror","Equilibrium","Connection"
+		"Pair","Duo","Twins","Mirror","Equilibrium","Connection","Alley"
 	];
 	var triadConcepts = [
-		"Triangle","Arc","Trio","Triad","Triumvirate","Trinity"
+		"Triangle","Arc","Trio","Triad","Triumvirate","Trinity","Corridor"
 	];
 	var quadConcepts = [
 		"Square","Tetrad","Crossroad","Quartet"
 	];
 	var biggroupConcepts = [
-		"Region","Sector","Environs","Web","Net","Network"
+		"Region","Sector","Environs","Web","Net","Network","Weave"
 	];
 	var hugegroupConcepts = [
-		"Worlds","Swathe","Flight","Centre","Realm","Expanse"
+		"Worlds","Swathe","Flight","Centre","Realm","Expanse","Vault","Ocean"
 	];
 
 	var criminalConcepts = [
@@ -474,8 +474,9 @@
 		var hab = p.get(g,s,"habitability");
 		var politics = p.get(g,s,"politics");
 		var colony = p.get(g,s,"colony");
-		if (choice < 0.2 && colony.stage < 3) {
-			n += " "+componentOrbitPosition(r);
+		var spec = colony.species[0];
+		if (choice < 0.2) {
+			n += " "+componentHomeConcept(r,spec);
 		} else if (choice < 0.6) {
 			n += componentOwnership(n);
 			n += " "+componentPlanetConcept(r,planet,hab);
@@ -496,7 +497,7 @@
 		var hab = p.get(g,s,"habitability");
 		var politics = p.get(g,s,"politics");
 		var spec = p.get(g,s,"colony").species[0];
-		if (choice < 0.5) {
+		if (choice < 0.3) {
 			n += " "+componentConstellationPosition(r,spec);
 		} else if (choice < 0.7) {
 			n += componentOwnership(n);
@@ -519,9 +520,9 @@
 		var n = "";
 		if (colony.founded == 10 && choice < 0.6) {
 			var choice2 = r.randf();
-			if (choice2 < 0.2) {
+			if (choice2 < 0.5) {
 				n = componentRefugeConcept(r);
-			} else if (choice2 < 0.4) {
+			} else if (choice2 < 0.9) {
 				n = componentFounderName(r,sp,spec);
 				n += componentOwnership(n);
 				n += " "+componentRefugeConcept(r,spec);
@@ -529,7 +530,7 @@
 				// haven't had time to name it yet
 				n = star.name+" "+componentOrbitPosition(r);
 			}
-		} else if (choice < 0.05) {
+		} else if (choice < 0.01) {
 			n = star.name+" "+componentOrbitPosition(r);
 		} else if (choice < 0.4) {
 			n += componentFounderName(r,sp,spec);
@@ -635,6 +636,10 @@
 				var n2 = componentPlanetConcept(r,planet,hab);
 			} while (n == n2);
 			n += " "+n2;
+		} else if (colony.founded) {
+			n = componentFounderName(r,sp,spec);
+			n += " "+componentOwnership(n);
+			n += componentPlanetConcept(r,planet,hab);
 		} else {
 			// never bothered to name it
 			n = star.name.replace(/\(.*/,"");

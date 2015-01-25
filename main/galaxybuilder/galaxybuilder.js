@@ -2170,19 +2170,23 @@ random.setStart(300000);
 			thisName = namegen.nameSystem(i,j,$,species,random);
 			if (usedNames[thisName]) {
 				console.error("Duplicate name "+thisName+" => fixing");
-				var us = (usedNames[thisName]-1)%$.systems;
-				var ug = (usedNames[thisName]-1-us)/$.systems;
-				colony2 = $.get(ug,us,"colony");
-				if (colony2.founded < colony.founded) {
-					thisName = namegen.newPrefix(random)+thisName;
-					console.error("...Renamed to "+thisName);
-				} else {
-					var newname = namegen.newPrefix(random)+thisName;
-					$.set(ug,us,"name",newname);
-					console.error("...Renamed other to "+newname);
-					usedNames[newname] = usedNames[thisName];
+				thisName = namegen.nameSystem(i,j,$,species,random);
+				if (usedNames[thisName]) {
+					console.error("Duplicate name on second go "+thisName+" => fixing");
+					
+					var us = (usedNames[thisName]-1)%$.systems;
+					var ug = (usedNames[thisName]-1-us)/$.systems;
+					colony2 = $.get(ug,us,"colony");
+					if (colony2.founded < colony.founded) {
+						thisName = namegen.newPrefix(random)+thisName;
+						console.error("...Renamed to "+thisName);
+					} else {
+						var newname = namegen.newPrefix(random)+thisName;
+						$.set(ug,us,"name",newname);
+						console.error("...Renamed other to "+newname);
+						usedNames[newname] = usedNames[thisName];
+					}
 				}
-
 			}
 			usedNames[thisName] = 1+(i*$.systems)+j;
 			//				console.error(thisName);
