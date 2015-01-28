@@ -1266,7 +1266,7 @@
 		};
 		if (info.colony.outsiders == 0) {
 			opts = [
-				{ key: "BFLUC-NEW1", text: "By %D7, when %H was colonised, there was liitle enthusiasm among the homeworld governments for further expansion as their practical influence over existing colonies waned. Like many of this period, the initial supplies were funded by subscription from the colonists themselves.", condition: true },
+				{ key: "BFLUC-NEW1", text: "By %D7, when %H was colonised, there was little enthusiasm among the homeworld governments for further expansion as their practical influence over existing colonies waned. Like many of this period, the initial supplies were funded by subscription from the colonists themselves.", condition: true },
 				{ key: "BFLUC-NEW2", text: "A joint %I-%I1 expedition settled %H in %D7.", condition: true },
 				{ key: "BFLUC-NEW3", text: "Near the end of the post-unification period, homeworld funding for new settlements was extremely low. %H was one of the few systems still settled from %O, as the %IS wished to have access to its %M reserves.", condition: info.planet.mineralWealth > 0.25 },
 				{ key: "BFLUC-NEW4", text: "Settlers in %D7 were as likely to come from a failing colony to try again as they were to come from their species' homeworld. %H was founded by refugees fleeing collapses of %I and %I1 colonies in the area.", condition: true },
@@ -2075,7 +2075,7 @@
 
 			opts = [
 				{ key: "BFCI-RAID1", text: "In %D10 the USC undertook a precautionary evacuation of the %U system, moving %X %L"+event.oldSize+" people to other better protected worlds. Successes in other battle zones meant that the system never came under serious attack, but very few of the evacuees have yet returned.", condition: true },
-				{ key: "BFCI-RAID2", text: "The USC was able to evacuate over one %X %L"+event.oldSize+" from the system before it became the site of a clash between the invaders and the "+fleetnth(info.r)+" Fleet. The invaders largely ignored the mostly empty planet, making only token raids on factories and other infrastructure.", condition: true },
+				{ key: "BFCI-RAID2", text: "The USC was able to evacuate over %X %L"+event.oldSize+" from the system before it became the site of a clash between the invaders and the "+fleetnth(info.r)+" Fleet. The invaders largely ignored the mostly empty planet, making only token raids on factories and other infrastructure.", condition: true },
 				{ key: "BFCI-RAID3", text: "The "+fleetnth(info.r)+" Fleet arrived too late to prevent a significant assault on this system in %D10. Local forces and civilians bravely defended the system, but were unable to prevent a bombardment of surface installations in which over %X %L"+event.oldSize+" died.", condition: true },
 				{ key: "BFCI-RAID4", text: "In %D10 the invaders destroyed most of the orbital stations and surface settlements in %U, killing over %X %L"+event.oldSize+" people.", condition: true },
 				{ key: "BFCI-RAID5", text: "The %M production on %H made it a significant target for the invaders who assaulted the system on four occasions during %D10. Over %X %L"+event.oldSize+" died in the attacks, but the mineral supplies remained secure.", condition: info.planet.mineralWealth > 0.45 },

@@ -196,7 +196,8 @@ this.$aiMap = {
 	"sotw-station-defense-ship": "sotw-station-defenseAI.js",
 	"sotw-station-defense-platform": "sotw-station-defenseAI.js",
 	"sotw-shuttle": "sotw-orbital-shuttleAI.js",
-	"sotw-long-range-trader": "sotw-traderoute-freighterAI.js"
+	"sotw-long-range-trader": "sotw-traderoute-freighterAI.js",
+	"sotw-freighter-resupply": "sotw-station-resupplyAI.js"
 };
 
 this._launchShipFromStation = function(station, shipRole) {

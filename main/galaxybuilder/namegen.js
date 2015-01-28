@@ -638,8 +638,8 @@
 			n += " "+n2;
 		} else if (colony.founded) {
 			n = componentFounderName(r,sp,spec);
-			n += " "+componentOwnership(n);
-			n += componentPlanetConcept(r,planet,hab);
+			n += componentOwnership(n);
+			n += " "+componentPlanetConcept(r,planet,hab);
 		} else {
 			// never bothered to name it
 			n = star.name.replace(/\(.*/,"");

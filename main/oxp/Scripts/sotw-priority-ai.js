@@ -59,7 +59,7 @@ this.startUp = function() {
 
 	lib.prototype.sotw_conditionFreighterResupplierAssigned = function() {
 		var re = this.getParameter("sotw_freighterResupplyShip");
-		if (re && re.isValid && re.status == "STATUS_IN_FLIGHT") {
+		if (re && re.isValid && (re.status == "STATUS_IN_FLIGHT" || re.status == "STATUS_LAUNCHING" || re.status == "STATUS_DOCKED")) {
 			return true;
 		} else if (re) {
 			this.setParameter("sotw_freighterResupplyShip",null);
@@ -67,12 +67,30 @@ this.startUp = function() {
 		return false;
 	};
 
+	// freighter testing if the resupplier is docked
 	lib.prototype.sotw_conditionFreighterResupplierDocked = function() {
 		var re = this.getParameter("sotw_freighterResupplyShip");
-		if (re && re.isValid && re.status == "STATUS_IN_FLIGHT") {
+		if (re && re.isValid && (re.status == "STATUS_IN_FLIGHT" || re.status == "STATUS_LAUNCHING" || re.status == "STATUS_DOCKED")) {
 			if (this.ship.speed == 0 && re.speed == 0) {
 				if (this.distance(re) < this.ship.collisionRadius + re.collisionRadius + 20) {
 					if (this.ship.collisionExceptions.indexOf(re) > -1) {
+						return true;
+					}
+				}
+			}
+		} else if (re) {
+			this.setParameter("sotw_freighterResupplyShip",null);
+		}
+		return false;
+	};
+
+	// resupplier testing if the freighter is docked
+	lib.prototype.sotw_conditionResupplierFreighterDocked = function() {
+		var rt = this.ship.script.$sotwResupplyTarget;
+		if (rt && rt.isValid && rt.status == "STATUS_IN_FLIGHT") {
+			if (this.ship.speed == 0 && rt.speed == 0) {
+				if (this.distance(rt) < this.ship.collisionRadius + rt.collisionRadius + 20) {
+					if (this.ship.collisionExceptions.indexOf(rt) > -1) {
 						return true;
 					}
 				}
@@ -172,7 +190,79 @@ this.startUp = function() {
 		return true;
 	};
 
+	lib.prototype.sotw_conditionHasResupplyMission = function() {
+		var rtarget = this.ship.script.$sotwResupplyTarget;
+		if (!rtarget || !rtarget.isValid) {
+			return false;
+		}
+		if (this.getParameter("sotw_resupplyLevel") == 0 || rtarget.AIScript.oolite_priorityai.getParameter("sotw_resupplyLevel") == 0) {
+			return false;
+		}
+		if (rtarget.speed > 0) {
+			// this probably means the ship being resupplied is trying
+			// to evade attacks, so now really isn't a good time to
+			// try resupplying it.
+			return false;
+		}
+		return true;
+	};
+
+	lib.prototype.sotw_conditionResupplyReadyToDock = function() {
+		var rtarget = this.ship.script.$sotwResupplyTarget;
+		var dest = this.sotw_utilDockingEndPosition(rtarget);
+		// if either at start point or closer
+		if (this.distance(dest) <= dest.distanceTo(this.sotw_utilDockingStartPosition(rtarget))+20) {
+			// and facing the right way
+			if (dest.subtract(this.ship.position).direction().dot(this.ship.vectorForward) > 0.999) {
+				return true;
+			}
+		}
+		return false;
+	};
+
+	lib.prototype.sotw_conditionResupplyAtDockingStartPoint = function() {
+		var rtarget = this.ship.script.$sotwResupplyTarget;
+		var dest = this.sotw_utilDockingStartPosition(rtarget);
+		return this.distance(dest) < 5;
+	};
+
 	/* Configurations */
+
+	lib.prototype.sotw_configurationSetResupplyFinalDocking = function() {
+		var rtarget = this.ship.script.$sotwResupplyTarget;
+		this.ship.destination = this.sotw_utilDockingEndPosition(rtarget);
+		this.ship.desiredRange = 0.1;
+		var cspeed = this.cruiseSpeed();
+		this.ship.desiredSpeed = Math.min(cspeed,50);
+		// must add collision exception, or trying to fly to the
+		// destination will also try to avoid this ship...
+		this.ship.addCollisionException(rtarget);
+	};
+
+	lib.prototype.sotw_configurationSetResupplyMidDocking = function() {
+		var rtarget = this.ship.script.$sotwResupplyTarget;
+		if (this.ship.destination.distanceTo(this.sotw_utilDockingMidPosition(rtarget)) < 10) {
+			this.ship.destination = this.sotw_utilDockingEndPosition(rtarget);
+		} else {
+			this.ship.destination = this.sotw_utilDockingMidPosition(rtarget);
+		}
+		this.ship.desiredRange = 5;
+		var cspeed = this.cruiseSpeed();
+		this.ship.desiredSpeed = Math.min(cspeed,50);
+		// must add collision exception, or trying to fly to the
+		// destination will also try to avoid this ship...
+		this.ship.addCollisionException(rtarget);
+	};
+
+	lib.prototype.sotw_configurationSetResupplyBeginDocking = function() {
+		var rtarget = this.ship.script.$sotwResupplyTarget;
+		this.ship.destination = this.sotw_utilDockingStartPosition(rtarget);
+		this.ship.desiredRange = 2;
+		this.ship.desiredSpeed = this.cruiseSpeed();
+		// remove collision exception if set earlier
+		this.ship.removeCollisionException(rtarget);
+	};
+
 
 	// spread them out around the station, rather than having them all pile up
 	// on the witchpoint side
@@ -324,9 +414,10 @@ this.startUp = function() {
 			// not right now!
 			return;
 		}
-		var resupply = pop.launchShipsFromStation(s,"sotw-transport-insystem","sotw-freighter-resupply",true,1,10)[0];
+		var resupply = pop._launchShipsFromStation(s,"sotw-transport-insystem","sotw-freighter-resupply",true,1,10)[0];
 		if (resupply) {
 			this.setParameter("sotw_freighterResupplyShip",resupply);
+			resupply.script.$sotwResupplyTarget = this.ship;
 		}
 		var handlers = {};
 		this.responsesAddStandard(handlers);
@@ -345,10 +436,28 @@ this.startUp = function() {
 			resupply.AIScript.oolite_priorityai.setParameter("sotw_resupplyLevel",has-1);
 			// and start refuelling
 			this.sotw_configurationBeginRefuellingCountdown();
+			if (needs == 1 || has == 1) {
+				// now operation is complete
+				// undock
+				resupply.velocity = this.ship.vectorUp.multiply(75);
+				// slight recoil
+				this.ship.velocity = this.ship.vectorUp.multiply(-10);
+			}
 		}
 		var handlers = {};
 		this.responsesAddStandard(handlers);
 		this.applyHandlers(handlers);
+	};
+
+	lib.prototype.sotw_behaviourPriorityFaceDestinationForResupplyDock = function() {
+		// face destination, ignoring everything else until done
+		var handlers = {
+			shipNowFacingDestination : function() {
+				this.reconsiderNow();
+			}
+		};
+		this.applyHandlers(handlers);
+		this.ship.performFaceDestination();
 	};
 
 	/* -- Station behaviours */
@@ -491,6 +600,19 @@ this.startUp = function() {
 		return v;
 	};
 
+	lib.prototype.sotw_utilDockingStartPosition = function(ship) {
+		return this.sotw_utilDockingEndPosition(ship).add(ship.vectorForward.multiply(-1*(ship.boundingBox.z+this.ship.boundingBox.z+500)));
+	};
+
+	// this is used to get the turning to face destination right for ship
+	// orientation
+	lib.prototype.sotw_utilDockingMidPosition = function(ship) {
+		return this.sotw_utilDockingEndPosition(ship).add(ship.vectorUp.multiply(500));
+	};
+
+	lib.prototype.sotw_utilDockingEndPosition = function(ship) {
+		return ship.position.add(ship.vectorUp.multiply((ship.boundingBox.y+this.ship.boundingBox.y)/2));
+	};
 
 
 	// Core utility override
@@ -581,7 +703,7 @@ this.startUp = function() {
 			},
 			{
 				label: "Request resupply ship",
-				condition: this.sotw_conditionFreighterResupplierAssigned,
+				notcondition: this.sotw_conditionFreighterResupplierAssigned,
 				behaviour: this.sotw_behaviourRequestResupply,
 				reconsider: 60 // it'll take a while for one to get here, anyway
 			},
