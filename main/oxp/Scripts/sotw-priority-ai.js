@@ -231,7 +231,7 @@ this.startUp = function() {
 	lib.prototype.sotw_configurationSetResupplyFinalDocking = function() {
 		var rtarget = this.ship.script.$sotwResupplyTarget;
 		this.ship.destination = this.sotw_utilDockingEndPosition(rtarget);
-		this.ship.desiredRange = 0.1;
+		this.ship.desiredRange = 5;
 		var cspeed = this.cruiseSpeed();
 		this.ship.desiredSpeed = Math.min(cspeed,50);
 		// must add collision exception, or trying to fly to the
@@ -241,7 +241,7 @@ this.startUp = function() {
 
 	lib.prototype.sotw_configurationSetResupplyMidDocking = function() {
 		var rtarget = this.ship.script.$sotwResupplyTarget;
-		if (this.ship.destination.distanceTo(this.sotw_utilDockingMidPosition(rtarget)) < 10) {
+		if (this.ship.destination.distanceTo(this.sotw_utilDockingMidPosition(rtarget)) < 10 || this.ship.destination.distanceTo(this.sotw_utilDockingEndPosition(rtarget)) < 10) {
 			this.ship.destination = this.sotw_utilDockingEndPosition(rtarget);
 		} else {
 			this.ship.destination = this.sotw_utilDockingMidPosition(rtarget);
