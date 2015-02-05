@@ -7,6 +7,13 @@ this.aiStarted = function() {
 
 	ai.setParameter("oolite_flag_sendsDistressCalls",true);
 
+	if (this.ship.script.$sotwPersonalVector) {
+		ai.setParameter("sotw_personalVector",this.ship.script.$sotwPersonalVector);
+	}
+	if (this.ship.script.$sotwResupplyShip) {
+		ai.setParameter("sotw_freighterResupplyShip",this.ship.script.$sotwFreighterResupplyShip);
+	}
+
 	if (system.info.population > 0) {
 		if (system.ID == this.ship.destinationSystem) {
 			ai.setParameter("sotw_freighterObjective","TRADE");

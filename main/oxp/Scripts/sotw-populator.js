@@ -30,18 +30,22 @@ this.systemWillPopulate = function() {
 	log(this.name,"Trade route density "+this.$tradeRouteTotalWeight);
 
 	system.setPopulator("sotw-witchpoint",{
-		callback: this._setupWitchpoints,
+		callback: this._setupWitchpoints.bind(this),
 		priority: 5,
 		location: "WITCHPOINT"
 	});
 
 	system.setPopulator("sotw-main-station",{
-		callback: this._setupMainStation,
+		callback: this._setupMainStation.bind(this),
 		priority: 10,
 		location: "STATION_AEGIS"
 	});
 
-	
+	system.setPopulator("sotw-traderoute-freighters",{
+		callback: this._setupFreighters.bind(this),
+		priority: 10,
+		location: "LANE_WP"
+	});
 
 };
 
@@ -118,6 +122,42 @@ this._repopulateShuttles = function() {
 }
 
 
+this._setupFreighters = function(pos) {
+	/* 3 million weight is one per hour, but a freighter will probably
+	 * be in the system for several hours - cargo transfers probably
+	 * take ~5 hours for a large freighter, and in-system travel could
+	 * take a couple of hours too. So for a populated system, there's
+	 * probably approximately one freighter in the system for every
+	 * 0.5 million weight. */
+	var fcount = this.$tradeRouteTotalWeight / 0.5E6;
+	fcount *= 1+Math.random()-Math.random();
+	while (fcount > 0) {
+		// fractional bits
+		if (Math.random() < fcount) {
+			if (Math.random() < 0.25) {
+				// somewhere between the witchpoint and the station
+				var pos = system.mainStation.position.multiply(0.1+(Math.random()*0.9));
+				this._addFreighter(pos);
+			} else {
+				// already at the station, being resupplied
+				var dir = Vector3D.randomDirection();
+				var f = this._addFreighter(system.mainStation.position.add(dir.multiply(12E3)));
+				f.script.$sotwPersonalVector = dir;
+				var r = this._addResupplyShip(system.mainStation.position.add(dir.multiply(12E3)),system.mainStation);
+				r.position = f.position.add(f.vectorUp.multiply((f.boundingBox.y+r.boundingBox.y)/2));
+				r.orientation = f.orientation;
+				f.script.$sotwResupplyShip = r;
+				r.script.$sotwResupplyTarget = f;
+				f.addCollisionException(r);
+			}
+
+		}
+		fcount--;
+	}
+
+};
+
+
 this._repopulateFreighters = function() {
 	// top trade route is probably about 10 million weight
 	// and ~1 every 20 minutes would be reasonable there
@@ -129,7 +169,7 @@ this._repopulateFreighters = function() {
 	if (Math.random() < trchance) {
 		this._addFreighter([0,0,0]);
 	}
-}
+};
 
 
 this._addFreighter = function(position) {
@@ -154,6 +194,16 @@ this._addFreighter = function(position) {
 		}
 		
 	}
+	return ship;
+};
+
+this._addResupplyShip = function(position,station) {
+	var ship = this._addShipsToSpace(position,"sotw-transport-insystem","sotw-freighter-resupply",1,10)[0];
+	log("Resupply ship","=>"+ship);
+	station.group.addShip(ship);
+	ship.group = station.group;
+	ship.script.$sotwFaction = station.script.$sotwFaction;
+	return ship;
 };
 
 
@@ -318,7 +368,7 @@ this._addShipsToSpace = function(position,shipClass,shipRole,maxCount,maxValue) 
 	var spareVal = maxValue - shipsAllowed*shipRoleData.cost;
 	var result = [];
 	for (var i=0;i<shipsAllowed;i++) {
-		var ship = system.addShips(shipRoleData.keyRole,1,position,1E3);
+		var ship = system.addShips(shipRoleData.keyRole,1,position,1E3*i);
 		if (ship && ship[0]) {
 			this._setUpShipAs(ship[0],shipRole);
 			// TODO: use spareVal to upgrade ships if autoWeapons
