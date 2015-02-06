@@ -149,6 +149,8 @@ this._setupFreighters = function(pos) {
 				f.script.$sotwResupplyShip = r;
 				r.script.$sotwResupplyTarget = f;
 				f.addCollisionException(r);
+				// debug
+				r.displayName += " "+Math.floor(Math.random()*10000);
 			}
 
 		}
@@ -188,7 +190,7 @@ this._addFreighter = function(position) {
 			if (acc >= route) {
 				ship.homeSystem = this.$tradeRoutes[i].start;
 				ship.destinationSystem = this.$tradeRoutes[i].end;
-				log(this.name,"Freighter heading from "+System.infoForSystem(galaxyNumber,ship.homeSystem).name+" to "+System.infoForSystem(galaxyNumber,ship.destinationSystem).name);
+//				log(this.name,"Freighter heading from "+System.infoForSystem(galaxyNumber,ship.homeSystem).name+" to "+System.infoForSystem(galaxyNumber,ship.destinationSystem).name);
 				break;
 			}
 		}
@@ -199,7 +201,7 @@ this._addFreighter = function(position) {
 
 this._addResupplyShip = function(position,station) {
 	var ship = this._addShipsToSpace(position,"sotw-transport-insystem","sotw-freighter-resupply",1,10)[0];
-	log("Resupply ship","=>"+ship);
+//	log("Resupply ship","=>"+ship);
 	station.group.addShip(ship);
 	ship.group = station.group;
 	ship.script.$sotwFaction = station.script.$sotwFaction;

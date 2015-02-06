@@ -12,6 +12,14 @@ this.aiStarted = function() {
 	}
 	if (this.ship.script.$sotwResupplyShip) {
 		ai.setParameter("sotw_freighterResupplyShip",this.ship.script.$sotwFreighterResupplyShip);
+		for (var i=0;i<system.stations.length;i++) {
+			if (system.stations[i].position.distanceTo(this.ship) < 15E3) {
+				// make sure freighters added ready to resupply don't run away
+				ai.setParameter("oolite_selectedStation",system.stations[i]);
+				break;
+			}
+		}
+
 	}
 
 	if (system.info.population > 0) {

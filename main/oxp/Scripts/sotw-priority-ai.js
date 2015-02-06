@@ -95,7 +95,7 @@ this.startUp = function() {
 					}
 				}
 			}
-		} else if (re) {
+		} else if (rt) {
 			this.setParameter("sotw_freighterResupplyShip",null);
 		}
 		return false;
