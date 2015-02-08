@@ -1205,10 +1205,13 @@ Non-homeworld systems at the colony stage cap have a 5% chance of gaining d4 TL 
 				} else if (choice < 20 || colony.stage == 7) {
 					// nothing
 				} else if (choice < 40) {
-					$.raidColony(i,j,1+random.rand(6),random); // 20% of raid
-					rc++;
-					if (colony.embassy) {
-						rce++;
+					// cap possible embassy attacks
+					if (rce < 3) {
+						$.raidColony(i,j,1+random.rand(6),random); // 20% of raid
+						rc++;
+						if (colony.embassy) {
+							rce++;
+						}
 					}
 				} else if (choice < 45) {
 					$.assaultColony(i,j,1+random.rand(4),random); // 5% chance of assault - planet is depopulated, some orbital infrastructure remains or rebuilt
@@ -2321,6 +2324,8 @@ random.setStart(325000);
 			});
 			$.set(i,j,"description",blocks.map(function(b) { return b.text; }).join(" ... "));
 			$.set(i,j,"descriptionElementsUsed",blocks.map(function(b) { return b.key; }).join(","));
+//			console.log(i,j);
+
 		}
 	}
 //	descgen.debug();

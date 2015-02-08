@@ -1017,7 +1017,7 @@
 		var blocks = [];
 		var opt, opts;
 		var block = {
-			importance: 10,
+			importance: Math.ceil(Math.random()*30),
 			displayOrder: 5,
 			key: "",
 			text: ""
@@ -1047,8 +1047,7 @@
 					block.key = opt.key;
 					block.text = opt.text;
 				} while (!opt.condition);
-			} while (!checkKey(block.key,20,true));
-			// can probably bring 10 down a bit later
+			} while (!checkKey(block.key,5,true));
 			
 		} else {
 			if (!state.oneoffs["BFEUJ-JHAB-"+info.g+"-"+info.s]) {
@@ -1077,8 +1076,7 @@
 						block.key = opt.key;
 						block.text = opt.text;
 					} while (!opt.condition);
-				} while (!checkKey(block.key,10,true));
-				// can probably bring 10 down a bit later
+				} while (!checkKey(block.key,5,true));
 
 			}
 		}
@@ -1180,7 +1178,7 @@
 		var blocks = [];
 		var opt, opts;
 		var block = {
-			importance: 10,
+			importance: Math.ceil(Math.random()*20),
 			displayOrder: 6,
 			key: "",
 			text: ""
@@ -1218,8 +1216,8 @@
 						block.key = opt.key;
 						block.text = opt.text;
 					} while (!opt.condition);
-				} while (!checkKey(block.key,10,true));
-				// can probably bring 10 down a bit later
+				} while (!checkKey(block.key,5,true));
+
 			}
 		} else {
 			// join mining world
@@ -1241,8 +1239,7 @@
 					block.key = opt.key;
 					block.text = opt.text;
 				} while (!opt.condition);
-			} while (!checkKey(block.key,10,true));
-			// can probably bring 10 down a bit later
+			} while (!checkKey(block.key,5,true));
 
 		}
 
@@ -1343,7 +1340,7 @@
 		var blocks = [];
 		var opt, opts;
 		var block = {
-			importance: 10,
+			importance: Math.ceil(Math.random()*30),
 			displayOrder: 7,
 			key: "",
 			text: ""
@@ -1377,8 +1374,7 @@
 						block.key = opt.key;
 						block.text = opt.text;
 					} while (!opt.condition);
-				} while (!checkKey(block.key,20,true)); 
-				// can probably bring 20 down a bit later
+				} while (!checkKey(block.key,5,true)); 
 			}
 		} else {
 			// need ~30
@@ -1399,9 +1395,7 @@
 					block.key = opt.key;
 					block.text = opt.text;
 				} while (!opt.condition);
-			} while (!checkKey(block.key,10,true));
-			// can probably bring 10 down a bit later
-
+			} while (!checkKey(block.key,5,true));
 		}
 
 		if (block.text != "") {
@@ -1540,7 +1534,7 @@
 		var blocks = [];
 		var opt, opts;
 		var block = {
-			importance: 12,
+			importance: Math.ceil(Math.random()*25),
 			displayOrder: 8,
 			key: "",
 			text: ""
@@ -2271,6 +2265,7 @@
 				{ key: "BFRI-RMAJ14", text: "The economic power of %H allows it considerable influence over trade routes in "+region.name, condition: info.colony.militaryBase == 0 },
 				{ key: "BFRI-RMAJ15", text: "%H contributes extensively to the trading strength of "+region.name+".", condition: region.category == "Economic Area" },
 				{ key: "BFRI-RMAJ16", text: "Part of the historic "+region.name+" region, %H no longer plays a significant role in chart politics, but once provided a vital centre for further settlement of the region.", condition: region.category == "Historic Area" },
+				{ key: "BFRI-RMAJ17", text: "The %U system's high population makes it a significant contributor to the regional economy.", condition: info.colony.militaryBase == 0 },
 			];
 
 			do {
@@ -3429,7 +3424,7 @@
 		var blocks = [];
 		var opt, opts = [];
 		var block = {
-			importance: info.politics.governmentCategory == "Atypical"?40:25,
+			importance: info.politics.governmentCategory == "Atypical"?40:Math.ceil(25*Math.random()),
 			displayOrder: 12,
 			key: "",
 			text: ""
@@ -3853,6 +3848,7 @@
 					block.text = opt.text;
 				} while (!opt.condition);
 			} while (!checkKey(block.key,50,true));
+			block.importance = Math.ceil(block.importance*Math.random());
 			blocks.push(block);
 		}
 		
@@ -3865,7 +3861,7 @@
 		var blocks = [];
 		var opt, opts = [];
 		var block = {
-			importance: 25,
+			importance: Math.ceil(25*Math.random()),
 			displayOrder: 12,
 			key: "",
 			text: ""
@@ -3923,7 +3919,7 @@
 			];
 			break;
 		case "Farming": // ~175
-			block.importance = 24; // very common, downgrade slightly
+			block.importance--; // very common, downgrade slightly
 			opts = [
 				{ key: "BFEI-FARM1", text: "To avoid damaging %H' environment, the planet contains very little heavy industry. Tools and machinery for the farmers must often be imported from other systems.", condition: true },
 				{ key: "BFEI-FARM2", text: "The farms of %H produce much of the area's luxury foods, with modern fertilisers often having to be imported to meet the growing demand.", condition: true },
@@ -3939,7 +3935,8 @@
 				{ key: "BFEI-FARM12", text: "The fur of the animals of %H is warmer than many synthetic materials, and is often in demand on the colder worlds.", condition: info.planet.temperature < 10 },
 				{ key: "BFEI-FARM13", text: "Agricultural worlds such as %H provide foods and other organic products to their more industrial neighbours whose environments only allow for basic hydroponic facilities.", condition: true },
 				{ key: "BFEI-FARM14", text: "The farming on %H requires careful maintenance of the planetary environment, and mining and production industries are significantly restricted. As a result the planet must import much of its tools.", condition: true },
-				{ key: "BFEI-FARM15", text: "The settlers of %H hunt the wild %CA, whose meat and hides are prized across the region.", condition: info.economy.reason == "Wilderness" }
+				{ key: "BFEI-FARM15", text: "The settlers of %H hunt the wild %CA, whose meat and hides are prized across the region.", condition: info.economy.reason == "Wilderness" },
+				{ key: "BFEI-FARM16", text: "The settlers of %H hunt the wild %CA, whose meat and hides are prized across the region.", condition: info.economy.reason == "Wilderness" }
 			];
 			break;
 		case "Ground Mining": // ~75
@@ -4004,7 +4001,7 @@
 				{ key: "BFEI-RESB4", text: "The research institutes on %H host one of the largest catalogues of biological data in the eight charts, collecting samples and recordings of animals and plants, as well as importing a large amount of computing hardware to process this data.", condition: info.colony.stage > 3 },
 				{ key: "BFEI-RESB5", text: "%H' orbital station contains a small research installation observing the planet below. Planetary settlements are restricted to data collection sites and supporting infrastructure.", condition: info.economy.reason == "Wilderness" },
 				{ key: "BFEI-RESB6", text: "The largely unmodified environment of %H is of great interest to researchers, and most of the previous colonists have been replaced by observation stations.", condition: info.economy.reason == "Wilderness" },
-				{ key: "BFEI-RESB7", text: "Biological and medical research has become a major speciality of %H, and it is estimated that around %XL%X percent of the system's population is employed directly or indirectly by the research facilities.", condition: info.colony.stage > 3 },
+				{ key: "BFEI-RESB7", text: "Biological and medical research has become a major speciality of %H, and it is estimated that around %XLy percent of the system's population is employed directly or indirectly by the research facilities.", condition: info.colony.stage > 3 },
 				{ key: "BFEI-RESB8", text: "%H' native life is extremely unusual, and is mostly observed from a distance in orbital research platforms. Landing is strictly controlled to avoid disruption to the ecosystem.", condition: info.economy.reason == "Native Life" },
 			];
 			break;
@@ -4037,6 +4034,8 @@
 				{ key: "BFEI-RESM5", text: "The effects of the destruction on %H are carefully studied by USC military researchers in the hope of understanding more about the invaders' assault weapons.", condition: info.economy.reason == "Ruins" },
 				{ key: "BFEI-RESM6", text: "%H' research base contains a small shipyard where the latest prototype military craft are produced. Prototype versions of the Espadon and Tabarzin fighters were built here during the invasion.", condition: info.economy.reason == "Military" },
 				{ key: "BFEI-RESM7", text: "The destruction of %H by the invaders used weapons unknown to the USC, and data retrieved from the few survivors is inconclusive. Researchers are scouring the system for any clues that can be found about what happened here.", condition: info.economy.reason == "Ruins" },
+				{ key: "BFEI-RESM8", text: "The invasion turned %H from a local centre of expertise in laser miniaturisation to one of the most strategically significant systems in the eight charts.", condition: info.economy.reason != "Military" && info.economy.reason != "Ruins" },
+
 			];
 			break;
 		case "Research (Sci)": // ~15
@@ -4056,6 +4055,7 @@
 				{ key: "BFEI-RESO2", text: "The rapid meeting of eight species following the discovery of cross-chart witchspace caused many major changes in all their societies, and the emergence of many new societies. On %H, researchers try to examine the impact of these changes, to assist future decisions.", condition: true },
 				{ key: "BFEI-RESO3", text: "The invasion brought the largest changes in collective psychology since unification. Researchers on %H attempt to understand how society is coping with the threat of a return, and how best to prepare people for another war if it comes.", condition: true },
 				{ key: "BFEI-RESO4", text: "%H' research institutes have produced some of the most respected studies on the conflict between the species-centric homeworld and USC governance and the interspecies cultures of more recent settlements.", condition: true },
+				{ key: "BFEI-RESO5", text: "The economic modelling taking place on %H has been invaluable in monitoring the damage to inter-system trade caused by the destruction of key manufacturers during the invasion.", condition: true },
 			];
 			break;
 		case "Salvage": // ~25
@@ -4071,7 +4071,7 @@
 			];
 			break;
 		case "Service": // ~100
-			block.importance = 23;
+			block.importance -= 2;
 			opts = [
 				{ key: "BFEI-SERV1", text: "%H is best-known for its %S industry. While the planet is largely self-sufficient, computing and telepresence hardware is often imported from elsewhere. Manufacturing is limited to low-impact luxury goods.", condition: true },
 				{ key: "BFEI-SERV2", text: "The %S industry requires good-quality telepresence tools to manage its off-world communications. While the world has no conventional exports, communication data is regularly packaged up for transport, and has the advantage of not needing a slow freighter to carry it.", condition: true },
@@ -4168,7 +4168,7 @@
 	var blocksForGeneralInterest = function(info) {
 		var blocks = [];
 		var block = {
-			importance: info.r.rand(16+(3*info.colony.stage)),
+			importance: info.r.rand(10+(2*info.colony.stage)),
 			displayOrder: 12,
 			key: "",
 			text: ""	
@@ -4195,10 +4195,16 @@
 			{ key: "BFGI-ENLIGHTENMENT", text: "The system is home to the Enlightenment of %NO, who hold that the truly enlightened are able to visit witchspace without ships and return.", limit: 1, condition: true },
 			{ key: "BFGI-REFUGEES", text: "The %NO refugees, having survived the invasion and been welcomed here, have organised to raise funds for the millions of other refugees stranded through the charts.", limit: 1, condition: true },
 			{ key: "BFGI-GENERATION", text: "%H is the base of the %NO Generationalists, who believe that the only chance to escape a return of the invaders is to build a generation ship capable of re-crossing Biya's Gap", limit: 1, condition: info.galaxy == 1 },
+			{ key: "BFGI-CAGE", text: "The Cage Society, which believes that only by escaping the eight charts will USC society survive in the long-term, was founded on %H in %D7. The invasion has increased their membership considerably.", limit: 1, condition: true },
+			{ key: "BFGI-STABLE", text: "The lack of gas giants in the %U system makes witchspace relatively stable, and so it is a common site for experiments with new witchdrive technology.", limit: 6, condition: info.planet.mineralWealth < 0.1 },
+			{ key: "BFGI-UNSTABLE", text: "The %H witchpoint is unusually unstable, and ships arriving in the system often appear significantly off-course.", limit: 4, condition: true },
 			{ key: "BFGI-NEBULA", text: "%U is surrounded by a dense nebula, which blocks out the light from nearby stars.", limit: 4, condition: true },
 			{ key: "BFGI-ARCHAEOLOGY1", text: "There is heavily disputed evidence that %H may once have had technological native life. The %NO Survey has been thoroughly searching the system since the first discovery in %D6.", limit: 1, condition: info.galaxy == 2 && info.habitability.best > 55 },
 			{ key: "BFGI-ARCHAEOLOGY2", text: "Spaceship wreckage not resembling any USC design has recently been found on the outskirts of the %U system. An archaeological team is currently investigating.", limit: 1, condition: info.galaxy == 2 },
 			{ key: "BFGI-SHELL", text: "Unusual plankton in the waters of %H dye %IL exoskeletons an iridescent rainbow of colours.", limit: 1, condition: info.colony.species.indexOf("Lobster") > -1 && info.habitability.best > 70},
+			{ key: "BFGI-CAVERNS", text: "The Spectral Caverns of %H are formed from the interior of kilometre-wide quartz geodes. Mirrors and lenses on the surface focus sunlight into them, making for a spectacular sight.", limit: 1, condition: info.colony.species.indexOf("Rodent") > -1 && info.habitability.best > 80},
+			{ key: "BFGI-RINGSYSTEM", text: "A loose ring of asteroids surrounds %H, believed to be the remnants of a moon.", limit: 7, condition: true },
+			{ key: "BFGI-LARGESTATION", text: "The orbital station at %H was significantly expanded in %D9 to manage increased trade levels. The disruption of trade during the invasion has left much of the extra capacity unused, and several sections of the station are intentionally depressurised to decrease maintenance costs.", limit: 5, condition: true },
 			{ key: "BFGI-TREASURE", text: "The %U system is rumoured to be the resting place of the %NO treasure, named after the wealthy crime lord who accumulated billions of credits worth of stolen artefacts before their assassination in %D8.", limit: 1, condition: true},
 			{ key: "BFGI-MAZE", text: "The interior of the main orbital station at %H has been laid out as a giant maze.", limit: 1, condition: true},
 			{ key: "BFGI-TESTZONE", text: "Rumours that the USC military use %U for testing their next-generation warships and fighters remain unproven.", limit: 5, condition: true},
@@ -4211,7 +4217,11 @@
 			{ key: "BFGI-HERO1", text: "Homeworld of %NH, the most famous fighter pilot of the USC fleets during the invasion. Credited with over seven hundred confirmed kills, including two carriers, she is believed to have been killed defending the 2nd Fleet from an ambush in 1141 kD.", limit: 1, condition: true },
 			{ key: "BFGI-HERO2", text: "This otherwise unremarkable system is the birthplace of %NH, who chaired the committee to draft the original USC Treaty. Major celebrations are held on the anniversary of the signing.", limit: 1, condition: info.colony.founded < 4 },
 			{ key: "BFGI-HERO3", text: "%NH, lead scientist on the project to develop the cross-chart witchdrive, was born in this system in %D3L.", limit: 1, condition: info.galaxy == 0 && info.colony.founded < 4 },
-			{ key: "BFGI-HERO4", text: "The revolutionary %NH, writer of 'Reaching Together', is said to have been inspired to found the Cultural Reaching movement while working as a refuelling technician at %H station in %D5.", limit: 1, condition: info.colony.founded < 6 }
+			{ key: "BFGI-HERO4", text: "The revolutionary %NH, writer of 'Reaching Together', is said to have been inspired to found the Cultural Reaching movement while working as a refuelling technician at %H station in %D5.", limit: 1, condition: info.colony.founded < 6 },
+			{ key: "BFGI-HERO5", text: "%NH, the first USC Convenor-General to come from a mixed-species world, was born on %H in %D9.", limit: 1, condition: info.colony.founded < 7 && info.colony.species.length > 1 },
+			{ key: "BFGI-HERO6", text: "A day of silence is observed on %H at each aphelion, in memory of %NH, who was executed in %D10 by the USC on charges - believed locally to be false - of passing information to the invaders.", limit: 1, condition: true },
+			{ key: "BFGI-HISTORY1", text: "A series of marker buoys placed between the planet and its witchpoint summarise the history of the USC", limit: 1, condition: true },
+			{ key: "BFGI-HISTORY2", text: "", limit: 1, condition: true },
 		];
 
 		do {
