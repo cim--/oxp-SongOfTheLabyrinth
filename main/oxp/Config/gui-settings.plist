@@ -13,4 +13,23 @@
 	"selected_row_color" = "greenColor";
 	"selected_row_background_color" = "blackColor";
 
+	"chart_economy_0_color" = "0.7 0.1 0.1";
+	"chart_economy_1_color" = "0.3 0.8 0.8";
+	"chart_economy_2_color" = "0.9 0.8 0.2";
+	"chart_economy_3_color" = "0.6 0.8 0.9";
+	"chart_economy_4_color" = "0.6 0.3 0.1";
+	"chart_economy_5_color" = "0.2 0.9 0.2";
+	"chart_economy_6_color" = "0.3 0.2 0.8";
+	"chart_economy_7_color" = "0.8 0.1 0.7";
+
+	"chart_government_0_color" = "0.3 0.3 0.3";
+	"chart_government_1_color" = "1.0 1.0 0.9";
+	"chart_government_2_color" = "0.7 0.4 0.1";
+	"chart_government_3_color" = "0.8 0.2 0.8";
+	"chart_government_4_color" = "1.0 0.1 0.1";
+	"chart_government_5_color" = "0.1 0.7 0.5";
+	"chart_government_6_color" = "0.3 0.8 0.8";
+	"chart_government_7_color" = "0.2 0.9 0.2";
+	
+
 }
