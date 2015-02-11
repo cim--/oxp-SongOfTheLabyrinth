@@ -1017,7 +1017,7 @@
 		var blocks = [];
 		var opt, opts;
 		var block = {
-			importance: Math.ceil(Math.random()*30),
+			importance: Math.ceil(info.r.randf()*30),
 			displayOrder: 5,
 			key: "",
 			text: ""
@@ -1178,7 +1178,7 @@
 		var blocks = [];
 		var opt, opts;
 		var block = {
-			importance: Math.ceil(Math.random()*20),
+			importance: Math.ceil(info.r.randf()*20),
 			displayOrder: 6,
 			key: "",
 			text: ""
@@ -1340,7 +1340,7 @@
 		var blocks = [];
 		var opt, opts;
 		var block = {
-			importance: Math.ceil(Math.random()*30),
+			importance: Math.ceil(info.r.randf()*30),
 			displayOrder: 7,
 			key: "",
 			text: ""
@@ -1534,7 +1534,7 @@
 		var blocks = [];
 		var opt, opts;
 		var block = {
-			importance: Math.ceil(Math.random()*25),
+			importance: Math.ceil(info.r.randf()*25),
 			displayOrder: 8,
 			key: "",
 			text: ""
@@ -3424,7 +3424,7 @@
 		var blocks = [];
 		var opt, opts = [];
 		var block = {
-			importance: info.politics.governmentCategory == "Atypical"?40:Math.ceil(25*Math.random()),
+			importance: info.politics.governmentCategory == "Atypical"?40:Math.ceil(25*info.r.randf()),
 			displayOrder: 12,
 			key: "",
 			text: ""
@@ -3848,7 +3848,7 @@
 					block.text = opt.text;
 				} while (!opt.condition);
 			} while (!checkKey(block.key,50,true));
-			block.importance = Math.ceil(block.importance*Math.random());
+			block.importance = Math.ceil(block.importance*info.r.randf());
 			blocks.push(block);
 		}
 		
@@ -3861,7 +3861,7 @@
 		var blocks = [];
 		var opt, opts = [];
 		var block = {
-			importance: Math.ceil(25*Math.random()),
+			importance: Math.ceil(25*info.r.randf()),
 			displayOrder: 12,
 			key: "",
 			text: ""

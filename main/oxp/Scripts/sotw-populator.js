@@ -78,8 +78,8 @@ this._setupMainStation = function() {
 	system.mainStation.orientation = new Quaternion().rotateY(Math.PI/2).multiply(system.mainStation.orientation);
 
 	// step 2: patrols
-	var shipStrength = system.info.government;
-	var shipNumbers = system.info.government * 2;
+	var shipStrength = system.info.sotw_system_stability;
+	var shipNumbers = system.info.sotw_system_stability * 2;
 
 	for (var i=1;i<=shipNumbers;i++) {
 		var ships = this._addShipsToSpace(this._stationPatrolLocation(system.mainStation,i,shipNumbers),"sotw-fighter-superiority","sotw-station-defense-ship",1,shipStrength);

@@ -6,8 +6,8 @@ this.aiStarted = function() {
 	var ai = new worldScripts["oolite-libPriorityAI"].PriorityAIController(this.ship);
 
 	ai.setParameter("oolite_flag_listenForDistressCall",true);
-	ai.setParameter("sotw_desiredSecurityLevel",system.info.government*2);
-	ai.setParameter("sotw_defenseShipStrength",system.info.government);
+	ai.setParameter("sotw_desiredSecurityLevel",system.info.sotw_system_stability*2);
+	ai.setParameter("sotw_defenseShipStrength",system.info.sotw_system_stability);
 
 	ai.setCommunicationsRole("sotw_mainStation");
 

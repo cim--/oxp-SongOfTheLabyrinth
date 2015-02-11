@@ -59,7 +59,7 @@ this.updateGeneralCommodityDefinition = function(marketdef, station, system) {
 	// more secure systems have less variable prices due to higher
 	// trade volumes (and probably a much more significant domestic
 	// economy)
-	var security = sysinfo.government;
+	var security = sysinfo.sotw_system_stability;
 	if (security == 0) { security = 1; } // uninhabited
 	volatility /= security;
 	tvolfactor /= security;

@@ -160,6 +160,18 @@
 		"Research (Sci)": []
 	};
 
+	var governmentIconTable = {
+		"Corporate": 7,
+		"Democratic": 6,
+		"Hierarchical": 5,
+		"Collective": 4,
+		"Atypical": 3,
+		"Disordered": 2,
+		"United Species Coalition": 1,
+		"Uninhabited": 0
+	};
+
+
 	var planetinfo = {};
 
 	planetinfo.$debug = 0;
@@ -839,17 +851,17 @@
 
 		var info = planetdata[g][s];
 		
-		var govtDebugNum = function(type) {
-			if (type == "") { return 1; } // not yet determined
+		var govIcon = function(type,inhabited) {
+			if (!inhabited) { return 0; }
 			var c = planetinfo.governmentCategoryFromType(type);
 			if (c == "Corporate") { return 7; }
 			if (c == "Democratic") { return 6; }
 			if (c == "Hierarchical") { return 3; }
 			if (c == "Collective") { return 4; }
-			if (c == "Atypical") { return 2; }
-			if (c == "Disordered") { return 0; }
-			if (c == "United Species") { return 5; }
-			return 1; // never?
+			if (c == "Atypical") { return 5; }
+			if (c == "Disordered") { return 2; }
+			if (c == "United Species") { return 1; }
+			return 0;
 		}
 
 		var result = "\""+g+" "+s+"\" = {\n";
@@ -933,7 +945,8 @@
 		result += $plistarray("sotw_economy_exportsto",planetinfo.tradeRouteExports(g,s));
 		result += $plistarray("sotw_economy_onroutes",planetinfo.tradeRouteMembers(g,s));
 
-		result += $plist("government",info.politics.stability);
+		result += $plist("government",govIcon(info.politics.governmentType,info.colony.stage));
+		result += $plist("sotw_system_stability",info.politics.stability);
 		if (info.colony.stage > 0) {
 			result += $plist("government_description",info.politics.governmentType);
 			result += $plist("sotw_government_category",info.politics.governmentCategory);

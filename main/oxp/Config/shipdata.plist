@@ -114,8 +114,10 @@
 		auto_weapons = yes;
 		cargo_type = "CARGO_NOT_CARGO";
 		max_cargo = 0;
-		max_missiles = 2;
-		missiles = 2;
+//		max_missiles = 2;
+//		missiles = 2;
+		max_missiles = 0;
+		missiles = 0;
 		name = "Firangi";
 		weapon_facings = 3;
 
