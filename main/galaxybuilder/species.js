@@ -27,8 +27,7 @@
 		"sa","se","si","so","su",
 		"ta","te","ti","to","tu",
 		"ub","ud","ug","ul","um","un","up","us","ur","ut","ux",
-		"ve","vi","vo",
-		"wa","we","wi","wo","wy",
+		"ve","vi","vo",		"wa","we","wi","wo","wy",
 		"xe","xy",
 		"ya","ye","yo",
 		"za","ze","zo","zy",
@@ -68,7 +67,17 @@
 		"bar","ber","bir","bor","bur",
 		"abb","ebb","ibb","obb","ubb",
 		"all","ell","ill","oll","ull",
-		"ast","est","ist","ost","ust"
+		"ast","est","ist","ost","ust",
+		"aen","ain","aon","aun","ean","een","ein","eon","ian","ion","oen","oin","oon","oun","uan","uen","uin","uon",
+		"and","end","ind","ond","und",
+		"tha","the","thi","tho","thu",
+		"ant","ent","int",
+		"tao","teo","tio","too","two",
+		"far","fer","fir","for","fur",
+		"nda","nde","ndi","ndo","ndu",
+		"tas","tis","tos","tus",
+		"aft","eft","ift","oft","uft",
+		"man","men","min","mon","mun"
 	];
 
 	var wordmap = {
@@ -217,6 +226,9 @@ console.error(namelist.length);
 			if (random.randf() < 0.25) {
 				preflist.push("'");
 			}
+			if (random.randf() < 0.25) {
+				preflist.push("-");
+			}
 			// require at least two vowels
 		} while (
 			((preflist.indexOf("a") == -1)?0:1) +
@@ -236,6 +248,10 @@ console.error(namelist.length);
 			}
 			if (random.randf() < chance) {
 				prefbits.push(wordbits[i]);
+				// select some more common bits
+				if (random.randf() < chance*chance*chance) {
+					prefbits.push(wordbits[i]);
+				}
 			}
 		}
 		if (preflist.indexOf("a") != -1) {
@@ -290,7 +306,7 @@ console.error(namelist.length);
 				for (j=0;j<phlength;j++) {
 					phstr += preflist[random.rand(preflist.length)];
 				}
-			} while (!phstr.match(/[aeiouáàéèíìóòúù]/));
+			} while (!phstr.match(/^[aeiouáàéèíìóòúù]+$/));
 			prefbits.push(phstr);
 		}
 		speciesInfo[spec].wordBits = prefbits;
@@ -311,6 +327,8 @@ console.error(namelist.length);
 			}
 			name = name.replace(/^'/,"");
 			name = name.replace(/'$/,"");
+			name = name.replace(/^-/,"");
+			name = name.replace(/-$/,"");
 			speciesInfo[spec].nameList.push(name);
 		}
 //		console.error(spec+" has name list "+speciesInfo[spec].nameList);

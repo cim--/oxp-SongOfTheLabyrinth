@@ -4,8 +4,6 @@
 
 @ Crosshairs: smaller middle zone
 
-@ Planetinfo. Add seed values, random vectors, station roles and basic universal settings so that the core one can be excluded (for quicker startup)
-
 @ Scenarios. In separate OXP. Copy the basic SOTW save for now.
 
 @ Equipment:
@@ -22,8 +20,3 @@ Core features:
  - multi-use missiles. There's bits already in it for that, though no counter.
  - scripted combat AI should unconditionally fire if the JS tells it to
 
-Font:
- - adjust font plist
- - economy symbols
- - adjust gui-settings plist for colours
- - test galaxybuilder changes

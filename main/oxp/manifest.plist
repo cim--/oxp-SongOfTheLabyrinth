@@ -1,8 +1,4 @@
 {
-/* Scenario restriction
-id:oolite.oxp.cim.sotw.main;exc:trade-goods.plist;exc:world-scripts.plist
-Likely to need to exclude some more plists later
-*/
 	"identifier" = "oolite.oxp.cim.sotw.main";
 	"required_oolite_version" = "1.81";
 	"title" = "Song of the Witch";
@@ -14,4 +10,10 @@ The setting is similar to the original Oolite setting, but provides more detail 
 	"author" = "cim";
 	"license" = "CC-BY-SA 4.0";
 	"tags" = ("oolite-scenario-only");
+	"requires_oxps" = (
+		{
+			"identifier" = "oolite.oxp.cim.sotw.scenario";
+			"description" = "Requires scenario OXP to start new games";
+		}
+	);
 }

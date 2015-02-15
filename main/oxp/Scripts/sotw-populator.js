@@ -197,7 +197,7 @@ this._addFreighter = function(position) {
 		
 		gsize -= ship.scriptInfo.sotw_npc_popval;
 		while (gsize >= 3) {
-			var eposition = position.add(Vector3D.randomDirection(2000));
+			var eposition = ship.position.add(Vector3D.randomDirection(2000));
 			var escort = this._addShipsToSpace(position,"sotw-fighter-escort","sotw-escort",1,gsize)[0];
 			if (escort) {
 				gsize -= escort.scriptInfo.sotw_npc_popval;

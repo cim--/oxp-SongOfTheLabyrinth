@@ -242,7 +242,7 @@
 		string = string.replace(/%DE5/g,"unification");
 		string = string.replace(/%DE6/g,"post-unification");
 		string = string.replace(/%DE7/g,"post-unification");
-		string = string.replace(/%DE8/g,"environmental manipulation");
+		string = string.replace(/%DE8/g,"terraforming");
 		string = string.replace(/%DE9/g,"consolidation");
 		string = string.replace(/%DE10/g,"invasion");
 		// initial colonisation
@@ -1421,27 +1421,27 @@
 			if (checkKey("BTFC-TERRF",0) && info.habitability.best < 70) {
 				block.importance = 100;
 				block.key = "BTFC-TERRF";
-				block.text = "In 887 kD, breakthroughs in environmental manipulation made it possible to inhabit worlds previously considered unusable. The initial trials took place on %H in 895kD, successfully creating an area of several thousand square kilometres in which a conventional habitat could be constructed.";
+				block.text = "In 887 kD, breakthroughs in terraforming made it possible to inhabit worlds previously considered unusable. The initial trials took place on %H in 895kD, successfully creating an area of several thousand square kilometres in which a conventional habitat could be constructed.";
 				state.firstTerr = info.name;
 			} else if (checkKey("BTFC-TERRF",3) && info.habitability.best < 70) {
 				block.importance = 95;
 				block.key = "BTFC-TERRF";
-				block.text = "In addition to "+state.firstTerr+", three other worlds were selected for early trials of the new environmental manipulation technology. Operations began on %H in %D8E, and colonists arrived soon after.";
+				block.text = "In addition to "+state.firstTerr+", three other worlds were selected for early trials of the new terraforming technology. Operations began on %H in %D8E, and colonists arrived soon after.";
 			} else {
 				
 				opts = [
-					{ key: "BFTC-TERR1", text: "After the promising trial results, %H was selected for environmental manipulation in %D8.", condition: info.habitability.best < 70 },
-					{ key: "BFTC-TERR2", text: "Environmental manipulation technology was not just trialled to make uninhabitable worlds livable, but to make livable worlds safer. %D8 saw its use on the previously-uninhabited world of %H.", condition: info.habitability.best > 80 },
-					{ key: "BFTC-TERR3", text: "Environmental manipulation to make %H habitable as part of the UCS-wide trials began in %D8.", condition: info.habitability.best < 70 },
-					{ key: "BFTC-TERR4", text: "%H had been considered for colonisation as early as %D6, but it was only with the environmental manipulation technology available in %D8 that it was considered cost-effective to do so - and then only with the significant subsidies the UCS was offering for trialling the technology.", condition: info.habitability.best >= 70 },
-					{ key: "BFTC-TERR5", text: "The trials of environmental manipulation technology were a success, but the great expense of using it meant that plans for further phases were placed on indefinite hold. %H was one of the last systems to be colonised as part of the trial, in %D8L.", condition: true },
-					{ key: "BFTC-TERR6", text: "The use of environmental manipulation technology on %H was unusually funded outside of the USC project, in the belief that the technology would eventually pay for itself.", condition: info.politics.governmentCategory == "Corporate" },
+					{ key: "BFTC-TERR1", text: "After the promising trial results, %H was selected for terraforming in %D8.", condition: info.habitability.best < 70 },
+					{ key: "BFTC-TERR2", text: "Terraforming technology was not just trialled to make uninhabitable worlds livable, but to make livable worlds safer. %D8 saw its use on the previously-uninhabited world of %H.", condition: info.habitability.best > 80 },
+					{ key: "BFTC-TERR3", text: "Terraforming to make %H habitable as part of the UCS-wide trials began in %D8.", condition: info.habitability.best < 70 },
+					{ key: "BFTC-TERR4", text: "%H had been considered for colonisation as early as %D6, but it was only with the terraforming technology available in %D8 that it was considered cost-effective to do so - and then only with the significant subsidies the UCS was offering for trialling the technology.", condition: info.habitability.best >= 70 },
+					{ key: "BFTC-TERR5", text: "The trials of terraforming technology were a success, but the great expense of using it meant that plans for further phases were placed on indefinite hold. %H was one of the last systems to be colonised as part of the trial, in %D8L.", condition: true },
+					{ key: "BFTC-TERR6", text: "The use of terraforming technology on %H was unusually funded outside of the USC project, in the belief that the technology would eventually pay for itself.", condition: info.politics.governmentCategory == "Corporate" },
 					{ key: "BFTC-TERR7", text: "The expense of using environmental manipulators, and a desire to monitor the results long-term before further use, meant that the USC trials were ended shortly after %H was colonised in %D8L", condition: true },
-					{ key: "BFTC-TERR8", text: "%H was settled with the assistance of environmental manipulation technology in %D8.", condition: true },
-					{ key: "BFTC-TERR9", text: "The use of environmental manipulation technology allowed a wide range of species to colonise %H in %D8.", condition: info.colony.species.length > 3 },
-					{ key: "BFTC-TERR10", text: "The risk of environmental manipulation was highlighted in %D8 when %W %N seized control of the manipulation control centre, threatening to shut it down unless the government surrended to them. Their successors continue to rule from the control centre today.", condition: info.politics.governmentCategory == "Hierarchical" },
-					{ key: "BFTC-TERR11", text: "The use of environmental manipulation technology in %D8 finally allowed formal residence in the %U system, sweeping aside various informal attempts to control its position on a key trade route.", condition: info.bottle > 0 },
-					{ key: "BFTC-TERR12", text: "%IS and %I1S took advantage of the USC trial of environmental manipulation technology to place a small settlement on %H.", condition: info.colony.species.length > 1 },
+					{ key: "BFTC-TERR8", text: "%H was settled with the assistance of terraforming technology in %D8.", condition: true },
+					{ key: "BFTC-TERR9", text: "The use of terraforming technology allowed a wide range of species to colonise %H in %D8.", condition: info.colony.species.length > 3 },
+					{ key: "BFTC-TERR10", text: "The risk of terraforming was highlighted in %D8 when %W %N seized control of the manipulation control centre, threatening to shut it down unless the government surrended to them. Their successors continue to rule from the control centre today.", condition: info.politics.governmentCategory == "Hierarchical" },
+					{ key: "BFTC-TERR11", text: "The use of terraforming technology in %D8 finally allowed formal residence in the %U system, sweeping aside various informal attempts to control its position on a key trade route.", condition: info.bottle > 0 },
+					{ key: "BFTC-TERR12", text: "%IS and %I1S took advantage of the USC trial of terraforming technology to place a small settlement on %H.", condition: info.colony.species.length > 1 },
 				];
 
 				do {
@@ -1457,7 +1457,7 @@
 			block.importance = 25;
 
 			opts = [
-				{ key: "BFTC-MIN1", text: "The increased demand for %M resulting from the USC's environmental manipulation trials caused several new mining operations to open, including %H in %D8.", condition: true },
+				{ key: "BFTC-MIN1", text: "The increased demand for %M resulting from the USC's terraforming trials caused several new mining operations to open, including %H in %D8.", condition: true },
 				{ key: "BFTC-MIN2", text: "Routine resurveys of %U discovered high %M concentrations, and extraction began in %D8", condition: true },
 				{ key: "BFTC-MIN3", text: "As older mining systems began to exhaust the easily accessible reserves, or rebuilt their economies around refining and production activities, newer mines opened in systems such as %H.", condition: true },
 				{ key: "BFTC-MIN4", text: "It was sometimes more cost-effective to open mining operations in a new system than to upgrade existing mines. %H was settled for this reason in %D8.", condition: true },
@@ -1466,7 +1466,7 @@
 				{ key: "BFTC-MIN7", text: "Shortages of %M in %D8 led to the extremely inhospitable %U system gaining a mining station.", condition: info.habitability.best < 10 },
 				{ key: "BFTC-MIN8", text: "Several independent mining groups pooled their resources to build a permanent station around %H in %D8.", condition: info.politics.governmentCategory == "Collective" },
 				{ key: "BFTC-MIN9", text: "Mining, especially of %M, began on %H in %D8.", condition: info.economy.type != "Asteroid Mining" },
-				{ key: "BFTC-MIN10", text: "The USC's environmental manipulation trials were believed at the time to be the start of a new wave of colonisation similar to that of the unification period. Mining began in %H with the hope of supplying the hundreds of new colonies, but fortunately was able to continue profitably even without them.", condition: info.colony.stage > 1 },
+				{ key: "BFTC-MIN10", text: "The USC's terraforming trials were believed at the time to be the start of a new wave of colonisation similar to that of the unification period. Mining began in %H with the hope of supplying the hundreds of new colonies, but fortunately was able to continue profitably even without them.", condition: info.colony.stage > 1 },
 				{ key: "BFTC-MIN11", text: "The first permanent mining station was placed in the %U system in %D8.", condition: true },
 				{ key: "BFTC-MIN12", text: "%H was settled for its mineral wealth in %D8.", condition: true },
 				{ key: "BFTC-MIN13", text: "Market speculation in %D8 caused a chart-wide shortage of %M. The extraction operation at %H was intended to be temporary, but remained profitable and was kept open.", condition: true },
@@ -1489,7 +1489,7 @@
 			opts = [
 				{ key: "BFTC-OUT1", text: "Contact was lost with the %H orbital station shortly after its installation in %D8. Remote investigations revealed that it was still operational and inhabited, but no communications were answered.", condition: info.politics.governmentType == "Isolationist" },
 				{ key: "BFTC-OUT2", text: "In %D8, an orbital station was placed around %H in the previously uninhabited %U system by a group of %I anarchists.", condition: info.politics.governmentType == "Anarchist" },
-				{ key: "BFTC-OUT3", text: "While most USC scientists watched the environmental manipulation trials with interests, the Transapiest movement continued to focus on manipulating the eight species to better fit the environment, and founded a small settlement on %H in %D8 to continue their research.", condition: info.politics.governmentType == "Transapientism" },
+				{ key: "BFTC-OUT3", text: "While most USC scientists watched the terraforming trials with interests, the Transapiest movement continued to focus on manipulating the eight species to better fit the environment, and founded a small settlement on %H in %D8 to continue their research.", condition: info.politics.governmentType == "Transapientism" },
 				{ key: "BFTC-OUT4", text: "%U is officially a Social Evolutionist system, but the residents dispute this classification as the frequent changes of government and government style are the result of unplanned revolutions rather than planned experiments. Proposals to add a 'Social Revolutionist' classification for them are currently stalled in USC committees.", condition: info.politics.governmentType == "Social Evolutionists" },
 				{ key: "BFTC-OUT5", text: "By %D8 it was not unusual for major systems to be able to generate a sufficient surplus to focus much of it on the production of cultural works. %H station was founded as an offworld retreat for artists in the nearby systems.", condition: info.politics.governmentType == "Cultural Reachers" },
 				{ key: "BFTC-OUT6A", text: "Following the example of "+state.precedentarchy5+", the %N Precedentists colonised %H in %D8.", condition: info.politics.governmentType == "Precedentarchy" && state.precedentarchy5 },
@@ -1548,13 +1548,13 @@
 		opts = [
 			{ key: "BFTJ-JOIN1", text: "Additional settlers, especially "+sns+", were attracted to the system in %D8.", condition: true },
 			{ key: "BFTJ-JOIN2", text: "Further mining expansion took place in %D8, with attempts to establish permanent ground settlements.", condition: info.planet.mineralWealth > 0.45 },
-			{ key: "BFTJ-JOIN3", text: "The existing orbital station at %H made monitoring of environmental modifications more straightforward, and the system was picked for USC trials of the technology in %D8", condition: info.habitability.best > 80 },
-			{ key: "BFTJ-JOIN4", text: "%H was selected for environmental modification to make it habitable by "+sns+" in %D8. A small group joined the existing orbital station to observe the process.", condition: info.habitability.best > 60 && info.habitability.best < 70 },
+			{ key: "BFTJ-JOIN3", text: "The existing orbital station at %H made monitoring of terraforming more straightforward, and the system was picked for USC trials of the technology in %D8", condition: info.habitability.best > 80 },
+			{ key: "BFTJ-JOIN4", text: "%H was selected for terraforming to make it habitable by "+sns+" in %D8. A small group joined the existing orbital station to observe the process.", condition: info.habitability.best > 60 && info.habitability.best < 70 },
 			{ key: "BFTJ-JOIN5", text: "More settlers arrived in %D8.", condition: true },
 			{ key: "BFTJ-JOIN6", text: "New %M deposits were discovered in %D8, briefly attracting a rush of miners and prospectors to the system.", condition: info.planet.mineralWealth > 0.45 },
 			{ key: "BFTJ-JOIN7", text: "The system was selected for terraforming trials in %D8L, shortly before the programme ended.", condition: info.habitability.best > 60 },
 			{ key: "BFTJ-JOIN8", text: "%H' small orbital station was renovated and expanded in %D8 in preparation for planned ground settlements.", condition: true },
-			{ key: "BFTJ-JOIN9", text: "%H was selected for environmental modification trials in %D8, focusing on thickening the atmosphere to reduce the harsh radiation from %U.", condition: info.planet.surfaceRadiation > 0.4 }
+			{ key: "BFTJ-JOIN9", text: "%H was selected for terraforming trials in %D8, focusing on thickening the atmosphere to reduce the harsh radiation from %U.", condition: info.planet.surfaceRadiation > 0.4 }
 		];
 		
 
@@ -1586,7 +1586,7 @@
 		};
 
 		opts = [
-			{ key: "BFCC-NEW1", text: "New settlement almost ceased after the end of the environmental modification trials, with most organisations with the wealth to fund a colony waiting to see the impact. %H had a small orbital outpost established in %D9, as an unusual exception.", condition: info.politics.governmentCategory != "Atypical" },
+			{ key: "BFCC-NEW1", text: "New settlement almost ceased after the end of the terraforming trials, with most organisations with the wealth to fund a colony waiting to see the impact. %H had a small orbital outpost established in %D9, as an unusual exception.", condition: info.politics.governmentCategory != "Atypical" },
 			{ key: "BFCC-NEW2", text: "With official settlement virtually non-existent, a few systems such as %U became 'settled' just through originally temporary outposts becoming permanent.", condition: info.politics.governmentCategory != "Atypical" },
 			{ key: "BFCC-NEW3", text: "Minority political movements often went to uninhabited space to try to put their utopias into practice. %H was settled in %D9 by the %N movement.", condition: true },
 			{ key: "BFCC-NEW4", text: "A small group of independent ship owners converted freighters into an permanent orbiter in %D9.", condition: true },
@@ -1799,7 +1799,7 @@
 				{ key: "BFCG-GCF9", text: "Surface habitation suffered a temporary setback in %D"+redOutSteps[0]+" when %N %Y was damaged by %AG.", condition: info.colony.stage > 1 },
 				{ key: "BFCG-GCF10", text: "The first surface settlement was placed without a great understanding of the local %C and was overtaken in %D"+redOutSteps[0]+".", condition: info.habitability.best > 80 },
 				{ key: "BFCG-GCF11", text: "Decontaminating %N %Y after a major chemical spill in %D"+redOutSteps[0]+" has so far not been economically viable, and the site remains quarantined.", condition: info.economy.type == "Quarantine" },
-				{ key: "BFCG-GCF12", text: "The ground settlements were evacuated in %D8 after an accident involving the unauthorised use of environmental modification technology.", condition: redOutSteps[0] == 8 }
+				{ key: "BFCG-GCF12", text: "The ground settlements were evacuated in %D8 after an accident involving the unauthorised use of terraforming technology.", condition: redOutSteps[0] == 8 }
 			];
 
 			do {
@@ -1922,7 +1922,7 @@
 				{ key: "BFCG-BIL4", text: "High mineral wealth and a superb environment made %H rapidly self-sufficient, and the population expanded, reaching one billion in %D"+bilStep+".", condition: info.planet.mineralWealth > 0.45 },
 				{ key: "BFCG-BIL5", text: "%H' economy prospered during the %DE"+bilStep+" period, with sufficient surplus after feeding the billion inhabitants to produce many great artworks.", condition: info.economy.type == "Cultural" },
 				{ key: "BFCG-BIL6", text: "The total population of the %U system reached one billion in %D"+bilStep+".", condition: true },
-				{ key: "BFCG-BIL7", text: "While always manageable, it was only with the development of environmental manipulation technology that sufficient living space could be found for %H' population to reach one billion.", condition: info.habitability.best < 90 },
+				{ key: "BFCG-BIL7", text: "While always manageable, it was only with the development of terraforming technology that sufficient living space could be found for %H' population to reach one billion.", condition: info.habitability.best < 90 },
 			];
 			
 			do {
@@ -2619,7 +2619,7 @@
 				{ key: "BFSEP-TEMC8", text: "A geological survey in %D7 found unusually high mineral concentrations in ice cores, but no follow-up has yet taken place.", condition: !info.colony.founded && info.planet.mineralWealth > 0.45 },
 				{ key: "BFSEP-TEMC9", text: "Too cold for comfortable habitation and with no known mineral reserves, %H has remained uninhabited since its discovery.", condition: !info.colony.founded && info.planet.mineralWealth < 0.25 },
 				{ key: "BFSEP-TEMC10", text: "While cold, the equatorial and tropical regions of %H are possible to survive in unassisted.", condition: info.habitability.best > 70 },
-				{ key: "BFSEP-TEMC11", text: "%H is currently too cold to settle without extensive use of environmental modification technology, which is currently considered too uneconomical.", condition: info.habitability.best > 60 && info.habitability.best < 70 && !info.colony.founded },
+				{ key: "BFSEP-TEMC11", text: "%H is currently too cold to settle without extensive use of terraforming technology, which is currently considered too uneconomical.", condition: info.habitability.best > 60 && info.habitability.best < 70 && !info.colony.founded },
 				{ key: "BFSEP-TEMC12", text: "The thin atmosphere provides little insulation, and while the mean temperature is "+Math.floor(273+info.planet.temperature)+"K. this varies considerably between day and night sides of %H.", condition: info.planet.cloudAlpha == 0 },
 				{ key: "BFSEP-TEMC13", text: "An extremely cold world.", condition: true },
 				{ key: "BFSEP-TEMC14", text: "%H is too cold to support more than a few isolated settlements.", condition: info.habitability.best < 60 && info.colony.stage > 0 },
@@ -2676,7 +2676,7 @@
 				{ key: "BFSEP-TEMH5", text: "The orbital stations are currently the only habitation at %H, as the surface is generally too warm for permanent residence.", condition: info.colony.stage == 1 },
 				{ key: "BFSEP-TEMH6", text: "With a mean surface temperature of "+Math.floor(273+info.planet.temperature)+"K, %H is barely considered habitable.", condition: !info.colony.founded && info.habitability.best > 70 },
 				{ key: "BFSEP-TEMH7", text: "The intense heat from %U places %H well outside the comfortable range for most species.", condition: true },
-				{ key: "BFSEP-TEMH8", text: "Even with costly environmental manipulation tools, %H is unlikely to ever be fit for more than a few isolated polar settlements.", condition: info.habitability.best < 60 },
+				{ key: "BFSEP-TEMH8", text: "Even with costly terraforming tools, %H is unlikely to ever be fit for more than a few isolated polar settlements.", condition: info.habitability.best < 60 },
 				{ key: "BFSEP-TEMH9", text: "The construction of %NC in %H' intense heat posed many challenges for the original engineers.", condition: info.colony.stage > 1 },
 				{ key: "BFSEP-TEMH10", text: "%U has turned most of %H' into a barren wasteland.", condition: info.planet.cloudAlpha > 0 && info.planet.percentLand > 0.5 },
 				{ key: "BFSEP-TEMH11", text: "The high surface temperatures cause significant evaporation from %H' oceans, covering the world in thick clouds.", condition: info.planet.cloudAlpha > 2 && info.planet.percentLand < 0.5 },
@@ -3341,7 +3341,7 @@
 
 			block.importance = 10;
 			block.key = "BFUEP-HABI";
-			block.text = "Extensive use of environmental modification technology could in principle make %H suitable for colonisation by "+habl+".";
+			block.text = "Extensive use of terraforming technology could in principle make %H suitable for colonisation by "+habl+".";
 		}
 
 		if (block.text != "") {
@@ -3634,9 +3634,9 @@
 				// note: these four aren't currently used, as
 				// only the economy type is Quarantine in these cases
 				{ key: "BFGAS-QUAR6", text: "Following the destruction of the settlements by the invaders, %H' surface has exhibited unusual properties. The system has been placed under USC quarantine as a precautionary measure.", condition: info.colony.attacked == 3 },
-				{ key: "BFGAS-QUAR7", text: "Unexpected side-effects of environmental modification have caused problems on %H. While the situation is stabilised, surface-orbit transfers are strictly controlled.", condition: info.colony.attacked == 0 && info.economy.reason == "Terraforming" },
-				{ key: "BFGAS-QUAR8", text: "The planet is currently carrying out the "+nth(info.r.rand(3)+1)+" phase of its environmental modification programme, and landing is currently strictly restricted.", condition: info.colony.attacked == 0 && info.economy.reason == "Terraforming"  },
-				{ key: "BFGAS-QUAR9", text: "The surface has been evacuated and sealed after an environmental modification plant ran out of control. The plant has been shut down and it is hoped that the situation will soon return to normal.", condition: info.colony.attacked == 0 && info.economy.reason == "Terraforming"  },
+				{ key: "BFGAS-QUAR7", text: "Unexpected side-effects of terraforming have caused problems on %H. While the situation is stabilised, surface-orbit transfers are strictly controlled.", condition: info.colony.attacked == 0 && info.economy.reason == "Terraforming" },
+				{ key: "BFGAS-QUAR8", text: "The planet is currently carrying out the "+nth(info.r.rand(3)+1)+" phase of its terraforming programme, and landing is currently strictly restricted.", condition: info.colony.attacked == 0 && info.economy.reason == "Terraforming"  },
+				{ key: "BFGAS-QUAR9", text: "The surface has been evacuated and sealed after an terraforming plant ran out of control. The plant has been shut down and it is hoped that the situation will soon return to normal.", condition: info.colony.attacked == 0 && info.economy.reason == "Terraforming"  },
 			];
 			break;
 		case "Anarchist":
@@ -3973,9 +3973,9 @@
 		case "Quarantine": // ~50
 			if (info.economy.reason == "Terraforming") {
 				opts = [
-					{ key: "BFEI-QUAR1", text: "Unexpected side-effects of environmental modification have caused problems on %H. While the situation is stabilised, surface-orbit transfers are strictly controlled.", condition: true },
-					{ key: "BFEI-QUAR2", text: "The planet is currently carrying out the "+nth(info.r.rand(3)+1)+" phase of its environmental modification programme, and landing is currently strictly restricted.", condition: true },
-					{ key: "BFEI-QUAR3", text: "The surface has been evacuated and sealed after an environmental modification plant ran out of control. The plant has been shut down and it is hoped that the situation will soon return to normal.", condition: true },
+					{ key: "BFEI-QUAR1", text: "Unexpected side-effects of terraforming have caused problems on %H. While the situation is stabilised, surface-orbit transfers are strictly controlled.", condition: true },
+					{ key: "BFEI-QUAR2", text: "The planet is currently carrying out the "+nth(info.r.rand(3)+1)+" phase of its terraforming programme, and landing is currently strictly restricted.", condition: true },
+					{ key: "BFEI-QUAR3", text: "The surface has been evacuated and sealed after an terraforming plant ran out of control. The plant has been shut down and it is hoped that the situation will soon return to normal.", condition: true },
 				];
 			} 
 			// else the *government* is also going to be Quarantine
@@ -3997,7 +3997,7 @@
 			opts = [
 				{ key: "BFEI-RESB1", text: "The native life of %H is of great interest to researchers, with its %C and %CA being particularly unusual. The majority of the settlement is research facilities.", condition: info.economy.reason == "Native Life" },
 				{ key: "BFEI-RESB2", text: "The wilderness of %H is under observation as part of a USC-funded research project. The planetary inhabitants are restricted to researchers and their support staff.", condition: info.economy.reason == "Wilderness" },
-				{ key: "BFEI-RESB3", text: "%H contains one of the most respected biological research facilities in the eight charts. Many new medicines and drugs have been developed here, and it is also heavily involved in the improvement of environmental manipulation technologies.", condition: info.colony.stage > 3 },
+				{ key: "BFEI-RESB3", text: "%H contains one of the most respected biological research facilities in the eight charts. Many new medicines and drugs have been developed here, and it is also heavily involved in the improvement of terraforming technologies.", condition: info.colony.stage > 3 },
 				{ key: "BFEI-RESB4", text: "The research institutes on %H host one of the largest catalogues of biological data in the eight charts, collecting samples and recordings of animals and plants, as well as importing a large amount of computing hardware to process this data.", condition: info.colony.stage > 3 },
 				{ key: "BFEI-RESB5", text: "%H' orbital station contains a small research installation observing the planet below. Planetary settlements are restricted to data collection sites and supporting infrastructure.", condition: info.economy.reason == "Wilderness" },
 				{ key: "BFEI-RESB6", text: "The largely unmodified environment of %H is of great interest to researchers, and most of the previous colonists have been replaced by observation stations.", condition: info.economy.reason == "Wilderness" },
@@ -4117,13 +4117,13 @@
 			break;
 		case "Terraforming": // ~40
 			opts = [
-				{ key: "BFEI-TERR1", text: "The farmers of %H are making use of limited environmental modification technology to improve productivity. While this continues, surplus production is suspended. Biosciences researchers are extremely interested in the results.", condition: info.economy.reason == "Agriculture I" },
-				{ key: "BFEI-TERR2", text: "After a severe crop failure, %H has turned to environmental modification technology to boost yields. The modifiers, tools to maintain them, and suitable protective clothing are all required to continue this programme.", condition: info.economy.reason == "Agriculture I" },
-				{ key: "BFEI-TERR3", text: "While already inhabitable, the settlers are using environmental modification technologies to move %H closer to species norms.", condition: info.economy.reason == "Agriculture I" },
-				{ key: "BFEI-TERR4", text: "The use of environmental modification on %H is carefully controlled, but is gradually making the soils more fertile. The colony expects to be able to start producing food and other plant-based goods in export quantities in around %XS ten kD.", condition: info.economy.reason == "Agriculture I" },
-				{ key: "BFEI-TERR5", text: "Use of environmental modification technology is gradually making %H inhabitable for its %I occupants. While the process continues, the modification plants need maintenance and protection from external radiation.", condition: info.economy.reason == "Terraforming" },
-				{ key: "BFEI-TERR6", text: "The operation of environmental modification on %H is of great interest to researchers as the process of converting the world into one more suitable for %I occupancy continues.", condition: info.economy.reason == "Terraforming" && info.colony.founded == 8 },
-				{ key: "BFEI-TERR7", text: "Protective clothing for the environmental modification operators needs regular replacement as the substances released by the plants permeate their surroundings before diffusing into the atmosphere.", condition: info.economy.reason == "Terraforming" },
+				{ key: "BFEI-TERR1", text: "The farmers of %H are making use of limited terraforming technology to improve productivity. While this continues, surplus production is suspended. Biosciences researchers are extremely interested in the results.", condition: info.economy.reason == "Agriculture I" },
+				{ key: "BFEI-TERR2", text: "After a severe crop failure, %H has turned to terraforming technology to boost yields. The modifiers, tools to maintain them, and suitable protective clothing are all required to continue this programme.", condition: info.economy.reason == "Agriculture I" },
+				{ key: "BFEI-TERR3", text: "While already inhabitable, the settlers are using terraforming technologies to move %H closer to species norms.", condition: info.economy.reason == "Agriculture I" },
+				{ key: "BFEI-TERR4", text: "The use of terraforming on %H is carefully controlled, but is gradually making the soils more fertile. The colony expects to be able to start producing food and other plant-based goods in export quantities in around %XS ten kD.", condition: info.economy.reason == "Agriculture I" },
+				{ key: "BFEI-TERR5", text: "Use of terraforming technology is gradually making %H inhabitable for its %I occupants. While the process continues, the modification plants need maintenance and protection from external radiation.", condition: info.economy.reason == "Terraforming" },
+				{ key: "BFEI-TERR6", text: "The operation of terraforming on %H is of great interest to researchers as the process of converting the world into one more suitable for %I occupancy continues.", condition: info.economy.reason == "Terraforming" && info.colony.founded == 8 },
+				{ key: "BFEI-TERR7", text: "Protective clothing for the terraforming operators needs regular replacement as the substances released by the plants permeate their surroundings before diffusing into the atmosphere.", condition: info.economy.reason == "Terraforming" },
 			];
 			break;
 		case "Tourism": // ~40
