@@ -175,12 +175,12 @@ this._repopulateFreighters = function() {
 
 
 this._addFreighter = function(position) {
-	// TODO: the ship should get an escort group
 	// TODO: should decide route *first* and adjust the freighter
 	// size accordingly - but that can wait until there's more than
 	// one freighter
+	var gsize = 60;
 	// TODO: if the route *starts* here should handle it a bit differently
-	var ship = this._addShipsToSpace(position,"sotw-freighter","sotw-long-range-trader",1,50)[0];
+	var ship = this._addShipsToSpace(position,"sotw-freighter","sotw-long-range-trader",1,gsize)[0];
 	if (ship) {
 		
 		var route = Math.random()*this.$tradeRouteTotalWeight;
@@ -195,6 +195,20 @@ this._addFreighter = function(position) {
 			}
 		}
 		
+		gsize -= ship.scriptInfo.sotw_npc_popval;
+		while (gsize >= 3) {
+			var eposition = position.add(Vector3D.randomDirection(2000));
+			var escort = this._addShipsToSpace(position,"sotw-fighter-escort","sotw-escort",1,gsize)[0];
+			if (escort) {
+				gsize -= escort.scriptInfo.sotw_npc_popval;
+				
+				escort.offerToEscort(ship);
+
+			} else {
+				break;
+			}
+		}
+
 	}
 	return ship;
 };
@@ -248,6 +262,7 @@ this.$aiMap = {
 	"sotw-station-defense-ship": "sotw-station-defenseAI.js",
 	"sotw-station-defense-platform": "sotw-station-defenseAI.js",
 	"sotw-shuttle": "sotw-orbital-shuttleAI.js",
+	"sotw-escort": "sotw-escortAI.js",
 	"sotw-long-range-trader": "sotw-traderoute-freighterAI.js",
 	"sotw-freighter-resupply": "sotw-station-resupplyAI.js"
 };

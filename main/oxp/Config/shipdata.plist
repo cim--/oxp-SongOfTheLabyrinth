@@ -113,6 +113,10 @@
 		auto_ai = yes;
 		auto_weapons = yes;
 		cargo_type = "CARGO_NOT_CARGO";
+		escort_roles = (
+			// set up by populator, but need to make slots available
+			{ role = ""; min = 16; max = 16; }
+		);
 		max_cargo = 0;
 //		max_missiles = 2;
 //		missiles = 2;
@@ -125,7 +129,7 @@
 			"sotw_mass" = 480;
 			"sotw_des" = 140;
 			"sotw_es" = 850;
-			"sotw_npc_popval" = 1;
+			"sotw_npc_popval" = 3;
 			"sotw_standard_fit" = ("2:1:0:0","2:2:0:0","5:0:0:0","5:0:0:0","0:2:0:0","0:0");
 		};
 
@@ -133,7 +137,7 @@
 
 	"sotw-firangi-npc" = {
 		"like_ship" = "sotw-firangi-template";
-		"roles" = "sotw-fighter-superiority";
+		"roles" = "sotw-fighter-superiority sotw-fighter-escort";
 		max_flight_speed = 350;
 		max_flight_pitch = 1.0;
 		max_flight_roll = 2.0;
@@ -258,6 +262,10 @@
 		auto_ai = yes;
 		auto_weapons = yes;
 		cargo_type = "CARGO_NOT_CARGO";
+		escort_roles = (
+			// set up by populator, but need to make slots available
+			{ role = ""; min = 16; max = 16; }
+		);
 		max_cargo = 25;
 		max_missiles = 2;
 		missiles = 2;
@@ -405,6 +413,10 @@
 		auto_ai = yes;
 		auto_weapons = yes;
 		cargo_type = "CARGO_NOT_CARGO";
+		escort_roles = (
+			// set up by populator, but need to make slots available
+			{ role = ""; min = 16; max = 16; }
+		);
 		max_cargo = 20;
 		max_missiles = 2;
 		missiles = 2;
@@ -556,6 +568,10 @@
 		auto_ai = yes;
 		auto_weapons = yes;
 		cargo_type = "CARGO_NOT_CARGO";
+		escort_roles = (
+			// set up by populator, but need to make slots available
+			{ role = ""; min = 16; max = 16; }
+		);
 		max_cargo = 375;
 		max_missiles = 2;
 		missiles = 2;
@@ -566,7 +582,7 @@
 			"sotw_mass" = 30000;
 			"sotw_es" = 6000;
 			"sotw_des" = 1750;
-			"sotw_npc_popval" = 30;
+			"sotw_npc_popval" = 45;
 			"sotw_standard_fit" = ("0:0:5:0","0:0:2:0","0:2:0:0","0:4:0:0","0:0:5:0","1:0");
 		};
 

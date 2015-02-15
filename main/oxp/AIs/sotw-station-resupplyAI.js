@@ -76,6 +76,7 @@ this.aiStarted = function() {
 		},
 		// getting here means there's no resuppliable ship
 		// and no stations left in the system.
-	].concat(ai.templateWitchspaceJumpAnywhere()));
+	].concat(ai.templateWitchspaceJumpAnywhere()),
+					 1); // delay initial reconsideration
 
 }

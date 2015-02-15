@@ -766,7 +766,16 @@ this.startUp = function() {
 				reconsider: 60
 			}
 		];
-	}
+	};
+
+	lib.prototype.sotw_templateEscortMothership = function() {
+		return [
+			{
+				behaviour: this.behaviourEscortMothership,
+				reconsider: 60
+			}
+		];
+	};
 
 	/* Waypoint generators */
 
