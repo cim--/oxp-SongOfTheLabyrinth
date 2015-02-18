@@ -33,6 +33,13 @@ this.allowAwardEquipment = function(eqKey,ship,context) {
 		}
 	}
 
+	if (eqKey == "EQ_SOTW_REFUEL_INFLIGHT") {
+		// no point in installing this on a ship without a hold
+		if (player.ship.cargoSpaceCapacity == 0) {
+			return false;
+		}
+	}
+
 	// else
 	return true;
 }

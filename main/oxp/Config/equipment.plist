@@ -411,6 +411,20 @@
 		}
 	),
 
+	(
+		6, 20000, "In-flight refuelling system",
+		"EQ_SOTW_REFUEL_INFLIGHT",
+		"Allows you to transfer a barrel of witchdrive fuel from your hold to your fuel tank while in flight. Uses '[oolite_key_activate_equipment]' to start transferring, and '[oolite_key_mode_equipment]' to stop transfers in emergencies. Injector use will not be possible while transfers are in progress.",
+		{
+			available_to_all = true;
+			condition_script = "sotw-conditions.js";
+			script = "sotw-equipment-refueller.js";
+			script_info = {
+				"sotw_esuse" = 180;
+			};
+		}
+	),
+
 /* Weapons */
     (
 		1, 1000, "Light Missile",

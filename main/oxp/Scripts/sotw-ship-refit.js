@@ -122,7 +122,7 @@ this._evaluateRefit = function() {
 
 
 this._evaluateOtherEquipment = function() {
-	var key, keys = ["EQ_SOTW_COMBAT_COMPUTER","EQ_SOTW_NAVIGATION_COMPUTER"];
+	var key, keys = ["EQ_SOTW_COMBAT_COMPUTER","EQ_SOTW_NAVIGATION_COMPUTER","EQ_SOTW_REFUEL_INFLIGHT"];
 	
 	while (key = keys.shift()) {
 		var eqs = player.ship.equipmentStatus(key,true);
