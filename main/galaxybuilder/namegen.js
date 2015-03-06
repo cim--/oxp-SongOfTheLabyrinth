@@ -42,7 +42,7 @@
 		"Paradise","Utopia","Dreamland","Eternity","Enchantment","Harmony","Serenity","Tranquility","Sanctuary","Beauty","Bliss","Delight","Gift","Reward"
 	];
 	var brightConcepts = [
-		"Eye","Life","Light","Jewel","Gem","Chance","Hope","Breath","Orb","Marble","Wanderer","Beacon","Gleam","Harvest","Earth","Air","Soul","Heart","Spirit","Force","Mover","Traveller","Fortune","Faith","Radiance","Shine","Aurora","Mirror"
+		"Eye","Life","Light","Jewel","Gem","Chance","Hope","Breath","Orb","Marble","Wanderer","Beacon","Gleam","Harvest","Earth","Air","Soul","Heart","Spirit","Force","Mover","Traveller","Fortune","Faith","Radiance","Shine","Aurora","Mirror","Illumination"
 	];
 	var greenConcepts = [
 		"Land","Grove","Wilds","Haven","Shelter","Home","Terminus","Settlement","Colony","Outpost","Work","Bond","Port"
@@ -89,7 +89,7 @@
 		"Choice","Option","Voice","Song","Breath","Majority","Decision","Ballot","Vote","Preference","Score","Council","Senate","Chamber","Legislature","Cabinet","Plebiscite"
 	];
 	var hierarchicalConcepts = [
-		"Order","Throne","Seat","Crown","Sceptre","Seal","Orb","Sphere","Command","Supremacy","Stand","Citadel","Fortress","Leadership","Royal","Might","Victory","Empire","Tribute"
+		"Order","Throne","Seat","Crown","Sceptre","Seal","Orb","Sphere","Command","Supremacy","Stand","Dominion","Jurisdiction","Citadel","Fortress","Leadership","Royal","Might","Victory","Empire","Tribute","Privilege","Reign"
 	];
 	var collectiveConcepts = [
 		"Unity","Unison","Harmony","Equity","Liberty","Labour","Work","Accord","Collective","Equality","Community","Society","Peace","Tenacity","Help","Support","Union","Commonwealth","Commons","Combine","Camaradarie","Comrades","Solidarity"
@@ -155,7 +155,7 @@
 	];
 
 	var militaryConcepts = [
-		"Fortress","Citadel","Battlement","Redoubt","Castle","Stronghold","Bastion","Keep","Sword","Spear","Shield","Stand","Surety","Glory","Fury","Courage","Tower","Colossus","Triumph","Bulwark","Guard","Vanguard","Valor","Bombard","Cordon","Gate","Fortification","Donjon","Acropolis","Garrison","Camp","Encampment","Barracks","Wall","Barrier","Barricade","Rampart","Parapet","Palisade","Screen","Pillar","Alcázar","Bailey","Enceinte","Portcullis","Barbican","Ward"
+		"Fortress","Citadel","Battlement","Redoubt","Castle","Stronghold","Bastion","Keep","Sword","Spear","Shield","Stand","Surety","Glory","Fury","Courage","Tower","Colossus","Triumph","Bulwark","Guard","Vanguard","Valor","Bombard","Cordon","Gate","Fortification","Donjon","Acropolis","Garrison","Camp","Encampment","Barracks","Wall","Barrier","Barricade","Rampart","Parapet","Palisade","Screen","Pillar","Alcázar","Bailey","Enceinte","Portcullis","Barbican","Ward","Dominion","Authorisation"
 	];
 
 	var originConcepts = [
@@ -175,7 +175,7 @@
 	];
 
 	var regionalConcepts = [
-		"Cluster","Nebula","Reach","Stars","Suns","District","Domain","Zone","Discovery","Battlefield","Constellation","Borders","Outlands","Halo","Sweep","Margin","Forge","Asterism","Foundry","Prospect","Retreat","Links","Heights","Ports","Stations","Cloister","Group","Watchers","Observers","Cauldron","Sparks"
+		"Cluster","Nebula","Reach","Stars","Suns","District","Domain","Zone","Discovery","Battlefield","Constellation","Borders","Outlands","Halo","Sweep","Margin","Forge","Asterism","Foundry","Prospect","Retreat","Links","Heights","Ports","Stations","Cloister","Group","Watchers","Observers","Cauldron","Sparks","Realm","District"
 	];
 
 	var pairConcepts = [
@@ -185,7 +185,7 @@
 		"Triangle","Arc","Trio","Triad","Triumvirate","Trinity","Corridor"
 	];
 	var quadConcepts = [
-		"Square","Tetrad","Crossroad","Quartet"
+		"Square","Tetrad","Crossroad","Quartet","Enclave"
 	];
 	var biggroupConcepts = [
 		"Region","Sector","Environs","Web","Net","Network","Weave"

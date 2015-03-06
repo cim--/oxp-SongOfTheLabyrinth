@@ -10,7 +10,7 @@
 		"ba","be","bi","bo","bu","by",
 		"ca","ce","ci","co",
 		"da","de","di","do","du","dy",
-		"eb","ec","ed","ef","ee","eg","el","em","en","ep","er","es","et","ev","ex","ez",
+		"eb","ec","ed","ef","eg","el","em","en","ep","er","es","et","ev","ex","ez",
 		"fa","fe","fi","fo",
 		"ga","ge","gi","go","gu","gy",
 		"ha","he","hi","ho","hu",
@@ -20,7 +20,7 @@
 		"la","le","li","lo","lu","ly",
 		"ma","me","mi","mo","mu","my",
 		"na","ne","no",
-		"oa","od","of","og","oh","oi","ol","om","on","oo","op","or","os","ot","ow","ox","oy","oz",
+		"od","of","og","oh","ol","om","on","op","or","os","ot","ow","ox","oy","oz",
 		"pa","pi","po","pu",
 		"qua","que","qui","quo",
 		"ra","re","ri","ro","ru","ry",
@@ -75,9 +75,13 @@
 		"tao","teo","tio","too","two",
 		"far","fer","fir","for","fur",
 		"nda","nde","ndi","ndo","ndu",
+		"nba","nbe","nbo","nbu",
+		"nga","nge","ngo","ngu",
+		"nza","nze","nzo","nzu",
 		"tas","tis","tos","tus",
 		"aft","eft","ift","oft","uft",
-		"man","men","min","mon","mun"
+		"man","men","min","mon","mun",
+		"mna","mno","mnu"
 	];
 
 	var wordmap = {
@@ -306,11 +310,12 @@ console.error(namelist.length);
 				for (j=0;j<phlength;j++) {
 					phstr += preflist[random.rand(preflist.length)];
 				}
-			} while (!phstr.match(/^[aeiouáàéèíìóòúù]+$/));
+				// all bits must mix vowels and consonants
+			} while (phstr.match(/^[aeiouáàéèíìóòúùy]+$/) || phstr.match(/^[^aeiouáàéèíìóòúùy]+$/));
 			prefbits.push(phstr);
 		}
 		speciesInfo[spec].wordBits = prefbits;
-//		console.error(spec+" has bit list "+prefbits);
+		console.error(spec+" has bit list "+prefbits);
 	}
 
 	species.generateNameLists = function(spec,random) {

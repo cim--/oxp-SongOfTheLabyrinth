@@ -1366,6 +1366,7 @@
 					{ key: "BFLUJ-JHAB10", text: "Having proved that their unconventional form of government could be sustainable, many more sympathisers joined the colony, with construction of %N %Y beginning in %D7 to house the increasing population.", condition: info.politics.governmentCategory == "Atypical" },
 					{ key: "BFLUJ-JHAB11", text: "%U system's economically important position attracted many more settlers to the system as intersystem trade networks began to predominate in the late post-unification period.", condition: info.bottle > 0 },
 					{ key: "BFLUJ-JHAB12", text: "%H continued to be a popular settlement throughout the late post-unification period.", condition: info.colony.stage >= 3 },
+					{ key: "BFLUJ-JHAB13", text: "A political alliance with a "+sn+" group in %D7 led to major expansion of the system.", condition: info.politics.governmentCategory == "Hierarchical" },
 				];
 				
 				do {
