@@ -678,7 +678,9 @@
 		var needed = planetdata[g][s].economy.productivity;
 		while (needed > 0 && options.length > 0) {
 			var option = options.shift();
-			needed -= option.prod;
+			// can't transfer more than 1 freighter per hour to any
+			// individual system
+			needed -= Math.min(option.prod,3E6);
 			tradeRoutes[g].push({from: s, to: option.id});
 		}
 		if (needed > 0) {
@@ -698,7 +700,7 @@
 		var acc = 0;
 		for (var i=tradeRoutes[g].length-1;i>=0;i--) {
 			if (tradeRoutes[g][i].to == s) {
-				acc += planetdata[g][tradeRoutes[g][i].from].economy.productivity;
+				acc += Math.min(planetdata[g][tradeRoutes[g][i].from].economy.productivity,3E6);
 			}
 		}
 		var req = planetdata[g][s].economy.productivity/100;

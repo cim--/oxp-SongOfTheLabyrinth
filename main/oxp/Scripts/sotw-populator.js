@@ -17,7 +17,8 @@ this.systemWillPopulate = function() {
 			var rend = route[route.length-1];
 			var rscale = Math.min(
 				System.infoForSystem(galaxyNumber,rstart).productivity,
-				System.infoForSystem(galaxyNumber,rend).productivity
+				System.infoForSystem(galaxyNumber,rend).productivity,
+				3E6 // no individual trade route bigger than 3E6 (match in planetinfo.js in the builder)
 			);
 			this.$tradeRouteTotalWeight += rscale;
 			this.$tradeRoutes.push({
