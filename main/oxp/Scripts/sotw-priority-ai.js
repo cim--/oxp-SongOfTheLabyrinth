@@ -59,6 +59,13 @@ this.startUp = function() {
 
 	lib.prototype.sotw_conditionFreighterResupplierAssigned = function() {
 		var re = this.getParameter("sotw_freighterResupplyShip");
+		if (!re) {
+			// initial population stage only
+			re = this.ship.script.$sotwResupplyShip;
+			if (re && re.isValid) {
+				this.setParameter("sotw_freighterResupplyShip",re);
+			}
+		}
 		if (re && re.isValid && (re.status == "STATUS_IN_FLIGHT" || re.status == "STATUS_LAUNCHING" || re.status == "STATUS_DOCKED")) {
 			return true;
 		} else if (re) {
@@ -70,6 +77,13 @@ this.startUp = function() {
 	// freighter testing if the resupplier is docked
 	lib.prototype.sotw_conditionFreighterResupplierDocked = function() {
 		var re = this.getParameter("sotw_freighterResupplyShip");
+		if (!re) {
+			// initial population stage only
+			re = this.ship.script.$sotwResupplyShip;
+			if (re && re.isValid) {
+				this.setParameter("sotw_freighterResupplyShip",re);
+			}
+		}
 		if (re && re.isValid && (re.status == "STATUS_IN_FLIGHT" || re.status == "STATUS_LAUNCHING" || re.status == "STATUS_DOCKED")) {
 			if (this.ship.speed == 0 && re.speed == 0) {
 				if (this.distance(re) < this.ship.collisionRadius + re.collisionRadius + 20) {
@@ -796,7 +810,9 @@ this.startUp = function() {
 				}
 			}
 		}
-		if (!patrol) {
+		// patrol can be > onpatrol if a ship disappears
+		// so reorganise this one
+		if (!patrol || patrol > onpatrol) {
 			patrol = 1;
 			while (nums.indexOf(patrol) != -1) {
 				++patrol;

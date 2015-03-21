@@ -123,7 +123,7 @@ this._repopulateShuttles = function() {
 }
 
 
-this._setupFreighters = function(pos) {
+this._setupFreighters = function(bpos) {
 	/* 3 million weight is one per hour, but a freighter will probably
 	 * be in the system for several hours - cargo transfers probably
 	 * take ~5 hours for a large freighter, and in-system travel could
