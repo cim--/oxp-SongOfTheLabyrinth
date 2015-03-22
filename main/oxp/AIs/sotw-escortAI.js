@@ -5,6 +5,8 @@ this.name = "SOTW Escort AI";
 this.aiStarted = function() {
 	var ai = new worldScripts["oolite-libPriorityAI"].PriorityAIController(this.ship);
 
+	ai.setParameter("oolite_flag_sendsDistressCalls",true);
+
 	/* Mostly this is the same as the core Oolite one, *except* that
 	 * the escort green flight behaviour is a template, not a
 	 * behaviour, to allow for more sophistication later. */

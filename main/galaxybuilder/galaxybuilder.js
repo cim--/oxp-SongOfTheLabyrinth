@@ -2348,7 +2348,7 @@ random.setStart(550000);
 				$.set(i,j,"nebulaCount",random.rand(500)+300);
 				$.set(i,j,"nebulaColours",[random.randf()/5,random.randf()/5,random.randf()/5,random.randf()/5,random.randf()/5,random.randf()/5]);
 			} else {
-				$.set(i,j,"starCount",random.rand(5000)+8000);
+				$.set(i,j,"starCount",random.rand(10000)+10000);
 				$.set(i,j,"nebulaCount",random.rand(50)+25);
 				$.set(i,j,"nebulaColours",[]);
 			}

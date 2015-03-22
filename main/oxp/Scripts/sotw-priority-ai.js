@@ -505,6 +505,7 @@ this.startUp = function() {
 			coms = coma;
 			coma = tmp;
 		}
+		log(this.name,"Station to responding to distress call: Sender "+sender+" has faction "+coms+", Aggressor "+aggressor+" has faction "+coma);
 		if (coms >= 0 && coma <= 1) {
 			this.ship.addDefenseTarget(aggressor);
 			if (!this.ship.hasHostileTarget) {
