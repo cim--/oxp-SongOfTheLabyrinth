@@ -161,6 +161,22 @@ this.startUp = function() {
 		return false;
 	};
 
+	lib.prototype.sotw_conditionLocalSpaceClear = function() {
+		var nearby = system.filteredEntities(this, function(e) {
+			return e!=this.ship && e.isShip && !(this.ship.escortGroup.containsShip(e) && this.distance(e) < 2.5E3);
+		}, this.ship, 25E3);
+		// must be nothing nearby except this ship's escorts, and the escorts
+		// must be much closer
+		return (nearby.length == 0);
+	};
+
+
+	lib.prototype.sotw_conditionMothershipUsingTorus = function() {
+		var t = this.ship.group.leader.AIScript.oolite_priorityai.getParameter("sotw_torusEffect");
+		return (t && t.isValid);
+	};
+
+
 	lib.prototype.sotw_conditionMainTradingStationExists = function() {
 		/* TODO: more than just one station linked to main market */
 		return this.friendlyStation(system.mainStation);
@@ -474,6 +490,30 @@ this.startUp = function() {
 		this.ship.performFaceDestination();
 	};
 
+
+	lib.prototype.sotw_behaviourTorusToDestination = function() {
+		var t = this.getParameter("sotw_torusEffect");
+		if (!(t&&t.isValid)) {
+			var torus = system.addVisualEffect("sotw-torus-effect",this.ship.position);
+			torus.script.$ship = this.ship;
+			torus.script.$destination = this.ship.destination;
+			torus.script.$maxSpeed = this.ship.maxSpeed * 32;
+			this.setParameter("sotw_torusEffect",torus);
+		}
+		var handlers = {};
+		this.responsesAddStandard(handlers);
+		this.applyHandlers(handlers);
+		this.ship.performFaceDestination();
+	};
+
+
+	lib.prototype.sotw_behaviourEscortTorus = function() {
+		var handlers = {};
+		this.responsesAddStandard(handlers);
+		this.applyHandlers(handlers);
+		this.ship.performStop();
+	};
+
 	/* -- Station behaviours */
 
 	lib.prototype.sotw_behaviourStationFight = function() {
@@ -570,6 +610,8 @@ this.startUp = function() {
 		this.responsesAddStation(handlers);
 		this.applyHandlers(handlers);
 	};
+
+
 
 
 	/* Utils */
@@ -684,16 +726,32 @@ this.startUp = function() {
 	/* Templates */
 
 	lib.prototype.sotw_templateApproachStation = function() {
-		/* TODO: torus drive support */
 		return [
 			{
 				label: "Approach station",
 				configuration: this.configurationSetDestinationToSelectedStation,
+				truebranch: this.sotw_templateTravelToDestination()
+			}
+		];
+	};
+
+
+	lib.prototype.sotw_templateTravelToDestination = function() {
+		return [
+			{
+				label: "Approach destination normally",
+				notcondition: this.sotw_conditionLocalSpaceClear,
 				behaviour: this.behaviourApproachDestination,
+				reconsider: 30
+			},
+			{
+				label: "Approach destination on torus",
+				behaviour: this.sotw_behaviourTorusToDestination,
 				reconsider: 30
 			}
 		];
 	};
+
 
 
 	lib.prototype.sotw_templateResupplyOperation = function() {
@@ -785,6 +843,11 @@ this.startUp = function() {
 
 	lib.prototype.sotw_templateEscortMothership = function() {
 		return [
+			{
+				condition: this.sotw_conditionMothershipUsingTorus,
+				behaviour: this.sotw_behaviourEscortTorus,
+				reconsider: 5
+			},
 			{
 				behaviour: this.behaviourEscortMothership,
 				reconsider: 60

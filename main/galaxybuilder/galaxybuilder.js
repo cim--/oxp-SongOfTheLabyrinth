@@ -265,7 +265,9 @@ random.setStart(35000); // guess ~13 total above random numbers max
 
 			planet.surfaceGravity = ((planet.radius/6400)*(0.8+(random.randf()*0.4)));
 
-			planet.zpos = Math.floor((500000*planet.surfaceGravity)+random.rand(100000));
+//			var planetzf = 1E5;
+			var planetzf = 1E6;
+			planet.zpos = Math.floor(planetzf*((5*planet.surfaceGravity)+random.randf()));
 
 			var avel = random.randf()*random.randf()*random.randf()*random.randf();
 			var arv;

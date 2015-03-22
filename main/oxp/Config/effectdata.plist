@@ -1,0 +1,16 @@
+{
+	"sotw-torus-effect" = {
+		"script" = "sotw-torus-effect.js";
+		"subentities" = (
+			{
+				type = "flasher";
+				position = (0,0,0);
+				color = "cyanColor";
+				frequency = 0;
+//				size = 25600;
+				size = 6400;
+			}
+		);
+	};
+
+}

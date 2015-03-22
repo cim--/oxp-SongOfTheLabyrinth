@@ -15,8 +15,6 @@ this.shipSpawned = function() {
 }
 
 
-
-
 this._setScanFromFaction = function() {
 	switch (this.$sotwFaction) {
 	case "debris":
