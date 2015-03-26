@@ -2,7 +2,7 @@
 	/* Fighters */
 
 	/* Firangi. Uses Mamba for now */
-	"sotw-firangi-template" = {
+	"sotl-firangi-template" = {
 		"is_template" = 1;
 		
 		// Model-specific keys
@@ -126,18 +126,18 @@
 		weapon_facings = 3;
 
 		"script_info" = {
-			"sotw_mass" = 480;
-			"sotw_des" = 140;
-			"sotw_es" = 850;
-			"sotw_npc_popval" = 3;
-			"sotw_standard_fit" = ("2:1:0:0","2:2:0:0","5:0:0:0","5:0:0:0","0:2:0:0","0:0");
+			"sotl_mass" = 480;
+			"sotl_des" = 140;
+			"sotl_es" = 850;
+			"sotl_npc_popval" = 3;
+			"sotl_standard_fit" = ("2:1:0:0","2:2:0:0","5:0:0:0","5:0:0:0","0:2:0:0","0:0");
 		};
 
 	};
 
-	"sotw-firangi-npc" = {
-		"like_ship" = "sotw-firangi-template";
-		"roles" = "sotw-fighter-superiority sotw-fighter-escort";
+	"sotl-firangi-npc" = {
+		"like_ship" = "sotl-firangi-template";
+		"roles" = "sotl-fighter-superiority sotl-fighter-escort";
 		max_flight_speed = 350;
 		max_flight_pitch = 1.0;
 		max_flight_roll = 2.0;
@@ -146,12 +146,12 @@
 		max_energy = 460; // 166 + 166 + 128
 		energy_recharge_rate = 2.2;
 		hyperspace_motor = no;
-		forward_weapon_type = "EQ_WEAPON_SOTW_LIGHTPULSE";
+		forward_weapon_type = "EQ_WEAPON_SOTL_LIGHTPULSE";
 
 	};
 
-	"sotw-firangi-player" = {
-		"like_ship" = "sotw-firangi-template";
+	"sotl-firangi-player" = {
+		"like_ship" = "sotl-firangi-template";
 		"roles" = "player";
 		
 	};
@@ -160,7 +160,7 @@
 	/* Short-range transports */
 	
 	/* Lena. Uses Transporter for now */
-	"sotw-lena-template" = {
+	"sotl-lena-template" = {
 		"is_template" = 1;
 		
 		// Model-specific keys
@@ -273,18 +273,18 @@
 		weapon_facings = 3;
 
 		"script_info" = {
-			"sotw_mass" = 1800;
-			"sotw_es" = 1600;
-			"sotw_des" = 350;
-			"sotw_npc_popval" = 6;
-			"sotw_standard_fit" = ("0:4:0:0","0:2:0:0","3:1:0:0","2:1:0:0","0:6:0:0","0:0");
+			"sotl_mass" = 1800;
+			"sotl_es" = 1600;
+			"sotl_des" = 350;
+			"sotl_npc_popval" = 6;
+			"sotl_standard_fit" = ("0:4:0:0","0:2:0:0","3:1:0:0","2:1:0:0","0:6:0:0","0:0");
 		};
 
 	};
 
-	"sotw-lena-npc" = {
-		"like_ship" = "sotw-lena-template";
-		"roles" = "sotw-transport-insystem";
+	"sotl-lena-npc" = {
+		"like_ship" = "sotl-lena-template";
+		"roles" = "sotl-transport-insystem";
 		max_flight_speed = 266;
 		max_flight_pitch = 0.22;
 		max_flight_roll = 0.44;
@@ -296,8 +296,8 @@
 		
 	};
 
-	"sotw-lena-player" = {
-		"like_ship" = "sotw-lena-template";
+	"sotl-lena-player" = {
+		"like_ship" = "sotl-lena-template";
 		"roles" = "player";
 		
 	};
@@ -306,7 +306,7 @@
 	/* Multi-role traders */
 
 	/* Kodiak. Uses Cobra III for now */
-	"sotw-kodiak-template" = {
+	"sotl-kodiak-template" = {
 		"is_template" = 1;
 
 		// Model-specific keys
@@ -424,18 +424,18 @@
 		weapon_facings = 15;
 
 		"script_info" = {
-			"sotw_mass" = 1600;
-			"sotw_es" = 2200;
-			"sotw_des" = 350;
-			"sotw_npc_popval" = 10;
-			"sotw_standard_fit" = ("0:4:0:0","0:4:0:0","0:4:0:0","0:3:0:0","0:4:0:0","0:0");
+			"sotl_mass" = 1600;
+			"sotl_es" = 2200;
+			"sotl_des" = 350;
+			"sotl_npc_popval" = 10;
+			"sotl_standard_fit" = ("0:4:0:0","0:4:0:0","0:4:0:0","0:3:0:0","0:4:0:0","0:0");
 		};
 
 	};
 
-	"sotw-kodiak-npc" = {
-		"like_ship" = "sotw-kodiak-template";
-		"roles" = "sotw-multirole-trader";
+	"sotl-kodiak-npc" = {
+		"like_ship" = "sotl-kodiak-template";
+		"roles" = "sotl-multirole-trader";
 		max_flight_speed = 300;
 		max_flight_pitch = 0.62;
 		max_flight_roll = 1.24;
@@ -448,8 +448,8 @@
 		
 	};
 
-	"sotw-kodiak-player" = {
-		"like_ship" = "sotw-kodiak-template";
+	"sotl-kodiak-player" = {
+		"like_ship" = "sotl-kodiak-template";
 		"roles" = "player";
 		
 	};
@@ -458,7 +458,7 @@
 	/* Freighters */
 
 	/* Charolais: uses Boa for now */
-	"sotw-charolais-template" = {
+	"sotl-charolais-template" = {
 		"is_template" = 1;
 
 		// Model-specific keys
@@ -579,18 +579,18 @@
 		weapon_facings = 15;
 
 		"script_info" = {
-			"sotw_mass" = 30000;
-			"sotw_es" = 6000;
-			"sotw_des" = 1750;
-			"sotw_npc_popval" = 45;
-			"sotw_standard_fit" = ("0:0:5:0","0:0:2:0","0:2:0:0","0:4:0:0","0:0:5:0","1:0");
+			"sotl_mass" = 30000;
+			"sotl_es" = 6000;
+			"sotl_des" = 1750;
+			"sotl_npc_popval" = 45;
+			"sotl_standard_fit" = ("0:0:5:0","0:0:2:0","0:2:0:0","0:4:0:0","0:0:5:0","1:0");
 		};
 
 	};
 
-	"sotw-charolais-npc" = {
-		"like_ship" = "sotw-charolais-template";
-		"roles" = "sotw-freighter";
+	"sotl-charolais-npc" = {
+		"like_ship" = "sotl-charolais-template";
+		"roles" = "sotl-freighter";
 		max_flight_speed = 100;
 		max_flight_pitch = 0.06;
 		max_flight_roll = 0.12;
@@ -602,8 +602,8 @@
 		
 	};
 
-	"sotw-charolais-player" = {
-		"like_ship" = "sotw-charolais-template";
+	"sotl-charolais-player" = {
+		"like_ship" = "sotl-charolais-template";
 		"roles" = "player";
 		
 	};
@@ -613,8 +613,8 @@
 	
 	/* Outpost station - small station around un- or lightly-inhabited planets */
 	/* Tmp: and everywhere else for now */
-	"sotw-outpost-station" = {
-		ai_type = "sotw-main-stationAI.js"; //tmp
+	"sotl-outpost-station" = {
+		ai_type = "sotl-main-stationAI.js"; //tmp
 		allegiance = "planetary";
 		cargo_type = "CARGO_NOT_CARGO";
 		energy_recharge_rate = 100;
@@ -652,26 +652,26 @@
 		model = "oolite_coriolis.dat";
 		name = "Outpost Station";
 		"requires_docking_clearance" = yes;
-		roles = "sotw-outpost-station station";
+		roles = "sotl-outpost-station station";
 		rotating = no;
 		scan_class = "CLASS_STATION";
-		script = "sotw-station-script.js";
+		script = "sotl-station-script.js";
 		subentities = 
 		( 
 			{ 
-				subentity_key = "sotw_outpost_faceplate"; 
+				subentity_key = "sotl_outpost_faceplate"; 
 				orientation = (1, 0, 0, 0); 
 				position = (0, 0, 0);
 				is_dock = false;						
 			},
 			{ 
-				subentity_key = "sotw_outpost_tris"; 
+				subentity_key = "sotl_outpost_tris"; 
 				orientation = (1, 0, 0, 0); 
 				position = (0, 0, 0); 
 				is_dock = false;
 			},
 			{ 
-				subentity_key = "sotw_outpost_dock"; 
+				subentity_key = "sotl_outpost_dock"; 
 				orientation = (1, 0, 0, 0);
 				position = (0, 0, 500.2561);
 				is_dock = true; 
@@ -793,7 +793,7 @@
 		weapon_energy = 0;
 	};
 
-	"sotw_outpost_faceplate" = 
+	"sotl_outpost_faceplate" = 
 	{
 		materials = 
 		{ 
@@ -813,7 +813,7 @@
 		name = "Coriolis Faceplate";
 		smooth = 0;
 	};
-	"sotw_outpost_tris" = 
+	"sotl_outpost_tris" = 
 	{ 
 		materials = 
 		{ 
@@ -833,7 +833,7 @@
 		name = "Coriolis Triangle faces";    
 		smooth = 0;
 	};	
-	"sotw_outpost_dock" = 
+	"sotl_outpost_dock" = 
 	{
 		materials = 
 		{ 

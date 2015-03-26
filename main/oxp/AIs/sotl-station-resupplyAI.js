@@ -5,15 +5,15 @@ this.name = "Station Resupply AI";
 this.aiStarted = function() {
 	var ai = new worldScripts["oolite-libPriorityAI"].PriorityAIController(this.ship);
 
-	ai.setCommunicationsRole("sotw_stationResupply");
+	ai.setCommunicationsRole("sotl_stationResupply");
 
 
 	if (this.ship.position.distanceTo(this.ship.group.leader) > 8E3) {
 		// already resupplying
-		ai.setParameter("sotw_resupplyLevel",Math.ceil(Math.random()*this.ship.cargoSpaceCapacity));
+		ai.setParameter("sotl_resupplyLevel",Math.ceil(Math.random()*this.ship.cargoSpaceCapacity));
 	} else {
 		// start with full resupply cargo on normal launch
-		ai.setParameter("sotw_resupplyLevel",this.ship.cargoSpaceCapacity);
+		ai.setParameter("sotl_resupplyLevel",this.ship.cargoSpaceCapacity);
 	}
 
 
@@ -26,27 +26,27 @@ this.aiStarted = function() {
 		 */
 		{ // step 4
 			label: "Docked with target?",
-			condition: ai.sotw_conditionResupplierFreighterDocked,
+			condition: ai.sotl_conditionResupplierFreighterDocked,
 			behaviour: ai.behaviourWaitHere,
 			reconsider: 30 // needs to be faster than the freighter
 		},
 		{ // step 3
 			label: "Ready to dock with target?",
-			condition: ai.sotw_conditionResupplyReadyToDock,
-			configuration: ai.sotw_configurationSetResupplyFinalDocking,
+			condition: ai.sotl_conditionResupplyReadyToDock,
+			configuration: ai.sotl_configurationSetResupplyFinalDocking,
 			behaviour: ai.behaviourApproachDestination,
 			reconsider: 30 // this reconsider is unlikely to be used
 		},
 		{ // step 2
 			label: "Turn to face docking?",
-			condition: ai.sotw_conditionResupplyAtDockingStartPoint,
-			configuration: ai.sotw_configurationSetResupplyMidDocking,
-			behaviour: ai.sotw_behaviourPriorityFaceDestinationForResupplyDock,
+			condition: ai.sotl_conditionResupplyAtDockingStartPoint,
+			configuration: ai.sotl_configurationSetResupplyMidDocking,
+			behaviour: ai.sotl_behaviourPriorityFaceDestinationForResupplyDock,
 			reconsider: 30 // this reconsider is unlikely to be used
 		},
 		{ // step 1
 			label: "Go to docking start location",
-			configuration: ai.sotw_configurationSetResupplyBeginDocking,
+			configuration: ai.sotl_configurationSetResupplyBeginDocking,
 			behaviour: ai.behaviourApproachDestination,
 			reconsider: 30
 		}
@@ -66,7 +66,7 @@ this.aiStarted = function() {
 		},
 		{
 			label: "Check resupply mission",
-			condition: ai.sotw_conditionHasResupplyMission,
+			condition: ai.sotl_conditionHasResupplyMission,
 			// mission complete/failed? return to base
 			// this means it won't try to use remaining cargo
 			// on a different freighter -- it probably didn't have

@@ -1,17 +1,17 @@
 "use strict";
 
-this.name = "SOTW Freighter (Trade Route) AI";
+this.name = "SOTL Freighter (Trade Route) AI";
 
 this.aiStarted = function() {
 	var ai = new worldScripts["oolite-libPriorityAI"].PriorityAIController(this.ship);
 
 	ai.setParameter("oolite_flag_sendsDistressCalls",true);
 
-	if (this.ship.script.$sotwPersonalVector) {
-		ai.setParameter("sotw_personalVector",this.ship.script.$sotwPersonalVector);
+	if (this.ship.script.$sotlPersonalVector) {
+		ai.setParameter("sotl_personalVector",this.ship.script.$sotlPersonalVector);
 	}
-	if (this.ship.script.$sotwResupplyShip) {
-		ai.setParameter("sotw_freighterResupplyShip",this.ship.script.$sotwFreighterResupplyShip);
+	if (this.ship.script.$sotlResupplyShip) {
+		ai.setParameter("sotl_freighterResupplyShip",this.ship.script.$sotlFreighterResupplyShip);
 		for (var i=0;i<system.stations.length;i++) {
 			if (system.stations[i].position.distanceTo(this.ship) < 15E3) {
 				// make sure freighters added ready to resupply don't run away
@@ -24,22 +24,22 @@ this.aiStarted = function() {
 
 	if (system.info.population > 0) {
 		if (system.ID == this.ship.destinationSystem) {
-			ai.setParameter("sotw_freighterObjective","TRADE");
-			ai.setParameter("sotw_resupplyLevel",this.ship.cargoSpaceCapacity);
+			ai.setParameter("sotl_freighterObjective","TRADE");
+			ai.setParameter("sotl_resupplyLevel",this.ship.cargoSpaceCapacity);
 		} else if (system.ID == this.ship.homeSystem) {
-			ai.setParameter("sotw_freighterObjective","TRADE");
+			ai.setParameter("sotl_freighterObjective","TRADE");
 			if (this.ship.position.magnitude() < 25E3) {
 				// this freighter is about to begin a trade route
-				ai.setParameter("sotw_resupplyLevel",this.ship.cargoSpaceCapacity);
+				ai.setParameter("sotl_resupplyLevel",this.ship.cargoSpaceCapacity);
 			} else {
-				ai.setParameter("sotw_resupplyLevel",Math.floor(Math.random()*this.ship.cargoSpaceCapacity));
+				ai.setParameter("sotl_resupplyLevel",Math.floor(Math.random()*this.ship.cargoSpaceCapacity));
 			}
 		} else {
-			ai.setParameter("sotw_freighterObjective","RESUPPLY");
-			ai.setParameter("sotw_resupplyLevel",1);
+			ai.setParameter("sotl_freighterObjective","RESUPPLY");
+			ai.setParameter("sotl_resupplyLevel",1);
 		}
 	} else {
-		ai.setParameter("sotw_freighterObjective","TRAVEL");
+		ai.setParameter("sotl_freighterObjective","TRAVEL");
 	}
 
 	/* Resupply:
@@ -53,31 +53,31 @@ this.aiStarted = function() {
 	var pri_resupply = [
 		{
 			label: "Resupply complete?",
-			notcondition: ai.sotw_conditionNeedsResupply,
-			configuration: ai.sotw_configurationFreighterObjectiveTravel,
+			notcondition: ai.sotl_conditionNeedsResupply,
+			configuration: ai.sotl_configurationFreighterObjectiveTravel,
 			behaviour: ai.behaviourWaitHere,
 			reconsider: 120 // let the resupply ship get clear
 		},
 		{
 			label: "Station nearby?",
 			condition: ai.conditionSelectedStationNearby,
-			truebranch: ai.sotw_templateResupplyOperation()
+			truebranch: ai.sotl_templateResupplyOperation()
 		},
 		{
 			label: "Approach station?",
 			condition: ai.conditionHasSelectedStation,
-			truebranch: ai.sotw_templateApproachStation()
+			truebranch: ai.sotl_templateApproachStation()
 		},
 		{
 			label: "Select station",
-			condition: ai.sotw_conditionRefuellingStationExists,
-			configuration: ai.sotw_configurationSelectRefuellingStation,
-			truebranch: ai.sotw_templateApproachStation()
+			condition: ai.sotl_conditionRefuellingStationExists,
+			configuration: ai.sotl_configurationSelectRefuellingStation,
+			truebranch: ai.sotl_templateApproachStation()
 		},
 		{
 			label: "Panic",
 			// no refuelling possible here - move on
-			configuration: ai.sotw_configurationFreighterObjectiveTravel,
+			configuration: ai.sotl_configurationFreighterObjectiveTravel,
 			behaviour: ai.behaviourWaitHere,
 			reconsider: 5 
 		}	
@@ -103,31 +103,31 @@ this.aiStarted = function() {
 	var pri_trade = [
 		{
 			label: "Select trade route",
-			notcondition: ai.sotw_conditionNeedsResupply,
-			configuration: ai.sotw_configurationFreighterNewTradeRoute,
+			notcondition: ai.sotl_conditionNeedsResupply,
+			configuration: ai.sotl_configurationFreighterNewTradeRoute,
 			behaviour: ai.behaviourWaitHere,
 			reconsider: 120 // let the resupply ship get clear
 		},
 		{
 			label: "Resupply at station",
 			condition: ai.conditionSelectedStationNearby,
-			truebranch: ai.sotw_templateResupplyOperation()
+			truebranch: ai.sotl_templateResupplyOperation()
 		},
 		{
 			label: "Approach station",
 			condition: ai.conditionHasSelectedStation,
-			truebranch: ai.sotw_templateApproachStation()
+			truebranch: ai.sotl_templateApproachStation()
 		},
 		{
 			label: "Select station",
-			condition: ai.sotw_conditionMainTradingStationExists,
-			configuration: ai.sotw_configurationSelectMainTradingStation,
-			truebranch: ai.sotw_templateApproachStation()
+			condition: ai.sotl_conditionMainTradingStationExists,
+			configuration: ai.sotl_configurationSelectMainTradingStation,
+			truebranch: ai.sotl_templateApproachStation()
 		},
 		{
 			label: "Panic",
 			// no trading possible here - panic!
-			configuration: ai.sotw_configurationFreighterAbortMission,
+			configuration: ai.sotl_configurationFreighterAbortMission,
 			behaviour: ai.behaviourWaitHere,
 			reconsider: 5 
 		}	
@@ -144,19 +144,19 @@ this.aiStarted = function() {
 	var pri_travel = [
 		{
 			label: "Jump to next system",
-			preconfiguration: ai.sotw_configurationSetTradeRouteNextSystem,
-			condition: ai.sotw_conditionHasFuelForJump,
-			truebranch: ai.sotw_templateMakeWitchspaceJump()
+			preconfiguration: ai.sotl_configurationSetTradeRouteNextSystem,
+			condition: ai.sotl_conditionHasFuelForJump,
+			truebranch: ai.sotl_templateMakeWitchspaceJump()
 		},
 		{
 			label: "Refuel",
-			condition: ai.sotw_conditionHasFuelAboard,
-			truebranch: ai.sotw_templateRefuelInFlight()
+			condition: ai.sotl_conditionHasFuelAboard,
+			truebranch: ai.sotl_templateRefuelInFlight()
 		},
 		{
 			label: "Panic",
 			// out of fuel supplies - panic!
-			configuration: ai.sotw_configurationFreighterAbortMission,
+			configuration: ai.sotl_configurationFreighterAbortMission,
 			behaviour: ai.behaviourWaitHere,
 			reconsider: 5 
 		}
@@ -194,27 +194,27 @@ this.aiStarted = function() {
 		},
 		{
 			label: "Try to resupply",
-			condition: ai.sotw_conditionFreighterWantsToResupply,
+			condition: ai.sotl_conditionFreighterWantsToResupply,
 			truebranch: pri_resupply,
 		}, 
 		{
 			label: "Try to travel",
-			condition: ai.sotw_conditionFreighterWantsToTravel,
+			condition: ai.sotl_conditionFreighterWantsToTravel,
 			truebranch: pri_travel,
 		}, 
 		{
 			label: "Try to trade",
-			condition: ai.sotw_conditionFreighterWantsToTrade,
+			condition: ai.sotl_conditionFreighterWantsToTrade,
 			truebranch: pri_trade,
 		}, 
 		{
 			label: "Try to survive",
-			condition: ai.sotw_conditionFreighterWantsToSurvive,
+			condition: ai.sotl_conditionFreighterWantsToSurvive,
 			truebranch: pri_survive,
 		}, 
 		// emergency fallback if the current objective becomes impossible
 		{
-			configuration: ai.sotw_configurationFreighterAbortMission,
+			configuration: ai.sotl_configurationFreighterAbortMission,
 			behaviour: ai.behaviourReconsider
 		}
 	]);

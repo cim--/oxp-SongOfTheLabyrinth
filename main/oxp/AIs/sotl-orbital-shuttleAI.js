@@ -2,7 +2,7 @@
 
 // so far this is a copy of the Oolite one. Changes are likely to be
 // necessary later.
-this.name = "SOTW Orbital Shuttle AI";
+this.name = "SOTL Orbital Shuttle AI";
 
 this.aiStarted = function() {
 	var ai = new worldScripts["oolite-libPriorityAI"].PriorityAIController(this.ship);

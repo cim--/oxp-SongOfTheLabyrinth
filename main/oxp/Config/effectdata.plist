@@ -1,6 +1,6 @@
 {
-	"sotw-torus-effect" = {
-		"script" = "sotw-torus-effect.js";
+	"sotl-torus-effect" = {
+		"script" = "sotl-torus-effect.js";
 		"subentities" = (
 			{
 				type = "flasher";

@@ -1,4 +1,4 @@
-this.name = "SOTW Populator Script";
+this.name = "SOTL Populator Script";
 
 /* Populator set up */
 
@@ -9,8 +9,8 @@ this.systemWillPopulate = function() {
 	// remake trade routes array
 	this.$tradeRoutes = [];
 	this.$tradeRouteTotalWeight = 0;
-	if (system.info.sotw_economy_onroutes != "") {
-		var routes = system.info.sotw_economy_onroutes.split(";");
+	if (system.info.sotl_economy_onroutes != "") {
+		var routes = system.info.sotl_economy_onroutes.split(";");
 		for (var i=0;i<routes.length;i++) {
 			var route = routes[i].split(",");
 			var rstart = route[0];
@@ -30,19 +30,19 @@ this.systemWillPopulate = function() {
 	}
 	log(this.name,"Trade route density "+this.$tradeRouteTotalWeight);
 
-	system.setPopulator("sotw-witchpoint",{
+	system.setPopulator("sotl-witchpoint",{
 		callback: this._setupWitchpoints.bind(this),
 		priority: 5,
 		location: "WITCHPOINT"
 	});
 
-	system.setPopulator("sotw-main-station",{
+	system.setPopulator("sotl-main-station",{
 		callback: this._setupMainStation.bind(this),
 		priority: 10,
 		location: "STATION_AEGIS"
 	});
 
-	system.setPopulator("sotw-traderoute-freighters",{
+	system.setPopulator("sotl-traderoute-freighters",{
 		callback: this._setupFreighters.bind(this),
 		priority: 10,
 		location: "LANE_WP"
@@ -56,7 +56,7 @@ this.systemWillRepopulate = function() {
 		// 10 = uninhabited planet, orbital only
 		this._repopulateShuttles();
 	}
-	if (system.info.sotw_economy_onroutes != "") {
+	if (system.info.sotl_economy_onroutes != "") {
 		// no point if there's no actual routes
 		this._repopulateFreighters();
 	}
@@ -79,20 +79,20 @@ this._setupMainStation = function() {
 	system.mainStation.orientation = new Quaternion().rotateY(Math.PI/2).multiply(system.mainStation.orientation);
 
 	// step 2: patrols
-	var shipStrength = system.info.sotw_system_stability;
-	var shipNumbers = system.info.sotw_system_stability * 2;
+	var shipStrength = system.info.sotl_system_stability;
+	var shipNumbers = system.info.sotl_system_stability * 2;
 
 	for (var i=1;i<=shipNumbers;i++) {
-		var ships = this._addShipsToSpace(this._stationPatrolLocation(system.mainStation,i,shipNumbers),"sotw-fighter-superiority","sotw-station-defense-ship",1,shipStrength);
+		var ships = this._addShipsToSpace(this._stationPatrolLocation(system.mainStation,i,shipNumbers),"sotl-fighter-superiority","sotl-station-defense-ship",1,shipStrength);
 		// group the ship to the station, and set the patrol numbers
 		if (ships) {
 			var ship = ships[0];
 			system.mainStation.group.addShip(ship);
 			ship.group = system.mainStation.group;
-			ship.script.$sotwFaction = system.mainStation.script.$sotwFaction;
-			ship.script.$sotwPatrolZoneNumber = i;
+			ship.script.$sotlFaction = system.mainStation.script.$sotlFaction;
+			ship.script.$sotlPatrolZoneNumber = i;
 			// make sure they don't all go off patrol at once!
-			ship.script.$sotwPopulationPatrolAdjust = Math.random()*3E6;
+			ship.script.$sotlPopulationPatrolAdjust = Math.random()*3E6;
 		}
 	}
 
@@ -113,10 +113,10 @@ this._repopulateShuttles = function() {
 		var station = stations[Math.floor(Math.random()*stations.length)];
 		if (Math.random() < 0.5) {
 			// launch from station
-			this._launchShipsFromStation(station,"sotw-transport-insystem","sotw-shuttle",false,1,10);
+			this._launchShipsFromStation(station,"sotl-transport-insystem","sotl-shuttle",false,1,10);
 		} else {
 			// launch from planet
-			this._launchShipsFromPlanet(system.mainPlanet,station.position.subtract(system.mainPlanet.position).direction(),"sotw-transport-insystem","sotw-shuttle",1,10);
+			this._launchShipsFromPlanet(system.mainPlanet,station.position.subtract(system.mainPlanet.position).direction(),"sotl-transport-insystem","sotl-shuttle",1,10);
 		
 		}
 	}
@@ -143,12 +143,12 @@ this._setupFreighters = function(bpos) {
 				// already at the station, being resupplied
 				var dir = Vector3D.randomDirection();
 				var f = this._addFreighter(system.mainStation.position.add(dir.multiply(12E3)));
-				f.script.$sotwPersonalVector = dir;
+				f.script.$sotlPersonalVector = dir;
 				var r = this._addResupplyShip(system.mainStation.position.add(dir.multiply(12E3)),system.mainStation);
 				r.position = f.position.add(f.vectorUp.multiply((f.boundingBox.y+r.boundingBox.y)/2));
 				r.orientation = f.orientation;
-				f.script.$sotwResupplyShip = r;
-				r.script.$sotwResupplyTarget = f;
+				f.script.$sotlResupplyShip = r;
+				r.script.$sotlResupplyTarget = f;
 				f.addCollisionException(r);
 				// debug
 				r.displayName += " "+Math.floor(Math.random()*10000);
@@ -181,7 +181,7 @@ this._addFreighter = function(position) {
 	// one freighter
 	var gsize = 60;
 	// TODO: if the route *starts* here should handle it a bit differently
-	var ship = this._addShipsToSpace(position,"sotw-freighter","sotw-long-range-trader",1,gsize)[0];
+	var ship = this._addShipsToSpace(position,"sotl-freighter","sotl-long-range-trader",1,gsize)[0];
 	if (ship) {
 		
 		var route = Math.random()*this.$tradeRouteTotalWeight;
@@ -196,12 +196,12 @@ this._addFreighter = function(position) {
 			}
 		}
 		
-		gsize -= ship.scriptInfo.sotw_npc_popval;
+		gsize -= ship.scriptInfo.sotl_npc_popval;
 		while (gsize >= 3) {
 			var eposition = ship.position.add(Vector3D.randomDirection(2000));
-			var escort = this._addShipsToSpace(position,"sotw-fighter-escort","sotw-escort",1,gsize)[0];
+			var escort = this._addShipsToSpace(position,"sotl-fighter-escort","sotl-escort",1,gsize)[0];
 			if (escort) {
-				gsize -= escort.scriptInfo.sotw_npc_popval;
+				gsize -= escort.scriptInfo.sotl_npc_popval;
 				
 				escort.offerToEscort(ship);
 
@@ -215,11 +215,11 @@ this._addFreighter = function(position) {
 };
 
 this._addResupplyShip = function(position,station) {
-	var ship = this._addShipsToSpace(position,"sotw-transport-insystem","sotw-freighter-resupply",1,10)[0];
+	var ship = this._addShipsToSpace(position,"sotl-transport-insystem","sotl-freighter-resupply",1,10)[0];
 //	log("Resupply ship","=>"+ship);
 	station.group.addShip(ship);
 	ship.group = station.group;
-	ship.script.$sotwFaction = station.script.$sotwFaction;
+	ship.script.$sotlFaction = station.script.$sotlFaction;
 	return ship;
 };
 
@@ -229,13 +229,13 @@ this._addResupplyShip = function(position,station) {
 
 this.uninhabitedSystemWillPopulate = function() {
 	
-	system.setPopulator("sotw-witchpoint",{
+	system.setPopulator("sotl-witchpoint",{
 		callback: this._setupWitchpoints,
 		priority: 5,
 		location: "WITCHPOINT"
 	});
 
-	system.setPopulator("sotw-main-station",{
+	system.setPopulator("sotl-main-station",{
 		callback: function() {
 			if (player.ship.dockedStation == system.mainStation) {
 				// shouldn't be necessary
@@ -260,12 +260,12 @@ this.uninhabitedSystemWillPopulate = function() {
 this.$shipClassCache = {};
 // like autoAI
 this.$aiMap = {
-	"sotw-station-defense-ship": "sotw-station-defenseAI.js",
-	"sotw-station-defense-platform": "sotw-station-defenseAI.js",
-	"sotw-shuttle": "sotw-orbital-shuttleAI.js",
-	"sotw-escort": "sotw-escortAI.js",
-	"sotw-long-range-trader": "sotw-traderoute-freighterAI.js",
-	"sotw-freighter-resupply": "sotw-station-resupplyAI.js"
+	"sotl-station-defense-ship": "sotl-station-defenseAI.js",
+	"sotl-station-defense-platform": "sotl-station-defenseAI.js",
+	"sotl-shuttle": "sotl-orbital-shuttleAI.js",
+	"sotl-escort": "sotl-escortAI.js",
+	"sotl-long-range-trader": "sotl-traderoute-freighterAI.js",
+	"sotl-freighter-resupply": "sotl-station-resupplyAI.js"
 };
 
 this._launchShipFromStation = function(station, shipRole) {
@@ -291,7 +291,7 @@ this._buildClassCache = function(shipClass) {
 		var entry = { 
 			key: keys[i],
 			keyRole: "["+keys[i]+"]",
-			cost: Ship.shipDataForKey(keys[i]).script_info.sotw_npc_popval
+			cost: Ship.shipDataForKey(keys[i]).script_info.sotl_npc_popval
 		};
 		result.push(entry);
 	}
@@ -333,7 +333,7 @@ this._launchShipsFromStation = function(station,shipClass,shipRole,groupToStatio
 			if (groupToStation) {
 				station.group.addShip(ship);
 				ship.group = station.group;
-				ship.script.$sotwFaction = station.script.$sotwFaction;
+				ship.script.$sotlFaction = station.script.$sotlFaction;
 			}
 		}
 	}

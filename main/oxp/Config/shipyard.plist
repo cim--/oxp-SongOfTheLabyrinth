@@ -1,5 +1,5 @@
 {
-	"sotw-kodiak-player" = {
+	"sotl-kodiak-player" = {
 		chance = 0.5;
 		optional_equipment = ();
 		price = 100000;
@@ -13,7 +13,7 @@
 		"weapon_facings" = 15;
 	};
 
-	"sotw-lena-player" = {
+	"sotl-lena-player" = {
 		chance = 0.5;
 		optional_equipment = ();
 		price = 75000;
@@ -27,7 +27,7 @@
 		"weapon_facings" = 3;
 	};
 
-	"sotw-firangi-player" = {
+	"sotl-firangi-player" = {
 		chance = 0.5;
 		optional_equipment = ();
 		price = 20000;
@@ -42,7 +42,7 @@
 	};
 
 
-	"sotw-charolais-player" = {
+	"sotl-charolais-player" = {
 		chance = 0.5;
 		optional_equipment = ();
 		price = 300000;

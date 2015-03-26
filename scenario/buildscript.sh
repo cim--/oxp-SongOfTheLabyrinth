@@ -1,5 +1,5 @@
 #!/bin/bash -ex
 
-OXPNAME=Template
+OXPNAME=Song_of_the_Labyrinth_Startup
 VERSION=1.0
 . ../buildscript.common

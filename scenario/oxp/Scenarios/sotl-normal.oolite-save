@@ -35,32 +35,32 @@
 	<real>258427.1015625</real>
     </array>
     <key>docked_station_role</key>
-    <string>sotw-outpost-station</string>
+    <string>sotl-outpost-station</string>
     <key>docking_clearance_protocol</key>
     <false/>
     <key>entity_personality</key>
     <integer>0</integer>
     <key>extra_equipment</key>
     <dict>
-	<key>EQ_SOTW_COMBAT_COMPUTER</key>
+	<key>EQ_SOTL_COMBAT_COMPUTER</key>
 	<integer>1</integer>
-	<key>EQ_SOTW_COMPONENT_CAPACITOR2</key>
+	<key>EQ_SOTL_COMPONENT_CAPACITOR2</key>
 	<integer>4</integer>
-	<key>EQ_SOTW_COMPONENT_ENGINE2</key>
+	<key>EQ_SOTL_COMPONENT_ENGINE2</key>
 	<integer>4</integer>
-	<key>EQ_SOTW_COMPONENT_GENERATOR2</key>
+	<key>EQ_SOTL_COMPONENT_GENERATOR2</key>
 	<integer>3</integer>
-	<key>EQ_SOTW_COMPONENT_SHIELD2</key>
+	<key>EQ_SOTL_COMPONENT_SHIELD2</key>
 	<integer>4</integer>
-	<key>EQ_SOTW_COMPONENT_THRUSTER2</key>
+	<key>EQ_SOTL_COMPONENT_THRUSTER2</key>
 	<integer>5</integer>
-	<key>EQ_SOTW_COMPONENT_WITCHDRIVE1</key>
+	<key>EQ_SOTL_COMPONENT_WITCHDRIVE1</key>
 	<integer>1</integer>
-	<key>EQ_SOTW_NAVIGATION_COMPUTER</key>
+	<key>EQ_SOTL_NAVIGATION_COMPUTER</key>
 	<integer>1</integer>
     </dict>
     <key>forward_weapon</key>
-    <string>EQ_WEAPON_SOTW_LIGHTPULSE</string>
+    <string>EQ_WEAPON_SOTL_LIGHTPULSE</string>
     <key>found_system_id</key>
     <string>30</string>
     <key>fuel</key>
@@ -74,57 +74,57 @@
     <key>localMarket</key>
     <array>
 	<array>
-	    <string>sotw-narcotics</string>
+	    <string>sotl-narcotics</string>
 	    <integer>0</integer>
 	    <integer>1088</integer>
 	</array>
 	<array>
-	    <string>sotw-fuel</string>
+	    <string>sotl-fuel</string>
 	    <integer>198</integer>
 	    <integer>132</integer>
 	</array>
 	<array>
-	    <string>sotw-shipparts</string>
+	    <string>sotl-shipparts</string>
 	    <integer>109</integer>
 	    <integer>3030</integer>
 	</array>
 	<array>
-	    <string>sotw-machinery</string>
+	    <string>sotl-machinery</string>
 	    <integer>19</integer>
 	    <integer>3026</integer>
 	</array>
 	<array>
-	    <string>sotw-terraforming</string>
+	    <string>sotl-terraforming</string>
 	    <integer>0</integer>
 	    <integer>17125</integer>
 	</array>
 	<array>
-	    <string>sotw-spareparts</string>
+	    <string>sotl-spareparts</string>
 	    <integer>104</integer>
 	    <integer>243</integer>
 	</array>
 	<array>
-	    <string>sotw-plastics</string>
+	    <string>sotl-plastics</string>
 	    <integer>46</integer>
 	    <integer>1669</integer>
 	</array>
 	<array>
-	    <string>sotw-corals</string>
+	    <string>sotl-corals</string>
 	    <integer>14</integer>
 	    <integer>9606</integer>
 	</array>
 	<array>
-	    <string>sotw-fertiliser</string>
+	    <string>sotl-fertiliser</string>
 	    <integer>9</integer>
 	    <integer>427</integer>
 	</array>
 	<array>
-	    <string>sotw-sciequip</string>
+	    <string>sotl-sciequip</string>
 	    <integer>1</integer>
 	    <integer>32644</integer>
 	</array>
 	<array>
-	    <string>sotw-telepresence</string>
+	    <string>sotl-telepresence</string>
 	    <integer>4</integer>
 	    <integer>9037</integer>
 	</array>
@@ -134,87 +134,87 @@
 	    <integer>519</integer>
 	</array>
 	<array>
-	    <string>sotw-luxuries</string>
+	    <string>sotl-luxuries</string>
 	    <integer>21</integer>
 	    <integer>8787</integer>
 	</array>
 	<array>
-	    <string>sotw-ceramics-ind</string>
+	    <string>sotl-ceramics-ind</string>
 	    <integer>42</integer>
 	    <integer>599</integer>
 	</array>
 	<array>
-	    <string>sotw-textiles</string>
+	    <string>sotl-textiles</string>
 	    <integer>61</integer>
 	    <integer>294</integer>
 	</array>
 	<array>
-	    <string>sotw-food-basic</string>
+	    <string>sotl-food-basic</string>
 	    <integer>110</integer>
 	    <integer>328</integer>
 	</array>
 	<array>
-	    <string>sotw-computers-flight</string>
+	    <string>sotl-computers-flight</string>
 	    <integer>0</integer>
 	    <integer>2162</integer>
 	</array>
 	<array>
-	    <string>sotw-tools</string>
+	    <string>sotl-tools</string>
 	    <integer>52</integer>
 	    <integer>425</integer>
 	</array>
 	<array>
-	    <string>sotw-artworks</string>
+	    <string>sotl-artworks</string>
 	    <integer>8</integer>
 	    <integer>1740</integer>
 	</array>
 	<array>
-	    <string>sotw-entertainment</string>
+	    <string>sotl-entertainment</string>
 	    <integer>51</integer>
 	    <integer>347</integer>
 	</array>
 	<array>
-	    <string>sotw-preciousstones</string>
+	    <string>sotl-preciousstones</string>
 	    <integer>19</integer>
 	    <integer>20899</integer>
 	</array>
 	<array>
-	    <string>sotw-furs</string>
+	    <string>sotl-furs</string>
 	    <integer>4</integer>
 	    <integer>1709</integer>
 	</array>
 	<array>
-	    <string>sotw-animals</string>
+	    <string>sotl-animals</string>
 	    <integer>14</integer>
 	    <integer>13930</integer>
 	</array>
 	<array>
-	    <string>sotw-handweapons</string>
+	    <string>sotl-handweapons</string>
 	    <integer>6</integer>
 	    <integer>3754</integer>
 	</array>
 	<array>
-	    <string>sotw-weapons</string>
+	    <string>sotl-weapons</string>
 	    <integer>9</integer>
 	    <integer>10395</integer>
 	</array>
 	<array>
-	    <string>sotw-preciousmetals</string>
+	    <string>sotl-preciousmetals</string>
 	    <integer>16</integer>
 	    <integer>15915</integer>
 	</array>
 	<array>
-	    <string>sotw-computers-research</string>
+	    <string>sotl-computers-research</string>
 	    <integer>2</integer>
 	    <integer>26010</integer>
 	</array>
 	<array>
-	    <string>sotw-medicine</string>
+	    <string>sotl-medicine</string>
 	    <integer>7</integer>
 	    <integer>1390</integer>
 	</array>
 	<array>
-	    <string>sotw-ceramics-art</string>
+	    <string>sotl-ceramics-art</string>
 	    <integer>2</integer>
 	    <integer>563</integer>
 	</array>
@@ -229,47 +229,47 @@
 	    <integer>290</integer>
 	</array>
 	<array>
-	    <string>sotw-computers-basic</string>
+	    <string>sotl-computers-basic</string>
 	    <integer>22</integer>
 	    <integer>1769</integer>
 	</array>
 	<array>
-	    <string>sotw-oil</string>
+	    <string>sotl-oil</string>
 	    <integer>104</integer>
 	    <integer>458</integer>
 	</array>
 	<array>
-	    <string>sotw-ores</string>
+	    <string>sotl-ores</string>
 	    <integer>96</integer>
 	    <integer>617</integer>
 	</array>
 	<array>
-	    <string>sotw-clothes-basic</string>
+	    <string>sotl-clothes-basic</string>
 	    <integer>45</integer>
 	    <integer>298</integer>
 	</array>
 	<array>
-	    <string>sotw-food-luxury</string>
+	    <string>sotl-food-luxury</string>
 	    <integer>20</integer>
 	    <integer>6390</integer>
 	</array>
 	<array>
-	    <string>sotw-sensors</string>
+	    <string>sotl-sensors</string>
 	    <integer>19</integer>
 	    <integer>5983</integer>
 	</array>
 	<array>
-	    <string>sotw-mixed-alloys</string>
+	    <string>sotl-mixed-alloys</string>
 	    <integer>12</integer>
 	    <integer>802</integer>
 	</array>
 	<array>
-	    <string>sotw-plants</string>
+	    <string>sotl-plants</string>
 	    <integer>16</integer>
 	    <integer>4765</integer>
 	</array>
 	<array>
-	    <string>sotw-radiationshield</string>
+	    <string>sotl-radiationshield</string>
 	    <integer>5</integer>
 	    <integer>5202</integer>
 	</array>
@@ -300,7 +300,7 @@
 	<string>[{&quot;destination&quot;:190,&quot;route&quot;:{&quot;distance&quot;:83.20000000000002,&quot;time&quot;:461.44000000000017,&quot;route&quot;:[45,198,102,176,203,232,160,17,70,222,68,147,242,130,86,216,190]},&quot;sender&quot;:&quot;Beti Ataben&quot;,&quot;deadline&quot;:180061514094.40576,&quot;risk&quot;:0,&quot;description&quot;:&quot;Prototype technology&quot;,&quot;payment&quot;:159,&quot;skill&quot;:6.232226009538291},{&quot;destination&quot;:22,&quot;route&quot;:{&quot;distance&quot;:107.2,&quot;time&quot;:583.0400000000003,&quot;route&quot;:[45,198,102,176,203,232,160,17,70,222,68,147,242,130,86,98,175,60,251,206,87,22]},&quot;sender&quot;:&quot;Inquso Thatil&quot;,&quot;deadline&quot;:180060794470.40576,&quot;risk&quot;:2,&quot;description&quot;:&quot;Prototype technology&quot;,&quot;payment&quot;:1234,&quot;skill&quot;:54.2113471950015},{&quot;destination&quot;:117,&quot;route&quot;:{&quot;distance&quot;:46.800000000000004,&quot;time&quot;:228.64000000000004,&quot;route&quot;:[45,198,234,168,214,85,53,31,211,111,117]},&quot;sender&quot;:&quot;Se Nutiouor&quot;,&quot;deadline&quot;:180059542503.40576,&quot;risk&quot;:2,&quot;description&quot;:&quot;Prototype technology&quot;,&quot;payment&quot;:832,&quot;skill&quot;:43.96694356093243}]</string>
 	<key>mission_oolite_contracts_passengers</key>
 	<string>[{&quot;destination&quot;:148,&quot;route&quot;:{&quot;distance&quot;:66.80000000000001,&quot;time&quot;:365.9200000000001,&quot;route&quot;:[45,198,102,176,203,232,160,17,241,235,78,115,220,148]},&quot;species&quot;:&quot;furious Large Feline&quot;,&quot;name&quot;:&quot;Tiisra Ab&quot;,&quot;risk&quot;:2,&quot;deadline&quot;:180059801167.40576,&quot;payment&quot;:6369,&quot;skill&quot;:23.013816521930714,&quot;advance&quot;:2550},{&quot;destination&quot;:32,&quot;route&quot;:{&quot;distance&quot;:85.6,&quot;time&quot;:483.8400000000002,&quot;route&quot;:[45,198,102,176,203,232,160,17,241,235,90,184,178,97,84,146,103,32]},&quot;species&quot;:&quot;calm Human Colonial&quot;,&quot;name&quot;:&quot;Tiitveri Esloen&quot;,&quot;risk&quot;:1,&quot;deadline&quot;:180060072294.40576,&quot;payment&quot;:8689,&quot;skill&quot;:35.45104047086772,&quot;advance&quot;:1435},{&quot;destination&quot;:44,&quot;route&quot;:{&quot;distance&quot;:62.400000000000006,&quot;time&quot;:350.0800000000001,&quot;route&quot;:[45,198,102,176,203,232,160,17,241,235,90,136,44]},&quot;species&quot;:&quot;shy Human Colonial&quot;,&quot;name&quot;:&quot;Thse Garrebairn&quot;,&quot;risk&quot;:1,&quot;deadline&quot;:180059802632.40576,&quot;payment&quot;:1675,&quot;skill&quot;:16.60797125361409,&quot;advance&quot;:344},{&quot;destination&quot;:17,&quot;route&quot;:{&quot;distance&quot;:34.400000000000006,&quot;time&quot;:178.56000000000003,&quot;route&quot;:[45,198,102,176,203,232,160,17]},&quot;species&quot;:&quot;distressed Fierce Yellow Furry Rodent&quot;,&quot;name&quot;:&quot;Enil Ored&quot;,&quot;risk&quot;:0,&quot;deadline&quot;:180058832694.40576,&quot;payment&quot;:1201,&quot;skill&quot;:30.066401283669993,&quot;advance&quot;:83},{&quot;destination&quot;:243,&quot;route&quot;:{&quot;distance&quot;:87.6,&quot;time&quot;:502.2400000000001,&quot;route&quot;:[45,198,102,176,203,232,160,17,70,222,68,147,242,201,100,11,243]},&quot;species&quot;:&quot;worried Human Colonial&quot;,&quot;name&quot;:&quot;Soxeza Goodfire&quot;,&quot;risk&quot;:1,&quot;deadline&quot;:180059994710.40576,&quot;payment&quot;:3763,&quot;skill&quot;:19.379123735972357,&quot;advance&quot;:569},{&quot;destination&quot;:195,&quot;route&quot;:{&quot;distance&quot;:18.400000000000002,&quot;time&quot;:95.68000000000004,&quot;route&quot;:[45,26,156,165,195]},&quot;species&quot;:&quot;friendly Fierce Yellow Furry Rodent&quot;,&quot;name&quot;:&quot;Alxe Seceusse&quot;,&quot;risk&quot;:0,&quot;deadline&quot;:180058962721.40576,&quot;payment&quot;:578,&quot;skill&quot;:19.457562596501617,&quot;advance&quot;:43},{&quot;destination&quot;:191,&quot;route&quot;:{&quot;distance&quot;:95.60000000000002,&quot;time&quot;:538.4000000000002,&quot;route&quot;:[45,198,102,176,203,232,160,17,70,222,89,7,127,231,221,1,192,33,191]},&quot;species&quot;:&quot;hesitant Fierce Yellow Furry Rodent&quot;,&quot;name&quot;:&quot;Beisat Esonor&quot;,&quot;risk&quot;:2,&quot;deadline&quot;:180060359277.40576,&quot;payment&quot;:11084,&quot;skill&quot;:60,&quot;advance&quot;:1042}]</string>
-	<key>mission_sotw_refit_shieldbias</key>
+	<key>mission_sotl_refit_shieldbias</key>
 	<string>-1.3877787807814457e-16</string>
 	<key>mission_trumbles</key>
 	<string>BUY_ME</string>
@@ -320,7 +320,7 @@
     <key>player_name</key>
     <string>Jameson</string>
     <key>player_save_name</key>
-    <string>SOTW</string>
+    <string>SOTL</string>
     <key>port_weapon</key>
     <string>EQ_WEAPON_NONE</string>
     <key>primed_equipment_a</key>
@@ -368,54 +368,54 @@
 	<string>player-unknown</string>
     </array>
     <key>scenario_restriction</key>
-    <string>id:oolite.oxp.cim.sotw.main;exc:trade-goods.plist;exc:world-scripts.plist;exc:equipment.plist;exc:shipdata.plist;exc:shipyard.plist;exc:planetinfo.plist</string>
+    <string>id:oolite.oxp.cim.sotl.main;exc:trade-goods.plist;exc:world-scripts.plist;exc:equipment.plist;exc:shipdata.plist;exc:shipyard.plist;exc:planetinfo.plist</string>
     <key>scripted_planetinfo_overrides</key>
     <dict>
     </dict>
     <key>shipCommodityData</key>
     <array>
 	<array>
-	    <string>sotw-narcotics</string>
+	    <string>sotl-narcotics</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-fuel</string>
+	    <string>sotl-fuel</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-shipparts</string>
+	    <string>sotl-shipparts</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-machinery</string>
+	    <string>sotl-machinery</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-terraforming</string>
+	    <string>sotl-terraforming</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-spareparts</string>
+	    <string>sotl-spareparts</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-plastics</string>
+	    <string>sotl-plastics</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-corals</string>
+	    <string>sotl-corals</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-fertiliser</string>
+	    <string>sotl-fertiliser</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-sciequip</string>
+	    <string>sotl-sciequip</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-telepresence</string>
+	    <string>sotl-telepresence</string>
 	    <integer>0</integer>
 	</array>
 	<array>
@@ -423,71 +423,71 @@
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-luxuries</string>
+	    <string>sotl-luxuries</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-ceramics-ind</string>
+	    <string>sotl-ceramics-ind</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-textiles</string>
+	    <string>sotl-textiles</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-food-basic</string>
+	    <string>sotl-food-basic</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-computers-flight</string>
+	    <string>sotl-computers-flight</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-tools</string>
+	    <string>sotl-tools</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-artworks</string>
+	    <string>sotl-artworks</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-entertainment</string>
+	    <string>sotl-entertainment</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-preciousstones</string>
+	    <string>sotl-preciousstones</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-furs</string>
+	    <string>sotl-furs</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-animals</string>
+	    <string>sotl-animals</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-handweapons</string>
+	    <string>sotl-handweapons</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-weapons</string>
+	    <string>sotl-weapons</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-preciousmetals</string>
+	    <string>sotl-preciousmetals</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-computers-research</string>
+	    <string>sotl-computers-research</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-medicine</string>
+	    <string>sotl-medicine</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-ceramics-art</string>
+	    <string>sotl-ceramics-art</string>
 	    <integer>0</integer>
 	</array>
 	<array>
@@ -499,39 +499,39 @@
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-computers-basic</string>
+	    <string>sotl-computers-basic</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-oil</string>
+	    <string>sotl-oil</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-ores</string>
+	    <string>sotl-ores</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-clothes-basic</string>
+	    <string>sotl-clothes-basic</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-food-luxury</string>
+	    <string>sotl-food-luxury</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-sensors</string>
+	    <string>sotl-sensors</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-mixed-alloys</string>
+	    <string>sotl-mixed-alloys</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-plants</string>
+	    <string>sotl-plants</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotw-radiationshield</string>
+	    <string>sotl-radiationshield</string>
 	    <integer>0</integer>
 	</array>
     </array>
@@ -540,7 +540,7 @@
     <key>ship_clock</key>
     <real>180058771900.1459</real>
     <key>ship_desc</key>
-    <string>sotw-kodiak-player</string>
+    <string>sotl-kodiak-player</string>
     <key>ship_kills</key>
     <integer>0</integer>
     <key>ship_name</key>

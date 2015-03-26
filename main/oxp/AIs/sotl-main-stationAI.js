@@ -1,53 +1,53 @@
 "use strict";
 
-this.name = "SOTW Main Station AI";
+this.name = "SOTL Main Station AI";
 
 this.aiStarted = function() {
 	var ai = new worldScripts["oolite-libPriorityAI"].PriorityAIController(this.ship);
 
 	ai.setParameter("oolite_flag_listenForDistressCall",true);
-	ai.setParameter("sotw_desiredSecurityLevel",system.info.sotw_system_stability*2);
-	ai.setParameter("sotw_defenseShipStrength",system.info.sotw_system_stability);
+	ai.setParameter("sotl_desiredSecurityLevel",system.info.sotl_system_stability*2);
+	ai.setParameter("sotl_defenseShipStrength",system.info.sotl_system_stability);
 
-	ai.setCommunicationsRole("sotw_mainStation");
+	ai.setCommunicationsRole("sotl_mainStation");
 
 	ai.setPriorities([
 		/* Fight */
 		{
 			preconfiguration: ai.configurationStationValidateTarget,
 			condition: ai.conditionInCombat,
-			behaviour: ai.sotw_behaviourStationFight,
+			behaviour: ai.sotl_behaviourStationFight,
 			reconsider: 30
 		},
 		/* Respond to distress calls */
 		{
 			condition: ai.conditionHasReceivedDistressCall,
-			behaviour: ai.sotw_behaviourStationRespondToDistressCall,
+			behaviour: ai.sotl_behaviourStationRespondToDistressCall,
 			reconsider: 20
 		},
 		/* Scan */
 		{
 			preconfiguration: ai.configurationCheckScanner,
-			condition: ai.sotw_conditionScannerContainsHostileFaction,
+			condition: ai.sotl_conditionScannerContainsHostileFaction,
 			configuration: ai.configurationAcquireScannedTarget,
-			behaviour: ai.sotw_behaviourStationWarnOrAttackHostileFaction,
+			behaviour: ai.sotl_behaviourStationWarnOrAttackHostileFaction,
 			reconsider: 60 // long delay to give them time to leave the area
 		},
 		/* Scan */
 		{
 			condition: ai.conditionScannerContainsSalvage,
-			behaviour: ai.sotw_behaviourStationLaunchSalvager,
+			behaviour: ai.sotl_behaviourStationLaunchSalvager,
 			reconsider: 60 // long delay to avoid launching too many at once
 		},
 		{
 			preconfiguration: ai.configurationStationReduceAlertLevel,
-			notcondition: ai.sotw_conditionStationHasEnoughDefense,
-			behaviour: ai.sotw_behaviourStationLaunchDefense,
+			notcondition: ai.sotl_conditionStationHasEnoughDefense,
+			behaviour: ai.sotl_behaviourStationLaunchDefense,
 			reconsider: 60
 		},
 		{
 			configuration: ai.configurationStationReduceAlertLevel,
-			behaviour: ai.sotw_behaviourStationIdle,
+			behaviour: ai.sotl_behaviourStationIdle,
 			reconsider: 60
 		}
 	]);

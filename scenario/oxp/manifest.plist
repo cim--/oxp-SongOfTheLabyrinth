@@ -1,10 +1,10 @@
 {
-	"identifier" = "oolite.oxp.cim.sotw.scenario";
+	"identifier" = "oolite.oxp.cim.sotl.scenario";
 	"required_oolite_version" = "1.81";
-	"title" = "Song of the Witch (starting positions)";
+	"title" = "Song of the Labyrinth (starting positions)";
 	"version" = "0.1";
 	"category" = "Systems";
-	"description" = "The starting positions for the Song of the Witch OXP.";
+	"description" = "The starting positions for the Song of the Labyrinth OXP.";
 	"author" = "cim";
 	"license" = "CC-BY-SA 4.0";
 }

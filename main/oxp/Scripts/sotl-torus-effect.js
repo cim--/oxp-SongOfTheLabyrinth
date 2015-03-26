@@ -1,4 +1,4 @@
-this.name = "SOTW Torus Effect";
+this.name = "SOTL Torus Effect";
 
 this.$ship = null;
 this.$fcb = null;
@@ -48,7 +48,7 @@ this.torusMove = function(delta) {
 this.torusEnd = function() {
 	removeFrameCallback(this.$fcb);
 	if (this.$ship.isValid) {
-		this.$ship.AIScript.oolite_priorityai.setParameter("sotw_torusEffect",null);
+		this.$ship.AIScript.oolite_priorityai.setParameter("sotl_torusEffect",null);
 		this.$ship.AIScript.oolite_priorityai.reconsiderNow();
 	}
 	this.visualEffect.remove();

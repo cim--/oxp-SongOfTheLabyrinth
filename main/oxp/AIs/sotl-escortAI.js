@@ -1,6 +1,6 @@
 "use strict";
 
-this.name = "SOTW Escort AI";
+this.name = "SOTL Escort AI";
 
 this.aiStarted = function() {
 	var ai = new worldScripts["oolite-libPriorityAI"].PriorityAIController(this.ship);
@@ -53,7 +53,7 @@ this.aiStarted = function() {
 		},
 		{
 			condition: ai.conditionIsEscorting,
-			truebranch: ai.sotw_templateEscortMothership()
+			truebranch: ai.sotl_templateEscortMothership()
 		},
 		/* Don't have a mothership */
 		{

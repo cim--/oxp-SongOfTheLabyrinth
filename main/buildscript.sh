@@ -1,6 +1,6 @@
 #!/bin/bash -ex
 
-OXPNAME=Song_of_the_Witch
+OXPNAME=Song_of_the_Labyrinth
 VERSION=1.0
 
 # Build galaxy data

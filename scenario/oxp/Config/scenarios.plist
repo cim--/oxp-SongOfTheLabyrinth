@@ -1,8 +1,8 @@
 (
 	{
-		"file" = "sotw-normal.oolite-save";
-		"name" = "Song of the Witch";
-		"description" = "Song of the Witch is an alternative set of galaxies, ships and game mechanics using the Oolite engine.";
+		"file" = "sotl-normal.oolite-save";
+		"name" = "Song of the Labyrinth";
+		"description" = "Song of the Labyrinth is an alternative set of galaxies, ships and game mechanics using the Oolite engine.";
 		"model" = "asteroid";
 	},
 )

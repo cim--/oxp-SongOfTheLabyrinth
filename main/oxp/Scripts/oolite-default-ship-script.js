@@ -1,7 +1,7 @@
 this.name			= "oolite-default-ship-script";
-// Override of the default ship script for SOTW
+// Override of the default ship script for SOTL
 
-this.$sotwFaction = "independent";
+this.$sotlFaction = "independent";
 
 this.shipSpawned = function() {
 	if (this.ship.scanClass == "CLASS_MISSILE") {
@@ -16,7 +16,7 @@ this.shipSpawned = function() {
 
 
 this._setScanFromFaction = function() {
-	switch (this.$sotwFaction) {
+	switch (this.$sotlFaction) {
 	case "debris":
 		this.ship.scannerDisplayColor1 = [0.7,0.7,0.7];
 		this.ship.scanDescription = "";

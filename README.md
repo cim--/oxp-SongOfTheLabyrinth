@@ -1,6 +1,6 @@
-# Song of the Witch
+# Song of the Labyrinth
 
-Song of the Witch is an Oolite OXP designed to show off some of the
+Song of the Labyrinth is an Oolite OXP designed to show off some of the
 new features coming in 1.82, and demonstrate just how much
 customisation is possible.
 

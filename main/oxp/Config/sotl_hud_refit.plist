@@ -3,7 +3,7 @@
 	dials = (
 		{ // DES use
 			selector = "drawCustomBar:";
-			data_source = "sotw_desuse_bar";
+			data_source = "sotl_desuse_bar";
 			x_origin = -1;
 			y_origin = 0;
 			x = 16;
@@ -18,7 +18,7 @@
 		},
 		{ // ES use
 			selector = "drawCustomBar:";
-			data_source = "sotw_esuse_bar";
+			data_source = "sotl_esuse_bar";
 			x_origin = -1;
 			y_origin = 0;
 			x = 16;
@@ -33,7 +33,7 @@
 		},
 		{ // Speed
 			selector = "drawCustomText:";
-			data_source = "sotw_maxspeed_str";
+			data_source = "sotl_maxspeed_str";
 			x_origin = 1;
 			y_origin = 0;
 			x = -56;
@@ -44,7 +44,7 @@
 		},
 		{ // Turn
 			selector = "drawCustomText:";
-			data_source = "sotw_maxturn_str";
+			data_source = "sotl_maxturn_str";
 			x_origin = 1;
 			y_origin = 0;
 			x = -56;
@@ -55,7 +55,7 @@
 		},
 		{ // F Shield
 			selector = "drawCustomText:";
-			data_source = "sotw_maxfshield_str";
+			data_source = "sotl_maxfshield_str";
 			x_origin = 1;
 			y_origin = 0;
 			x = -56;
@@ -66,7 +66,7 @@
 		},
 		{ // A Shield
 			selector = "drawCustomText:";
-			data_source = "sotw_maxashield_str";
+			data_source = "sotl_maxashield_str";
 			x_origin = 1;
 			y_origin = 0;
 			x = -56;
@@ -77,7 +77,7 @@
 		},
 		{ // Shield bias
 			selector = "drawCustomIndicator:";
-			data_source = "sotw_shieldbias_ind";
+			data_source = "sotl_shieldbias_ind";
 			x_origin = 1;
 			y_origin = 0;
 			x = -40;
@@ -90,7 +90,7 @@
 		},
 		{ // Generator
 			selector = "drawCustomText:";
-			data_source = "sotw_genpower_str";
+			data_source = "sotl_genpower_str";
 			x_origin = 1;
 			y_origin = 0;
 			x = -56;
@@ -101,7 +101,7 @@
 		},
 		{ // Capacitor
 			selector = "drawCustomText:";
-			data_source = "sotw_cappower_str";
+			data_source = "sotl_cappower_str";
 			x_origin = 1;
 			y_origin = 0;
 			x = -56;
@@ -112,7 +112,7 @@
 		},
 		{ // Energy bias
 			selector = "drawCustomIndicator:";
-			data_source = "sotw_genspare_ind";
+			data_source = "sotl_genspare_ind";
 			x_origin = -1;
 			y_origin = 0;
 			x = 48;
@@ -125,7 +125,7 @@
 		},
 		{ // Witchdrive
 			selector = "drawCustomLight:";
-			data_source = "sotw_witchdrive_light";
+			data_source = "sotl_witchdrive_light";
 			x_origin = 1;
 			y_origin = 0;
 			x = -42;
@@ -135,7 +135,7 @@
 		},
 		{ // Galdrive
 			selector = "drawCustomLight:";
-			data_source = "sotw_galdrive_light";
+			data_source = "sotl_galdrive_light";
 			x_origin = 1;
 			y_origin = 0;
 			x = -14;

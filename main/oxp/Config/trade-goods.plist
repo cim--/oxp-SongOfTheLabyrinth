@@ -4,294 +4,294 @@
 	// classes needed in Oolite core
 	"alloys" = {
 		name = "Scrap Metal";
-		classes = ("sotw-ex-salvage","sotw-im-refining","sotw-quantity-high","sotw-priceband-3","sotw-demand-medium","sotw-supply-medium","sotw-volatility-low");
+		classes = ("sotl-ex-salvage","sotl-im-refining","sotl-quantity-high","sotl-priceband-3","sotl-demand-medium","sotl-supply-medium","sotl-volatility-low");
 		comment = "Recycled and salvaged scrap metal is collected for shipping to refineries, where the valuable elements may be extracted for reuse. Fragments of hull plating from derelict ships are usually so damaged that this is the only use for them.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
 	"minerals" = {
 		name = "Rock Fragments";
-		classes = ("sotw-im-asteroidmining","sotw-quantity-medium","sotw-priceband-2","sotw-demand-medium","sotw-supply-low","sotw-volatility-low");
+		classes = ("sotl-im-asteroidmining","sotl-quantity-medium","sotl-priceband-2","sotl-demand-medium","sotl-supply-low","sotl-volatility-low");
 		comment = "Unsorted rock fragments from asteroid mining. Asteroid mining systems will tend to have facilities for breaking these up to extract valuable ores, or the larger mining ships can carry their own.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
 	"slaves" = {
 		name = "Escape Pods";
-		classes = ("sotw-priceband-6","sotw-quantity-bulk","sotw-demand-high","sotw-supply-none","sotw-volatility-none");
+		classes = ("sotl-priceband-6","sotl-quantity-bulk","sotl-demand-high","sotl-supply-none","sotl-volatility-none");
 		comment = "Escape pods ejected from damaged ships. There is a standard fee for rescue of these pods, though in many cases this will be supplemented significantly by a reward.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
 	// normal trade goods
 
-	"sotw-mixed-alloys" = {
+	"sotl-mixed-alloys" = {
 		name = "Mixed Alloys";
-		classes = ("sotw-ex-salvage","sotw-ex-refining","sotw-im-production","sotw-im-shipyard","sotw-im-researchmil","sotw-im-researcheng","sotw-im-researchcomp","sotw-priceband-5","sotw-demand-high","sotw-supply-high","sotw-volatility-low","sotw-quantity-medium");
+		classes = ("sotl-ex-salvage","sotl-ex-refining","sotl-im-production","sotl-im-shipyard","sotl-im-researchmil","sotl-im-researcheng","sotl-im-researchcomp","sotl-priceband-5","sotl-demand-high","sotl-supply-high","sotl-volatility-low","sotl-quantity-medium");
 		comment = "Metal alloys are generally produced from ores in refinery systems, though recycling and salvage also places them on the market. They are continually in demand at production systems and shipyards, as well as by some research institutes.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
-	"sotw-animals" = {
+	"sotl-animals" = {
 		name = "Animals";
-		classes = ("sotw-ex-farming","sotw-ex-colonisation","sotw-exr-nativelife","sotw-im-researchbio","sotw-priceband-13","sotw-demand-low","sotw-supply-medium","sotw-volatility-high","sotw-quantity-low","sotw-specialist-good");
+		classes = ("sotl-ex-farming","sotl-ex-colonisation","sotl-exr-nativelife","sotl-im-researchbio","sotl-priceband-13","sotl-demand-low","sotl-supply-medium","sotl-volatility-high","sotl-quantity-low","sotl-specialist-good");
 		comment = "Live non-sapient animals for transport between systems. Available on many habitable worlds, sometimes farmed intentionally, and sometimes collected by colonists especially on newer worlds. Biological research institutes will sometimes pay a good price for specimens. The cargo containers include full life-support systems adapted to the carried animal to transport them in safety and reasonably humane conditions.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 	
-	"sotw-artworks" = {
+	"sotl-artworks" = {
 		name = "Artworks";
-		classes = ("sotw-ex-tourism","sotw-ex-cultural","sotw-im-cultural","sotw-ex-researchsoc","sotw-im-researchsoc","sotw-volatility-high","sotw-priceband-7","sotw-demand-medium","sotw-supply-medium","sotw-quantity-low");
+		classes = ("sotl-ex-tourism","sotl-ex-cultural","sotl-im-cultural","sotl-ex-researchsoc","sotl-im-researchsoc","sotl-volatility-high","sotl-priceband-7","sotl-demand-medium","sotl-supply-medium","sotl-quantity-low");
 		comment = "Copies or recordings of various forms of art. These are generally traded between the various cultural worlds but may be of interest to collectors anywhere.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
-	"sotw-ceramics-ind" = {
+	"sotl-ceramics-ind" = {
 		name = "Industrial Ceramics";
-		classes = ("sotw-ex-salvage","sotw-ex-refining","sotw-im-production","sotw-im-shipyard","sotw-im-researchmil","sotw-im-researcheng","sotw-ims-radiation","sotw-volatility-low","sotw-priceband-5","sotw-supply-medium","sotw-demand-medium","sotw-quantity-high");
+		classes = ("sotl-ex-salvage","sotl-ex-refining","sotl-im-production","sotl-im-shipyard","sotl-im-researchmil","sotl-im-researcheng","sotl-ims-radiation","sotl-volatility-low","sotl-priceband-5","sotl-supply-medium","sotl-demand-medium","sotl-quantity-high");
 		comment = "Industrial ceramics used in a wide range of applications, including heat and radiation shielding, body armour, chemical processing and building materials. Generally produced by refineries to precise specifications.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
-	"sotw-ceramics-art" = {
+	"sotl-ceramics-art" = {
 		name = "Artistic Ceramics";
-		classes = ("sotw-ex-farming","sotw-im-cultural","sotw-volatility-medium","sotw-priceband-4","sotw-supply-low","sotw-demand-low","sotw-quantity-low","sotw-specialist-good");
+		classes = ("sotl-ex-farming","sotl-im-cultural","sotl-volatility-medium","sotl-priceband-4","sotl-supply-low","sotl-demand-low","sotl-quantity-low","sotl-specialist-good");
 		comment = "Ceramics in both set and unset forms suitable for artistic uses. Generally produced by traditional methods from rich clay soils and sold to the specialist art market.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
-	"sotw-clothes-basic" = {
+	"sotl-clothes-basic" = {
 		name = "Mixed Clothing";
-		classes = ("sotw-ex-production","sotw-ex-cultural","sotw-im-survival","sotw-im-salvage","sotw-im-tourism","sotw-im-terraforming","sotw-im-service","sotw-im-cultural","sotw-volatility-low","sotw-priceband-3","sotw-supply-high","sotw-demand-high","sotw-quantity-high");
+		classes = ("sotl-ex-production","sotl-ex-cultural","sotl-im-survival","sotl-im-salvage","sotl-im-tourism","sotl-im-terraforming","sotl-im-service","sotl-im-cultural","sotl-volatility-low","sotl-priceband-3","sotl-supply-high","sotl-demand-high","sotl-quantity-high");
 		comment = "Normal clothing intended for use in non-hazardous environments. Generally purchased by systems which do not have the local resources to produce sufficient themselves, or by richer systems wishing to experience alternative fashions.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 	
-	"sotw-computers-basic" = {
+	"sotl-computers-basic" = {
 		name = "Computers";
-		classes = ("sotw-ex-production","sotw-im-service","sotw-volatility-low","sotw-priceband-6","sotw-supply-medium","sotw-demand-medium","sotw-quantity-medium");
+		classes = ("sotl-ex-production","sotl-im-service","sotl-volatility-low","sotl-priceband-6","sotl-supply-medium","sotl-demand-medium","sotl-quantity-medium");
 		comment = "General purpose computers and similar devices for civilian domestic and business use.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
-	"sotw-computers-flight" = {
+	"sotl-computers-flight" = {
 		name = "Flight Computers";
-		classes = ("sotw-ex-shipyard","sotw-im-military","sotw-exr-shipyard","sotw-imr-military","sotw-volatility-medium","sotw-priceband-9","sotw-supply-medium","sotw-demand-low","sotw-quantity-low");
+		classes = ("sotl-ex-shipyard","sotl-im-military","sotl-exr-shipyard","sotl-imr-military","sotl-volatility-medium","sotl-priceband-9","sotl-supply-medium","sotl-demand-low","sotl-quantity-low");
 		comment = "Components and hardware for computing aboard ship, including navigation and witchspace calculations, flight control, trading and communications, and weapons systems. The increased price over normal hardware is mainly due to hardening against adverse conditions.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
-	"sotw-computers-research" = {
+	"sotl-computers-research" = {
 		name = "Research Computers";
-		classes = ("sotw-ex-researchcomp","sotw-im-researchbio","sotw-im-researchsci","sotw-volatility-high","sotw-priceband-18","sotw-supply-low","sotw-demand-low","sotw-quantity-rare","sotw-specialist-good");
+		classes = ("sotl-ex-researchcomp","sotl-im-researchbio","sotl-im-researchsci","sotl-volatility-high","sotl-priceband-18","sotl-supply-low","sotl-demand-low","sotl-quantity-rare","sotl-specialist-good");
 		comment = "Highly specialised computing hardware for supercomputing. Generally only required in significant quantities by research institutes, especially in the pure scientific fields.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
-	"sotw-corals" = {
+	"sotl-corals" = {
 		name = "Corals";
-		classes = ("sotw-ex-tourism","sotw-ex-farming","sotw-exs-ocean","sotw-im-cultural","sotw-volatility-medium","sotw-priceband-11","sotw-supply-low","sotw-demand-high","sotw-quantity-low","sotw-specialist-good");
+		classes = ("sotl-ex-tourism","sotl-ex-farming","sotl-exs-ocean","sotl-im-cultural","sotl-volatility-medium","sotl-priceband-11","sotl-supply-low","sotl-demand-high","sotl-quantity-low","sotl-specialist-good");
 		comment = "The remains of various usually aquatic creatures, these colourful and twisted rocks are in high demand by many artists, but the generally slow rate of growth means that only a small volume can be farmed.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
-	"sotw-entertainment" = {
+	"sotl-entertainment" = {
 		name = "Entertainment Packages";
-		classes = ("sotw-im-tourism","sotw-ex-cultural","sotw-volatility-low","sotw-priceband-3","sotw-supply-high","sotw-demand-medium","sotw-quantity-high");
+		classes = ("sotl-im-tourism","sotl-ex-cultural","sotl-volatility-low","sotl-priceband-3","sotl-supply-high","sotl-demand-medium","sotl-quantity-high");
 		comment = "Basic entertainment packages are produced and consumed almost everywhere, with some cultural worlds producing widely approved selections.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
-	"sotw-fertiliser" = {
+	"sotl-fertiliser" = {
 		name = "Fertiliser";
-		classes = ("sotw-im-farming","sotw-imr-agriculturei","sotw-ex-refining","sotw-ex-researchbio","sotw-volatility-low","sotw-priceband-4","sotw-supply-medium","sotw-demand-high","sotw-quantity-medium");
+		classes = ("sotl-im-farming","sotl-imr-agriculturei","sotl-ex-refining","sotl-ex-researchbio","sotl-volatility-low","sotl-priceband-4","sotl-supply-medium","sotl-demand-high","sotl-quantity-medium");
 		comment = "A range of synthesised fertilisers to improve crop yields and soil quality. Often a byproduct of the refining process.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
-	"sotw-handweapons" = {
+	"sotl-handweapons" = {
 		name = "Personal Weapons";
-		classes = ("sotw-im-military","sotw-im-survival","sotw-imr-ruins","sotw-imr-nativelife","sotw-imr-outsiders","sotw-ims-unstable","sotw-ex-production","sotw-ex-researchmil","sotw-volatility-medium","sotw-priceband-8","sotw-supply-low","sotw-demand-medium","sotw-quantity-low");
+		classes = ("sotl-im-military","sotl-im-survival","sotl-imr-ruins","sotl-imr-nativelife","sotl-imr-outsiders","sotl-ims-unstable","sotl-ex-production","sotl-ex-researchmil","sotl-volatility-medium","sotl-priceband-8","sotl-supply-low","sotl-demand-medium","sotl-quantity-low");
 		comment = "Personal weapons suitable for a range of anatomies and purposes from mostly non-lethal stunning and immobilisation devices to portable cannons. Primarily produced for military use the containers are reinforced against in-flight tampering. However, the contents often find their ways into civilian possession, and on worlds with dangerous native life this may be encouraged.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
-	"sotw-food-basic" = {
+	"sotl-food-basic" = {
 		name = "Mixed Food";
-		classes = ("sotw-im-survival","sotw-im-salvage","sotw-im-quarantine","sotw-ex-farming","sotw-im-asteroidmining","sotw-im-groundmining","sotw-ims-nohab","sotw-volatility-low","sotw-priceband-3","sotw-supply-high","sotw-demand-medium","sotw-quantity-bulk");
+		classes = ("sotl-im-survival","sotl-im-salvage","sotl-im-quarantine","sotl-ex-farming","sotl-im-asteroidmining","sotl-im-groundmining","sotl-ims-nohab","sotl-volatility-low","sotl-priceband-3","sotl-supply-high","sotl-demand-medium","sotl-quantity-bulk");
 		comment = "Basic food for a range of species. While almost all systems are able to generate enough food to feed their population locally, on the less habitable worlds, or those where production is strongly industrially-focused, the local food will often be bland protein from hydroponic facilities. Food that tastes of something is therefore a common purchase.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
-	"sotw-food-luxury" = {
+	"sotl-food-luxury" = {
 		name = "Luxury Food";
-		classes = ("sotw-im-cultural","sotw-ex-farming","sotw-im-service","sotw-ims-rich","sotw-volatility-high","sotw-priceband-10","sotw-supply-low","sotw-demand-medium","sotw-quantity-low");
+		classes = ("sotl-im-cultural","sotl-ex-farming","sotl-im-service","sotl-ims-rich","sotl-volatility-high","sotl-priceband-10","sotl-supply-low","sotl-demand-medium","sotl-quantity-low");
 		comment = "Luxury foods stored in temperature-controlled cargo pods. The more unusual produce of farming worlds is in high demand in the richer systems, though tastes and fashions may change rapidly.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
-	"sotw-fuel" = {
+	"sotl-fuel" = {
 		name = "Witchdrive Fuel";
-		classes = ("sotw-im-survival","sotw-im-military","sotw-imr-military","sotw-ex-refining","sotw-volatility-low","sotw-priceband-2","sotw-supply-high","sotw-demand-medium","sotw-quantity-bulk");
+		classes = ("sotl-im-survival","sotl-im-military","sotl-imr-military","sotl-ex-refining","sotl-volatility-low","sotl-priceband-2","sotl-supply-high","sotl-demand-medium","sotl-quantity-bulk");
 		comment = "Almost all systems have fuel plants able to manage domestic needs, though in some cases military systems will need to import additional fuel on contract. In-flight refuelling from these containers is often essential for long-range travel between populated regions, though requires special equipment to do so.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
-	"sotw-furs" = {
+	"sotl-furs" = {
 		name = "Animal Fabrics";
-		classes = ("sotw-ex-tourism","sotw-ex-farming","sotw-im-cultural","sotw-im-researchbio","sotw-ims-cold","sotw-exr-nativelife","sotw-volatility-medium","sotw-priceband-7","sotw-supply-medium","sotw-demand-medium","sotw-quantity-medium","sotw-specialist-good");
+		classes = ("sotl-ex-tourism","sotl-ex-farming","sotl-im-cultural","sotl-im-researchbio","sotl-ims-cold","sotl-exr-nativelife","sotl-volatility-medium","sotl-priceband-7","sotl-supply-medium","sotl-demand-medium","sotl-quantity-medium","sotl-specialist-good");
 		comment = "The furs, skins, hides or hair of a variety of animals. Other than its use in artworks and luxury clothing, some fabrics are also popular in colder systems for their insulating properties, especially among those species with poorly insulated natural anatomies.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
-	"sotw-preciousstones" = {
+	"sotl-preciousstones" = {
 		name = "Precious Stones";
-		classes = ("sotw-ex-terraforming","sotw-ex-asteroidmining","sotw-ex-groundmining","sotw-ims-rich","sotw-im-cultural","sotw-exs-minrich","sotw-volatility-high","sotw-priceband-15","sotw-supply-low","sotw-demand-medium","sotw-quantity-rare");
+		classes = ("sotl-ex-terraforming","sotl-ex-asteroidmining","sotl-ex-groundmining","sotl-ims-rich","sotl-im-cultural","sotl-exs-minrich","sotl-volatility-high","sotl-priceband-15","sotl-supply-low","sotl-demand-medium","sotl-quantity-rare");
 		comment = "Near-pure mineral crystals and unusual metamorphic rocks, sometimes unique to a particular system. Generally found as a byproduct of other mining and extraction processes. The vast majority of the volume of the cargo pod is taken up by shock absorbing padding to protect the often fragile stones in transit.\n\nTheir high wealth density once unpacked makes them popular in rich systems as a status symbol. While they are sometimes used as an alternative currency for off-the-record transactions, the difficulties in accurately assessing value makes this relatively rare.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 	
 	
-	"sotw-luxuries" = {
+	"sotl-luxuries" = {
 		name = "Luxury Goods";
-		classes = ("sotw-ex-service","sotw-im-cultural","sotw-ex-cultural","sotw-im-researchsoc","sotw-ims-rich","sotw-volatility-low","sotw-priceband-10","sotw-supply-medium","sotw-demand-medium","sotw-quantity-low");
+		classes = ("sotl-ex-service","sotl-im-cultural","sotl-ex-cultural","sotl-im-researchsoc","sotl-ims-rich","sotl-volatility-low","sotl-priceband-10","sotl-supply-medium","sotl-demand-medium","sotl-quantity-low");
 		comment = "Assorted luxury consumer goods popular in the richer systems.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
 
-	"sotw-machinery" = {
+	"sotl-machinery" = {
 		name = "Machinery";
-		classes = ("sotw-im-military","sotw-im-farming","sotw-im-groundmining","sotw-im-refining","sotw-ex-production","sotw-im-shipyard","sotw-im-researchmil","sotw-im-researcheng","sotw-im-researchcomp","sotw-volatility-low","sotw-priceband-8","sotw-supply-medium","sotw-demand-medium","sotw-quantity-medium");
+		classes = ("sotl-im-military","sotl-im-farming","sotl-im-groundmining","sotl-im-refining","sotl-ex-production","sotl-im-shipyard","sotl-im-researchmil","sotl-im-researcheng","sotl-im-researchcomp","sotl-volatility-low","sotl-priceband-8","sotl-supply-medium","sotl-demand-medium","sotl-quantity-medium");
 		comment = "Heavy agricultural and industrial machinery for mass production or processing. Required by most systems producing tangible goods, and created itself in the high-end factories most common on production worlds.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
-	"sotw-medicine" = {
+	"sotl-medicine" = {
 		name = "Medicine";
-		classes = ("sotw-im-survival","sotw-im-quarantine","sotw-im-military","sotw-im-colonisation","sotw-ex-production","sotw-ex-researchbio","sotw-ims-unstable","sotw-volatility-high","sotw-priceband-6","sotw-supply-medium","sotw-demand-low","sotw-quantity-low");
+		classes = ("sotl-im-survival","sotl-im-quarantine","sotl-im-military","sotl-im-colonisation","sotl-ex-production","sotl-ex-researchbio","sotl-ims-unstable","sotl-volatility-high","sotl-priceband-6","sotl-supply-medium","sotl-demand-low","sotl-quantity-low");
 		comment = "Basic painkillers, first aid kits, vaccines, and other medical supplies needed by various anatomies. Most systems are able to produce all they need locally, but systems which do not have any established production base or in which accidents are more likely may need a surplus.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
-	"sotw-narcotics" = {
+	"sotl-narcotics" = {
 		name = "Narcotics";
-		classes = ("sotw-im-tourism","sotw-ex-farming","sotw-ex-refining","sotw-im-service","sotw-im-cultural","sotw-ex-researchbio","sotw-volatility-high","sotw-priceband-7","sotw-supply-low","sotw-demand-high","sotw-quantity-medium");
+		classes = ("sotl-im-tourism","sotl-ex-farming","sotl-ex-refining","sotl-im-service","sotl-im-cultural","sotl-ex-researchbio","sotl-volatility-high","sotl-priceband-7","sotl-supply-low","sotl-demand-high","sotl-quantity-medium");
 		comment = "A range of mood-altering or hallucinogenic substances for various biochemistries, of both organic and synthetic origin. Popular in most places, especially among artists, though cultural attitudes towards open usage vary considerably.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
-	"sotw-oil" = {
+	"sotl-oil" = {
 		name = "Hydrocarbons";
-		classes = ("sotw-exs-oilmining","sotw-im-refining","sotw-exs-hab","sotw-volatility-medium","sotw-priceband-4","sotw-supply-medium","sotw-demand-medium","sotw-quantity-medium","sotw-specialist-good");
+		classes = ("sotl-exs-oilmining","sotl-im-refining","sotl-exs-hab","sotl-volatility-medium","sotl-priceband-4","sotl-supply-medium","sotl-demand-medium","sotl-quantity-medium","sotl-specialist-good");
 		comment = "Various short- and long-chain hydrocarbons used in the manufacture of plastics by refining systems. Extracted by ground mining of inhabitable systems. Note that this product is highly flammable and the containers are reinforced to reduce the likelihood of breaches.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
-	"sotw-ores" = {
+	"sotl-ores" = {
 		name = "Metal Ores";
-		classes = ("sotw-ex-asteroidmining","sotw-ex-groundmining","sotw-im-refining","sotw-volatility-medium","sotw-priceband-4","sotw-supply-high","sotw-demand-high","sotw-quantity-bulk");
+		classes = ("sotl-ex-asteroidmining","sotl-ex-groundmining","sotl-im-refining","sotl-volatility-medium","sotl-priceband-4","sotl-supply-high","sotl-demand-high","sotl-quantity-bulk");
 		comment = "Ores of common metals such as iron, nickel, aluminium and titanium. The most common products of mining, these will generally be separated from more commercially valuable ores at the mining facility, before being transported to a refinery for extraction and purification of the metal.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
-	"sotw-plants" = {
+	"sotl-plants" = {
 		name = "Live Plants";
-		classes = ("sotw-ex-colonisation","sotw-im-cultural","sotw-im-production","sotw-im-researchbio","sotw-im-researcheng","sotw-exs-hab","sotw-volatility-medium","sotw-priceband-9","sotw-supply-low","sotw-demand-low","sotw-quantity-low");
+		classes = ("sotl-ex-colonisation","sotl-im-cultural","sotl-im-production","sotl-im-researchbio","sotl-im-researcheng","sotl-exs-hab","sotl-volatility-medium","sotl-priceband-9","sotl-supply-low","sotl-demand-low","sotl-quantity-low");
 		comment = "Live plants often of interest to research institutes if they come from a poorly-catalogued planet, and sometimes used in artworks. The cargo containers include full support for either hydroponics or a soil ecosystem, which makes them more expensive and limits the volume which can be transported per container.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
-	"sotw-plastics" = {
+	"sotl-plastics" = {
 		name = "Mixed Plastics";
-		classes = ("sotw-ex-salvage","sotw-ex-refining","sotw-im-cultural","sotw-im-production","sotw-im-shipyard","sotw-im-researchmil","sotw-im-researcheng","sotw-volatility-low","sotw-priceband-6","sotw-supply-medium","sotw-demand-medium","sotw-quantity-high");
+		classes = ("sotl-ex-salvage","sotl-ex-refining","sotl-im-cultural","sotl-im-production","sotl-im-shipyard","sotl-im-researchmil","sotl-im-researcheng","sotl-volatility-low","sotl-priceband-6","sotl-supply-medium","sotl-demand-medium","sotl-quantity-high");
 		comment = "Raw plastics for domestic and commercial uses, also sometimes used for parts of ship interiors. Primarily produced by refining hydrocarbons and similar processes, or recycled from previous uses where possible.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
-	"sotw-preciousmetals" = {
+	"sotl-preciousmetals" = {
 		name = "Precious Metals";
-		classes = ("sotw-ex-asteroidmining","sotw-ex-groundmining","sotw-ex-refining","sotw-im-cultural","sotw-im-researchcomp","sotw-im-production","sotw-im-shipyard","sotw-ims-rich","sotw-volatility-high","sotw-priceband-14","sotw-supply-low","sotw-demand-medium","sotw-quantity-low");
+		classes = ("sotl-ex-asteroidmining","sotl-ex-groundmining","sotl-ex-refining","sotl-im-cultural","sotl-im-researchcomp","sotl-im-production","sotl-im-shipyard","sotl-ims-rich","sotl-volatility-high","sotl-priceband-14","sotl-supply-low","sotl-demand-medium","sotl-quantity-low");
 		comment = "Rare metals such as platinum, rhenium or osmium, used in small quantities in electronics and other applications, or for decoration. Small quantities are extracted in mostly pure form at mining sites, with further recovery made at larger refineries. A few containers can meet an entire system's need for a metal for a whole kiloday, but discovery of high-purity deposits is rare.\n\nOften used as an alternative currency for off-the-record transactions, despite the somewhat variable prices, due to the ease of assessing the value of ingots and verifying their purity and composition.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
 
-	"sotw-radiationshield" = {
+	"sotl-radiationshield" = {
 		name = "Radiation Shield";
-		classes = ("sotw-im-survival","sotw-im-salvage","sotw-im-terraforming","sotw-im-asteroidmining","sotw-ex-production","sotw-ex-shipyard","sotw-ex-researcheng","sotw-ims-radiation","sotw-volatility-medium","sotw-priceband-9","sotw-supply-low","sotw-demand-low","sotw-quantity-low");
+		classes = ("sotl-im-survival","sotl-im-salvage","sotl-im-terraforming","sotl-im-asteroidmining","sotl-ex-production","sotl-ex-shipyard","sotl-ex-researcheng","sotl-ims-radiation","sotl-volatility-medium","sotl-priceband-9","sotl-supply-low","sotl-demand-low","sotl-quantity-low");
 		comment = "High-density radiation shields mainly intended for use in space but also necessary on some high-radiation planets and for shielding some environmental modification technologies. Generally packaged as modular plates. Engineering research into carefully designed polymers aims to reduce the density required while preserving the shielding effectiveness.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
 
-	"sotw-sciequip" = {
+	"sotl-sciequip" = {
 		name = "Scientific Equipment";
-		classes = ("sotw-im-researchbio","sotw-im-researchsci","sotw-ex-researcheng","sotw-volatility-low","sotw-priceband-19","sotw-supply-low","sotw-demand-low","sotw-quantity-rare","sotw-specialist-good");
+		classes = ("sotl-im-researchbio","sotl-im-researchsci","sotl-ex-researcheng","sotl-volatility-low","sotl-priceband-19","sotl-supply-low","sotl-demand-low","sotl-quantity-rare","sotl-specialist-good");
 		comment = "High-precision scientific equipment required by some research facilities. Generally only the cutting edge fabrication plants associated with engineering research are able to build to the exacting specifications required. The containers are heavily padded and reinforced to reduce the chance of damage in transit.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
 
-	"sotw-sensors" = {
+	"sotl-sensors" = {
 		name = "Sensor Hardware";
-		classes = ("sotw-im-salvage","sotw-im-quarantine","sotw-im-military","sotw-im-asteroidmining","sotw-ex-shipyard","sotw-ex-researchmil","sotw-ex-researcheng","sotw-ex-researchcomp","sotw-priceband-10","sotw-volatility-medium","sotw-supply-low","sotw-demand-low","sotw-quantity-medium");
+		classes = ("sotl-im-salvage","sotl-im-quarantine","sotl-im-military","sotl-im-asteroidmining","sotl-ex-shipyard","sotl-ex-researchmil","sotl-ex-researcheng","sotl-ex-researchcomp","sotl-priceband-10","sotl-volatility-medium","sotl-supply-low","sotl-demand-low","sotl-quantity-medium");
 		comment = "Components of or occasionally whole sensor units for ships. These are generally created in shipyards for distribution to other worlds, and are highly in demand by asteroid miners and salvagers to make it easier for them to locate opportunities.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
-	"sotw-shipparts" = {
+	"sotl-shipparts" = {
 		name = "Ship Hardware";
-		classes = ("sotw-im-survival","sotw-ex-salvage","sotw-im-military","sotw-im-asteroidmining","sotw-ex-shipyard","sotw-exs-tech","sotw-priceband-8","sotw-volatility-low","sotw-supply-medium","sotw-demand-medium","sotw-quantity-medium");
+		classes = ("sotl-im-survival","sotl-ex-salvage","sotl-im-military","sotl-im-asteroidmining","sotl-ex-shipyard","sotl-exs-tech","sotl-priceband-8","sotl-volatility-low","sotl-supply-medium","sotl-demand-medium","sotl-quantity-medium");
 		comment = "A range of standardised ship hardware from power cables, coolant pipes and mounting brackets to replacement laser focusers and small thrusters, to allow ships to be maintained and serviced at any reasonably-equipped orbital station. While this is required to some extent in most systems, it is especially so in those which require ships for their economy.\n\nThe resilience of these items means that many of the components can be recycled and repaired even when the original ship is unsalvageable.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
 
-	"sotw-spareparts" = {
+	"sotl-spareparts" = {
 		name = "Industrial Components";
-		classes = ("sotw-im-survival","sotw-ex-salvage","sotw-im-farming","sotw-im-asteroidmining","sotw-im-groundmining","sotw-ex-production","sotw-volatility-low","sotw-priceband-3","sotw-supply-high","sotw-demand-medium","sotw-quantity-bulk");
+		classes = ("sotl-im-survival","sotl-ex-salvage","sotl-im-farming","sotl-im-asteroidmining","sotl-im-groundmining","sotl-ex-production","sotl-volatility-low","sotl-priceband-3","sotl-supply-high","sotl-demand-medium","sotl-quantity-bulk");
 		comment = "Generic industrial components from small screws and replacement filters to moderately large pre-built devices such as generators and oxygen recyclers. Most systems are able to produce their own to some extent but may import to allow greater local specialisation elsewhere.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
 
-	"sotw-telepresence" = {
+	"sotl-telepresence" = {
 		name = "Telepresence Systems";
-		classes = ("sotw-im-quarantine","sotw-im-groundmining","sotw-im-service","sotw-im-cultural","sotw-im-researchsoc","sotw-ex-researchsoc","sotw-ex-researchcomp","sotw-ex-production","sotw-ims-isolation","sotw-volatility-medium","sotw-priceband-11","sotw-supply-low","sotw-demand-medium","sotw-quantity-low");
+		classes = ("sotl-im-quarantine","sotl-im-groundmining","sotl-im-service","sotl-im-cultural","sotl-im-researchsoc","sotl-ex-researchsoc","sotl-ex-researchcomp","sotl-ex-production","sotl-ims-isolation","sotl-volatility-medium","sotl-priceband-11","sotl-supply-low","sotl-demand-medium","sotl-quantity-low");
 		comment = "Telepresence systems allow a person to act at a location without physically being there, to an extent much greater than that permitted by cheaper communications technologies. Their main uses are for operating complex machinery in dangerous environments, and for conducting 'face-to-face' meetings over planetary distances.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
-	"sotw-terraforming" = {
+	"sotl-terraforming" = {
 		name = "Terraformers";
-		classes = ("sotw-im-terraforming","sotw-ex-researchbio","sotw-volatility-medium","sotw-priceband-17","sotw-supply-low","sotw-demand-low","sotw-quantity-rare","sotw-specialist-good");
+		classes = ("sotl-im-terraforming","sotl-ex-researchbio","sotl-volatility-medium","sotl-priceband-17","sotl-supply-low","sotl-demand-low","sotl-quantity-rare","sotl-specialist-good");
 		comment = "The environmental modification projects of earlier periods still continue, and biological research institutes continue to manufacture the necessary equipment for the ongoing experiments. The great expense and large bulk of the tools makes it unlikely that further projects will be started in the near future.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
-	"sotw-textiles" = {
+	"sotl-textiles" = {
 		name = "Plant Fabrics";
-		classes = ("sotw-im-colonisation","sotw-ex-farming","sotw-im-cultural","sotw-im-production","sotw-volatility-low","sotw-priceband-3","sotw-supply-high","sotw-demand-medium","sotw-quantity-high");
+		classes = ("sotl-im-colonisation","sotl-ex-farming","sotl-im-cultural","sotl-im-production","sotl-volatility-low","sotl-priceband-3","sotl-supply-high","sotl-demand-medium","sotl-quantity-high");
 		comment = "Plant-derived fabrics used in the production of clothing and in some forms of art, mainly farmed specifically for this purpose. Some recently colonised worlds will import these as the local species have not yet been fully catalogued and deemed safe.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
-	"sotw-tools" = {
+	"sotl-tools" = {
 		name = "Tools";
-		classes = ("sotw-im-survival","sotw-im-salvage","sotw-im-military","sotw-im-colonisation","sotw-im-farming","sotw-im-terraforming","sotw-im-asteroidmining","sotw-im-groundmining","sotw-ex-production","sotw-im-researcheng","sotw-volatility-low","sotw-priceband-4","sotw-supply-high","sotw-demand-high","sotw-quantity-high");
+		classes = ("sotl-im-survival","sotl-im-salvage","sotl-im-military","sotl-im-colonisation","sotl-im-farming","sotl-im-terraforming","sotl-im-asteroidmining","sotl-im-groundmining","sotl-ex-production","sotl-im-researcheng","sotl-volatility-low","sotl-priceband-4","sotl-supply-high","sotl-demand-high","sotl-quantity-high");
 		comment = "A range of industrial, domestic and construction tools, from small and low-tech essential items such as hammers, to moderately large pieces of machinery such as lathes and drills, to high-tech laser cutters and small robots. Required to some extent virtually everywhere, shortfalls or inability to produce domestically are met by mass-production in the more industrialised systems.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
-	"sotw-weapons" = {
+	"sotl-weapons" = {
 		name = "Ship Weapons";
-		classes = ("sotw-im-military","sotw-ex-shipyard","sotw-ex-researchmil","sotw-volatility-low","sotw-priceband-12","sotw-supply-medium","sotw-demand-high","sotw-quantity-low");
+		classes = ("sotl-im-military","sotl-ex-shipyard","sotl-ex-researchmil","sotl-volatility-low","sotl-priceband-12","sotl-supply-medium","sotl-demand-high","sotl-quantity-low");
 		comment = "Ship mounted weapons, or more usually components for constructing them, in demand in most systems, and primarily produced at the major shipyards. Opening the canisters and trying to fit the contents yourself may void your warranty.";
-		market_script = "sotw-market-manager.js";
+		market_script = "sotl-market-manager.js";
 	};
 
 /* TODO: need some more at the high end of the pricebands, probably
- * with sotw-specialist-good */
+ * with sotl-specialist-good */
 
 }

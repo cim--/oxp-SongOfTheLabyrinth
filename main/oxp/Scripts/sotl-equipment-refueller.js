@@ -1,4 +1,4 @@
-this.name = "SOTW Inflight Refueller";
+this.name = "SOTL Inflight Refueller";
 
 this.$inProgress = 0;
 this.$fcb = 0;
@@ -11,7 +11,7 @@ this.activated = function() {
 		player.consoleMessage("Refuelling already in progress");
 		return;
 	}
-	if (player.ship.manifest["sotw-fuel"] == 0) {
+	if (player.ship.manifest["sotl-fuel"] == 0) {
 		player.consoleMessage("No fuel available in hold");
 		return;
 	}
@@ -22,7 +22,7 @@ this.activated = function() {
 	this.$inProgress = 1;
 	this.$fcb = addFrameCallback(this._refuellingOperation.bind(this));
 	player.consoleMessage("Commencing in-flight refuelling");
-	player.ship.manifest["sotw-fuel"]--;
+	player.ship.manifest["sotl-fuel"]--;
 	this.$savedInjectorBurn = player.ship.injectorBurnRate;
 	this.$savedInjectorSpeed = player.ship.injectorSpeedFactor;
 	player.ship.injectorBurnRate = 0;

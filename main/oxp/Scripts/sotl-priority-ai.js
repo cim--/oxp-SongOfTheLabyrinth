@@ -1,20 +1,20 @@
 "use strict";
 
-this.name = "SOTW Priority AI Extensions";
+this.name = "SOTL Priority AI Extensions";
 
 this.startUp = function() {
 	var lib = worldScripts["oolite-libPriorityAI"].PriorityAIController;
-	var pop = worldScripts["SOTW Populator Script"];
+	var pop = worldScripts["SOTL Populator Script"];
 	/* Conditions */
 
-	lib.prototype.sotw_conditionScannerContainsHostileFaction = function() {
+	lib.prototype.sotl_conditionScannerContainsHostileFaction = function() {
 		var scan = this.getParameter("oolite_scanResults");
 		if (scan) {
-			var f1 = this.ship.script.$sotwFaction;
+			var f1 = this.ship.script.$sotlFaction;
 			this.checkScannerWithPredicate(function(s) { 
-				var f2 = s.script.$sotwFaction;
+				var f2 = s.script.$sotlFaction;
 				if (f2 && f2 != f1) {
-					var result = this.sotw_utilCompareFactions(f1,f2);
+					var result = this.sotl_utilCompareFactions(f1,f2);
 					if (result < 0) {
 						return true;
 					}
@@ -26,62 +26,62 @@ this.startUp = function() {
 		}
 	};
 
-	lib.prototype.sotw_conditionStationHasEnoughDefense = function() {
+	lib.prototype.sotl_conditionStationHasEnoughDefense = function() {
 		// should have one patrolling ship per security level
-		// (sotw_desiredSecurityLevel parameter) in some systems there
+		// (sotl_desiredSecurityLevel parameter) in some systems there
 		// may be some stationary defense drones too, which will count
 		// against this number
 		var gs = this.ship.group.ships;
 		var has = 0;
 		for (var i=gs.length-1;i>=0;i--) {
-			if (gs[i].primaryRole == "sotw-station-defense-ship" || gs[i].primaryRole == "sotw-station-defense-platform") {
+			if (gs[i].primaryRole == "sotl-station-defense-ship" || gs[i].primaryRole == "sotl-station-defense-platform") {
 				has++;
 			}
 		}
-		return has >= this.getParameter("sotw_desiredSecurityLevel");
+		return has >= this.getParameter("sotl_desiredSecurityLevel");
 	};
 
-	lib.prototype.sotw_conditionFreighterWantsToTrade = function() {
-		return this.getParameter("sotw_freighterObjective") == "TRADE";
+	lib.prototype.sotl_conditionFreighterWantsToTrade = function() {
+		return this.getParameter("sotl_freighterObjective") == "TRADE";
 	};
 
-	lib.prototype.sotw_conditionFreighterWantsToResupply = function() {
-		return this.getParameter("sotw_freighterObjective") == "RESUPPLY";
+	lib.prototype.sotl_conditionFreighterWantsToResupply = function() {
+		return this.getParameter("sotl_freighterObjective") == "RESUPPLY";
 	};
 
-	lib.prototype.sotw_conditionFreighterWantsToTravel = function() {
-		return this.getParameter("sotw_freighterObjective") == "TRAVEL";
+	lib.prototype.sotl_conditionFreighterWantsToTravel = function() {
+		return this.getParameter("sotl_freighterObjective") == "TRAVEL";
 	};
 
-	lib.prototype.sotw_conditionFreighterWantsToSurvive = function() {
-		return this.getParameter("sotw_freighterObjective") == "SURVIVE";
+	lib.prototype.sotl_conditionFreighterWantsToSurvive = function() {
+		return this.getParameter("sotl_freighterObjective") == "SURVIVE";
 	};
 
-	lib.prototype.sotw_conditionFreighterResupplierAssigned = function() {
-		var re = this.getParameter("sotw_freighterResupplyShip");
+	lib.prototype.sotl_conditionFreighterResupplierAssigned = function() {
+		var re = this.getParameter("sotl_freighterResupplyShip");
 		if (!re) {
 			// initial population stage only
-			re = this.ship.script.$sotwResupplyShip;
+			re = this.ship.script.$sotlResupplyShip;
 			if (re && re.isValid) {
-				this.setParameter("sotw_freighterResupplyShip",re);
+				this.setParameter("sotl_freighterResupplyShip",re);
 			}
 		}
 		if (re && re.isValid && (re.status == "STATUS_IN_FLIGHT" || re.status == "STATUS_LAUNCHING" || re.status == "STATUS_DOCKED")) {
 			return true;
 		} else if (re) {
-			this.setParameter("sotw_freighterResupplyShip",null);
+			this.setParameter("sotl_freighterResupplyShip",null);
 		}
 		return false;
 	};
 
 	// freighter testing if the resupplier is docked
-	lib.prototype.sotw_conditionFreighterResupplierDocked = function() {
-		var re = this.getParameter("sotw_freighterResupplyShip");
+	lib.prototype.sotl_conditionFreighterResupplierDocked = function() {
+		var re = this.getParameter("sotl_freighterResupplyShip");
 		if (!re) {
 			// initial population stage only
-			re = this.ship.script.$sotwResupplyShip;
+			re = this.ship.script.$sotlResupplyShip;
 			if (re && re.isValid) {
-				this.setParameter("sotw_freighterResupplyShip",re);
+				this.setParameter("sotl_freighterResupplyShip",re);
 			}
 		}
 		if (re && re.isValid && (re.status == "STATUS_IN_FLIGHT" || re.status == "STATUS_LAUNCHING" || re.status == "STATUS_DOCKED")) {
@@ -93,14 +93,14 @@ this.startUp = function() {
 				}
 			}
 		} else if (re) {
-			this.setParameter("sotw_freighterResupplyShip",null);
+			this.setParameter("sotl_freighterResupplyShip",null);
 		}
 		return false;
 	};
 
 	// resupplier testing if the freighter is docked
-	lib.prototype.sotw_conditionResupplierFreighterDocked = function() {
-		var rt = this.ship.script.$sotwResupplyTarget;
+	lib.prototype.sotl_conditionResupplierFreighterDocked = function() {
+		var rt = this.ship.script.$sotlResupplyTarget;
 		if (rt && rt.isValid && rt.status == "STATUS_IN_FLIGHT") {
 			if (this.ship.speed == 0 && rt.speed == 0) {
 				if (this.distance(rt) < this.ship.collisionRadius + rt.collisionRadius + 20) {
@@ -110,34 +110,34 @@ this.startUp = function() {
 				}
 			}
 		} else if (rt) {
-			this.setParameter("sotw_freighterResupplyShip",null);
+			this.setParameter("sotl_freighterResupplyShip",null);
 		}
 		return false;
 	};
 
 
-	lib.prototype.sotw_conditionNeedsResupply = function() {
-		var sl = this.getParameter("sotw_resupplyLevel");
+	lib.prototype.sotl_conditionNeedsResupply = function() {
+		var sl = this.getParameter("sotl_resupplyLevel");
 		return (sl > 0);
 	};
 
-	lib.prototype.sotw_conditionInResupplyRange = function() {
+	lib.prototype.sotl_conditionInResupplyRange = function() {
 		var station = this.getParameter("oolite_selectedStation");
 		if (station && this.distance(station) < 20E3)
 		{
-			var resupplyPoint = station.position.add(this.sotw_utilPersonalVector().multiply(10E3+station.collisionRadius));
+			var resupplyPoint = station.position.add(this.sotl_utilPersonalVector().multiply(10E3+station.collisionRadius));
 			return (this.distance(resupplyPoint) < 2E3);
 		}
 		return false;
 	};
 
-	lib.prototype.sotw_conditionRefuellingStationExists = function() {
+	lib.prototype.sotl_conditionRefuellingStationExists = function() {
 		var ss = system.stations;
 		for (var i=0;i<ss.length;i++) {
 			if (this.friendlyStation(ss[i])) {
 				/* TODO: will eventually need condition about whether
 				 * the station is open for general business */
-				if (ss[i].market["sotw-fuel"].quantity > 0) {
+				if (ss[i].market["sotl-fuel"].quantity > 0) {
 					return true;
 				}
 			}
@@ -145,13 +145,13 @@ this.startUp = function() {
 		return false;
 	};
 
-	lib.prototype.sotw_conditionNearRefuellingStation = function() {
+	lib.prototype.sotl_conditionNearRefuellingStation = function() {
 		var ss = system.stations;
 		for (var i=0;i<ss.length;i++) {
 			if (this.friendlyStation(ss[i])) {
 				/* TODO: will eventually need condition about whether
 				 * the station is open for general business */
-				if (ss[i].market["sotw-fuel"].quantity > 0) {
+				if (ss[i].market["sotl-fuel"].quantity > 0) {
 					if (this.distance(ss[i]) < 20E3) {
 						return true;
 					}
@@ -161,7 +161,7 @@ this.startUp = function() {
 		return false;
 	};
 
-	lib.prototype.sotw_conditionLocalSpaceClear = function() {
+	lib.prototype.sotl_conditionLocalSpaceClear = function() {
 		var nearby = system.filteredEntities(this, function(e) {
 			return e!=this.ship && e.isShip && !(this.ship.escortGroup.containsShip(e) && this.distance(e) < 2.5E3);
 		}, this.ship, 25E3);
@@ -171,43 +171,43 @@ this.startUp = function() {
 	};
 
 
-	lib.prototype.sotw_conditionMothershipUsingTorus = function() {
-		var t = this.ship.group.leader.AIScript.oolite_priorityai.getParameter("sotw_torusEffect");
+	lib.prototype.sotl_conditionMothershipUsingTorus = function() {
+		var t = this.ship.group.leader.AIScript.oolite_priorityai.getParameter("sotl_torusEffect");
 		return (t && t.isValid);
 	};
 
 
-	lib.prototype.sotw_conditionMainTradingStationExists = function() {
+	lib.prototype.sotl_conditionMainTradingStationExists = function() {
 		/* TODO: more than just one station linked to main market */
 		return this.friendlyStation(system.mainStation);
 	};
 
-	lib.prototype.sotw_conditionIsMoving = function() {
+	lib.prototype.sotl_conditionIsMoving = function() {
 		return this.ship.speed > 0;
 	};
 
-	lib.prototype.sotw_conditionHasFuelForJump = function() {
-		var next = this.getParameter("sotw_nextSystem");
+	lib.prototype.sotl_conditionHasFuelForJump = function() {
+		var next = this.getParameter("sotl_nextSystem");
 		var dist = system.info.distanceToSystem(System.infoForSystem(galaxyNumber,next));
 		return this.ship.fuel >= dist;
 	};
 	
-	lib.prototype.sotw_conditionHasFuelAboard = function() {
+	lib.prototype.sotl_conditionHasFuelAboard = function() {
 		// TODO: actually track fuel carried
 		return true;
 	};
 
-	lib.prototype.sotw_conditionWitchspaceCountdownComplete = function() {
-		var cstart = this.getParameter("sotw_witchspaceCountdownStarted");
+	lib.prototype.sotl_conditionWitchspaceCountdownComplete = function() {
+		var cstart = this.getParameter("sotl_witchspaceCountdownStarted");
 		return (cstart && clock.absoluteSeconds - cstart > 15);
 	};
 
-	lib.prototype.sotw_conditionRefuellingCountdownComplete = function() {
-		var cstart = this.getParameter("sotw_refuellingCountdownStarted");
+	lib.prototype.sotl_conditionRefuellingCountdownComplete = function() {
+		var cstart = this.getParameter("sotl_refuellingCountdownStarted");
 		return ((cstart) && ((clock.absoluteSeconds - cstart) > 300));
 	};
 
-	lib.prototype.sotw_conditionInClearSpace = function() {
+	lib.prototype.sotl_conditionInClearSpace = function() {
 		if (this.ship.position.magnitude() < 100E3) {
 			return false;
 		}
@@ -220,12 +220,12 @@ this.startUp = function() {
 		return true;
 	};
 
-	lib.prototype.sotw_conditionHasResupplyMission = function() {
-		var rtarget = this.ship.script.$sotwResupplyTarget;
+	lib.prototype.sotl_conditionHasResupplyMission = function() {
+		var rtarget = this.ship.script.$sotlResupplyTarget;
 		if (!rtarget || !rtarget.isValid) {
 			return false;
 		}
-		if (this.getParameter("sotw_resupplyLevel") == 0 || rtarget.AIScript.oolite_priorityai.getParameter("sotw_resupplyLevel") == 0) {
+		if (this.getParameter("sotl_resupplyLevel") == 0 || rtarget.AIScript.oolite_priorityai.getParameter("sotl_resupplyLevel") == 0) {
 			return false;
 		}
 		if (rtarget.speed > 0) {
@@ -237,11 +237,11 @@ this.startUp = function() {
 		return true;
 	};
 
-	lib.prototype.sotw_conditionResupplyReadyToDock = function() {
-		var rtarget = this.ship.script.$sotwResupplyTarget;
-		var dest = this.sotw_utilDockingEndPosition(rtarget);
+	lib.prototype.sotl_conditionResupplyReadyToDock = function() {
+		var rtarget = this.ship.script.$sotlResupplyTarget;
+		var dest = this.sotl_utilDockingEndPosition(rtarget);
 		// if either at start point or closer
-		if (this.distance(dest) <= dest.distanceTo(this.sotw_utilDockingStartPosition(rtarget))+20) {
+		if (this.distance(dest) <= dest.distanceTo(this.sotl_utilDockingStartPosition(rtarget))+20) {
 			// and facing the right way
 			if (dest.subtract(this.ship.position).direction().dot(this.ship.vectorForward) > 0.999) {
 				return true;
@@ -250,17 +250,17 @@ this.startUp = function() {
 		return false;
 	};
 
-	lib.prototype.sotw_conditionResupplyAtDockingStartPoint = function() {
-		var rtarget = this.ship.script.$sotwResupplyTarget;
-		var dest = this.sotw_utilDockingStartPosition(rtarget);
+	lib.prototype.sotl_conditionResupplyAtDockingStartPoint = function() {
+		var rtarget = this.ship.script.$sotlResupplyTarget;
+		var dest = this.sotl_utilDockingStartPosition(rtarget);
 		return this.distance(dest) < 5;
 	};
 
 	/* Configurations */
 
-	lib.prototype.sotw_configurationSetResupplyFinalDocking = function() {
-		var rtarget = this.ship.script.$sotwResupplyTarget;
-		this.ship.destination = this.sotw_utilDockingEndPosition(rtarget);
+	lib.prototype.sotl_configurationSetResupplyFinalDocking = function() {
+		var rtarget = this.ship.script.$sotlResupplyTarget;
+		this.ship.destination = this.sotl_utilDockingEndPosition(rtarget);
 		this.ship.desiredRange = 5;
 		var cspeed = this.cruiseSpeed();
 		this.ship.desiredSpeed = Math.min(cspeed,50);
@@ -269,12 +269,12 @@ this.startUp = function() {
 		this.ship.addCollisionException(rtarget);
 	};
 
-	lib.prototype.sotw_configurationSetResupplyMidDocking = function() {
-		var rtarget = this.ship.script.$sotwResupplyTarget;
-		if (this.ship.destination.distanceTo(this.sotw_utilDockingMidPosition(rtarget)) < 10 || this.ship.destination.distanceTo(this.sotw_utilDockingEndPosition(rtarget)) < 10) {
-			this.ship.destination = this.sotw_utilDockingEndPosition(rtarget);
+	lib.prototype.sotl_configurationSetResupplyMidDocking = function() {
+		var rtarget = this.ship.script.$sotlResupplyTarget;
+		if (this.ship.destination.distanceTo(this.sotl_utilDockingMidPosition(rtarget)) < 10 || this.ship.destination.distanceTo(this.sotl_utilDockingEndPosition(rtarget)) < 10) {
+			this.ship.destination = this.sotl_utilDockingEndPosition(rtarget);
 		} else {
-			this.ship.destination = this.sotw_utilDockingMidPosition(rtarget);
+			this.ship.destination = this.sotl_utilDockingMidPosition(rtarget);
 		}
 		this.ship.desiredRange = 5;
 		var cspeed = this.cruiseSpeed();
@@ -284,9 +284,9 @@ this.startUp = function() {
 		this.ship.addCollisionException(rtarget);
 	};
 
-	lib.prototype.sotw_configurationSetResupplyBeginDocking = function() {
-		var rtarget = this.ship.script.$sotwResupplyTarget;
-		this.ship.destination = this.sotw_utilDockingStartPosition(rtarget);
+	lib.prototype.sotl_configurationSetResupplyBeginDocking = function() {
+		var rtarget = this.ship.script.$sotlResupplyTarget;
+		this.ship.destination = this.sotl_utilDockingStartPosition(rtarget);
 		this.ship.desiredRange = 2;
 		this.ship.desiredSpeed = this.cruiseSpeed();
 		// remove collision exception if set earlier
@@ -296,14 +296,14 @@ this.startUp = function() {
 
 	// spread them out around the station, rather than having them all pile up
 	// on the witchpoint side
-	lib.prototype.sotw_configurationSetDestinationToResupplyPoint = function() {
+	lib.prototype.sotl_configurationSetDestinationToResupplyPoint = function() {
 		var station = this.getParameter("oolite_selectedStation");
-		this.ship.destination = station.position.add(this.sotw_utilPersonalVector().multiply(10E3+station.collisionRadius));
+		this.ship.destination = station.position.add(this.sotl_utilPersonalVector().multiply(10E3+station.collisionRadius));
 		this.ship.desiredRange = 100;
 		this.ship.desiredSpeed = this.cruiseSpeed();
 	};
 
-	lib.prototype.sotw_configurationSetDestinationToClearSpace = function() {
+	lib.prototype.sotl_configurationSetDestinationToClearSpace = function() {
 		// clear out of the orbital plane
 		var pos = this.ship.position;
 		if (Math.abs(pos.y) < 25E3) {
@@ -319,17 +319,17 @@ this.startUp = function() {
 		this.ship.desiredSpeed = this.cruiseSpeed();
 	};
 
-	lib.prototype.sotw_configurationSelectMainTradingStation = function() {
+	lib.prototype.sotl_configurationSelectMainTradingStation = function() {
 		// TODO: more options than this
 		this.setParameter("oolite_selectedStation",system.mainStation);
 	};
 
-	lib.prototype.sotw_configurationSelectRefuellingStation = function() {
+	lib.prototype.sotl_configurationSelectRefuellingStation = function() {
 		var opts = [];
 		var ss = system.stations;
 		for (var i=0;i<ss.length;i++) {
 			if (this.friendlyStation(ss[i])) {
-				if (ss[i].market["sotw-fuel"].quantity > 0) {
+				if (ss[i].market["sotl-fuel"].quantity > 0) {
 					opts.push(ss[i]);
 				}
 			}
@@ -339,16 +339,16 @@ this.startUp = function() {
 		}
 	};
 
-	lib.prototype.sotw_configurationSetTradeRouteNextSystem = function() {
-		var next = this.getParameter("sotw_nextSystem");
+	lib.prototype.sotl_configurationSetTradeRouteNextSystem = function() {
+		var next = this.getParameter("sotl_nextSystem");
 		if (next === null || next == system.ID) {
-			var routes = system.info.sotw_economy_onroutes.split(";");
+			var routes = system.info.sotl_economy_onroutes.split(";");
 			for (var i=0;i<routes.length;i++) {
 				var route = routes[i].split(",");
 				if (parseInt(route[route.length-1]) == this.ship.destinationSystem) {
 					for (var j=0;j<route.length;j++) {
 						if (route[j] == system.ID) {
-							this.setParameter("sotw_nextSystem",route[j+1]);
+							this.setParameter("sotl_nextSystem",route[j+1]);
 							return;
 						}
 					}
@@ -363,19 +363,19 @@ this.startUp = function() {
 
 	};
 
-	lib.prototype.sotw_configurationFreighterNewTradeRoute = function() {
-		this.setParameter("sotw_freighterObjective","TRAVEL");
+	lib.prototype.sotl_configurationFreighterNewTradeRoute = function() {
+		this.setParameter("sotl_freighterObjective","TRAVEL");
 		this.ship.homeSystem = system.ID;
 		
-		var exports = system.info.sotw_economy_exportsto.split(";");
-		if (system.info.sotw_economy_exportsto.split != "") {
+		var exports = system.info.sotl_economy_exportsto.split(";");
+		if (system.info.sotl_economy_exportsto.split != "") {
 			this.ship.destinationSystem = parseInt(exports[Math.floor(Math.random()*exports.length)]);
 		} else {
 			var dist = 7;
 			do {
 				var systems = system.info.systemsInRange(dist);
 				for (var i=0;i<systems.length;i++) {
-					if (systems[i].sotw_economy.exportsto != "") {
+					if (systems[i].sotl_economy.exportsto != "") {
 						// travel to the nearest system that
 						// does export something
 						this.ship.destinationSystem = systems[i];
@@ -387,47 +387,47 @@ this.startUp = function() {
 		}
 	}
 
-	lib.prototype.sotw_configurationFreighterAbortMission = function() {
-		this.setParameter("sotw_freighterObjective","SURVIVE");
+	lib.prototype.sotl_configurationFreighterAbortMission = function() {
+		this.setParameter("sotl_freighterObjective","SURVIVE");
 	};
 
-	lib.prototype.sotw_configurationFreighterObjectiveTravel = function() {
-		this.setParameter("sotw_freighterObjective","TRAVEL");
+	lib.prototype.sotl_configurationFreighterObjectiveTravel = function() {
+		this.setParameter("sotl_freighterObjective","TRAVEL");
 	};
 
-	lib.prototype.sotw_configurationBeginWitchspaceCountdown = function() {
+	lib.prototype.sotl_configurationBeginWitchspaceCountdown = function() {
 		// also discards stale countdowns
-		if (!this.getParameter("sotw_witchspaceCountdownStarted") || this.getParameter("sotw_witchspaceCountdownStarted") - clock.absoluteSeconds > 60) {
-			this.setParameter("sotw_witchspaceCountdownStarted",clock.absoluteSeconds);
+		if (!this.getParameter("sotl_witchspaceCountdownStarted") || this.getParameter("sotl_witchspaceCountdownStarted") - clock.absoluteSeconds > 60) {
+			this.setParameter("sotl_witchspaceCountdownStarted",clock.absoluteSeconds);
 		}
 		this.ship.destination = this.ship.position.add(this.ship.vectorForward.multiply(1E6));
 		this.ship.desiredSpeed = this.cruiseSpeed();
 		this.ship.desiredRange = 1E3;
 	};
 
-	lib.prototype.sotw_configurationBeginRefuellingCountdown = function() {
+	lib.prototype.sotl_configurationBeginRefuellingCountdown = function() {
 		// also discards stale countdowns
-		if (!this.getParameter("sotw_refuellingCountdownStarted") || this.getParameter("sotw_refuellingCountdownStarted") - clock.absoluteSeconds > 900) {
-			this.setParameter("sotw_refuellingCountdownStarted",clock.absoluteSeconds);
+		if (!this.getParameter("sotl_refuellingCountdownStarted") || this.getParameter("sotl_refuellingCountdownStarted") - clock.absoluteSeconds > 900) {
+			this.setParameter("sotl_refuellingCountdownStarted",clock.absoluteSeconds);
 		}
 	};
 
-	lib.prototype.sotw_configurationRefuel = function() {
+	lib.prototype.sotl_configurationRefuel = function() {
 		/* TODO: consume a tonne of fuel from hold to do this */
 		this.ship.fuel = 7;
 	}
 
 	/* Behaviours */
 
-	lib.prototype.sotw_behaviourChargeWitchspaceDrive = function() {
+	lib.prototype.sotl_behaviourChargeWitchspaceDrive = function() {
 		// for now, just fly forward-ish
 		this.behaviourApproachDestination();
 	};
 
-	lib.prototype.sotw_behaviourEnterWitchspace = function() {
-		var destID = this.getParameter("sotw_nextSystem");
+	lib.prototype.sotl_behaviourEnterWitchspace = function() {
+		var destID = this.getParameter("sotl_nextSystem");
 		var result = this.ship.exitSystem(destID);
-		this.setParameter("sotw_witchspaceCountdownStarted",null);
+		this.setParameter("sotl_witchspaceCountdownStarted",null);
 		// if it doesn't, we'll get blocked
 		if (result)
 		{
@@ -438,16 +438,16 @@ this.startUp = function() {
 		this.applyHandlers(handlers);
 	};
 
-	lib.prototype.sotw_behaviourRequestResupply = function() {
+	lib.prototype.sotl_behaviourRequestResupply = function() {
 		var s = this.getParameter("oolite_selectedStation");
 		if (s.alertCondition > 1) {
 			// not right now!
 			return;
 		}
-		var resupply = pop._launchShipsFromStation(s,"sotw-transport-insystem","sotw-freighter-resupply",true,1,10)[0];
+		var resupply = pop._launchShipsFromStation(s,"sotl-transport-insystem","sotl-freighter-resupply",true,1,10)[0];
 		if (resupply) {
-			this.setParameter("sotw_freighterResupplyShip",resupply);
-			resupply.script.$sotwResupplyTarget = this.ship;
+			this.setParameter("sotl_freighterResupplyShip",resupply);
+			resupply.script.$sotlResupplyTarget = this.ship;
 		}
 		var handlers = {};
 		this.responsesAddStandard(handlers);
@@ -455,17 +455,17 @@ this.startUp = function() {
 	};
 
 
-	lib.prototype.sotw_behaviourTransferResupply = function() {
-		var needs = this.getParameter("sotw_resupplyLevel");
-		var resupply = this.getParameter("sotw_freighterResupplyShip");
-		var has = resupply.AIScript.oolite_priorityai.getParameter("sotw_resupplyLevel");
+	lib.prototype.sotl_behaviourTransferResupply = function() {
+		var needs = this.getParameter("sotl_resupplyLevel");
+		var resupply = this.getParameter("sotl_freighterResupplyShip");
+		var has = resupply.AIScript.oolite_priorityai.getParameter("sotl_resupplyLevel");
 		if (needs > 0 && has > 0) {
 			// transfer one unit of cargo
 			// TODO: actually swap hold cargo based on what this ship wants
-			this.setParameter("sotw_resupplyLevel",needs-1);
-			resupply.AIScript.oolite_priorityai.setParameter("sotw_resupplyLevel",has-1);
+			this.setParameter("sotl_resupplyLevel",needs-1);
+			resupply.AIScript.oolite_priorityai.setParameter("sotl_resupplyLevel",has-1);
 			// and start refuelling
-			this.sotw_configurationBeginRefuellingCountdown();
+			this.sotl_configurationBeginRefuellingCountdown();
 			if (needs == 1 || has == 1) {
 				// now operation is complete
 				// undock
@@ -479,7 +479,7 @@ this.startUp = function() {
 		this.applyHandlers(handlers);
 	};
 
-	lib.prototype.sotw_behaviourPriorityFaceDestinationForResupplyDock = function() {
+	lib.prototype.sotl_behaviourPriorityFaceDestinationForResupplyDock = function() {
 		// face destination, ignoring everything else until done
 		var handlers = {
 			shipNowFacingDestination : function() {
@@ -491,14 +491,14 @@ this.startUp = function() {
 	};
 
 
-	lib.prototype.sotw_behaviourTorusToDestination = function() {
-		var t = this.getParameter("sotw_torusEffect");
+	lib.prototype.sotl_behaviourTorusToDestination = function() {
+		var t = this.getParameter("sotl_torusEffect");
 		if (!(t&&t.isValid)) {
-			var torus = system.addVisualEffect("sotw-torus-effect",this.ship.position);
+			var torus = system.addVisualEffect("sotl-torus-effect",this.ship.position);
 			torus.script.$ship = this.ship;
 			torus.script.$destination = this.ship.destination;
 			torus.script.$maxSpeed = this.ship.maxSpeed * 32;
-			this.setParameter("sotw_torusEffect",torus);
+			this.setParameter("sotl_torusEffect",torus);
 		}
 		var handlers = {};
 		this.responsesAddStandard(handlers);
@@ -507,7 +507,7 @@ this.startUp = function() {
 	};
 
 
-	lib.prototype.sotw_behaviourEscortTorus = function() {
+	lib.prototype.sotl_behaviourEscortTorus = function() {
 		var handlers = {};
 		this.responsesAddStandard(handlers);
 		this.applyHandlers(handlers);
@@ -516,10 +516,10 @@ this.startUp = function() {
 
 	/* -- Station behaviours */
 
-	lib.prototype.sotw_behaviourStationFight = function() {
-		if (!this.__ltcache.sotw_launched_ship) {
+	lib.prototype.sotl_behaviourStationFight = function() {
+		if (!this.__ltcache.sotl_launched_ship) {
 			if (this.ship.script.$defenseShipCounter > 0) {
-				this.sotw_utilLaunchDefenseShips();
+				this.sotl_utilLaunchDefenseShips();
 			}
 		}
 		var handlers = {};
@@ -527,15 +527,15 @@ this.startUp = function() {
 		this.applyHandlers(handlers);
 	};
 
-	lib.prototype.sotw_behaviourStationRespondToDistressCall = function() {
+	lib.prototype.sotl_behaviourStationRespondToDistressCall = function() {
 		// check factions of both parties, then take action
 		var aggressor = this.getParameter("oolite_distressAggressor");
 		var sender = this.getParameter("oolite_distressSender");
-		var f1 = this.ship.script.$sotwFaction;
-		var fa = aggressor.script.$sotwFaction;
-		var fs = sender.script.$sotwFaction;
-		var coma = this.sotw_utilCompareFactions(f1,fa);
-		var coms = this.sotw_utilCompareFactions(f1,fs);
+		var f1 = this.ship.script.$sotlFaction;
+		var fa = aggressor.script.$sotlFaction;
+		var fs = sender.script.$sotlFaction;
+		var coma = this.sotl_utilCompareFactions(f1,fa);
+		var coms = this.sotl_utilCompareFactions(f1,fs);
 		if (coma > coms) {
 			// reverse the two
 			var tmp = sender;
@@ -559,10 +559,10 @@ this.startUp = function() {
 		this.applyHandlers(handlers);
 	};
 	
-	lib.prototype.sotw_behaviourStationWarnOrAttackHostileFaction = function() {
-		var f1 = this.ship.script.$sotwFaction;
-		var f2 = this.ship.target.script.$sotwFaction;
-		var compare = this.sotw_utilCompareFactions(f1,f2);
+	lib.prototype.sotl_behaviourStationWarnOrAttackHostileFaction = function() {
+		var f1 = this.ship.script.$sotlFaction;
+		var f2 = this.ship.target.script.$sotlFaction;
+		var compare = this.sotl_utilCompareFactions(f1,f2);
 		if (compare <= -3) {
 			// attack on sight
 			this.ship.alertCondition = 3;
@@ -575,7 +575,7 @@ this.startUp = function() {
 				this.ship.requestHelpFromGroup();
 				this.reconsiderNow();
 			} else {
-				this.sotw_utilWarnTarget();
+				this.sotl_utilWarnTarget();
 			}
 		}
 		var handlers = {};
@@ -583,19 +583,19 @@ this.startUp = function() {
 		this.applyHandlers(handlers);
 	};
 
-	lib.prototype.sotw_behaviourStationLaunchSalvager = function() {
+	lib.prototype.sotl_behaviourStationLaunchSalvager = function() {
 		if (this.ship.script.$salvageShipCounter > 0) {
-			this.sotw_utilLaunchSalvageShip();
+			this.sotl_utilLaunchSalvageShip();
 		}
 		var handlers = {};
 		this.responsesAddStation(handlers);
 		this.applyHandlers(handlers);
 	};
 
-	lib.prototype.sotw_behaviourStationLaunchDefense = function() {
-		if (!this.__ltcache.sotw_launched_ship) {
+	lib.prototype.sotl_behaviourStationLaunchDefense = function() {
+		if (!this.__ltcache.sotl_launched_ship) {
 			if (this.ship.script.$defenseShipCounter > 0) {
-				this.sotw_utilLaunchDefenseShips();
+				this.sotl_utilLaunchDefenseShips();
 			}
 		}
 		// TODO: if total defense ship count is too low
@@ -605,7 +605,7 @@ this.startUp = function() {
 		this.applyHandlers(handlers);
 	};
 
-	lib.prototype.sotw_behaviourStationIdle = function() {
+	lib.prototype.sotl_behaviourStationIdle = function() {
 		var handlers = {};
 		this.responsesAddStation(handlers);
 		this.applyHandlers(handlers);
@@ -625,66 +625,66 @@ this.startUp = function() {
 	 *  2: allied, will give benefit of doubt, always helps distress calls
 	 *  3: same faction
 	 */
-	lib.prototype.sotw_utilCompareFactions = function(f1,f2) {
+	lib.prototype.sotl_utilCompareFactions = function(f1,f2) {
 		if (f1 == f2) { return 3; }
 		return 0; // temp
 	};
 
-	lib.prototype.sotw_utilLaunchDefenseShips = function() {
-		this.__ltcache.sotw_launched_ship = 1;
+	lib.prototype.sotl_utilLaunchDefenseShips = function() {
+		this.__ltcache.sotl_launched_ship = 1;
 		var attempt = Math.min(3,this.ship.script.$defenseShipCounter);
-		var ships = pop._launchShipsFromStation(this.ship,"sotw-fighter-superiority","sotw-station-defense-ship",true,attempt,attempt*this.getParameter("sotw_defenseShipStrength"));
+		var ships = pop._launchShipsFromStation(this.ship,"sotl-fighter-superiority","sotl-station-defense-ship",true,attempt,attempt*this.getParameter("sotl_defenseShipStrength"));
 		if (ships) {
 			this.ship.script.$defenseShipCounter -= ships.length;
 		}
 	};
 
-	lib.prototype.sotw_utilLaunchSalvageShips = function() {
-		this.__ltcache.sotw_launched_ship = 1;
+	lib.prototype.sotl_utilLaunchSalvageShips = function() {
+		this.__ltcache.sotl_launched_ship = 1;
 		// TODO: actually launch ships
 	};
 
-	lib.prototype.sotw_utilWarnTarget = function() {
+	lib.prototype.sotl_utilWarnTarget = function() {
 		// TODO: actually warn target
 	};
 
-	lib.prototype.sotw_utilPersonalVector = function() {
-		var v = this.getParameter("sotw_personalVector");
+	lib.prototype.sotl_utilPersonalVector = function() {
+		var v = this.getParameter("sotl_personalVector");
 		if (!v) {
 			v = Vector3D.randomDirection();
-			this.setParameter("sotw_personalVector",v);
+			this.setParameter("sotl_personalVector",v);
 		}
 		return v;
 	};
 
-	lib.prototype.sotw_utilDockingStartPosition = function(ship) {
-		return this.sotw_utilDockingEndPosition(ship).add(ship.vectorForward.multiply(-1*(ship.boundingBox.z+this.ship.boundingBox.z+500)));
+	lib.prototype.sotl_utilDockingStartPosition = function(ship) {
+		return this.sotl_utilDockingEndPosition(ship).add(ship.vectorForward.multiply(-1*(ship.boundingBox.z+this.ship.boundingBox.z+500)));
 	};
 
 	// this is used to get the turning to face destination right for ship
 	// orientation
-	lib.prototype.sotw_utilDockingMidPosition = function(ship) {
-		return this.sotw_utilDockingEndPosition(ship).add(ship.vectorUp.multiply(500));
+	lib.prototype.sotl_utilDockingMidPosition = function(ship) {
+		return this.sotl_utilDockingEndPosition(ship).add(ship.vectorUp.multiply(500));
 	};
 
-	lib.prototype.sotw_utilDockingEndPosition = function(ship) {
+	lib.prototype.sotl_utilDockingEndPosition = function(ship) {
 		return ship.position.add(ship.vectorUp.multiply((ship.boundingBox.y+this.ship.boundingBox.y)/2));
 	};
 
 
 	// Core utility override
 	lib.prototype.friendlyStation = function(station) {
-		var f1 = this.ship.script.$sotwFaction;
-		var f2 = station.script.$sotwFaction;
-		var compare = this.sotw_utilCompareFactions(f1,f2);
+		var f1 = this.ship.script.$sotlFaction;
+		var f2 = station.script.$sotlFaction;
+		var compare = this.sotl_utilCompareFactions(f1,f2);
 		return compare >= 0;
 	};
 
 	// Core utility override
 	lib.prototype.hostileStation = function(station) {
-		var f1 = this.ship.script.$sotwFaction;
-		var f2 = station.script.$sotwFaction;
-		var compare = this.sotw_utilCompareFactions(f1,f2);
+		var f1 = this.ship.script.$sotlFaction;
+		var f2 = station.script.$sotlFaction;
+		var compare = this.sotl_utilCompareFactions(f1,f2);
 		return compare <= -2;
 	};
 
@@ -713,7 +713,7 @@ this.startUp = function() {
 		// player could have meant to do that
 		if (!this.getParameter("oolite_playerFriendlyFireAlready"))
 		{
-			var relation = this.sotw_utilCompareFactions(this.ship.script.$sotwFaction,player.ship.script.$sotwFaction);
+			var relation = this.sotl_utilCompareFactions(this.ship.script.$sotlFaction,player.ship.script.$sotlFaction);
 			if (relation >= 1) {
 				// only allow one!
 				this.setParameter("oolite_playerFriendlyFireAlready",true);
@@ -725,28 +725,28 @@ this.startUp = function() {
 
 	/* Templates */
 
-	lib.prototype.sotw_templateApproachStation = function() {
+	lib.prototype.sotl_templateApproachStation = function() {
 		return [
 			{
 				label: "Approach station",
 				configuration: this.configurationSetDestinationToSelectedStation,
-				truebranch: this.sotw_templateTravelToDestination()
+				truebranch: this.sotl_templateTravelToDestination()
 			}
 		];
 	};
 
 
-	lib.prototype.sotw_templateTravelToDestination = function() {
+	lib.prototype.sotl_templateTravelToDestination = function() {
 		return [
 			{
 				label: "Approach destination normally",
-				notcondition: this.sotw_conditionLocalSpaceClear,
+				notcondition: this.sotl_conditionLocalSpaceClear,
 				behaviour: this.behaviourApproachDestination,
 				reconsider: 30
 			},
 			{
 				label: "Approach destination on torus",
-				behaviour: this.sotw_behaviourTorusToDestination,
+				behaviour: this.sotl_behaviourTorusToDestination,
 				reconsider: 30
 			}
 		];
@@ -754,7 +754,7 @@ this.startUp = function() {
 
 
 
-	lib.prototype.sotw_templateResupplyOperation = function() {
+	lib.prototype.sotl_templateResupplyOperation = function() {
 		/* 1) Come to complete stop
 		 * 2) If no resupplier, request one
 		 * 3) If resupplier docked, transfer one unit of resupply
@@ -763,27 +763,27 @@ this.startUp = function() {
 		return [
 			{
 				label: "Approach designated resupply point",
-				notcondition: this.sotw_conditionInResupplyRange,
-				configuration: this.sotw_configurationSetDestinationToResupplyPoint,
+				notcondition: this.sotl_conditionInResupplyRange,
+				configuration: this.sotl_configurationSetDestinationToResupplyPoint,
 				behaviour: this.behaviourApproachDestination,
 				reconsider: 20
 			},
 			{
 				label: "Stop close to station",
-				condition: this.sotw_conditionIsMoving,
+				condition: this.sotl_conditionIsMoving,
 				behaviour: this.behaviourWaitHere,
 				reconsider: 20
 			},
 			{
 				label: "Request resupply ship",
-				notcondition: this.sotw_conditionFreighterResupplierAssigned,
-				behaviour: this.sotw_behaviourRequestResupply,
+				notcondition: this.sotl_conditionFreighterResupplierAssigned,
+				behaviour: this.sotl_behaviourRequestResupply,
 				reconsider: 60 // it'll take a while for one to get here, anyway
 			},
 			{
 				label: "Carry out resupply transfers",
-				condition: this.sotw_conditionFreighterResupplierDocked,
-				behaviour: this.sotw_behaviourTransferResupply,
+				condition: this.sotl_conditionFreighterResupplierDocked,
+				behaviour: this.sotl_behaviourTransferResupply,
 				reconsider: 60
 			},
 			{
@@ -794,41 +794,41 @@ this.startUp = function() {
 		];
 	};
 
-	lib.prototype.sotw_templateMakeWitchspaceJump = function() {
+	lib.prototype.sotl_templateMakeWitchspaceJump = function() {
 		return [
 			{
 				label: "Complete witchspace countdown",
-				condition: this.sotw_conditionWitchspaceCountdownComplete,
-				behaviour: this.sotw_behaviourEnterWitchspace,
+				condition: this.sotl_conditionWitchspaceCountdownComplete,
+				behaviour: this.sotl_behaviourEnterWitchspace,
 				reconsider: 5
 			},
 			{
 				label: "Begin witchspace countdown",
-				configuration: this.sotw_configurationBeginWitchspaceCountdown,
-				behaviour: this.sotw_behaviourChargeWitchspaceDrive,
+				configuration: this.sotl_configurationBeginWitchspaceCountdown,
+				behaviour: this.sotl_behaviourChargeWitchspaceDrive,
 				reconsider: 15
 			}
 		];
 	};
 
-	lib.prototype.sotw_templateRefuelInFlight = function() {
+	lib.prototype.sotl_templateRefuelInFlight = function() {
 		return [
 			{
 				// if refuelling countdown complete
 				// set fuel to full and reconsider
 				label: "Complete refuelling operation",
-				condition: this.sotw_conditionRefuellingCountdownComplete,
-				configuration: this.sotw_configurationRefuel,
+				condition: this.sotl_conditionRefuellingCountdownComplete,
+				configuration: this.sotl_configurationRefuel,
 				behaviour: this.behaviourWaitHere,
 				reconsider: 5
 			},
 			{
 				label: "Reach clear space and refuel",
-				preconfiguration: this.sotw_configurationBeginRefuellingCountdown,
-				condition: this.sotw_conditionInClearSpace,
+				preconfiguration: this.sotl_configurationBeginRefuellingCountdown,
+				condition: this.sotl_conditionInClearSpace,
 				// if refuelling countdown not started, start it
 				// if too near witchpoint, fly forwards
-				configuration: this.sotw_configurationSetDestinationToClearSpace,
+				configuration: this.sotl_configurationSetDestinationToClearSpace,
 				behaviour: this.behaviourApproachDestination,
 				reconsider: 60
 			},
@@ -841,11 +841,11 @@ this.startUp = function() {
 		];
 	};
 
-	lib.prototype.sotw_templateEscortMothership = function() {
+	lib.prototype.sotl_templateEscortMothership = function() {
 		return [
 			{
-				condition: this.sotw_conditionMothershipUsingTorus,
-				behaviour: this.sotw_behaviourEscortTorus,
+				condition: this.sotl_conditionMothershipUsingTorus,
+				behaviour: this.sotl_behaviourEscortTorus,
 				reconsider: 5
 			},
 			{
@@ -857,17 +857,17 @@ this.startUp = function() {
 
 	/* Waypoint generators */
 
-	lib.prototype.sotw_waypointsStationPatrol = function() {
+	lib.prototype.sotl_waypointsStationPatrol = function() {
 		// needs to depend on station security level
 		// stations with more ships on patrol can have more complex routes
-		var patrol = this.ship.script.$sotwPatrolZoneNumber;
+		var patrol = this.ship.script.$sotlPatrolZoneNumber;
 		var gs = this.ship.group.ships;
 		var nums = [];
 		var onpatrol = 1;
 		// find patrol numbers for other ships in groups (1-indexed)
 		for (var i=gs.length-1;i>=0;i--) {
 			if (gs[i].AIScript.oolite_priorityai) {
-				var pzn = gs[i].script.$sotwPatrolZoneNumber;
+				var pzn = gs[i].script.$sotlPatrolZoneNumber;
 				if (pzn) {
 					nums.push(pzn);
 					onpatrol++;
@@ -882,7 +882,7 @@ this.startUp = function() {
 				++patrol;
 			}
 			// patrol is now first free number
-			this.ship.script.$sotwPatrolZoneNumber = patrol;
+			this.ship.script.$sotlPatrolZoneNumber = patrol;
 		}
 
 		var station = this.ship.group.leader;

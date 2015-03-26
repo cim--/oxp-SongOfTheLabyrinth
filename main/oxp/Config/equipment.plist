@@ -1,40 +1,40 @@
 (
 	(
 		0, 0, "Refit Ship",
-		"EQ_SOTW_RECONFIGURE",
+		"EQ_SOTL_RECONFIGURE",
 		"Reconfigure allocation of internal space to engines, thrusters, shields, generators and capacitors.",
 		{
 			available_to_all = true;
-			condition_script = "sotw-conditions.js";
+			condition_script = "sotl-conditions.js";
 		}
 	),
 
 	(
 		4, 5000, "Combat Computer",
-		"EQ_SOTW_COMBAT_COMPUTER",
+		"EQ_SOTL_COMBAT_COMPUTER",
 		"Electronics covering combat-oriented systems, including target tracking, analysis, and locking.",
 		{
 			available_to_all = true;
-			condition_script = "sotw-conditions.js";
+			condition_script = "sotl-conditions.js";
 			provides = ("EQ_SCANNER_SHOW_MISSILE_TARGET","EQ_MULTI_TARGET","EQ_TARGET_MEMORY","EQ_INTEGRATED_TARGETING_SYSTEM");
 			script_info = {
-				"sotw_esuse" = 10;
-				"sotw_enuse" = 0.25;
+				"sotl_esuse" = 10;
+				"sotl_enuse" = 0.25;
 			};
 		}
 	),
 
 	(
 		4, 2500, "Navigation Computer",
-		"EQ_SOTW_NAVIGATION_COMPUTER",
+		"EQ_SOTL_NAVIGATION_COMPUTER",
 		"Electronics covering navigation-oriented systems, including both in-system and witchspace navigation.",
 		{
 			available_to_all = true;
-			condition_script = "sotw-conditions.js";
+			condition_script = "sotl-conditions.js";
 			provides = ("EQ_ADVANCED_COMPASS","EQ_ADVANCED_NAVIGATIONAL_ARRAY");
 			script_info = {
-				"sotw_esuse" = 10;
-				"sotw_enuse" = 0.05;
+				"sotl_esuse" = 10;
+				"sotl_enuse" = 0.05;
 			};
 		}
 	),
@@ -43,65 +43,65 @@
 /* Engine components */
 	(
 		2, 1000, "Engine 1",
-		"EQ_SOTW_COMPONENT_ENGINE1",
+		"EQ_SOTL_COMPONENT_ENGINE1",
 		"Small engine",
 		{
 			available_to_all = true;
 			can_carry_multiple = true;
-			condition_script = "sotw-conditions.js";
+			condition_script = "sotl-conditions.js";
 			script_info = {
-				"sotw_engine" = 24;
-				"sotw_esuse" = 18;
-				"sotw_desuse" = 18;
-				"sotw_enuse" = 0.05;
+				"sotl_engine" = 24;
+				"sotl_esuse" = 18;
+				"sotl_desuse" = 18;
+				"sotl_enuse" = 0.05;
 			};
 		}
 	),	
 	(
 		4, 6000, "Engine 2",
-		"EQ_SOTW_COMPONENT_ENGINE2",
+		"EQ_SOTL_COMPONENT_ENGINE2",
 		"Medium engine",
 		{
 			available_to_all = true;
 			can_carry_multiple = true;
-			condition_script = "sotw-conditions.js";
+			condition_script = "sotl-conditions.js";
 			script_info = {
-				"sotw_engine" = 120;
-				"sotw_esuse" = 80;
-				"sotw_desuse" = 80;
-				"sotw_enuse" = 0.2;
+				"sotl_engine" = 120;
+				"sotl_esuse" = 80;
+				"sotl_desuse" = 80;
+				"sotl_enuse" = 0.2;
 			};
 		}
 	),
 	(
 		8, 37500, "Engine 3",
-		"EQ_SOTW_COMPONENT_ENGINE3",
+		"EQ_SOTL_COMPONENT_ENGINE3",
 		"Large engine",
 		{
 			available_to_all = true;
 			can_carry_multiple = true;
-			condition_script = "sotw-conditions.js";
+			condition_script = "sotl-conditions.js";
 			script_info = {
-				"sotw_engine" = 600;
-				"sotw_esuse" = 350;
-				"sotw_desuse" = 350;
-				"sotw_enuse" = 0.75;
+				"sotl_engine" = 600;
+				"sotl_esuse" = 350;
+				"sotl_desuse" = 350;
+				"sotl_enuse" = 0.75;
 			};
 		}
 	),
 	(
 		12, 225000, "Engine 4",
-		"EQ_SOTW_COMPONENT_ENGINE4",
+		"EQ_SOTL_COMPONENT_ENGINE4",
 		"Huge engine",
 		{
 			available_to_all = true;
 			can_carry_multiple = true;
-			condition_script = "sotw-conditions.js";
+			condition_script = "sotl-conditions.js";
 			script_info = {
-				"sotw_engine" = 3000;
-				"sotw_esuse" = 1600;
-				"sotw_desuse" = 1600;
-				"sotw_enuse" = 2.75;
+				"sotl_engine" = 3000;
+				"sotl_esuse" = 1600;
+				"sotl_desuse" = 1600;
+				"sotl_enuse" = 2.75;
 			};
 		}
 	),
@@ -109,61 +109,61 @@
 /* Thruster components */
 	(
 		2, 1000, "Thruster 1",
-		"EQ_SOTW_COMPONENT_THRUSTER1",
+		"EQ_SOTL_COMPONENT_THRUSTER1",
 		"Small thruster",
 		{
 			available_to_all = true;
 			can_carry_multiple = true;
-			condition_script = "sotw-conditions.js";
+			condition_script = "sotl-conditions.js";
 			script_info = {
-				"sotw_thruster" = 40;
-				"sotw_esuse" = 15;
-				"sotw_enuse" = 0.05;
+				"sotl_thruster" = 40;
+				"sotl_esuse" = 15;
+				"sotl_enuse" = 0.05;
 			};
 		}
 	),	
 	(
 		4, 6000, "Thruster 2",
-		"EQ_SOTW_COMPONENT_THRUSTER2",
+		"EQ_SOTL_COMPONENT_THRUSTER2",
 		"Medium thruster",
 		{
 			available_to_all = true;
 			can_carry_multiple = true;
-			condition_script = "sotw-conditions.js";
+			condition_script = "sotl-conditions.js";
 			script_info = {
-				"sotw_thruster" = 200;
-				"sotw_esuse" = 60;
-				"sotw_enuse" = 0.2;
+				"sotl_thruster" = 200;
+				"sotl_esuse" = 60;
+				"sotl_enuse" = 0.2;
 			};
 		}
 	),
 	(
 		8, 37500, "Thruster 3",
-		"EQ_SOTW_COMPONENT_THRUSTER3",
+		"EQ_SOTL_COMPONENT_THRUSTER3",
 		"Large thruster",
 		{
 			available_to_all = true;
 			can_carry_multiple = true;
-			condition_script = "sotw-conditions.js";
+			condition_script = "sotl-conditions.js";
 			script_info = {
-				"sotw_thruster" = 1000;
-				"sotw_esuse" = 250;
-				"sotw_enuse" = 0.75;
+				"sotl_thruster" = 1000;
+				"sotl_esuse" = 250;
+				"sotl_enuse" = 0.75;
 			};
 		}
 	),
 	(
 		12, 225000, "Thruster 4",
-		"EQ_SOTW_COMPONENT_THRUSTER4",
+		"EQ_SOTL_COMPONENT_THRUSTER4",
 		"Huge thruster",
 		{
 			available_to_all = true;
 			can_carry_multiple = true;
-			condition_script = "sotw-conditions.js";
+			condition_script = "sotl-conditions.js";
 			script_info = {
-				"sotw_thruster" = 5000;
-				"sotw_esuse" = 1200;
-				"sotw_enuse" = 2.75;
+				"sotl_thruster" = 5000;
+				"sotl_esuse" = 1200;
+				"sotl_enuse" = 2.75;
 			};
 		}
 	),
@@ -171,61 +171,61 @@
 /* Shield components */
 	(
 		2, 1000, "Shield 1",
-		"EQ_SOTW_COMPONENT_SHIELD1",
+		"EQ_SOTL_COMPONENT_SHIELD1",
 		"Small shield",
 		{
 			available_to_all = true;
 			can_carry_multiple = true;
-			condition_script = "sotw-conditions.js";
+			condition_script = "sotl-conditions.js";
 			script_info = {
-				"sotw_shield" = 25;
-				"sotw_esuse" = 20;
-				"sotw_enuse" = 0.2;
+				"sotl_shield" = 25;
+				"sotl_esuse" = 20;
+				"sotl_enuse" = 0.2;
 			};
 		}
 	),	
 	(
 		4, 6000, "Shield 2",
-		"EQ_SOTW_COMPONENT_SHIELD2",
+		"EQ_SOTL_COMPONENT_SHIELD2",
 		"Medium shield",
 		{
 			available_to_all = true;
 			can_carry_multiple = true;
-			condition_script = "sotw-conditions.js";
+			condition_script = "sotl-conditions.js";
 			script_info = {
-				"sotw_shield" = 100;
-				"sotw_esuse" = 85;
-				"sotw_enuse" = 0.8;
+				"sotl_shield" = 100;
+				"sotl_esuse" = 85;
+				"sotl_enuse" = 0.8;
 			};
 		}
 	),
 	(
 		8, 37500, "Shield 3",
-		"EQ_SOTW_COMPONENT_SHIELD3",
+		"EQ_SOTL_COMPONENT_SHIELD3",
 		"Large shield",
 		{
 			available_to_all = true;
 			can_carry_multiple = true;
-			condition_script = "sotw-conditions.js";
+			condition_script = "sotl-conditions.js";
 			script_info = {
-				"sotw_shield" = 500;
-				"sotw_esuse" = 350;
-				"sotw_enuse" = 3.0;
+				"sotl_shield" = 500;
+				"sotl_esuse" = 350;
+				"sotl_enuse" = 3.0;
 			};
 		}
 	),
 	(
 		12, 225000, "Shield 4",
-		"EQ_SOTW_COMPONENT_SHIELD4",
+		"EQ_SOTL_COMPONENT_SHIELD4",
 		"Huge shield",
 		{
 			available_to_all = true;
 			can_carry_multiple = true;
-			condition_script = "sotw-conditions.js";
+			condition_script = "sotl-conditions.js";
 			script_info = {
-				"sotw_shield" = 2500;
-				"sotw_esuse" = 1600;
-				"sotw_enuse" = 15.0;
+				"sotl_shield" = 2500;
+				"sotl_esuse" = 1600;
+				"sotl_enuse" = 15.0;
 			};
 		}
 	),
@@ -233,61 +233,61 @@
 /* Generator components */
 	(
 		2, 1000, "Generator 1",
-		"EQ_SOTW_COMPONENT_GENERATOR1",
+		"EQ_SOTL_COMPONENT_GENERATOR1",
 		"Small generator",
 		{
 			available_to_all = true;
 			can_carry_multiple = true;
-			condition_script = "sotw-conditions.js";
+			condition_script = "sotl-conditions.js";
 			script_info = {
-				"sotw_generator" = 0.8;
-				"sotw_esuse" = 40;
-				"sotw_enuse" = -0.8;
+				"sotl_generator" = 0.8;
+				"sotl_esuse" = 40;
+				"sotl_enuse" = -0.8;
 			};
 		}
 	),	
 	(
 		4, 6000, "Generator 2",
-		"EQ_SOTW_COMPONENT_GENERATOR2",
+		"EQ_SOTL_COMPONENT_GENERATOR2",
 		"Medium generator",
 		{
 			available_to_all = true;
 			can_carry_multiple = true;
-			condition_script = "sotw-conditions.js";
+			condition_script = "sotl-conditions.js";
 			script_info = {
-				"sotw_generator" = 3.0;
-				"sotw_esuse" = 135;
-				"sotw_enuse" = -3.0;
+				"sotl_generator" = 3.0;
+				"sotl_esuse" = 135;
+				"sotl_enuse" = -3.0;
 			};
 		}
 	),
 	(
 		8, 37500, "Generator 3",
-		"EQ_SOTW_COMPONENT_GENERATOR3",
+		"EQ_SOTL_COMPONENT_GENERATOR3",
 		"Large generator",
 		{
 			available_to_all = true;
 			can_carry_multiple = true;
-			condition_script = "sotw-conditions.js";
+			condition_script = "sotl-conditions.js";
 			script_info = {
-				"sotw_generator" = 12.0;
-				"sotw_esuse" = 500;
-				"sotw_enuse" = -12.0;
+				"sotl_generator" = 12.0;
+				"sotl_esuse" = 500;
+				"sotl_enuse" = -12.0;
 			};
 		}
 	),
 	(
 		12, 225000, "Generator 4",
-		"EQ_SOTW_COMPONENT_GENERATOR4",
+		"EQ_SOTL_COMPONENT_GENERATOR4",
 		"Huge generator",
 		{
 			available_to_all = true;
 			can_carry_multiple = true;
-			condition_script = "sotw-conditions.js";
+			condition_script = "sotl-conditions.js";
 			script_info = {
-				"sotw_generator" = 35.0;
-				"sotw_esuse" = 1250;
-				"sotw_enuse" = -35.0;
+				"sotl_generator" = 35.0;
+				"sotl_esuse" = 1250;
+				"sotl_enuse" = -35.0;
 			};
 		}
 	),
@@ -295,86 +295,86 @@
 /* Capacitor components */
 	(
 		2, 1000, "Capacitor 1",
-		"EQ_SOTW_COMPONENT_CAPACITOR1",
+		"EQ_SOTL_COMPONENT_CAPACITOR1",
 		"Small capacitor",
 		{
 			available_to_all = true;
 			can_carry_multiple = true;
-			condition_script = "sotw-conditions.js";
+			condition_script = "sotl-conditions.js";
 			script_info = {
-				"sotw_capacitor" = 0.25;
-				"sotw_esuse" = 30;
+				"sotl_capacitor" = 0.25;
+				"sotl_esuse" = 30;
 			};
 		}
 	),	
 	(
 		4, 6000, "Capacitor 2",
-		"EQ_SOTW_COMPONENT_CAPACITOR2",
+		"EQ_SOTL_COMPONENT_CAPACITOR2",
 		"Medium capacitor",
 		{
 			available_to_all = true;
 			can_carry_multiple = true;
-			condition_script = "sotw-conditions.js";
+			condition_script = "sotl-conditions.js";
 			script_info = {
-				"sotw_capacitor" = 1;
-				"sotw_esuse" = 100;
+				"sotl_capacitor" = 1;
+				"sotl_esuse" = 100;
 			};
 		}
 	),
 	(
 		8, 37500, "Capacitor 3",
-		"EQ_SOTW_COMPONENT_CAPACITOR3",
+		"EQ_SOTL_COMPONENT_CAPACITOR3",
 		"Large capacitor",
 		{
 			available_to_all = true;
 			can_carry_multiple = true;
-			condition_script = "sotw-conditions.js";
+			condition_script = "sotl-conditions.js";
 			script_info = {
-				"sotw_capacitor" = 4;
-				"sotw_esuse" = 375;
+				"sotl_capacitor" = 4;
+				"sotl_esuse" = 375;
 			};
 		}
 	),
 	(
 		12, 225000, "Capacitor 4",
-		"EQ_SOTW_COMPONENT_CAPACITOR4",
+		"EQ_SOTL_COMPONENT_CAPACITOR4",
 		"Huge capacitor",
 		{
 			available_to_all = true;
 			can_carry_multiple = true;
-			condition_script = "sotw-conditions.js";
+			condition_script = "sotl-conditions.js";
 			script_info = {
-				"sotw_capacitor" = 16;
-				"sotw_esuse" = 1400;
+				"sotl_capacitor" = 16;
+				"sotl_esuse" = 1400;
 			};
 		}
 	),
 /* Witchdrive components */
 	(
 		4, 1000, "Standard Witchdrive",
-		"EQ_SOTW_COMPONENT_WITCHDRIVE1",
+		"EQ_SOTL_COMPONENT_WITCHDRIVE1",
 		"Standard witchdrive with a range of 7 LY.",
 		{
 			available_to_all = true;
 			can_carry_multiple = true;
-			condition_script = "sotw-conditions.js";
-			provides = ("EQ_SOTW_WITCHDRIVE");
+			condition_script = "sotl-conditions.js";
+			provides = ("EQ_SOTL_WITCHDRIVE");
 			script_info = {
-				"sotw_esuse" = 100;
+				"sotl_esuse" = 100;
 			};
 		}
 	),	
 	(
 		8, 6000, "Cross-chart Witchdrive",
-		"EQ_SOTW_COMPONENT_WITCHDRIVE2",
+		"EQ_SOTL_COMPONENT_WITCHDRIVE2",
 		"Provides cross-chart witchspace capability in addition to a standard 7 LY jump capability.",
 		{
 			available_to_all = true;
 			can_carry_multiple = true;
-			condition_script = "sotw-conditions.js";
-			provides = ("EQ_GAL_DRIVE","EQ_SOTW_WITCHDRIVE");
+			condition_script = "sotl-conditions.js";
+			provides = ("EQ_GAL_DRIVE","EQ_SOTL_WITCHDRIVE");
 			script_info = {
-				"sotw_esuse" = 400;
+				"sotl_esuse" = 400;
 			};
 		}
 	),
@@ -382,45 +382,45 @@
 /* Refuelling */
 	(
 		0, 10, "Refuel (from hold)",
-		"EQ_SOTW_REFUEL_CARRIED",
+		"EQ_SOTL_REFUEL_CARRIED",
 		"Refuel your ship's fuel tanks using a barrel from your hold. There is a small service charge to use the station's transfer facilities.",
 		{
 			available_to_all = true;
-			condition_script = "sotw-conditions.js";
+			condition_script = "sotl-conditions.js";
 			installation_time = 300;
 		}
 	),
 	(
 		0, 10, "Refuel (from market)",
-		"EQ_SOTW_REFUEL_MARKET",
+		"EQ_SOTL_REFUEL_MARKET",
 		"Refuel your ship's fuel tanks using a barrel from the station market. There is a small service charge to use the station's transfer facilities on top of the cost of the fuel itself.",
 		{
 			available_to_all = true;
-			condition_script = "sotw-conditions.js";
+			condition_script = "sotl-conditions.js";
 			installation_time = 300;
 		}
 	),
 	(
 		0, 10, "Refuel (from private seller)",
-		"EQ_SOTW_REFUEL_PRIVATE",
+		"EQ_SOTL_REFUEL_PRIVATE",
 		"Refuel your ship's fuel tanks using a barrel purchased privately. There is a small service charge to use the station's transfer facilities, and you may need to pay some premium above the current market rate.",
 		{
 			available_to_all = true;
-			condition_script = "sotw-conditions.js";
+			condition_script = "sotl-conditions.js";
 			installation_time = 300;
 		}
 	),
 
 	(
 		6, 20000, "In-flight refuelling system",
-		"EQ_SOTW_REFUEL_INFLIGHT",
+		"EQ_SOTL_REFUEL_INFLIGHT",
 		"Allows you to transfer a barrel of witchdrive fuel from your hold to your fuel tank while in flight. Uses '[oolite_key_activate_equipment]' to start transferring, and '[oolite_key_mode_equipment]' to stop transfers in emergencies. Injector use will not be possible while transfers are in progress.",
 		{
 			available_to_all = true;
-			condition_script = "sotw-conditions.js";
-			script = "sotw-equipment-refueller.js";
+			condition_script = "sotl-conditions.js";
+			script = "sotl-equipment-refueller.js";
 			script_info = {
-				"sotw_esuse" = 180;
+				"sotl_esuse" = 180;
 			};
 		}
 	),
@@ -432,7 +432,7 @@
 		"Standard lightweight fully active homing missile",
 		{
 			available_to_all = true;
-			condition_script = "sotw-conditions.js";
+			condition_script = "sotl-conditions.js";
 			requires_empty_pylon = true;
 			damage_probability = 0;
 		}
@@ -445,7 +445,7 @@
 		"Unmounts, safes, and re-sells at full market value all missiles and mines currently mounted on your craft.",
 		{
 			available_to_all = true;
-			condition_script = "sotw-conditions.js";
+			condition_script = "sotl-conditions.js";
 			requires_mounted_pylon = true;
 		}
 	),
@@ -454,7 +454,7 @@
 		"EQ_WEAPON_NONE",
 		"Remove weapon from selected mounting.",
 		{
-			condition_script = "sotw-conditions.js";
+			condition_script = "sotl-conditions.js";
 			available_to_all = true;
 			weapon_info = {
 				range = 32000;
@@ -468,11 +468,11 @@
 	),
 	(
 		3, 8000, "Light Pulse Laser",
-		"EQ_WEAPON_SOTW_LIGHTPULSE",
+		"EQ_WEAPON_SOTL_LIGHTPULSE",
 		"Light pulse laser for basic offensive capabilities.",
 		{
 			available_to_all = true;
-			condition_script = "sotw-conditions.js";
+			condition_script = "sotl-conditions.js";
 			weapon_info = {
 				range = 15000;
 				energy = 1.2;

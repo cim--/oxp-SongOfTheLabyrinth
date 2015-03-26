@@ -942,33 +942,33 @@
 		result += $plist("economy",info.economy.icon);
 		result += $plist("economy_description",info.economy.type);
 		result += $plist("productivity",Math.ceil(info.economy.productivity/1E6));
-		result += $plist("sotw_economy_status",info.economy.tradeStatus);
-		result += $plistarray("sotw_economy_importsfrom",planetinfo.tradeRouteImports(g,s));
-		result += $plistarray("sotw_economy_exportsto",planetinfo.tradeRouteExports(g,s));
-		result += $plistarray("sotw_economy_onroutes",planetinfo.tradeRouteMembers(g,s));
+		result += $plist("sotl_economy_status",info.economy.tradeStatus);
+		result += $plistarray("sotl_economy_importsfrom",planetinfo.tradeRouteImports(g,s));
+		result += $plistarray("sotl_economy_exportsto",planetinfo.tradeRouteExports(g,s));
+		result += $plistarray("sotl_economy_onroutes",planetinfo.tradeRouteMembers(g,s));
 
 		result += $plist("government",govIcon(info.politics.governmentType,info.colony.stage));
-		result += $plist("sotw_system_stability",info.politics.stability);
+		result += $plist("sotl_system_stability",info.politics.stability);
 		if (info.colony.stage > 0) {
 			result += $plist("government_description",info.politics.governmentType);
-			result += $plist("sotw_government_category",info.politics.governmentCategory);
+			result += $plist("sotl_government_category",info.politics.governmentCategory);
 		} else {
 			result += $plist("government_description","None");
-			result += $plist("sotw_government_category","None");
+			result += $plist("sotl_government_category","None");
 		}
 
 		result += $plist("station",info.station.type); // temporary
 		result += $plist("station_vector",color(info.station.vector));
 
 		result += $plist("description",info.description);
-		result += $plist("sotw_description_elements",info.descriptionElements);
-		result += $plist("sotw_description_elements_used",info.descriptionElementsUsed);
+		result += $plist("sotl_description_elements",info.descriptionElements);
+		result += $plist("sotl_description_elements_used",info.descriptionElementsUsed);
 
-		result += $plist("sotw_planet_surface_radiation",fix(info.planet.surfaceRadiation,3));
-		result += $plist("sotw_planet_surface_temperature",fix(info.planet.temperature,0));
-		result += $plist("sotw_mineral_wealth",fix(info.planet.mineralWealth,2));
-		result += $plist("sotw_habitability_best",fix(info.habitability.best,1));
-		result += $plist("sotw_economy_reason",info.economy.reason);
+		result += $plist("sotl_planet_surface_radiation",fix(info.planet.surfaceRadiation,3));
+		result += $plist("sotl_planet_surface_temperature",fix(info.planet.temperature,0));
+		result += $plist("sotl_mineral_wealth",fix(info.planet.mineralWealth,2));
+		result += $plist("sotl_habitability_best",fix(info.habitability.best,1));
+		result += $plist("sotl_economy_reason",info.economy.reason);
 		
 
 		if (this.$debug) {

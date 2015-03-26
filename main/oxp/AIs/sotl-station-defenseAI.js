@@ -7,17 +7,17 @@ this.aiStarted = function() {
 
 	ai.setParameter("oolite_flag_listenForDistressCall",true);
 	
-	if (this.ship.script.$sotwPopulationPatrolAdjust) {
-		ai.setParameter("oolite_patrolLength",3E6-this.ship.script.$sotwPopulationPatrolAdjust);
+	if (this.ship.script.$sotlPopulationPatrolAdjust) {
+		ai.setParameter("oolite_patrolLength",3E6-this.ship.script.$sotlPopulationPatrolAdjust);
 	} else {
 		ai.setParameter("oolite_patrolLength",3E6);
 	}
 	// should be about three hours
 	// initial system populator should modify and stagger patrol lengths
 	// of initial patrol
-	ai.setWaypointGenerator(ai.sotw_waypointsStationPatrol);
+	ai.setWaypointGenerator(ai.sotl_waypointsStationPatrol);
 
-	ai.setCommunicationsRole("sotw_stationDefense");
+	ai.setCommunicationsRole("sotl_stationDefense");
 
 	ai.setPriorities([
 		/* Fight */

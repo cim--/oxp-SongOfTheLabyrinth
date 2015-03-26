@@ -2363,7 +2363,7 @@ random.setStart(550000);
 				// TODO: more station types!
 				// Note: at some point this will need moving out
 				// of this loop into its own loop to stop breaking vectors
-				type: "sotw-outpost-station"
+				type: "sotl-outpost-station"
 			});
 			var seed = [];
 			for (k=0;k<6;k++) {

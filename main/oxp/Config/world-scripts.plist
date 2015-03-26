@@ -10,9 +10,9 @@
 	"oolite-primable-equipment-manager.js",
 	"oolite-registership.js", // for now
 
-	/* Second stage: SOTW's own scripts */
-	"sotw-ship-refit.js", // ship refitting
-	"sotw-priority-ai.js", // priority AI extensions
-	"sotw-populator.js" // populator scripts
+	/* Second stage: SOTL's own scripts */
+	"sotl-ship-refit.js", // ship refitting
+	"sotl-priority-ai.js", // priority AI extensions
+	"sotl-populator.js" // populator scripts
 	
 )
