@@ -854,6 +854,42 @@
 		name = "Coriolis Dock";
 	};	
 
+	/* Other installations */
+
+	"sotl_marker" = {
+		ai_type = "sotl-checkpoint-controlAI.js";
+/* Beacon label for now set in populator, not shipdata, for compatibility
+ * with old OXP like_ship entries */
+		cargo_type = "CARGO_NOT_CARGO";
+		energy_recharge_rate = 10;
+		forward_weapon_type = "WEAPON_NONE";
+		max_energy = 2500;
+		max_flight_pitch = 0.2;
+		max_flight_roll = 0.2;
+		max_flight_speed = 0;
+		missiles = 0;
+		model = "buoy.dat";
+		name = "Navigation Beacon";
+		roles = "sotl-installation-marker";
+		thrust = 100;
+		unpiloted = yes;
+		smooth = yes;
+		weapon_energy = 0;
+		materials =
+		{
+			"target_metal.png" =
+			{
+				shininess = 20;
+				specular_color = (0.8, 0.83, 0.85, 1.0);
+				diffuse_color = (0.8, 0.8, 0.8);
+				ambient_color = (0.75, 0.75, 0.75);
+			};
+		};	
+		"script_info" = {
+			"sotl_npc_popval" = 1;
+		};
+	};
+
 /* Specials required to be defined */
 
    // required until own missiles are defined
@@ -1120,8 +1156,8 @@
 		fragment_chance = 0.0;
 		is_template = 1;
 		max_energy = 2000;
-		max_flight_pitch = 2;
-		max_flight_roll = 2;
+		max_flight_pitch = 0.2;
+		max_flight_roll = 0.2;
 		max_flight_speed = 500;
 		model = "wreck1.dat";
 		name = "Wreckage";
@@ -1129,6 +1165,12 @@
 		scan_class = "CLASS_NO_DRAW";
 		thrust = 0;
 		counts_as_kill = false;
+	};
+	"oolite_template_wreckage-chunk" = 
+	{
+		like_ship = "oolite_template_wreckage-component";
+		explosion_type = ("oolite-wreckage-chunk-explosion");
+		roles = "oolite-wreckage-chunk";
 	};
 
 	"wreckage-component" =
@@ -1158,6 +1200,21 @@
 		like_ship = "oolite_template_wreckage-component";
 		explosion_type = ("oolite-fragment-explosion-b");
 		model = "wreck5.dat";
+	};
+
+	"wreckage-chunk" = 
+	{
+		like_ship = "oolite_template_wreckage-chunk";
+	};
+	"wreckage-chunk2" = 
+	{
+		like_ship = "oolite_template_wreckage-chunk";
+		explosion_type = ("oolite-wreckage-chunk-fragment");
+	};
+	"wreckage-chunk3" = 
+	{
+		like_ship = "oolite_template_wreckage-chunk";
+		explosion_type = ("oolite-wreckage-chunk-fragment-b");
 	};
 
 }

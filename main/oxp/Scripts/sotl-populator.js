@@ -48,6 +48,12 @@ this.systemWillPopulate = function() {
 		location: "LANE_WP"
 	});
 
+	system.setPopulator("sotl-checkpoint-patrols",{
+		callback: this._setupCheckpointPatrols.bind(this),
+		priority: 20,
+		location: "LANE_WP"
+	});
+
 };
 
 // every 20 seconds
@@ -77,6 +83,10 @@ this._setupWitchpoints = function() {
 this._setupMainStation = function() {
 	// step 1: realign main station so rightvector points at planet
 	system.mainStation.orientation = new Quaternion().rotateY(Math.PI/2).multiply(system.mainStation.orientation);
+
+	if (system.info.sotl_system_stability <= 1) {
+		return; // no patrols
+	}
 
 	// step 2: patrols
 	var shipStrength = system.info.sotl_system_stability;
@@ -224,6 +234,104 @@ this._addResupplyShip = function(position,station) {
 };
 
 
+/** Patrol types
+ * Station (added as part of station addition) - needs SL>=2
+ * Near-planet - needs SL>=3
+ * Checkpoint (on spacelane(s)), 'run' target for traders (drone-armed in more secure systems, as well as the normal patrol). Patrol will intercept nearby torus blips not heading directly for it - needs SL>=4
+ * Proactive, tours spacelane, intercepts most ships with torus, including ones
+ * passing distantly - needs SL>=6
+ */
+
+this._setupCheckpointPatrols = function(pos) {
+	var stability = system.info.sotl_system_stability;
+	log(this.name,"Stability "+stability);
+	if (stability <= 3) {
+		return;
+	}
+	var size;
+	switch (stability) {
+	case 4:
+		size = 6;
+		break;
+	case 5:
+		size = 10;
+		break;
+	case 6:
+		size = 15;
+		break;
+	case 7:
+		size = 20;
+		break;
+	}
+
+	var positions = this._checkpointPatrolLocations();
+	log(this.name,"Patrols at "+positions.length);
+
+	for (var i=0;i<positions.length;i++) {
+		var position = positions[i];
+		var beacon = this._addShipsToSpace(position,"sotl-installation-marker","sotl-checkpoint-buoy",1,100);
+		if (beacon) {
+			beacon = beacon[0];
+			beacon.beaconLabel = "Inbound checkpoint "+(i+1);
+			beacon.beaconCode = "C";
+			beacon.script.$sotlFaction = system.mainStation.script.$sotlFaction;
+		} else {
+			log(this.name,"Could not add beacon");
+			continue;
+		}
+		
+		var patrols = 2;
+		if (stability >= 6) {
+			patrols++;
+			if (stability >= 7) {
+				patrols++;
+			}
+		}
+		beacon.script.$sotl_patrolsWanted = patrols;
+		beacon.script.$sotl_patrolGroups = [];
+		for (var j=0;j<patrols;j++) {
+			var patrolGroup = this._addGroupToSpace(position.add(Vector3D.randomDirection().multiply(10E3)),"sotl-fighter-superiority","sotl-checkpoint-patrolship",2,size);
+			// beacon coordinates patrol actions
+			beacon.script.$sotl_patrolGroups.push(patrolGroup);
+			for (var k=0;k<patrolGroup.ships.length;k++) {
+				patrolGroup.ships[k].script.$sotlFaction = system.mainStation.script.$sotlFaction;
+			}
+		}
+	}
+
+};
+
+
+this._checkpointPatrolLocations = function() {
+	var stability = system.info.sotl_system_stability;
+
+	var ppos = [];
+
+	switch (stability) {
+	case 4:
+		ppos = [0.33];
+		break;
+	case 5:
+		ppos = [0.25,0.5,0.75];
+		break;
+	case 6:
+	case 7:
+		// 7 just has more ships
+		ppos = [0.2,0.4,0.6,0.8];
+		break;
+	default:
+		return ppos; // no patrols of this sort at <=4
+	};
+
+	var coords = [];
+	for (var i=0;i<ppos.length;i++) {
+		coords.push(system.mainPlanet.position.multiply(ppos[i]));
+		// TODO checkpoints for other routes
+	}
+	return coords;
+};
+
+
 // TODO: uninhabited system populator goes here
 
 
@@ -265,7 +373,9 @@ this.$aiMap = {
 	"sotl-shuttle": "sotl-orbital-shuttleAI.js",
 	"sotl-escort": "sotl-escortAI.js",
 	"sotl-long-range-trader": "sotl-traderoute-freighterAI.js",
-	"sotl-freighter-resupply": "sotl-station-resupplyAI.js"
+	"sotl-freighter-resupply": "sotl-station-resupplyAI.js",
+	"sotl-checkpoint-buoy": "sotl-checkpoint-controlAI.js",
+	"sotl-checkpoint-patrolship": "sotl-checkpoint-patrolAI.js",
 };
 
 this._launchShipFromStation = function(station, shipRole) {
@@ -287,6 +397,7 @@ this._setUpShipAs = function(ship, primaryRole) {
 this._buildClassCache = function(shipClass) {
 	var keys = Ship.keysForRole(shipClass);
 	var result = [];
+	log(this.name,"Building "+shipClass);
 	for (var i=0;i<keys.length;i++) {
 		var entry = { 
 			key: keys[i],
@@ -373,6 +484,17 @@ this._launchShipsFromPlanet = function(planet,launchVector,shipClass,shipRole,ma
 		}
 	}
 	return result;
+};
+
+
+this._addGroupToSpace = function(position,shipClass,shipRole,maxCount,maxValue) {
+	var ships = this._addShipsToSpace(position,shipClass,shipRole,maxCount,maxValue);
+	var group = new ShipGroup();
+	for (var i=0;i<ships.length;i++) {
+		group.addShip(ships[i]);
+		ships[i].group = group;
+	}
+	return group;
 };
 
 
@@ -492,4 +614,6 @@ this._stationPatrolLocation = function(station,patrolidx,outof) {
 
 	return pos;
 }
+
+
 
