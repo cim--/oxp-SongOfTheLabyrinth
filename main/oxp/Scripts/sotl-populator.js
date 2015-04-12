@@ -2,6 +2,8 @@ this.name = "SOTL Populator Script";
 
 /* Populator set up */
 
+this.$groupID = 0;
+
 // TODO: system populator and repopulator goes here
 
 this.systemWillPopulate = function() {
@@ -272,13 +274,18 @@ this._setupCheckpointPatrols = function(pos) {
 		var beacon = this._addShipsToSpace(position,"sotl-installation-marker","sotl-checkpoint-buoy",1,100);
 		if (beacon) {
 			beacon = beacon[0];
-			beacon.beaconLabel = "Inbound checkpoint "+(i+1);
-			beacon.beaconCode = "C";
 			beacon.script.$sotlFaction = system.mainStation.script.$sotlFaction;
 		} else {
 			log(this.name,"Could not add beacon");
 			continue;
 		}
+
+		system.setWaypoint("checkpoint-primary-"+i,position,[0,0,0,0],{
+			size: 10E3,
+			beaconCode: "C",
+			beaconLabel: "Inbound checkpoint "+(i+1)
+		});
+
 		
 		var patrols = 2;
 		if (stability >= 6) {
@@ -288,17 +295,44 @@ this._setupCheckpointPatrols = function(pos) {
 			}
 		}
 		beacon.script.$sotl_patrolsWanted = patrols;
+		beacon.script.$sotl_lastPatrolChange = clock.adjustedSeconds-Math.floor(Math.random()*3600);
 		beacon.script.$sotl_patrolGroups = [];
+		beacon.script.$sotl_patrolGroupOrders = {};
 		for (var j=0;j<patrols;j++) {
 			var patrolGroup = this._addGroupToSpace(position.add(Vector3D.randomDirection().multiply(10E3)),"sotl-fighter-superiority","sotl-checkpoint-patrolship",2,size);
+			patrolGroup.name = "Group "+(++this.$groupID);
 			// beacon coordinates patrol actions
 			beacon.script.$sotl_patrolGroups.push(patrolGroup);
 			for (var k=0;k<patrolGroup.ships.length;k++) {
+				patrolGroup.ships[k].script.$sotl_patrolControl = beacon;
 				patrolGroup.ships[k].script.$sotlFaction = system.mainStation.script.$sotlFaction;
 			}
 		}
 	}
 
+};
+
+
+this._launchNewCheckpointPatrol = function() {
+	var stability = system.info.sotl_system_stability;
+	var size = 5;
+	switch (stability) {
+	case 4:
+		size = 6;
+		break;
+	case 5:
+		size = 10;
+		break;
+	case 6:
+		size = 15;
+		break;
+	case 7:
+		size = 20;
+		break;
+	}
+	var patrolGroup = this._launchGroupFromStation(system.mainStation,"sotl-fighter-superiority","sotl-checkpoint-patrolship",2,size);
+	patrolGroup.name = "Group "+(++this.$groupID);
+	return patrolGroup;
 };
 
 
@@ -453,7 +487,13 @@ this._launchShipsFromStation = function(station,shipClass,shipRole,groupToStatio
 
 
 this._launchGroupFromStation = function(station,shipClass,shipRole,maxCount,maxValue) {
-
+	var ships = this._launchShipsFromStation(station,shipClass,shipRole,maxCount,maxValue);
+	var group = new ShipGroup;
+	for (var i=0;i<ships.length;i++) {
+		group.addShip(ships[i]);
+		ships[i].group = group;
+	}
+	return group;
 };
 
 

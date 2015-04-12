@@ -256,6 +256,44 @@ this.startUp = function() {
 		return this.distance(dest) < 5;
 	};
 
+	/* -- Controllers */
+
+	lib.prototype.sotl_conditionControllerReadyToSendTorusIntercept = function() {
+		return this.getParameter("sotl_controllerScan") != null;
+	};
+
+
+	lib.prototype.sotl_conditionControllerHasSurplusPatrols = function() {
+		// if more patrols than required are under local control
+		if (this.ship.script.$sotl_patrolGroups.length > this.ship.script.$sotl_patrolsWanted) {
+			var groups = this.ship.script.$sotl_patrolGroups;
+			var orders = this.ship.script.$sotl_patrolGroupOrders;
+
+			// if group 0 is not on active mission
+			var gl = groups.length - 1;
+			if (orders[groups[0].name].order == "RECALL" && this.distance(groups[0].ships[0]) < 25E3) {
+				// and its replacement has arrived on station
+				if (orders[groups[gl].name].order == "RECALL" && this.distance(groups[gl].ships[0]) < 25E3) {
+					return true;
+				}
+			}
+		}
+		return false;
+	};
+
+
+	lib.prototype.sotl_conditionControllerHasInsufficientPatrols = function() {
+		// if more patrols than required are under local control
+		return (this.ship.script.$sotl_patrolGroups.length < this.ship.script.$sotl_patrolsWanted);
+	};
+
+
+	lib.prototype.sotl_conditionControllerHasOldPatrols = function() {
+		// if more patrols than required are under local control
+		return (beacon.script.$sotl_lastPatrolChange + 3600 < clock.adjustedSeconds);
+	};
+
+
 	/* Configurations */
 
 	lib.prototype.sotl_configurationSetResupplyFinalDocking = function() {
@@ -417,6 +455,70 @@ this.startUp = function() {
 		this.ship.fuel = 7;
 	}
 
+
+	lib.prototype.sotl_configurationControllerValidateGroups = function() {
+		var groups = this.ship.script.$sotl_patrolGroups;
+		var orders = this.ship.script.$sotl_patrolGroupOrders;
+		for (var i=groups.length-1;i>=0;i--) {
+			if (groups[i].count == 0) {
+				// clean up empty groups
+				delete orders[groups[i].name];
+				groups.splice(i,1);
+			} else if (!orders[groups[i].name]) {
+				// ensure some orders specified for all groups
+				orders[groups[i].name] = { order: "RECALL" };
+			} else if (orders[groups[i].name].order == "INTERCEPT") {
+				// manage intercept orders
+				if (!orders[groups[i].name].target.isValid) {
+					// convert to check if torus effect ends
+					orders[groups[i].name] = { order: "CHECK", target: orders[groups[i].name].backup };
+				} else {
+					// otherwise take a position backup in case it ends later
+					orders[groups[i].name].backup = orders[groups[i].name].target.position;
+				}
+			}
+		}
+		
+	}
+
+
+	lib.prototype.sotl_configurationControllerScanForTorusForCheckpoint = function() {
+		var objects = system.allVisualEffects;
+		if (player.ship.torusEngaged) {
+			objects.push(player.ship);
+		}
+
+		var groups = this.ship.script.$sotl_patrolGroups;
+		var orders = this.ship.script.$sotl_patrolGroupOrders;
+		var tracked = [];
+		for (var i=groups.length-1;i>=0;i--) {
+			if (orders[groups[i].name].order == "INTERCEPT" && orders[groups[i].name].target) {
+				tracked.push(orders[groups[i].name].target);
+			}
+		}
+
+		for (var i=0;i<objects.length;i++) {
+			if (object.dataKey == "sotl-torus-effect" || object.isPlayer) {
+				// intercept within 500km
+				if (this.distance(object.position) < 500E3) {
+					// don't *start* intercepts of ships which have
+					// passed the checkpoint
+					if (object.position.z < this.position.z) {
+						// and ignore ones heading outbound
+						if (object.orientation.vectorForward.z > 0) {
+							// and ignore ones already being intercepted
+							if (tracked.indexOf(object) == -1) {
+								this.setParameter("sotl_controllerScan",object);
+								return;
+							}
+						}
+					}
+				}
+			}
+		}
+		this.setParameter("sotl_controllerScan",null);
+	}
+
 	/* Behaviours */
 
 	lib.prototype.sotl_behaviourChargeWitchspaceDrive = function() {
@@ -512,6 +614,73 @@ this.startUp = function() {
 		this.responsesAddStandard(handlers);
 		this.applyHandlers(handlers);
 		this.ship.performStop();
+	};
+
+	/* -- Controller behaviours */
+
+	lib.prototype.sotl_behaviourControllerSetDefend = function() {
+		var handlers = {};
+		this.responsesAddStandard(handlers);
+		this.applyHandlers(handlers);
+
+		var groups = this.ship.script.$sotl_patrolGroups;
+		var orders = this.ship.script.$sotl_patrolGroupOrders;
+		for (var i=0;i<groups.length;i++) {
+			orders[groups[i].name] = { order: "DEFEND" };
+		}
+	};
+
+
+	lib.prototype.sotl_behaviourControllerSendTorusIntercept = function() {
+		var handlers = {};
+		this.responsesAddStandard(handlers);
+		this.applyHandlers(handlers);
+
+		var target = this.getParameter("sotl_controllerScan");
+
+		var groups = this.ship.script.$sotl_patrolGroups;
+		var orders = this.ship.script.$sotl_patrolGroupOrders;
+		for (var i=0;i<groups.length;i++) {
+			if (orders[groups[i].name].order == "RECALL" && this.distance(groups[i].ships[0]) < 25E3) {
+				// find a nearby one on recall orders and send it
+				orders[groups[i].name] = { order: "INTERCEPT", target: target, backup: target.position };
+				break;
+			}
+		}
+		// can't find one? will have to wait until can find one
+	}
+	
+
+	lib.prototype.sotl_behaviourControllerReleaseOnePatrol = function() {
+		var handlers = {};
+		this.responsesAddStandard(handlers);
+		this.applyHandlers(handlers);
+
+		var groups = this.ship.script.$sotl_patrolGroups;
+		var release = groups[0];
+		groups.splice(0,1); // remove group from list
+		// orders list will be cleaned up automatically
+		// delink the ships from the controller
+		for (var i=0;i<release.ships.length;i++) {
+			delete release.ships[i].script.$sotl_patrolControl;
+		}
+	};
+
+
+	lib.prototype.sotl_behaviourControllerRequestOnePatrol = function() {
+		var handlers = {};
+		this.responsesAddStandard(handlers);
+		this.applyHandlers(handlers);
+		
+		var group = pop._launchNewCheckpointPatrol();
+		var groups = this.ship.script.$sotl_patrolGroups;
+		var orders = this.ship.script.$sotl_patrolGroupOrders;
+		groups.push[group];
+		orders[group.name] = { order: "RECALL" };
+
+		for (var i=0;i<group.ships.length;i++) {
+			group.ships[i].script.$sotl_patrolControl = this.ship;
+		}
 	};
 
 	/* -- Station behaviours */
