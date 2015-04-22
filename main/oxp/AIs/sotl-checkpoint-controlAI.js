@@ -41,7 +41,8 @@ this.aiStarted = function() {
 			reconsider: 60
 		},
 		// if more patrols than needed and all patrols are nearby,
-		// degroup 0th patrol so it returns to base		{
+		// degroup 0th patrol so it returns to base
+		{
 			condition: ai.sotl_conditionControllerHasSurplusPatrols,
 			behaviour: ai.sotl_behaviourControllerReleaseOnePatrol,
 			reconsider: 60

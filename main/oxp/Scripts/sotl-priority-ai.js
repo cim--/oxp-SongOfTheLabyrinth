@@ -290,7 +290,7 @@ this.startUp = function() {
 
 	lib.prototype.sotl_conditionControllerHasOldPatrols = function() {
 		// if more patrols than required are under local control
-		return (beacon.script.$sotl_lastPatrolChange + 3600 < clock.adjustedSeconds);
+		return (this.ship.script.$sotl_lastPatrolChange + 3600 < clock.adjustedSeconds);
 	};
 
 
