@@ -17,10 +17,11 @@ this.aiStarted = function() {
 	ai.setPriorities([
 		// if under attack, set defend orders on all groups
 		{
+			label: "Check combat state",
 			preconfiguration: ai.sotl_configurationControllerValidateGroups,
 			condition: ai.conditionInCombat,
 			behaviour: ai.sotl_behaviourControllerSetDefend,
-			reconsider: 10
+			reconsider: 5
 		},
 
 /*		{ // TODO: once long-range distress calls implemented
@@ -35,36 +36,43 @@ this.aiStarted = function() {
 		// two patrols are currently on standby orders, give one of
 		// those patrols intercept orders
 		{
-			preconfiguration: ai.sotl_configurationScanForTorusForCheckpoint,
+			label: "Check for torus flares",
+			preconfiguration: ai.sotl_configurationControllerScanForTorusForCheckpoint,
 			condition: ai.sotl_conditionControllerReadyToSendTorusIntercept,
 			behaviour: ai.sotl_behaviourControllerSendTorusIntercept,
-			reconsider: 60
+			reconsider: 5
 		},
 		// if more patrols than needed and all patrols are nearby,
 		// degroup 0th patrol so it returns to base
 		{
+			label: "Check for surplus release",
 			condition: ai.sotl_conditionControllerHasSurplusPatrols,
 			behaviour: ai.sotl_behaviourControllerReleaseOnePatrol,
-			reconsider: 60
+			reconsider: 5
 		},
 		// if last patrol change more than 1 hour ago, or fewer
 		// patrols than needed, request launch of new patrols from
 		// station; give the new patrols recall orders
 		{
+			label: "Check for patrol shortage",
 			condition: ai.sotl_conditionControllerHasInsufficientPatrols,
 			behaviour: ai.sotl_behaviourControllerRequestOnePatrol,
-			reconsider: 60
+			reconsider: 5
 		},
 		{
+			label: "Check for patrol end",
 			condition: ai.sotl_conditionControllerHasOldPatrols,
 			behaviour: ai.sotl_behaviourControllerRequestOnePatrol,
-			reconsider: 60
+			reconsider: 5
 		},
 		{
+			label: "Wait and try again",
 			behaviour: ai.behaviourWaitHere,
-			reconsider: 3600
+			reconsider: 5
 		}
-	]);
+	],2+Math.random());
+	// longer startup delay on controllers, to let ships get into torus 
+	// on initial population
 
 
 }

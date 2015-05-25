@@ -12,8 +12,13 @@ this.aiStarted = function() {
 
 	ai.setPriorities([
 		{
+			condition: ai.sotl_conditionHasSurrendered,
+			behaviour: ai.sotl_behaviourSurrender,
+			reconsider: 120
+		},
+		{
 			condition: ai.conditionInCombat,
-			behaviour: ai.behaviourFleeCombat,
+			behaviour: ai.sotl_behaviourSurviveCombat,
 			reconsider: 10
 		},
 		{

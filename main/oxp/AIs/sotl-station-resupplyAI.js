@@ -59,9 +59,14 @@ this.aiStarted = function() {
 	ai.setPriorities([
 		/* Fight */
 		{
+			condition: ai.sotl_conditionHasSurrendered,
+			behaviour: ai.sotl_behaviourSurrender,
+			reconsider: 120
+		},
+		{
 			label: "Avoid combat",
 			condition: ai.conditionInCombat,
-			behaviour: ai.behaviourFleeCombat,
+			behaviour: ai.sotl_behaviourSurviveCombat,
 			reconsider: 5
 		},
 		{

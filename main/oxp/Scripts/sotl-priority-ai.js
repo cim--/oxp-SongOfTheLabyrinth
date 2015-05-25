@@ -7,6 +7,10 @@ this.startUp = function() {
 	var pop = worldScripts["SOTL Populator Script"];
 	/* Conditions */
 
+	lib.prototype.sotl_conditionDestinationIsNearby = function() {
+		return this.ship.destination.distanceTo(this.ship) < 25000;
+	}
+	
 	lib.prototype.sotl_conditionScannerContainsHostileFaction = function() {
 		var scan = this.getParameter("oolite_scanResults");
 		if (scan) {
@@ -21,6 +25,49 @@ this.startUp = function() {
 				}
 				return false;
 			});
+		} else {
+			return false;
+		}
+	};
+
+	lib.prototype.sotl_conditionScannerContainsRefusedSurrender = function() {
+		var scan = this.getParameter("oolite_scanResults");
+		if (scan) {
+			var f1 = this.ship.script.$sotlFaction;
+			this.checkScannerWithPredicate(function(s) { 
+				var f2 = s.script.$sotlSurrenderFaction;
+				// asked to surrender
+				if (f2 && f2 == f1) {
+					// hasn't surrendered
+					if (!this.sotl_utilHasSurrendered(s)) {
+						return true;
+					}
+				}
+				return false;
+			});
+		} else {
+			return false;
+		}
+	};
+
+
+	lib.prototype.sotl_conditionScannerContainsIllegalActivity = function() {
+var scan = this.getParameter("oolite_scanResults");
+		if (scan) {
+			var f1 = this.ship.script.$sotlFaction;
+			this.checkScannerWithPredicate(function(s) { 
+				var f2 = s.script.$sotlFaction;
+				if (f2 && f2 != f1) {
+					var result = this.sotl_utilCompareFactions(f1,f2);
+					/* TODO: split s.bounty to allow this to be used
+					 * other than by system station ships */
+					if (result < 2 && s.bounty > 0) {
+						return true;
+					}
+				}
+				return false;
+			});
+			/* TODO: implement illegal goods, add check for smugglers */
 		} else {
 			return false;
 		}
@@ -197,6 +244,15 @@ this.startUp = function() {
 		return true;
 	};
 
+	lib.prototype.sotl_conditionHasSurrendered = function() {
+		// if only own group around, cancel surrender state
+		if (this.sotl_conditionInClearSpace()) {
+			this.setParameter("sotl_surrendered",null);
+			return false;
+		}
+		return this.getParameter("sotl_surrendered");
+	};
+
 	lib.prototype.sotl_conditionWitchspaceCountdownComplete = function() {
 		var cstart = this.getParameter("sotl_witchspaceCountdownStarted");
 		return (cstart && clock.absoluteSeconds - cstart > 15);
@@ -257,6 +313,46 @@ this.startUp = function() {
 	};
 
 	/* -- Controllers */
+
+	lib.prototype.sotl_conditionHasController = function() {
+		return (this.ship.script.$sotl_patrolControl && this.ship.script.$sotl_patrolControl.isInSpace);
+	};
+
+	lib.prototype.sotl_conditionControllerOrderIsIntercept = function() {
+		var order = this.getParameter("sotl_currentControllerOrder");
+		return order && order.order == "INTERCEPT";
+	};
+
+	lib.prototype.sotl_conditionControllerOrderIsCheck = function() {
+		var order = this.getParameter("sotl_currentControllerOrder");
+		return order && order.order == "CHECK";
+	};
+
+	lib.prototype.sotl_conditionCheckOrdersAreComplete = function() {
+		var order = this.getParameter("sotl_currentControllerOrder");
+		var target = order.target;
+		if (order.order == "INTERCEPT")
+		{
+			// in case order has not yet been converted to CHECK order
+			target = order.backup;
+		}
+		if (this.distance(target) < 10E3)
+		{
+			return true;
+		}
+	};
+
+	lib.prototype.sotl_conditionControllerOrderIsDefend = function() {
+		var order = this.getParameter("sotl_currentControllerOrder");
+		return order && order.order == "DEFEND";
+	};
+
+	lib.prototype.sotl_conditionControllerOrderIsRecall = function() {
+		var order = this.getParameter("sotl_currentControllerOrder");
+		return order && order.order == "RECALL";
+	};
+
+
 
 	lib.prototype.sotl_conditionControllerReadyToSendTorusIntercept = function() {
 		return this.getParameter("sotl_controllerScan") != null;
@@ -456,10 +552,57 @@ this.startUp = function() {
 	}
 
 
+	lib.prototype.sotl_configurationSetDestinationToController = function() {
+		var centre = this.ship.script.$sotl_patrolControl.position;
+		// spread out of masslock range ready to intercept
+		// matches sotl-populator setupCheckpointPatrols
+		/* TODO: currently only works for controllers guarding the positive z-axis */
+		this.ship.destination = centre.add([40000*Math.sin(this.ship.entityPersonality),40000*Math.cos(this.ship.entityPersonality),-15000]);
+		this.ship.desiredRange = 1000;
+		this.ship.desiredSpeed = this.cruiseSpeed();
+	}
+
+	lib.prototype.sotl_configurationSetDestinationToControllerClose = function() {
+		this.ship.destination = this.ship.script.$sotl_patrolControl;
+		this.ship.desiredRange = 5000;
+		this.ship.desiredSpeed = this.cruiseSpeed();
+	}
+
+	lib.prototype.sotl_configurationSetDestinationToCheckPosition = function() {
+		var order = this.getParameter("sotl_currentControllerOrder");
+		this.ship.destination = order.target;
+		this.ship.desiredRange = 5000;
+		this.ship.desiredSpeed = this.cruiseSpeed();
+	}
+
+	lib.prototype.sotl_configurationSetDestinationToInterceptPosition = function() {
+		var order = this.getParameter("sotl_currentControllerOrder");
+		log(this.name,"Patrol at "+this.ship.position+" executing intercept of "+order.target);
+		if (order.target.isValid) {
+			if (order.target.isPlayer) {
+				this.ship.destination = order.target.position.add(order.target.vectorForward.multiply(order.target.speed*5));
+			} else {
+				this.ship.destination = order.target.position.add(order.target.script.$ship.vectorForward.multiply(order.target.script.$speed*5));
+			}
+		} else {
+			this.ship.destination = order.backup;
+		}
+		this.ship.desiredRange = 5000;
+		this.ship.desiredSpeed = this.cruiseSpeed();
+	}
+
+
+	lib.prototype.sotl_configurationGetControllerOrder = function() {
+		var ctl = this.ship.script.$sotl_patrolControl.script.$sotl_patrolGroupOrders;
+		var gn = this.ship.group.name;
+		this.setParameter("sotl_currentControllerOrder",ctl[gn]);
+	};
+
 	lib.prototype.sotl_configurationControllerValidateGroups = function() {
 		var groups = this.ship.script.$sotl_patrolGroups;
 		var orders = this.ship.script.$sotl_patrolGroupOrders;
 		for (var i=groups.length-1;i>=0;i--) {
+//			log(this.name,"Controller at "+this.ship.position+" is controlling group "+groups[i].name);
 			if (groups[i].count == 0) {
 				// clean up empty groups
 				delete orders[groups[i].name];
@@ -487,6 +630,7 @@ this.startUp = function() {
 		if (player.ship.torusEngaged) {
 			objects.push(player.ship);
 		}
+		log(this.name,"Pre-scan check gives "+objects.length+" objects");
 
 		var groups = this.ship.script.$sotl_patrolGroups;
 		var orders = this.ship.script.$sotl_patrolGroupOrders;
@@ -498,16 +642,23 @@ this.startUp = function() {
 		}
 
 		for (var i=0;i<objects.length;i++) {
-			if (object.dataKey == "sotl-torus-effect" || object.isPlayer) {
-				// intercept within 500km
+			var object = objects[i];
+			log(this.name,"Controller at "+this.ship.position+" assessing sensor trace at "+object.position);
+			if ((object.dataKey == "sotl-torus-effect" && object.script.$ship.script.$sotlFaction != this.ship.script.$sotlFaction) || object.isPlayer) {
+//				log(this.name,"...is torus flare");
+				// intercept within 500km, if not known already
 				if (this.distance(object.position) < 500E3) {
+//					log(this.name,"...is with 500k");
 					// don't *start* intercepts of ships which have
 					// passed the checkpoint
-					if (object.position.z < this.position.z) {
+					if (object.position.z < this.ship.position.z) {
+//						log(this.name,"...is outwards");
 						// and ignore ones heading outbound
-						if (object.orientation.vectorForward.z > 0) {
+						if (object.orientation.vectorForward().z > 0) {
+//							log(this.name,"...and heading inwards");
 							// and ignore ones already being intercepted
 							if (tracked.indexOf(object) == -1) {
+//								log(this.name,"...and not already tracked");
 								this.setParameter("sotl_controllerScan",object);
 								return;
 							}
@@ -520,6 +671,119 @@ this.startUp = function() {
 	}
 
 	/* Behaviours */
+
+	// use instead of destroy in almost all circumstances
+	lib.prototype.sotl_behaviourDisableCurrentTarget = function() {
+		this.setParameter("oolite_witchspaceEntry",null);
+
+		var handlers = {};
+		this.responsesAddStandard(handlers);
+		this.applyHandlers(handlers);
+		var target = this.ship.target
+		if (!target || !target.isValid || !target.isShip)
+		{
+			this.reconsiderNow();
+			return;
+		}
+
+		if (this.getParameter("oolite_flag_noSpecialThargoidReaction") != null)
+		{
+			if (this.ship.scanClass != "CLASS_THARGOID" && target.scanClass != "CLASS_THARGOID" && target.target.scanClass == "CLASS_THARGOID")
+			{
+				this.respondToThargoids(target.target,true);
+				this.ship.performAttack();
+				return;
+			}
+		}
+
+		if (this.sotl_utilHasSurrendered(target))
+		{
+			// succeeded
+			if (this.ship.escortGroup)
+			{
+				// also tell escorts to stop attacking it
+				for (var i = 0 ; i < this.ship.escortGroup.ships.length ; i++)
+				{
+					this.ship.escortGroup.ships[i].removeDefenseTarget(target);
+					if (this.ship.escortGroup.ships[i].target == target)
+					{
+						this.ship.escortGroup.ships[i].target = null;
+					}
+				}
+			}
+			this.ship.removeDefenseTarget(target);
+			this.ship.target = null;
+		}
+		else
+		{
+			if (!this.ship.hasHostileTarget)
+			{
+				// entering attack mode
+				this.broadcastAttackMessage(this.ship.target,"beginning",3);
+				this.ship.requestHelpFromGroup();
+			}
+			else if (this.ship.target)
+			{
+				this.broadcastAttackMessage(this.ship.target,"continuing",4);
+			}
+			if (this.ship.energy == this.ship.maxEnergy && this.getParameter("oolite_flag_escortsCoverRetreat") && this.ship.escortGroup.count > 1)
+			{
+				// if has escorts, and is not yet taking damage, run and let
+				// the escorts take them on
+				this.ship.performFlee();
+				return;
+			}
+			this.ship.performAttack();
+		}
+
+	};
+
+
+	lib.prototype.sotl_behaviourSurrender = function() {
+		this.ship.target = null;
+		this.ship.clearDefenseTargets();
+
+		var handlers = {};
+		this.responsesAddStandard(handlers);
+		this.applyHandlers(handlers);
+		this.communicate("sotl_surrender",null,1);
+		this.performStop();
+	};
+
+	lib.prototype.sotl_behaviourDemandTargetSurrender = function() {
+		this.ship.target.script.$sotlSurrenderFaction = this.ship.script.$sotlFaction;
+
+		var handlers = {};
+		this.responsesAddStandard(handlers);
+		this.applyHandlers(handlers);
+		this.communicate("sotl_demandSurrender",null,1);
+		/* TODO: consider ways to make target aware of demand without
+		 * immediately attacking */
+		this.performAttack();
+	};
+
+
+	lib.prototype.sotl_behaviourSurviveCombat = function() {
+		if (this.ship.energy < 64) {
+			if (this.ship.hasEquipmentProviding("EQ_ESCAPE_POD")) {
+				this.ship.abandonShip();
+			} else {
+				this.setParameter("sotl_surrendered",true);
+				this.ship.target = null;
+				this.ship.clearDefenseTargets();
+
+				var handlers = {};
+				this.responsesAddStandard(handlers);
+				this.applyHandlers(handlers);
+				this.communicate("sotl_surrender",null,1);
+				this.performStop();
+			}
+		} else {
+			// try to flee
+			this.behaviourFleeCombat();
+		}
+	};
+
 
 	lib.prototype.sotl_behaviourChargeWitchspaceDrive = function() {
 		// for now, just fly forward-ish
@@ -597,10 +861,12 @@ this.startUp = function() {
 		var t = this.getParameter("sotl_torusEffect");
 		if (!(t&&t.isValid)) {
 			var torus = system.addVisualEffect("sotl-torus-effect",this.ship.position);
-			torus.script.$ship = this.ship;
 			torus.script.$destination = this.ship.destination;
+			torus.script.$ship = this.ship;
 			torus.script.$maxSpeed = this.ship.maxSpeed * 32;
 			this.setParameter("sotl_torusEffect",torus);
+		} else {
+			t.script.$destination = this.ship.destination;
 		}
 		var handlers = {};
 		this.responsesAddStandard(handlers);
@@ -641,9 +907,12 @@ this.startUp = function() {
 		var groups = this.ship.script.$sotl_patrolGroups;
 		var orders = this.ship.script.$sotl_patrolGroupOrders;
 		for (var i=0;i<groups.length;i++) {
-			if (orders[groups[i].name].order == "RECALL" && this.distance(groups[i].ships[0]) < 25E3) {
+			if (orders[groups[i].name].order == "RECALL" && this.distance(groups[i].ships[0]) < 60E3) {
 				// find a nearby one on recall orders and send it
+				log(this.name,"Checkpoint at "+this.ship.position+" sending intercept to "+target.script.$ship+" at "+target.position);
 				orders[groups[i].name] = { order: "INTERCEPT", target: target, backup: target.position };
+				// force reconsideration
+				groups[i].ships[0].AIScriptWakeTime = clock.seconds;
 				break;
 			}
 		}
@@ -682,6 +951,17 @@ this.startUp = function() {
 			group.ships[i].script.$sotl_patrolControl = this.ship;
 		}
 	};
+
+	lib.prototype.sotl_behaviourSetRecallOrdersForSelf = function() {
+		var handlers = {};
+		this.responsesAddStandard(handlers);
+		this.applyHandlers(handlers);
+		
+		var ctl = this.ship.script.$sotl_patrolControl.script.$sotl_patrolGroupOrders;
+		var gn = this.ship.group.name;
+		ctl[gn] = { order: "RECALL" };
+	};
+
 
 	/* -- Station behaviours */
 
@@ -840,6 +1120,15 @@ this.startUp = function() {
 		return ship.position.add(ship.vectorUp.multiply((ship.boundingBox.y+this.ship.boundingBox.y)/2));
 	};
 
+	lib.prototype.sotl_utilHasSurrendered = function(ship) {
+		if (ship.isPlayer) {
+			// TODO: allow explicit surrender
+			return ship.speed == 0 && !ship.weaponsOnline
+		} else {
+			return ship.AIScript.oolite_priorityai.getParameter("sotl_surrendered") || ship.isHulk;
+		}
+	};
+
 
 	// Core utility override
 	lib.prototype.friendlyStation = function(station) {
@@ -914,6 +1203,13 @@ this.startUp = function() {
 				reconsider: 30
 			},
 			{
+				// don't use torus for short journeys
+				label: "Destination nearby",
+				condition: this.sotl_conditionDestinationIsNearby,
+				behaviour: this.behaviourApproachDestination,
+				reconsider: 30
+			},
+			{
 				label: "Approach destination on torus",
 				behaviour: this.sotl_behaviourTorusToDestination,
 				reconsider: 30
@@ -921,6 +1217,78 @@ this.startUp = function() {
 		];
 	};
 
+
+	/* Like traveltodestination, but with much faster reconsideration */
+	lib.prototype.sotl_templateTravelToIntercept = function() {
+		return [
+			{
+				label: "Approach destination normally",
+				notcondition: this.sotl_conditionLocalSpaceClear,
+				behaviour: this.behaviourApproachDestination,
+				reconsider: 5
+			},
+			{
+				label: "Approach destination on torus",
+				behaviour: this.sotl_behaviourTorusToDestination,
+				reconsider: 5
+			}
+		];
+	};
+
+
+	lib.prototype.sotl_templateReturnToBase = function()
+	{
+		return [
+			{
+				label: "Return to base",
+				condition: this.conditionHasSelectedStation,
+				truebranch: [
+					{
+						condition: this.conditionSelectedStationNearby,
+						configuration: this.configurationSetSelectedStationForDocking,
+						behaviour: this.behaviourDockWithStation,
+						reconsider: 30
+					},
+					{
+						configuration: this.configurationSetDestinationToSelectedStation,
+						truebranch: this.sotl_templateTravelToDestination()
+					}
+				],
+				falsebranch: [
+					{
+						condition: this.conditionFriendlyStationExists,
+						configuration: this.sotl_configurationSelectFriendlyStation,
+						behaviour: this.behaviourReconsider
+					},
+					{
+						condition: this.conditionHasSelectedPlanet,
+						truebranch: [
+							{
+								preconfiguration: this.configurationSetDestinationToSelectedPlanet,
+								condition: this.conditionNearDestination,
+								behaviour: this.behaviourLandOnPlanet
+							},
+							{
+								truebranch: this.sotl_templateTravelToDestination()
+							}
+						]
+					},
+					{
+						condition: this.conditionPlanetExists,
+						configuration: this.configurationSelectPlanet,
+						behaviour: this.behaviourReconsider
+					}
+				]
+			},
+			/* 
+			{
+			TODO: fallback for no station or planet
+			}
+			*/
+		];
+
+
+	};
 
 
 	lib.prototype.sotl_templateResupplyOperation = function() {

@@ -12,7 +12,7 @@
 	];
 
 	var constellationPositionsGeneric = [
-		"Eye","Height","Point","Rise","Jewel","Gem","Glow","Centre","Tool","Gap","End","Beginning","Curl","Dancer","Well","Girdle","Arrow"
+		"Eye","Height","Point","Rise","Jewel","Gem","Glow","Centre","Tool","Gap","End","Beginning","Curl","Dancer","Well","Girdle","Arrow","Fountain"
 	];
 	var constellationPositionsLizard = [
 		"Scale","Tongue","Arm","Foot","Leg","Tail","Beam","Hand","Head"
@@ -42,10 +42,10 @@
 		"Paradise","Utopia","Dreamland","Eternity","Enchantment","Harmony","Serenity","Tranquility","Sanctuary","Beauty","Bliss","Delight","Gift","Reward"
 	];
 	var brightConcepts = [
-		"Eye","Life","Light","Jewel","Gem","Chance","Hope","Breath","Orb","Marble","Wanderer","Beacon","Gleam","Harvest","Earth","Air","Soul","Heart","Spirit","Force","Mover","Traveller","Fortune","Faith","Radiance","Shine","Aurora","Mirror","Illumination"
+		"Eye","Life","Light","Jewel","Gem","Chance","Hope","Breath","Orb","Marble","Wanderer","Beacon","Gleam","Harvest","Earth","Air","Soul","Heart","Spirit","Force","Mover","Traveller","Fortune","Faith","Radiance","Shine","Aurora","Mirror","Illumination","Spring"
 	];
 	var greenConcepts = [
-		"Land","Grove","Wilds","Haven","Shelter","Home","Terminus","Settlement","Colony","Outpost","Work","Bond","Port"
+		"Land","Grove","Wilds","Haven","Shelter","Home","Terminus","Settlement","Colony","Outpost","Work","Bond","Port","Summer"
 	];
 	var hotConcepts = [
 		"Inferno","Char","Spark","Pit"
@@ -54,7 +54,7 @@
 		"Ice","Glaze","Rime","Winter"
 	];
 	var harshConcepts = [
-		"Bleakness","Labour","Punishment","Toil","Grave","Tomb","Wreck","Ruin","Folly","Hubris","Pride","Loss","Hole"
+		"Bleakness","Labour","Punishment","Toil","Grave","Tomb","Mausoleum","Crypt","Wreck","Ruin","Folly","Hubris","Pride","Loss","Hole","Prison","Jail","Dungeon"
 	];
 	var radiationConcepts = [
 		"Burn","Beacon","Blight","Scorch","Revenge"
@@ -63,10 +63,10 @@
 		"Rock","Stone","Boulder","Pebble"
 	];
 	var miningConcepts = [
-		"Mine","Quarry","Jewel","Gem","Vein","Riches","Wealth","Abundance","Hoard","Pearl","Prize","Claim","Yield","Dig","Chasm","Abyss"
+		"Mine","Quarry","Jewel","Gem","Vein","Riches","Wealth","Abundance","Hoard","Pearl","Prize","Claim","Yield","Dig","Prospect","Seam","Lode","Chasm","Abyss"
 	];
 	var oceanConcepts = [
-		"Ocean","Sea","Waters","Deeps","Abyss","Waters","Lagoon"
+		"Ocean","Sea","Waters","Deeps","Abyss","Waters","Oasis","Fountain","Well","Spring","Lagoon"
 	];
 	var redConcepts = [
 		"Ruby","Rust","Blood","Amber","Garnet","Crimson","Red","Copper"
@@ -79,26 +79,26 @@
 	];
 
 	var corporateConcepts = [
-		"Market","Bazaar","Profit","Yield","Harvest","Winnings","Acquisition","Grant","Claim","Share","Board","Income","Asset","Credit","Stock","Purchase","Contract","Premium","Bonus","Wage","Wages"
+		"Market","Bazaar","Profit","Yield","Harvest","Winnings","Acquisition","Grant","Claim","Share","Board","Income","Asset","Credit","Stock","Purchase","Contract","Premium","Enterprise","Bonus","Wage","Wages"
 	];
 	var corporateOrganisationConcepts = [
 		"Corporation","Incorporation","Conglomerate","Consortium","Syndicate"
 	];
 
 	var democraticConcepts = [
-		"Choice","Option","Voice","Song","Breath","Majority","Decision","Ballot","Vote","Preference","Score","Council","Senate","Chamber","Legislature","Cabinet","Plebiscite"
+		"Choice","Option","Voice","Song","Breath","Majority","Decision","Ballot","Vote","Preference","Score","Council","Senate","Chamber","Legislature","Cabinet","Plebiscite","Referendum","Election","Discussion","Consensus"
 	];
 	var hierarchicalConcepts = [
 		"Order","Throne","Seat","Crown","Sceptre","Seal","Orb","Sphere","Command","Supremacy","Stand","Dominion","Jurisdiction","Citadel","Fortress","Leadership","Royal","Might","Victory","Empire","Tribute","Privilege","Reign"
 	];
 	var collectiveConcepts = [
-		"Unity","Unison","Harmony","Equity","Liberty","Labour","Work","Accord","Collective","Equality","Community","Society","Peace","Tenacity","Help","Support","Union","Commonwealth","Commons","Combine","Camaradarie","Comrades","Solidarity"
+		"Unity","Unison","Harmony","Equity","Liberty","Labour","Work","Accord","Collective","Equality","Community","Society","Peace","Tenacity","Help","Support","Union","Commonwealth","Commons","Combine","Camaradarie","Comrades","Solidarity","Consensus"
 	];
 	var experimentalConcepts = [
-		"Chance","Proof","Trial","Claim","Attempt","Testament","Exhibit","Witness","Revolution"
+		"Chance","Proof","Trial","Claim","Attempt","Testament","Exhibit","Witness","Revolution","Vision"
 	];
 	var isolationistGovernmentConcepts = [
-		"Solitude","Exile","Detachment","Recluse","Secret","Seal","Lock","Gate"
+		"Solitude","Exile","Detachment","Recluse","Secret","Seal","Lock","Gate","Terminus"
 	];
 	// yes, okay, slightly silly variable name
 	var anarchistGovernmentConcepts = [
@@ -134,7 +134,7 @@
 		"Roost","Wind","Height","Cloud"
 	];
 	var homeWaterConcepts = [
-		"Port","Harbour","Abyss","Depths","Beach","River"
+		"Port","Harbour","Abyss","Depths","Beach","River","Spring","Well"
 	];
 	var homeTunnelConcepts = [
 		"Warren","Burrow","Den","Sett"
@@ -188,7 +188,7 @@
 		"Square","Tetrad","Crossroad","Quartet","Enclave"
 	];
 	var biggroupConcepts = [
-		"Region","Sector","Environs","Web","Net","Network","Weave"
+		"Region","Sector","Environs","Web","Net","Network","Weave","Enclosure"
 	];
 	var hugegroupConcepts = [
 		"Worlds","Swathe","Flight","Centre","Realm","Expanse","Vault","Ocean"

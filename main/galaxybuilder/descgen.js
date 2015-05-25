@@ -236,7 +236,7 @@
 		string = string.replace(/%L-/g,"one hundred");
 
 		// period names
-		string = string.replace(/%DE2/g,"early witchdrive");
+		string = string.replace(/%DE2/g,"early hyperdrive");
 		string = string.replace(/%DE3/g,"colonisation");
 		string = string.replace(/%DE4/g,"pre-unification");
 		string = string.replace(/%DE5/g,"unification");
@@ -299,7 +299,7 @@
 		if (string.match(/%D11/)) {
 			string = string.replace(/%D11/g,(info.r.rand(3)+1142)+" kD");
 		}
-		// witchdrive discovery
+		// hyperdrive discovery
 		if (string.match(/%D1E/)) {
 			string = string.replace(/%D1E/g,(info.r.rand(20)+110)+" kD");
 		}
@@ -626,7 +626,7 @@
 				{key: "BFIC-HAB14", text: "%H is home to a wide range of life, and while extremely habitable, settlements have intentionally been kept to a small area to preserve the wilderness.", condition: info.economy.reason == "Wilderness" },
 				{key: "BFIC-HAB15", text: "%I settlers first landed on this pleasant world in %D2", condition: true },
 				{key: "BFIC-HAB16", text: "Surveys of %U discovered %H in %D2, though despite its desirability the initial settlement did not take place until around ten kD later due to severe %M shortages on the %I homeworld.", condition: info.planet.mineralWealth < 0.25 },
-				{key: "BFIC-HAB17", text: "The oceans of %H are detectable by telescope from the %I homeworld, and it was one of the first candidates for a local survey following their invention of the witchdrive.", condition: info.planet.landFraction < 0.25 },
+				{key: "BFIC-HAB17", text: "The oceans of %H are detectable by telescope from the %I homeworld, and it was one of the first candidates for a local survey following their invention of the hyperdrive.", condition: info.planet.landFraction < 0.25 },
 				{key: "BFIC-HAB18", text: "One of the first %I colonies, %H declared independence in %D2 in a dispute over %P.", condition: info.politics.region == 0 },
 				{key: "BFIC-HAB19", text: "Initially unsure of how common habitable worlds were, %IS settled marginal worlds such as %H in the early stages of their expansion.", condition: info.habitability[info.colony.species[0]] < 85 },
 				{key: "BFIC-HAB20", text: "%IS and %I1S both found this a suitable habitable system, and jointly colonised it in %D2.", condition: info.colony.reason == "Joint Habitability" },
@@ -656,7 +656,7 @@
 			};
 		} else 		if (info.planet.mineralWealth > 0.45) {
 			opts = [
-				{key: "BFIC-MIN1", text: "As the demands of witchspace travel increased, %H' position near to their homeworld led %IS to establish mining operations here in %D2.", condition: true},
+				{key: "BFIC-MIN1", text: "As the demands of hyperspace travel increased, %H' position near to their homeworld led %IS to establish mining operations here in %D2.", condition: true},
 				{key: "BFIC-MIN2", text: "The easily accessible minerals in this system's asteroid belts were key to early colonisation of the chart.", condition: info.economy.type != "Ground Mining" },
 				{key: "BFIC-MIN3", text: "As a mineral-rich system, %H gained an outpost in %D2.", condition: true},
 				{key: "BFIC-MIN4", text: "Despite the extremely harsh conditions, %IS began mining %H' considerable mineral deposits early on. Thousands of early colonists died due to the lack of environmental protection while obtaining the valuable %M ores.", condition: info.habitability.best == 0},
@@ -682,7 +682,7 @@
 				{key: "BFIC-MIN24", text: "%M mining has been carried out here by both %IS and %I1S since %D2.", condition: info.colony.reason == "Joint Mining" },
 				{key: "BFIC-MIN25", text: "The first mining operations started in %D2.", condition: true },
 				{key: "BFIC-MIN26", text: "The extraction operations started in %D2 still continue in %H.", condition: info.economy.reason == "Extraction" },
-				{key: "BFIC-MIN27", text: "The %U system is unusually rich in %M, and was crucial to early %I witchdrive manufacture.", condition: true },
+				{key: "BFIC-MIN27", text: "The %U system is unusually rich in %M, and was crucial to early %I hyperdrive manufacture.", condition: true },
 				{key: "BFIC-MIN28", text: "%H is home to one of the earliest %I prospecting habitats.", condition: true },
 				{key: "BFIC-MIN29", text: "%H was settled in %D2 for %M extraction.", condition: true }, 
 				{key: "BFIC-MIN30", text: "This system was first inhabited by %I miners in %D2", condition: true }
@@ -722,16 +722,16 @@
 
 		if (info.habitability[info.colony.species[0]] >= 90) {
 			opts = [
-				{key: "BFPGC-HAB1", text: "The significant increase in operational range as the %I witchdrive programme continued brought many more systems within their reach. %H, in a stable orbit with conditions similar to %O, was settled in %D3.", condition: true },
+				{key: "BFPGC-HAB1", text: "The significant increase in operational range as the %I hyperdrive programme continued brought many more systems within their reach. %H, in a stable orbit with conditions similar to %O, was settled in %D3.", condition: true },
 				{key: "BFPGC-HAB2", text: "%H was one of the earlier %I colonies intended purely for self-sustained habitation, chosen because of its great similarity to %O.", condition: info.habitability[info.colony.species[0]] >= 97 },
 				{key: "BFPGC-HAB3", text: "The initial survey of %U missed %H due to equipment failures. It was only after resurveying in %D3 that it was colonised.", condition: true },
 				{key: "BFPGC-HAB4", text: "This system was settled pre-unification in %D3.", condition: true },
 				{key: "BFPGC-HAB5", text: "%H' soil was discovered to be suitable for many %I native flora, and initial farming camps were set up in %D3 to help supply the nearby mining outposts.", condition: info.economy.type == "Farming" },
-				{key: "BFPGC-HAB6", text: "The discovery of many habitable planets such as %H led to increasing demands on the early %I witchdrive factories, both for the colonisation ships themselves and the supply lines needed in their early days. Despite its suitability, the system was only colonised in %D3.", condition: true },
+				{key: "BFPGC-HAB6", text: "The discovery of many habitable planets such as %H led to increasing demands on the early %I hyperdrive factories, both for the colonisation ships themselves and the supply lines needed in their early days. Despite its suitability, the system was only colonised in %D3.", condition: true },
 				{key: "BFPGC-HAB7", text: "%H was founded in %D3 as a residential colony.", condition: true },
 				{key: "BFPGC-HAB8", text: "%H was quarantined shortly after discovery to protect the unusual native life from harm.", condition: info.economy.reason == "Native Life" && info.economy.type == "Quarantine" },
 				{key: "BFPGC-HAB9", text: "While easily habitable, the early colony suffered from significant mineral shortages.", condition: info.planet.mineralWealth < 0.1 },
-				{key: "BFPGC-HAB10", text: "Known as an exoplanet since pre-witchdrive times, the first explorers to visit %U were surprised to find %H to be habitable. A small colony was founded in %D3.", condition: info.g != 1 && info.g != 2 },
+				{key: "BFPGC-HAB10", text: "Known as an exoplanet since pre-hyperdrive times, the first explorers to visit %U were surprised to find %H to be habitable. A small colony was founded in %D3.", condition: info.g != 1 && info.g != 2 },
 				{key: "BFPGC-HAB11", text: "Long-range surveys from %O discovered %H in %D2, but it was only in %D3 that it was felt suitable for colonisation.", condition: true },
 				{key: "BFPGC-HAB12", text: "The agricultural potential of this system was recognised early on by %IS, who founded a small colony here in %D3.", condition: info.economy.reason == "Agriculture II" },
 				{key: "BFPGC-HAB13", text: "This early %I settlement was considered pre-unification to be among one of the most beautiful known worlds.", condition: info.economy.type == "Tourism" },
@@ -759,7 +759,7 @@
 		}
 		else if (info.planet.mineralWealth > 0.45) {
 			opts = [
-				{key: "BFPGC-MIN1", text: "Advances in miniaturisation and reliably of witchdrives allowed %I miners to reach this system in %D3.", condition: true },
+				{key: "BFPGC-MIN1", text: "Advances in miniaturisation and reliably of hyperdrives allowed %I miners to reach this system in %D3.", condition: true },
 				{key: "BFPGC-MIN2", text: "As %I space expanded, systems such as %H were valuable for their %M reserves.", condition: true },
 				{key: "BFPGC-MIN3", text: "The continuing need for more %M to supply expansion led to several colonies being founded in mineral-rich systems. %H was particularly important due to the purity of its deposits.", condition: info.planet.mineralWealth > 0.6 },
 				{key: "BFPGC-MIN4", text: "While the planets were considered unremarkable by early %I explorers, the mineral-rich asteroids of the system's %N belt brought thousands of prospectors to the system.", condition: info.economy.type == "Asteroid Mining" },
@@ -771,7 +771,7 @@
 				{key: "BFPGC-MIN10", text: "The need for %M led %IS to conduct some exploratory mining in the harsh light of %U, but difficulties in safely extracting the ore meant that the system never made a profit.", condition: info.habitability.best == 0 },
 				{key: "BFPGC-MIN11", text: "Combining both a suitable environment and easy mining opportunities, %H was settled in %D3 shortly after the initial surveys.", condition: info.habitability[info.colony.species[0]] >= 80 },
 				{key: "BFPGC-MIN12", text: "Founded in %D3 as another of the %I mining systems.", condition: true },
-				{key: "BFPGC-MIN13", text: "The development of cheaper and more reliable witchdrives allowed %IS to expand supply lines to new colonies considerably further than before. %H had been surveyed briefly in %D2, but despite significant mineral reserves it was only considered practical to settle in %D3.", condition: true },
+				{key: "BFPGC-MIN13", text: "The development of cheaper and more reliable hyperdrives allowed %IS to expand supply lines to new colonies considerably further than before. %H had been surveyed briefly in %D2, but despite significant mineral reserves it was only considered practical to settle in %D3.", condition: true },
 			];
 
 			do {
@@ -857,7 +857,7 @@
 
 		} else if (info.colony.founded == 4) {
 			opts = [
-				{ key:"BFGC-NEW1", text: "The discovery of the cross-chart witchspace routes brought many new colonies within reach of %IS, but this form of colonisation was hugely expensive and undertaken only for systems such as %H which had excellent living conditions.", condition: true },
+				{ key:"BFGC-NEW1", text: "The discovery of the cross-chart hyperspace routes brought many new colonies within reach of %IS, but this form of colonisation was hugely expensive and undertaken only for systems such as %H which had excellent living conditions.", condition: true },
 				{ key:"BFGC-NEW2", text: "Early cross-chart colonisation focused on worlds with excellent habitability for the crossing species. %H was founded in %D4 by %IS.", condition: true },
 				{ key:"BFGC-NEW3", text: "Cross-chart colonies largely depended on the chart's native species to provide extra supplies. They were generally therefore founded on highly habitable worlds, to reduce the chances of miscommunications being fatal to the new colony.", condition: info.g != 2 },
 				{ key:"BFGC-NEW4", text: "In addition to the eight colonies established by treaties, a few other colonies were established in this chart soon after unification. The first %I settlers landed here in %D4.", condition: info.g == 2 },
@@ -886,7 +886,7 @@
 				{ key:"BFGC-OLD4", text: "%I1S began the habitation of %H itself in %D4.", condition: true },
 				{ key:"BFGC-OLD5", text: "The existing outpost was supplemented by a %I1 ground station soon after unification.", condition: true },
 				{ key:"BFGC-OLD6", text: "Unification brought many more habitable worlds within reach of %I1S. Systems such as %U which already had basic orbital infrastructure were often considered safer to settle.", condition: true },
-				{ key:"BFGC-OLD7", text: "The expense of cross-chart witchspace routes meant that %I1S preferred to settle systems where supply deals could be made with an existing outpost.", condition: true },
+				{ key:"BFGC-OLD7", text: "The expense of cross-chart hyperspace routes meant that %I1S preferred to settle systems where supply deals could be made with an existing outpost.", condition: true },
 				{ key:"BFGC-OLD8", text: "%I1S began establishing farming communities on the surface of %H in %D4.", condition: info.economy.type == "Farming" },
 				{ key:"BFGC-OLD9", text: "Before the post-unification waves of intentional joint colonisation, inter-species cooperation was tested at systems like %U, where the %I1 settlers joined existing stations.", condition: true },
 				{ key:"BFGC-OLD10", text: "The excellent habitability of the system led to its selection for %I1 habitation in %D4, though it was several kD later before the necessary agreements with the %IS were concluded.", condition: true },
@@ -1672,7 +1672,7 @@
 		} else if (info.star.constellationIndex !== undefined && info.star.constellationIndex == 0) {
 			opts = [
 				{ key: "BFUS-CBI1", text: "%U is the brightest star in the traditional "+info.species.name(info.star.constellationIndexSpecies)+" constellation "+info.star.constellation+".", condition: true },
-				{ key: "BFUS-CBI2", text: "%UC was one of the most prominent stars in the pre-witchdrive "+info.species.name(info.star.constellationIndexSpecies)+"'s sky.", condition: true },
+				{ key: "BFUS-CBI2", text: "%UC was one of the most prominent stars in the pre-hyperdrive "+info.species.name(info.star.constellationIndexSpecies)+"'s sky.", condition: true },
 				{ key: "BFUS-CBI3", text: "%H was known to prehistoric "+info.species.name(info.star.constellationIndexSpecies)+" astronomers who were able to image its orbit around the nearby %U.", condition: true },
 			]
 		} else if (info.star.brightnessIndex !== undefined && info.star.brightnessIndex < 10) {
@@ -2535,13 +2535,13 @@
 				{ key: "BFBS-BOT4", text: "The %H station is a popular stop with long-distance travellers.", condition: true },
 				{ key: "BFBS-BOT5", text: "As the last system before the %NG - or the first after it - the system sees many ships pass through.", condition: info.bottle == 1 },
 				{ key: "BFBS-BOT6", text: "The %H refuelling and supply station is one of the more important to intersystem trade.", condition: info.colony.stage == 1 },
-				{ key: "BFBS-BOT7", text: "Situated at a natural convergence of witchspace routes, %H station attracts visitors from across the chart.", condition: info.bottle == 2 },
+				{ key: "BFBS-BOT7", text: "Situated at a natural convergence of hyperspace routes, %H station attracts visitors from across the chart.", condition: info.bottle == 2 },
 				{ key: "BFBS-BOT8", text: "The convenient position of %U has boosted its tourism industry.", condition: info.economy.type == "Tourism" },
-				{ key: "BFBS-BOT9", text: "One of the more dangerous witchspace bottlenecks, attempts to establish control over %H' space have all failed.", condition: info.politics.governmentCategory == "Disordered" },
+				{ key: "BFBS-BOT9", text: "One of the more dangerous hyperspace bottlenecks, attempts to establish control over %H' space have all failed.", condition: info.politics.governmentCategory == "Disordered" },
 				{ key: "BFBS-BOT10", text: "Ships crossing the %NG will often stop at %H station to resupply.", condition: info.bottle == 1 },
 				{ key: "BFBS-BOT11", text: "The economy of %H is helped by its strategic position.", condition: true },
 				{ key: "BFBS-BOT12", text: "Were it not for its position, it is unlikely that %H would have been settled at all.", condition: info.planet.mineralWealth < 0.45 && info.habitability.best < 0.9 },
-				{ key: "BFBS-BOT13", text: "The %U system is a small hub for trading activity, as many witchspace routes cross it.", condition: true }
+				{ key: "BFBS-BOT13", text: "The %U system is a small hub for trading activity, as many hyperspace routes cross it.", condition: true }
 			];
 
 			do {
@@ -4044,8 +4044,8 @@
 			opts = [
 				{ key: "BFEI-RESS1", text: "%H is most famous for its pure science research, especially in physics, chemistry and astronomy. The system imports the latest machinery and computers to carry out its research.", condition: true },
 				{ key: "BFEI-RESS2", text: "The research institutes of %H are constantly pushing back the boundaries of knowledge. Most of their discoveries are tens if not hundreds of kilodays from having practical use, though some with potential may be taken to other more applied research worlds.", condition: true },
-				{ key: "BFEI-RESS3", text: "Specialising in witchspace theory, %H' researchers are working on understanding the mysteries of this travel form, including the unusual topology of the eight charts. With the recent invaders having witchspace capabilities long thought impossible, their research has gained considerable urgency.", condition: true },
-				{ key: "BFEI-RESS4", text: "%H specialises in astronomy, and the telescopes it designs are being placed in systems around the edge of the chart to look for rogue planets large enough to be used as a witchspace anchor.", condition: true },
+				{ key: "BFEI-RESS3", text: "Specialising in hyperspace theory, %H' researchers are working on understanding the mysteries of this travel form, including the unusual topology of the eight charts. With the recent invaders having hyperspace capabilities long thought impossible, their research has gained considerable urgency.", condition: true },
+				{ key: "BFEI-RESS4", text: "%H specialises in astronomy, and the telescopes it designs are being placed in systems around the edge of the chart to look for rogue planets large enough to be used as a hyperspace anchor.", condition: true },
 				{ key: "BFEI-RESS5", text: "Pure science researchers from around the region have long been drawn to %H through the government's extensive funding for their work.", condition: true },
 			];
 			break;
@@ -4053,7 +4053,7 @@
 			block.importance = 80;
 			opts = [
 				{ key: "BFEI-RESO1", text: "%H is well-respected for its research institutes' studies of society across the eight charts. They regularly obtain loaned artworks and luxuries from other worlds as part of their studies.", condition: true },
-				{ key: "BFEI-RESO2", text: "The rapid meeting of eight species following the discovery of cross-chart witchspace caused many major changes in all their societies, and the emergence of many new societies. On %H, researchers try to examine the impact of these changes, to assist future decisions.", condition: true },
+				{ key: "BFEI-RESO2", text: "The rapid meeting of eight species following the discovery of cross-chart hyperspace caused many major changes in all their societies, and the emergence of many new societies. On %H, researchers try to examine the impact of these changes, to assist future decisions.", condition: true },
 				{ key: "BFEI-RESO3", text: "The invasion brought the largest changes in collective psychology since unification. Researchers on %H attempt to understand how society is coping with the threat of a return, and how best to prepare people for another war if it comes.", condition: true },
 				{ key: "BFEI-RESO4", text: "%H' research institutes have produced some of the most respected studies on the conflict between the species-centric homeworld and USC governance and the interspecies cultures of more recent settlements.", condition: true },
 				{ key: "BFEI-RESO5", text: "The economic modelling taking place on %H has been invaluable in monitoring the damage to inter-system trade caused by the destruction of key manufacturers during the invasion.", condition: true },
@@ -4193,12 +4193,13 @@
 			{ key: "BFGI-ART2", text: "Award-winning artist %NF, most famous for their %NA %N, carried out most of the work on it in this system.", limit: 5, condition: true },
 			{ key: "BFGI-MEMORIAL", text: "A memorial to those who died in the invasion is being constructed in this system.", limit: 8, condition: true },
 			{ key: "BFGI-IMPLICIT", text: "The inhabitants have heard all the jokes about their planet's name before, and tend to react violently to further repetition.", limit: 1, condition: true },
-			{ key: "BFGI-ENLIGHTENMENT", text: "The system is home to the Enlightenment of %NO, who hold that the truly enlightened are able to visit witchspace without ships and return.", limit: 1, condition: true },
+			{ key: "BFGI-ENLIGHTENMENT", text: "The system is home to the Enlightenment of %NO, who hold that the truly enlightened are able to visit hyperspace without ships and return.", limit: 1, condition: true },
+			{ key: "BFGI-SCEPTICAL", text: "%H is well-known as the current home of the Sceptical movement, which holds that only those statements which have been proven in controlled experiments should be considered true. Mortality rates among the movement were incredibly high until the founding of the Journal of Basic Survival Needs in %D8.", limit: 1, condition: !info.economy.type.match(/Research/) },
 			{ key: "BFGI-REFUGEES", text: "The %NO refugees, having survived the invasion and been welcomed here, have organised to raise funds for the millions of other refugees stranded through the charts.", limit: 1, condition: true },
 			{ key: "BFGI-GENERATION", text: "%H is the base of the %NO Generationalists, who believe that the only chance to escape a return of the invaders is to build a generation ship capable of re-crossing Biya's Gap", limit: 1, condition: info.galaxy == 1 },
 			{ key: "BFGI-CAGE", text: "The Cage Society, which believes that only by escaping the eight charts will USC society survive in the long-term, was founded on %H in %D7. The invasion has increased their membership considerably.", limit: 1, condition: true },
-			{ key: "BFGI-STABLE", text: "The lack of gas giants in the %U system makes witchspace relatively stable, and so it is a common site for experiments with new witchdrive technology.", limit: 6, condition: info.planet.mineralWealth < 0.1 },
-			{ key: "BFGI-UNSTABLE", text: "The %H witchpoint is unusually unstable, and ships arriving in the system often appear significantly off-course.", limit: 4, condition: true },
+			{ key: "BFGI-STABLE", text: "The lack of gas giants in the %U system makes hyperspace relatively stable, and so it is a common site for experiments with new hyperdrive technology.", limit: 6, condition: info.planet.mineralWealth < 0.1 },
+			{ key: "BFGI-UNSTABLE", text: "The %H hyperspace wake is unusually unstable, and ships arriving in the system often appear significantly off-course.", limit: 4, condition: true },
 			{ key: "BFGI-NEBULA", text: "%U is surrounded by a dense nebula, which blocks out the light from nearby stars.", limit: 4, condition: true },
 			{ key: "BFGI-ARCHAEOLOGY1", text: "There is heavily disputed evidence that %H may once have had technological native life. The %NO Survey has been thoroughly searching the system since the first discovery in %D6.", limit: 1, condition: info.galaxy == 2 && info.habitability.best > 55 },
 			{ key: "BFGI-ARCHAEOLOGY2", text: "Spaceship wreckage not resembling any USC design has recently been found on the outskirts of the %U system. An archaeological team is currently investigating.", limit: 1, condition: info.galaxy == 2 },
@@ -4217,12 +4218,12 @@
 			{ key: "BFGI-SHROUD", text: "A thick dust cloud surrounds %U cutting out light from all but the brightest stars.", limit: 2, condition: true },
 			{ key: "BFGI-HERO1", text: "Homeworld of %NH, the most famous fighter pilot of the USC fleets during the invasion. Credited with over seven hundred confirmed kills, including two carriers, she is believed to have been killed defending the 2nd Fleet from an ambush in 1141 kD.", limit: 1, condition: true },
 			{ key: "BFGI-HERO2", text: "This otherwise unremarkable system is the birthplace of %NH, who chaired the committee to draft the original USC Treaty. Major celebrations are held on the anniversary of the signing.", limit: 1, condition: info.colony.founded < 4 },
-			{ key: "BFGI-HERO3", text: "%NH, lead scientist on the project to develop the cross-chart witchdrive, was born in this system in %D3L.", limit: 1, condition: info.galaxy == 0 && info.colony.founded < 4 },
+			{ key: "BFGI-HERO3", text: "%NH, lead scientist on the project to develop the cross-chart hyperdrive, was born in this system in %D3L.", limit: 1, condition: info.galaxy == 0 && info.colony.founded < 4 },
 			{ key: "BFGI-HERO4", text: "The revolutionary %NH, writer of 'Reaching Together', is said to have been inspired to found the Cultural Reaching movement while working as a refuelling technician at %H station in %D5.", limit: 1, condition: info.colony.founded < 6 },
 			{ key: "BFGI-HERO5", text: "%NH, the first USC Convenor-General to come from a mixed-species world, was born on %H in %D9.", limit: 1, condition: info.colony.founded < 7 && info.colony.species.length > 1 },
 			{ key: "BFGI-HERO6", text: "A day of silence is observed on %H at each aphelion, in memory of %NH, who was executed in %D10 by the USC on charges - believed locally to be false - of passing information to the invaders.", limit: 1, condition: true },
-			{ key: "BFGI-HISTORY1", text: "A series of marker buoys placed between the planet and its witchpoint summarise the history of the USC", limit: 1, condition: true },
-			{ key: "BFGI-HISTORY2", text: "", limit: 1, condition: true },
+			{ key: "BFGI-HISTORY1", text: "A series of marker buoys placed between the planet and its hyperspace wake summarise the history of the USC", limit: 1, condition: true },
+			{ key: "BFGI-HISTORY2", text: "This system is home to the Grand Archive. Placed here in %D9 by several academic groups it contains a wide variety of primary sources for preservation, intentionally selected to be samples of those unlikely to survive otherwise.", limit: 1, condition: true },
 		];
 
 		do {

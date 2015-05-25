@@ -75,8 +75,8 @@ this.systemWillRepopulate = function() {
 this._setupWitchpoints = function() {
 	system.setWaypoint("witchpoint-primary",[0,0,0],[0,0,0,0],{
 		size: 10E3,
-		beaconCode: "W",
-		beaconLabel: "Witchpoint"
+		beaconCode: "H",
+		beaconLabel: "Hyperspace Wake"
 	});
 
 }.bind(this);
@@ -299,13 +299,22 @@ this._setupCheckpointPatrols = function(pos) {
 		beacon.script.$sotl_patrolGroups = [];
 		beacon.script.$sotl_patrolGroupOrders = {};
 		for (var j=0;j<patrols;j++) {
-			var patrolGroup = this._addGroupToSpace(position.add(Vector3D.randomDirection().multiply(10E3)),"sotl-fighter-superiority","sotl-checkpoint-patrolship",2,size);
+			// TODO: increase patrol size once wing AI is ready
+//			var patrolGroup = this._addGroupToSpace(position.add(Vector3D.randomDirection().multiply(10E3)),"sotl-fighter-superiority","sotl-checkpoint-patrolship",2,size);
+			var patrolGroup = this._addGroupToSpace(position.add(Vector3D.randomDirection().multiply(10E3)),"sotl-fighter-superiority","sotl-checkpoint-patrolship",1,size);
+
+			var centre = beacon.position;
+			// spread out of masslock range ready to intercept
+			// matches AI configurationSetDestinationToController
+			/* TODO: currently only works for controllers guarding the positive z-axis */
 			patrolGroup.name = "Group "+(++this.$groupID);
 			// beacon coordinates patrol actions
 			beacon.script.$sotl_patrolGroups.push(patrolGroup);
 			for (var k=0;k<patrolGroup.ships.length;k++) {
-				patrolGroup.ships[k].script.$sotl_patrolControl = beacon;
-				patrolGroup.ships[k].script.$sotlFaction = system.mainStation.script.$sotlFaction;
+				var patroller = patrolGroup.ships[k];
+				patroller.script.$sotl_patrolControl = beacon;
+				patroller.script.$sotlFaction = system.mainStation.script.$sotlFaction;
+				patroller.position = centre.add([40000*Math.sin(patroller.entityPersonality),40000*Math.cos(patroller.entityPersonality),-15000]);
 			}
 		}
 	}
@@ -330,7 +339,11 @@ this._launchNewCheckpointPatrol = function() {
 		size = 20;
 		break;
 	}
-	var patrolGroup = this._launchGroupFromStation(system.mainStation,"sotl-fighter-superiority","sotl-checkpoint-patrolship",2,size);
+//	var patrolGroup = this._launchGroupFromStation(system.mainStation,"sotl-fighter-superiority","sotl-checkpoint-patrolship",2,size);
+	
+	// temporary: restrict patrols to one ship each, as patrol wing AI not set up yet
+	var patrolGroup = this._launchGroupFromStation(system.mainStation,"sotl-fighter-superiority","sotl-checkpoint-patrolship",1,size);
+
 	patrolGroup.name = "Group "+(++this.$groupID);
 	return patrolGroup;
 };
