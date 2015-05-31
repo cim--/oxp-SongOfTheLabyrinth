@@ -312,13 +312,37 @@ this._setupCheckpointPatrols = function(pos) {
 			beacon.script.$sotl_patrolGroups.push(patrolGroup);
 			for (var k=0;k<patrolGroup.ships.length;k++) {
 				var patroller = patrolGroup.ships[k];
+				patroller.entityPersonality = this._patrolPoint(j,patrols);
 				patroller.script.$sotl_patrolControl = beacon;
 				patroller.script.$sotlFaction = system.mainStation.script.$sotlFaction;
 				patroller.position = centre.add([40000*Math.sin(patroller.entityPersonality),40000*Math.cos(patroller.entityPersonality),-15000]);
 			}
 		}
+
 	}
 
+};
+
+// e.g. x = 0..2 n = 3
+this._patrolPoint = function(x,n) {
+	/* TODO: this doesn't work for ships added after initial
+	 * population. Implement a proper patrol home position manager. */
+	var points;
+	switch (n) {
+	case 1:
+		points = [1];
+		break;
+	case 2:
+		points = [1,4];
+		break;
+	case 3:
+		points = [1,5,3];
+		break;
+	case 4:
+		points = [1,4,6,3];
+		break;
+	}
+	return points[x];
 };
 
 

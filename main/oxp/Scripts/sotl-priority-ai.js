@@ -612,9 +612,14 @@ var scan = this.getParameter("oolite_scanResults");
 				orders[groups[i].name] = { order: "RECALL" };
 			} else if (orders[groups[i].name].order == "INTERCEPT") {
 				// manage intercept orders
-				if (!orders[groups[i].name].target.isValid) {
+				var target = orders[groups[i].name].target;
+				if (!target.isValid || (target.isPlayer && !target.torusEngaged)) {
 					// convert to check if torus effect ends
 					orders[groups[i].name] = { order: "CHECK", target: orders[groups[i].name].backup };
+				} else if (this.distance(target) > 750E3) {
+					// getting too far away - give up pursuit
+					// to avoid running into a trap
+					orders[groups[i].name] = { order: "RECALL" };
 				} else {
 					// otherwise take a position backup in case it ends later
 					orders[groups[i].name].backup = orders[groups[i].name].target.position;
@@ -643,12 +648,10 @@ var scan = this.getParameter("oolite_scanResults");
 
 		for (var i=0;i<objects.length;i++) {
 			var object = objects[i];
-			log(this.name,"Controller at "+this.ship.position+" assessing sensor trace at "+object.position);
 			if ((object.dataKey == "sotl-torus-effect" && object.script.$ship.script.$sotlFaction != this.ship.script.$sotlFaction) || object.isPlayer) {
-//				log(this.name,"...is torus flare");
 				// intercept within 500km, if not known already
 				if (this.distance(object.position) < 500E3) {
-//					log(this.name,"...is with 500k");
+					log(this.name,"Controller at "+this.ship.position+" assessing sensor trace at "+object.position);
 					// don't *start* intercepts of ships which have
 					// passed the checkpoint
 					if (object.position.z < this.ship.position.z) {

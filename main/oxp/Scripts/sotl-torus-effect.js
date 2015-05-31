@@ -33,9 +33,10 @@ this.torusMove = function(delta) {
 		--this.$accumulator;
 		var nearby = system.filteredEntities(this, function(e) {
 			return e!=this.$ship && e.isShip && !(this.$ship.escortGroup.containsShip(e));
-		}, this.visualEffect, 25E3);
+		}, this.visualEffect, 20E3);
 		// must be nothing nearby except this ship's escorts, and the escorts
-		// must be much closer
+		// must be much closer. Uses 20E3 rather than full scanner range to
+		// simulate braking time, for now.
 		if (nearby.length > 0) {
 //			log(this.name,"Ending torus: "+nearby);
 			this.torusEnd();
