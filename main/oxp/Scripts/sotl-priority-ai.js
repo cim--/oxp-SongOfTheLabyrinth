@@ -2,6 +2,29 @@
 
 this.name = "SOTL Priority AI Extensions";
 
+this.$factionTable = {
+	"planetary" : {
+		"planetary": 3,
+		"independent": 0,
+		"criminal": -3, 
+		"player": -3 // testing
+	},
+	// TODO: stop using "independent" as a catch-all for traders
+	"independent" : {
+		"planetary": 1,
+		"independent": 0,
+		"criminal": -1,
+		"player": 0
+	},
+	"criminal" : {
+		"planetary": -2,
+		"independent": -1,
+		"criminal": 3,
+		"player": -1
+	}
+
+};
+
 this.startUp = function() {
 	var lib = worldScripts["oolite-libPriorityAI"].PriorityAIController;
 	var pop = worldScripts["SOTL Populator Script"];
@@ -52,17 +75,34 @@ this.startUp = function() {
 
 
 	lib.prototype.sotl_conditionScannerContainsIllegalActivity = function() {
-var scan = this.getParameter("oolite_scanResults");
+		var scan = this.getParameter("oolite_scanResults");
 		if (scan) {
 			var f1 = this.ship.script.$sotlFaction;
-			this.checkScannerWithPredicate(function(s) { 
+			return this.checkScannerWithPredicate(function(s) { 
+				if (this.sotl_utilHasSurrendered(s)) {
+					// do not re-attack surrendered ships
+					return false;
+				}
 				var f2 = s.script.$sotlFaction;
 				if (f2 && f2 != f1) {
 					var result = this.sotl_utilCompareFactions(f1,f2);
+					log(this.ship,"Compared "+f1+" with "+f2+", got "+result);
 					/* TODO: split s.bounty to allow this to be used
 					 * other than by system station ships */
 					if (result < 2 && s.bounty > 0) {
 						return true;
+					} 
+					if (result == -3) {
+						return true;
+					}
+					if (s.hasHostileTarget && result < 3) {
+						var st = s.target;
+						var stf = st.script.$sotlFaction;
+						var result2 = this.sotl_utilCompareFactions(f1,stf);
+						if (result2 > result) {
+							// if we like their target more than we like them
+							return true;
+						}
 					}
 				}
 				return false;
@@ -760,9 +800,9 @@ var scan = this.getParameter("oolite_scanResults");
 		this.responsesAddStandard(handlers);
 		this.applyHandlers(handlers);
 		this.communicate("sotl_demandSurrender",null,1);
-		/* TODO: consider ways to make target aware of demand without
-		 * immediately attacking */
-		this.performAttack();
+		/* TODO: make target aware of demand without immediately
+		 * attacking */
+		this.ship.performAttack();
 	};
 
 
@@ -1079,6 +1119,9 @@ var scan = this.getParameter("oolite_scanResults");
 	 */
 	lib.prototype.sotl_utilCompareFactions = function(f1,f2) {
 		if (f1 == f2) { return 3; }
+		if (worldScripts["SOTL Priority AI Extensions"].$factionTable[f1][f2]) {
+			return worldScripts["SOTL Priority AI Extensions"].$factionTable[f1][f2];
+		}
 		return 0; // temp
 	};
 
@@ -1125,6 +1168,7 @@ var scan = this.getParameter("oolite_scanResults");
 
 	lib.prototype.sotl_utilHasSurrendered = function(ship) {
 		if (ship.isPlayer) {
+			log(this.ship,"Assessing player surrender: "+(ship.speed == 0 && !ship.weaponsOnline));
 			// TODO: allow explicit surrender
 			return ship.speed == 0 && !ship.weaponsOnline
 		} else {
