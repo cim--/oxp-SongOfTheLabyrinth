@@ -288,7 +288,9 @@ this._setupCheckpointPatrols = function(pos) {
 
 		
 		var patrols = 2;
+		var psize = 2;
 		if (stability >= 6) {
+			psize = 3;
 			patrols++;
 			if (stability >= 7) {
 				patrols++;
@@ -301,7 +303,7 @@ this._setupCheckpointPatrols = function(pos) {
 		for (var j=0;j<patrols;j++) {
 			// TODO: increase patrol size once wing AI is ready
 //			var patrolGroup = this._addGroupToSpace(position.add(Vector3D.randomDirection().multiply(10E3)),"sotl-fighter-superiority","sotl-checkpoint-patrolship",2,size);
-			var patrolGroup = this._addGroupToSpace(position.add(Vector3D.randomDirection().multiply(10E3)),"sotl-fighter-superiority","sotl-checkpoint-patrolship",1,size);
+			var patrolGroup = this._addGroupToSpace(position.add(Vector3D.randomDirection().multiply(10E3)),"sotl-fighter-superiority","sotl-checkpoint-patrolship",psize,size);
 
 			var centre = beacon.position;
 			// spread out of masslock range ready to intercept
@@ -349,6 +351,7 @@ this._patrolPoint = function(x,n) {
 this._launchNewCheckpointPatrol = function() {
 	var stability = system.info.sotl_system_stability;
 	var size = 5;
+	var psize = 2;
 	switch (stability) {
 	case 4:
 		size = 6;
@@ -357,16 +360,17 @@ this._launchNewCheckpointPatrol = function() {
 		size = 10;
 		break;
 	case 6:
+		psize = 3;
 		size = 15;
 		break;
 	case 7:
+		psize = 3;
 		size = 20;
 		break;
 	}
 //	var patrolGroup = this._launchGroupFromStation(system.mainStation,"sotl-fighter-superiority","sotl-checkpoint-patrolship",2,size);
 	
-	// temporary: restrict patrols to one ship each, as patrol wing AI not set up yet
-	var patrolGroup = this._launchGroupFromStation(system.mainStation,"sotl-fighter-superiority","sotl-checkpoint-patrolship",1,size);
+	var patrolGroup = this._launchGroupFromStation(system.mainStation,"sotl-fighter-superiority","sotl-checkpoint-patrolship",psize,size);
 
 	patrolGroup.name = "Group "+(++this.$groupID);
 	return patrolGroup;

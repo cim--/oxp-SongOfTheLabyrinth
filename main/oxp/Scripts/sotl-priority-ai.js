@@ -7,7 +7,7 @@ this.$factionTable = {
 		"planetary": 3,
 		"independent": 0,
 		"criminal": -3, 
-		"player": -3 // testing
+		"player": 0
 	},
 	// TODO: stop using "independent" as a catch-all for traders
 	"independent" : {
@@ -252,8 +252,8 @@ this.startUp = function() {
 		var nearby = system.filteredEntities(this, function(e) {
 			return e!=this.ship && e.isShip && !(this.ship.escortGroup.containsShip(e) && this.distance(e) < 2.5E3);
 		}, this.ship, 25E3);
-		// must be nothing nearby except this ship's escorts, and the escorts
-		// must be much closer
+		// must be nothing nearby except this ship's escorts/group,
+		// and the escorts must be much closer
 		return (nearby.length == 0);
 	};
 
@@ -431,6 +431,27 @@ this.startUp = function() {
 
 
 	/* Configurations */
+
+	lib.prototype.sotl_configurationMarkGroupMembersAsEscorts = function() {
+		if (this.__ltcache.sotlGroupEscorts) {
+			// don't need to recheck this every time - new group members
+			// will be rare
+			return;
+		}
+		this.__ltcache.sotlGroupEscorts = 1;
+		var s = this.ship.group.ships;
+		var eg = this.ship.escortGroup;
+		for (var i=0;i<s.length;i++) {
+			if (s[i] != this.ship && !eg.containsShip(s[i])) {
+				var tmp = s[i].primaryRole;
+				s[i].primaryRole = "sotl-escort-temp";
+				// only needs to match when actually adding the escort
+				eg.addShip(s[i]);
+				s[i].primaryRole = tmp;
+			}
+		}
+	};
+
 
 	lib.prototype.sotl_configurationSetResupplyFinalDocking = function() {
 		var rtarget = this.ship.script.$sotlResupplyTarget;
@@ -819,7 +840,7 @@ this.startUp = function() {
 				this.responsesAddStandard(handlers);
 				this.applyHandlers(handlers);
 				this.communicate("sotl_surrender",null,1);
-				this.performStop();
+				this.ship.performStop();
 			}
 		} else {
 			// try to flee

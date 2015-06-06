@@ -1,5 +1,6 @@
 {
 	"oolite-escort" = (
-		"sotl-escort"
+		"sotl-escort",
+		"sotl-escort-temp"
 	);
 }

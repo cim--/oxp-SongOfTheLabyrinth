@@ -6,8 +6,6 @@ this.aiStarted = function() {
 	var ai = new worldScripts["oolite-libPriorityAI"].PriorityAIController(this.ship);
 
 
-	/* TODO: need separate AI for patrol 2,3,etc ships */
-
 	/* Takes orders from controller. Order types:
 	 * Defend: return to very close to buoy
 	 * Recall: return to patrol areas around buoy
@@ -97,11 +95,21 @@ this.aiStarted = function() {
 			behaviour: ai.sotl_behaviourDemandTargetSurrender,
 			reconsider: 15
 		},
-		/* TODO: need to insert bit here to:
+		/* 
 		 * check if group has leader, appoint self if not
 		 * check if is leader
 		 * if not leader, just escort the current leader
 		 */
+		{
+			preconfiguration: ai.configurationAppointGroupLeader,
+			condition: ai.conditionIsGroupLeader,
+			truebranch: [
+				{
+					configuration: ai.sotl_configurationMarkGroupMembersAsEscorts
+				}
+			],
+			falsebranch: ai.sotl_templateEscortMothership()
+		},
 		// if no controller buoy set, return to station
 		{
 			notcondition: ai.sotl_conditionHasController,
