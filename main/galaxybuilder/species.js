@@ -325,7 +325,12 @@ console.error(namelist.length);
 			var name = "";
 			var nl = random.rand(2)+2;
 			for (var j=0;j<nl;j++) {
-				name += speciesInfo[spec].wordBits[random.rand(wbl)];
+				var part = speciesInfo[spec].wordBits[random.rand(wbl)];
+				if (part.length > 2) {
+					// bias towards smaller name fragments
+					part = speciesInfo[spec].wordBits[random.rand(wbl)];
+				}
+				name += part;
 			}
 			for (j in wordmap) {
 				name = name.replace(j,wordmap[j]);
@@ -334,6 +339,7 @@ console.error(namelist.length);
 			name = name.replace(/'$/,"");
 			name = name.replace(/^-/,"");
 			name = name.replace(/-$/,"");
+			name = name.replace(/([aeiou][aeiou])[aeiou]+/,"$1");
 			speciesInfo[spec].nameList.push(name);
 		}
 //		console.error(spec+" has name list "+speciesInfo[spec].nameList);
@@ -349,7 +355,12 @@ console.error(namelist.length);
 		var word = "";
 		var nl = random.rand(3)+2;
 		for (var j=0;j<nl;j++) {
-			word += wb[random.rand(wbl)];
+			var part = wb[random.rand(wbl)];
+			if (part.length > 2) {
+				// bias towards smaller name fragments
+				part = wb[random.rand(wbl)];
+			}
+			word += part;
 		}
 		for (j in wordmap) {
 			word = word.replace(j,wordmap[j]);
