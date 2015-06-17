@@ -327,7 +327,7 @@ this._equipmentManagerScreen = function(defaultChoice) {
 			"03_shields": this._genChoice("Refit Shields"),
 			"04_generators": this._genChoice("Refit Generators"),
 			"05_capacitors": this._genChoice("Refit Capacitors"),
-			"06_witchdrives": this._genChoice("Refit Witchdrive"),
+			"06_witchdrives": this._genChoice("Refit Hyperdrive"),
 		};
 		if (this.$enuse > 0) {
 			choices["99_save"] = this._genChoice("Apply Configuration");
@@ -421,14 +421,14 @@ this._equipmentManagerScreen = function(defaultChoice) {
 		};
 		break;
 	case "06_witchdrives":
-		title = "Refit Witchdrive";
-		message = "Select the witchdrive unit to fit to the ship. Multiple witchdrives may be fitted, though this only provides redundancy in the event of damage and does not increase performance. Ships without witchdrives may only enter witchspace by following another ship through a wormhole.\n\n"+this._infoTable("EQ_SOTL_COMPONENT_WITCHDRIVE",false,2);
+		title = "Refit Hyperdrive";
+		message = "Select the hyperdrive unit to fit to the ship. Multiple hyperdrives may be fitted, though this only provides redundancy in the event of damage and does not increase performance. Ships without hyperdrives may only enter hyperspace by following another ship through a wormhole.\n\n"+this._infoTable("EQ_SOTL_COMPONENT_WITCHDRIVE",false,2);
 		choices = {
 			"60_add_witchdrive1": this._addChoice("EQ_SOTL_COMPONENT_WITCHDRIVE1"),
 			"61_add_witchdrive2": this._addChoice("EQ_SOTL_COMPONENT_WITCHDRIVE2"),
 			"65_rem_witchdrive1": this._remChoice("EQ_SOTL_COMPONENT_WITCHDRIVE1"),
 			"66_rem_witchdrive2": this._remChoice("EQ_SOTL_COMPONENT_WITCHDRIVE2"),
-			"69_clear_witchdrive": this._genChoice("Remove all witchdrives"),
+			"69_clear_witchdrive": this._genChoice("Remove all hyperdrives"),
 			"98_home": this._genChoice("Return to main refit screen")
 		};
 		break;

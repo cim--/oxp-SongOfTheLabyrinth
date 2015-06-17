@@ -27,7 +27,7 @@
 	(
 		4, 2500, "Navigation Computer",
 		"EQ_SOTL_NAVIGATION_COMPUTER",
-		"Electronics covering navigation-oriented systems, including both in-system and witchspace navigation.",
+		"Electronics covering navigation-oriented systems, including both in-system and hyperspace navigation.",
 		{
 			available_to_all = true;
 			condition_script = "sotl-conditions.js";
@@ -351,9 +351,9 @@
 	),
 /* Witchdrive components */
 	(
-		4, 1000, "Standard Witchdrive",
+		4, 1000, "Standard Hyperdrive",
 		"EQ_SOTL_COMPONENT_WITCHDRIVE1",
-		"Standard witchdrive with a range of 7 LY.",
+		"Standard hyperdrive with a range of 7 LY.",
 		{
 			available_to_all = true;
 			can_carry_multiple = true;
@@ -365,9 +365,9 @@
 		}
 	),	
 	(
-		8, 6000, "Cross-chart Witchdrive",
+		8, 6000, "Cross-chart Hyperdrive",
 		"EQ_SOTL_COMPONENT_WITCHDRIVE2",
-		"Provides cross-chart witchspace capability in addition to a standard 7 LY jump capability.",
+		"Provides cross-chart hyperspace capability in addition to a standard 7 LY jump capability.",
 		{
 			available_to_all = true;
 			can_carry_multiple = true;
@@ -414,7 +414,7 @@
 	(
 		6, 20000, "In-flight refuelling system",
 		"EQ_SOTL_REFUEL_INFLIGHT",
-		"Allows you to transfer a barrel of witchdrive fuel from your hold to your fuel tank while in flight. Uses '[oolite_key_activate_equipment]' to start transferring, and '[oolite_key_mode_equipment]' to stop transfers in emergencies. Injector use will not be possible while transfers are in progress.",
+		"Allows you to transfer a barrel of hyperdrive fuel from your hold to your fuel tank while in flight. Uses '[oolite_key_activate_equipment]' to start transferring, and '[oolite_key_mode_equipment]' to stop transfers in emergencies. Injector use will not be possible while transfers are in progress.",
 		{
 			available_to_all = true;
 			condition_script = "sotl-conditions.js";

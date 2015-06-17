@@ -131,7 +131,7 @@
 	};
 
 	"sotl-fuel" = {
-		name = "Witchdrive Fuel";
+		name = "Hyperdrive Fuel";
 		classes = ("sotl-im-survival","sotl-im-military","sotl-imr-military","sotl-ex-refining","sotl-volatility-low","sotl-priceband-2","sotl-supply-high","sotl-demand-medium","sotl-quantity-bulk");
 		comment = "Almost all systems have fuel plants able to manage domestic needs, though in some cases military systems will need to import additional fuel on contract. In-flight refuelling from these containers is often essential for long-range travel between populated regions, though requires special equipment to do so.";
 		market_script = "sotl-market-manager.js";
