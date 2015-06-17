@@ -53,6 +53,64 @@ this.startUp = function() {
 		}
 	};
 
+
+	lib.prototype.sotl_conditionScannerContainsDisabledFreighter = function() {
+		if (this.ship.cargoSpaceAvailable == 0) {
+			return false; // there might be, but it's not relevant
+		}
+		var scan = this.getParameter("oolite_scanResults");
+		if (scan) {
+			var f1 = this.ship.script.$sotlFaction;
+			this.checkScannerWithPredicate(function(s) { 
+				if (s.cargoSpaceCapacity < 10) {
+					return false; // not a freighter
+				}
+				if (s.script.$sotlBoardingShip && s.script.$sotlBoardingShip != this.ship) {
+					return false; // someone else already boarding
+				}
+				var f2 = s.script.$sotlSurrenderFaction;
+				// asked to surrender
+				if (f2 && f2 == f1) {
+					// has surrendered to us
+					if (this.sotl_utilHasSurrendered(s)) {
+						return true;
+					}
+				}
+				return false;
+			});
+		} else {
+			return false;
+		}
+	};
+
+
+	lib.prototype.sotl_conditionScannerContainsPoorlyEscortedFreighter = function() {
+		if (this.ship.cargoSpaceAvailable == 0) {
+			return false; // there might be, but it's not relevant
+		}
+		var scan = this.getParameter("oolite_scanResults");
+		if (scan) {
+			var f1 = this.ship.script.$sotlFaction;
+			this.checkScannerWithPredicate(function(s) { 
+				if (s.cargoSpaceUsed < 10) {
+					return false; // not worth it
+				}
+				var f2 = s.script.$sotlFaction;
+				if (this.sotl_utilCompareFactions(f1,f2) > 0) {
+					return false; // on our side
+				}
+				/* TODO: odds assessment, but need to group up the
+				 * pirates first or they'll never attack. This will do
+				 * for testing */
+
+				return true;
+			});
+		} else {
+			return false;
+		}
+	};
+
+
 	lib.prototype.sotl_conditionScannerContainsRefusedSurrender = function() {
 		var scan = this.getParameter("oolite_scanResults");
 		if (scan) {
@@ -112,6 +170,18 @@ this.startUp = function() {
 			return false;
 		}
 	};
+
+
+	lib.prototype.sotl_conditionCombatTargetIsFreighter = function() {
+		return (this.ship.target && this.ship.hasHostileTarget && this.ship.target.cargoSpaceCapacity >= 10);
+	};
+
+
+	lib.prototype.sotl_conditionContinuePiracyActivity = function() {
+		/* TODO: also assess damage, group attrition */
+		return this.ship.cargoSpaceAvailable > 0;
+	};
+
 
 	lib.prototype.sotl_conditionStationHasEnoughDefense = function() {
 		// should have one patrolling ship per security level
@@ -258,6 +328,15 @@ this.startUp = function() {
 	};
 
 
+	lib.prototype.sotl_conditionStealthIsDesiredAtPosition = function() {
+		var p = this.ship.position;
+		if (p.z > 0 && p.z < system.mainPlanet.position.z && Math.abs(p.x) < 100E3 && Math.abs(p.y) < 100E3) {
+			/* TODO: extend this to cover within 100k of any lane */
+			return true;
+		}
+		return false;
+	};
+
 	lib.prototype.sotl_conditionMothershipUsingTorus = function() {
 		var t = this.ship.group.leader.AIScript.oolite_priorityai.getParameter("sotl_torusEffect");
 		return (t && t.isValid);
@@ -288,9 +367,30 @@ this.startUp = function() {
 		// if only own group around, cancel surrender state
 		if (this.sotl_conditionInClearSpace()) {
 			this.setParameter("sotl_surrendered",null);
+			delete this.ship.script.$sotlSurrenderFaction;
 			return false;
 		}
 		return this.getParameter("sotl_surrendered");
+	};
+
+	lib.prototype.sotl_conditionIsInGoodPiracyLurkPosition = function() {
+		var pos = this.ship.position;
+		if (worldScripts["SOTL Populator Script"]._nearestCheckpointRange(pos) < 750E3) {
+			// too close to a checkpoint
+			return false;
+		}
+		var patrols = worldScripts["SOTL Populator Script"].$currentSystemPatrolLocations;
+		var maxdist = 100E3;
+		if (patrols.length == 4) {
+			maxdist = 800E3;
+		} else if (patrols.length > 1) {
+			maxdist = 500E3;
+		}
+		/* TODO: allow for other lanes to exist */
+		if (pos.x*pos.x + pos.y*pos.y > max*max) {
+			return false; // not within range of lane
+		}
+		return true;
 	};
 
 	lib.prototype.sotl_conditionWitchspaceCountdownComplete = function() {
@@ -350,6 +450,31 @@ this.startUp = function() {
 		var rtarget = this.ship.script.$sotlResupplyTarget;
 		var dest = this.sotl_utilDockingStartPosition(rtarget);
 		return this.distance(dest) < 5;
+	};
+
+	lib.prototype.sotl_conditionInRangeToBoardShip = function() {
+		return this.distance(this.ship.target) < this.ship.collisionRadius + this.ship.target.collisionRadius + 15;
+	};
+
+
+	lib.prototype.sotl_conditionBoardingOperationInProgress = function() {
+		var bt = this.getParameter("sotl_boardingOperation");
+		return bt && bt.isValid;
+	};
+
+	lib.prototype.sotl_conditionBoardingOperationInterrupted = function() {
+		var bt = this.getParameter("sotl_boardingOperation");
+		return bt && (!bt.isValid || bt != this.ship.target || bt.speed > 0 || this.ship.speed > 0);
+	};
+
+	lib.prototype.sotl_conditionBoardingOperationComplete = function() {
+		var bt = this.getParameter("sotl_boardingOperation");
+		// either we're full or they're empty
+		return this.ship.cargoSpaceAvailable == 0 || bt.cargoSpaceUsed == 0;
+	};
+
+	lib.prototype.sotl_conditionHasInterceptionTarget = function() {
+		return this.getParameter("sotl_interceptTarget") != null;
 	};
 
 	/* -- Controllers */
@@ -430,7 +555,22 @@ this.startUp = function() {
 	};
 
 
+
 	/* Configurations */
+
+	lib.prototype.sotl_configurationSetDestinationToInterceptionTarget = function() {
+		var target = this.getParameter("sotl_interceptTarget");
+		if (!target.isValid || (target.isPlayer && !player.ship.torusEngaged)) {
+			// target has stopped using torus
+			this.ship.destination = this.getParameter("sotl_interceptTargetBackup");
+		} else {
+			this.ship.destination = target.position.add(target.vectorForward.multiply(target.speed*5));
+			this.setParameter("sotl_interceptTargetBackup",this.ship.destination);
+		}
+		this.ship.desiredRange = 12000;
+		this.ship.desiredSpeed = this.ship.maxSpeed;
+	};
+
 
 	lib.prototype.sotl_configurationMarkGroupMembersAsEscorts = function() {
 		if (this.__ltcache.sotlGroupEscorts) {
@@ -513,6 +653,45 @@ this.startUp = function() {
 		this.ship.desiredRange = 1000;
 		this.ship.desiredSpeed = this.cruiseSpeed();
 	};
+
+	lib.prototype.sotl_configurationSetDestinationToGoodPiracyLurkPosition = function() {
+		var lurkpos = this.getParameter("sotl_piracyLurkChoice");
+		if (!lurkpos) {
+			var patrols = worldScripts["SOTL Populator Script"].$currentSystemPatrolLocations;
+			var maxdist = 100E3;
+			if (patrols.length == 4) {
+				maxdist = 800E3;
+			} else if (patrols.length > 1) {
+				maxdist = 500E3;
+			}
+
+			var fallback = 10;
+			do {
+				if (--fallback <= 0) {
+					// lane is patrolled too much around here
+					// try fallbacks
+					if (fallback > -10) {
+						lurkpos = new Vector3D(0,0,this.ship.position.z).add(Vector3D.randomDirection(maxdist));
+					} else {
+						// really too patrolled. Hide near the entry
+						// point, probably somewhat behind it, just in
+						// case someone takes an odd route
+						lurkpos = Vector3D.randomDirection(maxdist);
+					}
+				} else {
+					// try to get somewhere nearby on the lane
+					lurkpos = new Vector3D(0,0,this.ship.position.z).add(Vector3D.randomDirectionAndLength(maxdist));
+				}
+
+			} while (worldScripts["SOTL Populator Script"]._nearestCheckpointRange(lurkpos) < 500E3);
+
+			this.setParameter("sotl_piracyLurkChoice",lurkpos);
+		}
+		this.ship.destination = lurkpos;
+		this.ship.desiredSpeed = this.cruiseSpeed();
+		this.ship.desiredRange = 2E3;
+	};
+
 
 	lib.prototype.sotl_configurationSelectMainTradingStation = function() {
 		// TODO: more options than this
@@ -608,9 +787,29 @@ this.startUp = function() {
 	};
 
 	lib.prototype.sotl_configurationRefuel = function() {
-		/* TODO: consume a tonne of fuel from hold to do this */
+		this.ship.adjustCargo("sotl-fuel",-1);
 		this.ship.fuel = 7;
-	}
+	};
+
+
+	lib.prototype.sotl_configurationSetDestinationToBoardingStart = function() {
+		this.ship.destination = this.ship.target.position;
+		this.ship.desiredRange = this.ship.collisionRadius + this.ship.target.collisionRadius + 5;
+		this.ship.desiredSpeed = this.cruiseSpeed();
+	};
+
+	lib.prototype.sotl_configurationEndBoardingOperation = function() {
+		this.ship.destination = this.ship.target.position;
+		this.ship.desiredRange = this.ship.collisionRadius + this.ship.target.collisionRadius + 3000;
+		this.ship.desiredSpeed = this.cruiseSpeed();
+		this.ship.target = null;
+		this.setParameter("sotl_boardingOperation",null);
+	};
+
+
+	lib.prototype.sotl_configurationClearBoardingData = function() {
+		this.setParameter("sotl_boardingOperation",null);
+	};
 
 
 	lib.prototype.sotl_configurationSetDestinationToController = function() {
@@ -691,12 +890,39 @@ this.startUp = function() {
 	}
 
 
+	lib.prototype.sotl_configurationPirateScanForTorus = function() {
+		var objects = system.allVisualEffects;
+		if (player.ship.torusEngaged) {
+			objects.push(player.ship);
+		}
+
+		for (var i=0;i<objects.length;i++) {
+			var object = objects[i];
+			if ((object.dataKey == "sotl-torus-effect" && object.script.$ship.script.$sotlFaction != this.ship.script.$sotlFaction) || object.isPlayer) {
+				// intercept within 500km, if not known already
+				if (this.distance(object.position) < 500E3) {
+					log(this.name,"Pirate at "+this.ship.position+" assessing sensor trace at "+object.position);
+					if (worldScripts["SOTL Populator Script"]._nearestCheckpointRange(object.position) > 750E3) {
+						// must not be in or near range of a patrol
+						if (object.script.$ship.cargoSpaceUsed > 0) {
+							/* TODO: a better way than above to prevent
+							   re-intercepting */
+							this.setParameter("sotl_interceptTarget",object);
+							return;
+						}
+					}
+				}
+			}
+		}
+		this.setParameter("sotl_interceptTarget",null);
+	}
+
+
 	lib.prototype.sotl_configurationControllerScanForTorusForCheckpoint = function() {
 		var objects = system.allVisualEffects;
 		if (player.ship.torusEngaged) {
 			objects.push(player.ship);
 		}
-		log(this.name,"Pre-scan check gives "+objects.length+" objects");
 
 		var groups = this.ship.script.$sotl_patrolGroups;
 		var orders = this.ship.script.$sotl_patrolGroupOrders;
@@ -712,17 +938,13 @@ this.startUp = function() {
 			if ((object.dataKey == "sotl-torus-effect" && object.script.$ship.script.$sotlFaction != this.ship.script.$sotlFaction) || object.isPlayer) {
 				// intercept within 500km, if not known already
 				if (this.distance(object.position) < 500E3) {
-					log(this.name,"Controller at "+this.ship.position+" assessing sensor trace at "+object.position);
 					// don't *start* intercepts of ships which have
 					// passed the checkpoint
 					if (object.position.z < this.ship.position.z) {
-//						log(this.name,"...is outwards");
 						// and ignore ones heading outbound
 						if (object.orientation.vectorForward().z > 0) {
-//							log(this.name,"...and heading inwards");
 							// and ignore ones already being intercepted
 							if (tracked.indexOf(object) == -1) {
-//								log(this.name,"...and not already tracked");
 								this.setParameter("sotl_controllerScan",object);
 								return;
 							}
@@ -918,6 +1140,31 @@ this.startUp = function() {
 		};
 		this.applyHandlers(handlers);
 		this.ship.performFaceDestination();
+	};
+
+
+	lib.prototype.sotl_behaviourBeginBoardingOperation = function() {
+		var handlers = {};
+		this.responsesAddStandard(handlers);
+		this.applyHandlers(handlers);
+		this.ship.performFaceDestination();
+		// TODO: animate boarding cable 
+		this.setParameter("sotl_boardingOperation",this.ship.target);
+	};
+
+	lib.prototype.sotl_behaviourContinueBoardingOperation = function() {
+		var handlers = {};
+		this.responsesAddStandard(handlers);
+		this.applyHandlers(handlers);
+		this.ship.performFaceDestination();
+
+		var cargo = this.ship.target.cargoList;
+		// if this function is run, should already have checked that
+		// target has cargo and we have some cargo space
+		var item = cargo[0].commodity;
+		// transfer cargo
+		this.ship.adjustCargo(item,1);
+		this.ship.target.adjustCargo(item,-1);
 	};
 
 
@@ -1285,6 +1532,35 @@ this.startUp = function() {
 		];
 	};
 
+	lib.prototype.sotl_templateSneakToDestination = function() {
+		return [
+			{
+				label: "Approach destination normally",
+				notcondition: this.sotl_conditionLocalSpaceClear,
+				behaviour: this.behaviourApproachDestination,
+				reconsider: 30
+			},
+			{
+				// don't use torus for short journeys
+				label: "Destination nearby",
+				condition: this.sotl_conditionDestinationIsNearby,
+				behaviour: this.behaviourApproachDestination,
+				reconsider: 30
+			},
+			{
+				// don't use torus for short journeys
+				label: "In sneaking area",
+				condition: this.sotl_conditionStealthIsDesiredAtPosition,
+				behaviour: this.behaviourApproachDestination,
+				reconsider: 30
+			},
+			{
+				label: "Approach destination on torus",
+				behaviour: this.sotl_behaviourTorusToDestination,
+				reconsider: 30
+			}
+		];
+	};
 
 	/* Like traveltodestination, but with much faster reconsideration */
 	lib.prototype.sotl_templateTravelToIntercept = function() {
@@ -1456,6 +1732,38 @@ this.startUp = function() {
 			{
 				behaviour: this.behaviourEscortMothership,
 				reconsider: 60
+			}
+		];
+	};
+
+	// requires boarding ship to be the current target
+	lib.prototype.sotl_templateBoardDisabledShip = function() {
+		return [
+			{
+				condition: this.sotl_conditionBoardingOperationInterrupted, 
+				configuration: this.sotl_configurationClearBoardingData, 
+				behaviour: this.behaviourReconsider
+			},
+			{
+				condition: this.sotl_conditionBoardingOperationComplete, 
+				configuration: this.sotl_configurationEndBoardingOperation, 
+				behaviour: this.behaviourApproachDestination,
+				reconsider: 10
+			},
+			{ 
+				condition: this.sotl_conditionBoardingOperationInProgress, 
+				behaviour: this.sotl_behaviourContinueBoardingOperation, 
+				reconsider: 30
+			},
+			{
+				condition: this.sotl_conditionInRangeToBoardShip,
+				behaviour: this.sotl_behaviourBeginBoardingOperation, 
+				reconsider: 30
+			},
+			{
+				configuration: this.sotl_configurationSetDestinationToBoardingStart,
+				behaviour: this.behaviourApproachDestination,
+				reconsider: 10
 			}
 		];
 	};

@@ -395,6 +395,7 @@ this._checkpointPatrolLocations = function() {
 		ppos = [0.2,0.4,0.6,0.8];
 		break;
 	default:
+		this.$currentSystemPatrolLocations = [];
 		return ppos; // no patrols of this sort at <=4
 	};
 
@@ -403,9 +404,22 @@ this._checkpointPatrolLocations = function() {
 		coords.push(system.mainPlanet.position.multiply(ppos[i]));
 		// TODO checkpoints for other routes
 	}
+	this.$currentSystemPatrolLocations = coords;
 	return coords;
 };
 
+
+// gives distance to nearest checkpoint
+this._nearestCheckpointRange = function(position) {
+	var range = 10E10;
+	for (var i=0;i<this.$currentSystemPatrolLocations.length;i++) {
+		var prange = position.distanceTo(this.$currentSystemPatrolLocations[i]);
+		if (prange < range) {
+			range = prange;
+		}
+	}
+	return range;
+};
 
 // TODO: uninhabited system populator goes here
 
