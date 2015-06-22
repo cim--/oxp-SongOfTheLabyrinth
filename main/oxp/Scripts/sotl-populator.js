@@ -56,6 +56,12 @@ this.systemWillPopulate = function() {
 		location: "LANE_WP"
 	});
 
+	system.setPopulator("sotl-traderoute-pirates",{
+		callback: this._setupPirates.bind(this),
+		priority: 30,
+		location: "LANE_WP"
+	});
+
 };
 
 // every 20 seconds
@@ -421,6 +427,45 @@ this._nearestCheckpointRange = function(position) {
 	return range;
 };
 
+
+this._setupPirates = function(bpos) {
+	// one freighter per 500k weight
+	var fcount = this.$tradeRouteTotalWeight / 0.5E6;
+	var stability = system.info.sotl_system_stability;
+	
+	// roughly one pirate group out per expected freighter
+	var pcount = fcount;
+	if (stability >= 4) {
+		// but reduce significantly if system is patrolled well
+		pcount /= stability-2;
+	}
+	if (system.info.economy_description == "Survival") {
+		// desperation
+		pcount *= 2;
+	} 
+	if (system.info.government_description == "Criminal Rule") {
+		// authorised
+		pcount *= 2;
+	} else if (system.info.government_description == "Civil War") {
+		pcount *= 1.5;
+	}
+	// variation
+	pcount *= 1+Math.random()-Math.random();
+	// and to integer
+	pcount = Math.ceil(pcount);
+
+	var shipStrength = 15; // TODO: vary by system
+
+	for (var i=0;i<pcount;i++) {
+		var position = new Vector3D((Math.random()-0.5)*100E3,(Math.random()-0.5)*100E3,((Math.random()*0.6)+0.1)*system.mainPlanet.position.z);
+		if (this._nearestCheckpointRange(position) > 500E3) {
+			this._addGroupToSpace(position,"sotl-multirole-aggressive","sotl-pirate",1,shipStrength);
+		}
+	}
+
+};
+
+
 // TODO: uninhabited system populator goes here
 
 
@@ -465,6 +510,7 @@ this.$aiMap = {
 	"sotl-freighter-resupply": "sotl-station-resupplyAI.js",
 	"sotl-checkpoint-buoy": "sotl-checkpoint-controlAI.js",
 	"sotl-checkpoint-patrolship": "sotl-checkpoint-patrolAI.js",
+	"sotl-pirate": "sotl-pirateAI.js",
 };
 
 this._launchShipFromStation = function(station, shipRole) {

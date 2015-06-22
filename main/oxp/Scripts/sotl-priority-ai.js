@@ -387,7 +387,7 @@ this.startUp = function() {
 			maxdist = 500E3;
 		}
 		/* TODO: allow for other lanes to exist */
-		if (pos.x*pos.x + pos.y*pos.y > max*max) {
+		if (pos.x*pos.x + pos.y*pos.y > maxdist*maxdist) {
 			return false; // not within range of lane
 		}
 		return true;

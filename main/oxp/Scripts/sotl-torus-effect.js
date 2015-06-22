@@ -9,6 +9,13 @@ this.effectSpawned = function() {
 	this.$fcb = addFrameCallback(this.torusMove.bind(this));
 };
 
+this.effectRemoved = function() {
+	if (this.$fcb) {
+		removeFrameCallback(this.$fcb);
+		delete this.$fcb;
+	}
+}
+
 this.$accumulator = 0;
 this.$speed = 0;
 
@@ -21,7 +28,8 @@ this.torusMove = function(delta) {
 		// accelerate
 		this.$speed = Math.min(this.$speed+(0.1*delta*this.$maxSpeed),this.$maxSpeed);
 	}
-	var objs = this.$ship.escortGroup.ships;
+	var egroup = this.$ship.escortGroup; 
+	var objs = egroup?egroup.ships:[this.$ship];
 	var mv = this.$ship.vectorForward.multiply(this.$speed * delta);
 	for (var i=0;i<objs.length;i++) {
 		objs[i].position = objs[i].position.add(mv);
@@ -33,9 +41,9 @@ this.torusMove = function(delta) {
 		--this.$accumulator;
 		var nearby = system.filteredEntities(this, function(e) {
 			return e!=this.$ship && e.isShip && !(this.$ship.escortGroup.containsShip(e));
-		}, this.visualEffect, 20E3);
+		}, this.visualEffect, 22.5E3);
 		// must be nothing nearby except this ship's escorts, and the escorts
-		// must be much closer. Uses 20E3 rather than full scanner range to
+		// must be much closer. Uses 22.5E3 rather than full scanner range to
 		// simulate braking time, for now.
 		if (nearby.length > 0) {
 //			log(this.name,"Ending torus: "+nearby);
@@ -48,6 +56,7 @@ this.torusMove = function(delta) {
 
 this.torusEnd = function() {
 	removeFrameCallback(this.$fcb);
+	delete this.$fcb;
 	if (this.$ship.isValid) {
 		this.$ship.AIScript.oolite_priorityai.setParameter("sotl_torusEffect",null);
 		this.$ship.AIScript.oolite_priorityai.reconsiderNow();

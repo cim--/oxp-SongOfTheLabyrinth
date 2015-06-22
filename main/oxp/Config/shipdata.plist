@@ -302,6 +302,153 @@
 		
 	};
 
+	/* Multi-role aggressive */
+
+	/* Jackal. Uses Krait for now */
+
+	"sotl-jackal-template" = {
+		"is_template" = 1;
+
+		// Model-specific keys
+		aft_eject_position = "0.0 -19.0 -40.0";
+		custom_views =
+		(
+			{
+				view_description = "Rear View";
+				view_orientation = "1.0 0.0 0.0 0.0";
+				view_position = "0.0 30.0 -200.0";
+				weapon_facing = "FORWARD";
+			},
+			{
+				view_description = "Rear Right View";
+				view_orientation = "0.9239 0.0 0.3827 0.0";
+				view_position = "141.42 30.0 -141.42";
+				weapon_facing = "FORWARD";
+			},
+			{
+				view_description = "Right View";
+				view_orientation = "0.7071 0.0 0.7071 0.0";
+				view_position = "200.0 30.0 0.0";
+				weapon_facing = "FORWARD";
+			},
+			{
+				view_description = "Front Right View";
+				view_orientation = "0.3827 0.0 0.9239 0.0";
+				view_position = "141.42 30.0 141.42";
+				weapon_facing = "FORWARD";
+			},
+			{
+				view_description = "Front View";
+				view_orientation = "0.0 0.0 1.0 0.0";
+				view_position = "0.0 30.0 200.0";
+				weapon_facing = "FORWARD";
+			},
+			{
+				view_description = "Front Left View";
+				view_orientation = "0.3827 0.0 -0.9239 0.0";
+				view_position = "-141.42 30.0 141.42";
+				weapon_facing = "FORWARD";
+			},
+			{
+				view_description = "Left View";
+				view_orientation = "0.7071 0.0 -0.7071 0.0";
+				view_position = "-200.0 30.0 0.0";
+				weapon_facing = "FORWARD";
+			},
+			{
+				view_description = "Rear Left View";
+				view_orientation = "0.9239 0.0 -0.3827 0.0";
+				view_position = "-141.42 30.0 -141.42";
+				weapon_facing = "FORWARD";
+			},
+			{
+				view_description = "Top View";
+				view_orientation = "-0.7071 0.7071 0.0 0.0";
+				view_position = "0.0 200.0 -15.0";
+				weapon_facing = "FORWARD";
+			},
+			{
+				view_description = "Bottom View";
+				view_orientation = "0.0 0.0 0.7071 0.7071";
+				view_position = "0.0 -200.0 -15.0";
+				weapon_facing = "FORWARD";
+			}
+		);
+		exhaust = 
+		(		
+			"-13.6291 -0.5683 -38.8271  8.0 5.3 1.0",
+			"13.6291  -0.5683 -38.8271  8.0 5.3 1.0"
+		);
+		frangible = 0;
+		materials =
+		{
+			"Hull" =
+			{
+				diffuse_map = "oolite_krait_diffuse.png"; 
+				specular_color = (0.2, 0.2, 0.2);
+				shininess = 5;
+				emission_map = 
+				{
+					name = "oolite_krait_diffuse.png"; extract_channel = "a";
+				};
+				emission_modulate_color = (0.9926, 0.9686, 0.7325, 1.0);
+			};
+		};
+		missile_launch_position = "0.0 -7.65 33.34";
+		model = "oolite_krait.dat";
+		scoop_position = "0.0 -7.284 4.628";
+		weapon_position_aft = "0.0 0.0 -34.6";
+		weapon_position_forward = "0.0 -1.6045 41.5081";
+		weapon_position_port = "-45.0 0.0 -13.5";
+		weapon_position_starboard = "45.0 0.0 -13.5";
+		
+
+		// General keys
+		auto_ai = yes;
+		auto_weapons = yes;
+		cargo_type = "CARGO_NOT_CARGO";
+		escort_roles = (
+			// set up by populator, but need to make slots available
+			{ role = ""; min = 16; max = 16; }
+		);
+		max_cargo = 5;
+		max_missiles = 2;
+		missiles = 2;
+		name = "Jackal";
+		weapon_facings = 15;
+
+		"script_info" = {
+			"sotl_mass" = 850;
+			"sotl_es" = 1500;
+			"sotl_des" = 200;
+			"sotl_npc_popval" = 9;
+			"sotl_standard_fit" = ("2:2:0:0","3:3:0:0","0:3:0:0","0:2:0:0","0:3:0:0","0:0");
+		};
+
+
+	};
+
+	"sotl-jackal-npc" = {
+		"like_ship" = "sotl-jackal-template";
+		"roles" = "sotl-multirole-aggressive";
+		max_flight_speed = 338;
+		max_flight_pitch = 0.84;
+		max_flight_roll = 1.68;
+		max_flight_yaw = 0.42;
+		thrust = 9.7;
+		max_energy = 642; // 225 + 225 + 192
+		energy_recharge_rate = 2.35;
+		hyperspace_motor = yes;
+		has_scoop = yes;
+		
+	};
+
+	"sotl-jackal-player" = {
+		"like_ship" = "sotl-jackal-template";
+		"roles" = "player";
+		
+	};
+
 
 	/* Multi-role traders */
 
