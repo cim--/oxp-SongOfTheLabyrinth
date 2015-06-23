@@ -904,7 +904,7 @@ this.startUp = function() {
 					log(this.name,"Pirate at "+this.ship.position+" assessing sensor trace at "+object.position);
 					if (worldScripts["SOTL Populator Script"]._nearestCheckpointRange(object.position) > 750E3) {
 						// must not be in or near range of a patrol
-						if (object.script.$ship.cargoSpaceUsed > 0) {
+						if ((object.isPlayer && object.cargoSpaceUsed > 0) || object.script.$ship.cargoSpaceUsed > 0) {
 							/* TODO: a better way than above to prevent
 							   re-intercepting */
 							this.setParameter("sotl_interceptTarget",object);

@@ -449,6 +449,10 @@ this._setupPirates = function(bpos) {
 	} else if (system.info.government_description == "Civil War") {
 		pcount *= 1.5;
 	}
+	// make sure systems without explicit trade routes still have some
+	if (pcount < 3) {
+		pcount = 3;
+	}
 	// variation
 	pcount *= 1+Math.random()-Math.random();
 	// and to integer
@@ -459,6 +463,7 @@ this._setupPirates = function(bpos) {
 	for (var i=0;i<pcount;i++) {
 		var position = new Vector3D((Math.random()-0.5)*100E3,(Math.random()-0.5)*100E3,((Math.random()*0.6)+0.1)*system.mainPlanet.position.z);
 		if (this._nearestCheckpointRange(position) > 500E3) {
+			// TODO: allow bigger groups
 			this._addGroupToSpace(position,"sotl-multirole-aggressive","sotl-pirate",1,shipStrength);
 		}
 	}
