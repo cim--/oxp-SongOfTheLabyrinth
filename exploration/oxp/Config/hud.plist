@@ -7,18 +7,6 @@
 		{
 			equipment_required = "EQ_SOTL_EXP_HYPERSPACEJUMP";
 			selector = "drawCustomIndicator:";
-			data_source = "sotl_exp_hyp_roll_prediction";
-			color = "cyanColor";
-			draw_surround = 0;
-			height = 16;
-			width = 112;
-			x = 0;
-			y = -72;
-			alpha = 0.5;
-		},
-		{
-			equipment_required = "EQ_SOTL_EXP_HYPERSPACEJUMP";
-			selector = "drawCustomIndicator:";
 			data_source = "sotl_exp_hyp_roll_required";
 			color = "greenColor";
 			color_surround = "yellowColor";
@@ -37,18 +25,6 @@
 			width = 112;
 			x = 0;
 			y = -72;
-		},
-		{
-			equipment_required = "EQ_SOTL_EXP_HYPERSPACEJUMP";
-			selector = "drawCustomIndicator:";
-			data_source = "sotl_exp_hyp_pitch_prediction";
-			color = "cyanColor";
-			draw_surround = 0;
-			height = 112;
-			width = 16;
-			x = -72;
-			y = 0;
-			alpha = 0.5;
 		},
 		{
 			equipment_required = "EQ_SOTL_EXP_HYPERSPACEJUMP";

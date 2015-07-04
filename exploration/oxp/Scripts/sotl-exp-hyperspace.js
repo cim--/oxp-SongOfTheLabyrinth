@@ -9,6 +9,21 @@ this.$hyperspaceDestination = -1;
 this.$hyperspaceDistance = 0;
 this.$hyperspaceProgress = 0;
 this.$hyperspaceExitPrecision = 0;
+this.$hyperspaceRouteQualities = {};
+this.$hyperspaceKnownRoute = 0;
+
+this.startUp = function() {
+	this.$hyperspaceRouteQualities = missionVariables.sotl_exp_routequalities ? JSON.parse(missionVariables.sotl_exp_routequalities) : {};
+
+	for (var route in this.$hyperspaceRouteQualities) {
+		var systems = route.split(":");
+		this._updateRouteDrawing(systems[0],systems[1]);
+	}
+};
+
+this.playerWillSaveGame = function() {
+	missionVariables.sotl_exp_routequalities = JSON.stringify(this.$hyperspaceRouteQualities);
+};
 
 
 this.playerStartedJumpCountdown = function(type, seconds) {
@@ -28,7 +43,7 @@ this.playerStartedJumpCountdown = function(type, seconds) {
 };
 
 this.shipWillExitWitchspace = function() {
-	if (this.$hyperspaceExitPrecision > 0) {
+	if (this.$hyperspaceExitPrecision > 0 && system.sun) {
 		if (this.$hyperspaceExitPrecision > 10) {
 			// bad exit
 			player.ship.position = system.sun.position.add(Vector3D.randomDirection(system.sun.radius*this.$hyperspaceExitPrecision));
@@ -38,6 +53,17 @@ this.shipWillExitWitchspace = function() {
 			player.ship.orientation = [1,0,0,0];
 		}
 	}
+	this._resetHyperspaceSequence();
+};
+
+this._resetHyperspaceSequence = function() {
+	// reset some more variables
+	player.ship.removeEquipment("EQ_SOTL_EXP_HYPERSPACEJUMP");
+	this.$hyperspaceDestination = -1;
+	this.$hyperspaceDistance = 0;
+	this.$hyperspaceProgress = 0;
+	this.$hyperspaceKnownRoute = 0;
+	this.$hyperspaceExitPrecision = 0;
 };
 
 
@@ -48,6 +74,11 @@ this._beginHyperspaceSequence = function() {
 	this.$hyperspaceDestination = this._getDestination();
 	this.$hyperspaceRoute = this._makeHyperspaceRoute(system.ID,this.$hyperspaceDestination);
 	this.$hyperspaceDistance = system.info.distanceToSystem(System.infoForSystem(galaxyNumber,this.$hyperspaceDestination));
+	if (system.ID != -1) {
+		this.$hyperspaceKnownRoute = this.$hyperspaceRouteQualities[system.ID+":"+this.$hyperspaceDestination] ? this.$hyperspaceRouteQualities[system.ID+":"+this.$hyperspaceDestination] : 0;
+	} else {
+		this.$hyperspaceKnownRoute = 0;
+	}
 	player.ship.position = [1E10,0,0];
 };
 
@@ -61,11 +92,11 @@ this._endHyperspaceSequence = function() {
 	this.$hyperspaceState = 0;
 	removeFrameCallback(this.$hyperspaceFCB);
 	this.$hyperspaceFCB = null;
-	player.ship.removeEquipment("EQ_SOTL_EXP_HYPERSPACEJUMP");
 	this.$hyperspaceRoute = null;
 
 	// create wormhole to destination
 	if (this.$hyperspaceProgress < 10) {
+		this._resetHyperspaceSequence();
 		// not left system
 		var closeness = system.sun.radius*(10+(Math.pow(2,this.$hyperspaceProgress)));
 		player.ship.position = system.sun.position.add(Vector3D.randomDirection(closeness));
@@ -81,6 +112,20 @@ this._endHyperspaceSequence = function() {
 			var remaining = 20+(10*this.$hyperspaceDistance)-this.$hyperspaceProgress;
 			this.$hyperspaceExitPrecision += Math.pow(2,remaining);
 
+		} else {
+			// good exit
+			if (system.ID > -1) {
+				if (!this.$hyperspaceKnownRoute) {
+					// start storing data
+					this.$hyperspaceRouteQualities[system.ID+":"+this.$hyperspaceDestination] = 1;
+				} else if (this.$hyperspaceRouteQualities[system.ID+":"+this.$hyperspaceDestination] < 20) {
+					// improve route data
+					/* TODO: faster/slower scanners? */
+					this.$hyperspaceRouteQualities[system.ID+":"+this.$hyperspaceDestination] += 1;
+				}
+				this._updateRouteDrawing(system.ID,this.$hyperspaceDestination);
+			}
+
 		}
 		jumper.fuel = 7;
 		jumper.exitSystem(this.$hyperspaceDestination);
@@ -88,11 +133,13 @@ this._endHyperspaceSequence = function() {
 		player.ship.position = [2E10,0,0];
 	}
 	
+};
 
-	// TODO: these should be set in 'will exit witchspace'
-	this.$hyperspaceDestination = -1;
-	this.$hyperspaceDistance = 0;
-	this.$hyperspaceProgress = 0;
+
+this._updateRouteDrawing = function(a,b) {
+	if (this.$hyperspaceRouteQualities[a+":"+b]) {
+		SystemInfo.setInterstellarProperty(galaxyNumber,a,b,2,"link_color","0.2 "+(0.2+(this.$hyperspaceRouteQualities[a+":"+b]/40))+" 0.2 1.0");
+	}
 };
 
 
@@ -167,6 +214,7 @@ this._makeHyperspaceRoute = function(s1,s2) {
 this._hyperspaceSequence = function(delta) {
 	this.$hyperspaceProgress += delta;
 	if (this.$hyperspaceProgress >= (this.$hyperspaceDistance*10)+20) {
+		player.ship.setCustomHUDDial("sotl_exp_hyp_progresstext","Complete");
 		this._endHyperspaceSequence();
 		return;
 	}
@@ -179,13 +227,6 @@ this._hyperspaceSequence = function(delta) {
 	// get desired roll/pitch positions
 	var dx = (this.$hyperspaceRoute[s1][0]*(1-frac))+(this.$hyperspaceRoute[s2][0]*(frac));	
 	var dy = (this.$hyperspaceRoute[s1][1]*(1-frac))+(this.$hyperspaceRoute[s2][1]*(frac));
-	// get predicted roll/pitch positions
-	var px = dx; var py = dy;
-	if (false) {
-		// TODO: if route is "known"
-		px = (this.$hyperspaceRoute[s2][0]*(1-frac))+(this.$hyperspaceRoute[s3][0]*(frac));	
-		py = (this.$hyperspaceRoute[s2][1]*(1-frac))+(this.$hyperspaceRoute[s3][1]*(frac));
-	}
 	// get actual roll/pitch positions
 	// axes are inverted
 	var ax = -player.ship.roll/player.ship.maxRoll;
@@ -193,8 +234,12 @@ this._hyperspaceSequence = function(delta) {
 
 //	log(this.name, "X: d="+dx+",a="+ax+" ; Y: d="+dy+",a="+ay);
 
-	var energydrain = 3; // basic, unavoidable
-	var precisionfactor = 5; // need to be within 0.1 both ways to avoid losing energy entirely
+	var energydrain = 3; // basic level
+	if (this.$hyperspaceKnownRoute) {
+		energydrain -= Math.pow(this.$hyperspaceKnownRoute,0.75)/5;
+	}
+
+	var precisionfactor = 5;
 	energydrain += Math.abs(ax-dx)*precisionfactor;
 	energydrain += Math.abs(ay-dy)*precisionfactor;
 	// going the wrong way gives serious energy drain
@@ -247,9 +292,7 @@ this._hyperspaceSequence = function(delta) {
 
 
 	// set HUD indicators
-	player.ship.setCustomHUDDial("sotl_exp_hyp_roll_prediction",px);
 	player.ship.setCustomHUDDial("sotl_exp_hyp_roll_required",dx);
-	player.ship.setCustomHUDDial("sotl_exp_hyp_pitch_prediction",py);
 	player.ship.setCustomHUDDial("sotl_exp_hyp_pitch_required",dy);
 	player.ship.setCustomHUDDial("sotl_exp_hyp_status",colspec);
 	player.ship.setCustomHUDDial("sotl_exp_hyp_progress",progress);
