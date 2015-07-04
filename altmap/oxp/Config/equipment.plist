@@ -483,6 +483,25 @@
 				threat_assessment = 0.0;
 			};
 		}
+	),
+	(
+		3, 8000, "Heavy Pulse Laser",
+		"EQ_WEAPON_SOTL_HEAVYPULSE",
+		"Heavy pulse laser for basic offensive capabilities.",
+		{
+			available_to_all = true;
+			condition_script = "sotl-conditions.js";
+			weapon_info = {
+				range = 15000;
+				energy = 2.0;
+				damage = 40.0;
+				recharge_rate = 0.45;
+				shot_temperature = 10.0;
+				color = "orangeColor";
+				threat_assessment = 1.0;
+			};
+		}
 	)
+
 
 )

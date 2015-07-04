@@ -61,13 +61,14 @@ this.startUp = function() {
 		var scan = this.getParameter("oolite_scanResults");
 		if (scan) {
 			var f1 = this.ship.script.$sotlFaction;
-			this.checkScannerWithPredicate(function(s) { 
+			return this.checkScannerWithPredicate(function(s) { 
 				if (s.cargoSpaceCapacity < 10) {
 					return false; // not a freighter
 				}
 				if (s.script.$sotlBoardingShip && s.script.$sotlBoardingShip != this.ship) {
 					return false; // someone else already boarding
 				}
+				/* TODO: check this - not always being set properly */
 				var f2 = s.script.$sotlSurrenderFaction;
 				// asked to surrender
 				if (f2 && f2 == f1) {
@@ -91,18 +92,22 @@ this.startUp = function() {
 		var scan = this.getParameter("oolite_scanResults");
 		if (scan) {
 			var f1 = this.ship.script.$sotlFaction;
-			this.checkScannerWithPredicate(function(s) { 
+			return this.checkScannerWithPredicate(function(s) { 
+				log(this.name,"Checking "+s+" as freighter");
+				// TODO: check cargo value, at least for player ship
 				if (s.cargoSpaceUsed < 10) {
+					log(this.name,"Not enough cargo");
 					return false; // not worth it
 				}
 				var f2 = s.script.$sotlFaction;
 				if (this.sotl_utilCompareFactions(f1,f2) > 0) {
+					log(this.name,"Too friendly");
 					return false; // on our side
 				}
 				/* TODO: odds assessment, but need to group up the
 				 * pirates first or they'll never attack. This will do
 				 * for testing */
-
+				log(this.name,"Valid target");
 				return true;
 			});
 		} else {
@@ -474,7 +479,16 @@ this.startUp = function() {
 	};
 
 	lib.prototype.sotl_conditionHasInterceptionTarget = function() {
-		return this.getParameter("sotl_interceptTarget") != null;
+		var inttarg = this.getParameter("sotl_interceptTarget");
+		if (inttarg && inttarg.isValid) {
+			if (this.distance(inttarg) < 25E3) {
+				// intercept complete, clear target to allow scan for attack
+				this.setParameter("sotl_interceptTarget",null);
+			} else {
+				return true;
+			}
+		}
+		return false;
 	};
 
 	/* -- Controllers */
@@ -899,12 +913,12 @@ this.startUp = function() {
 		for (var i=0;i<objects.length;i++) {
 			var object = objects[i];
 			if ((object.dataKey == "sotl-torus-effect" && object.script.$ship.script.$sotlFaction != this.ship.script.$sotlFaction) || object.isPlayer) {
-				// intercept within 500km, if not known already
-				if (this.distance(object.position) < 500E3) {
+				// intercept within 1000km, if not known already
+				if (this.distance(object.position) < 1000E3) {
 					log(this.name,"Pirate at "+this.ship.position+" assessing sensor trace at "+object.position);
 					if (worldScripts["SOTL Populator Script"]._nearestCheckpointRange(object.position) > 750E3) {
 						// must not be in or near range of a patrol
-						if ((object.isPlayer && object.cargoSpaceUsed > 0) || object.script.$ship.cargoSpaceUsed > 0) {
+						if ((object.isPlayer && object.cargoSpaceUsed > 0) || (!object.isPlayer && object.script.$ship.cargoSpaceUsed > 0)) {
 							/* TODO: a better way than above to prevent
 							   re-intercepting */
 							this.setParameter("sotl_interceptTarget",object);

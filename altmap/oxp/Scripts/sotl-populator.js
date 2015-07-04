@@ -464,7 +464,13 @@ this._setupPirates = function(bpos) {
 		var position = new Vector3D((Math.random()-0.5)*100E3,(Math.random()-0.5)*100E3,((Math.random()*0.6)+0.1)*system.mainPlanet.position.z);
 		if (this._nearestCheckpointRange(position) > 500E3) {
 			// TODO: allow bigger groups
-			this._addGroupToSpace(position,"sotl-multirole-aggressive","sotl-pirate",1,shipStrength);
+			var g = this._addGroupToSpace(position,"sotl-multirole-aggressive","sotl-pirate",1,shipStrength);
+			var ships = g.ships;
+			for (var j=0;j<ships.length;j++) {
+				ships[j].accuracy += 7.5;
+				ships[j].forwardWeapon = "EQ_WEAPON_SOTL_HEAVYPULSE";
+				ships[j].script.$sotlFaction = "criminal";
+			}
 		}
 	}
 

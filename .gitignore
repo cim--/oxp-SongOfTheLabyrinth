@@ -1,8 +1,8 @@
 node_modules
 *~
-main/galaxybuilder/build/*
+altmap/galaxybuilder/build/*
 npm-debug.log
 
 # generated files
-main/oxp/Config/descriptions.plist
-main/oxp/Config/planetinfo.plist
+altmap/oxp/Config/descriptions.plist
+altmap/oxp/Config/planetinfo.plist

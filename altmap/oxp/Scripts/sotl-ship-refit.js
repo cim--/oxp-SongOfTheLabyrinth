@@ -171,7 +171,7 @@ this._evaluateRefitEngines = function() {
 		engpower = 1;
 	}
 	player.ship.maxSpeed = (engpower * 1000) / mass;
-	player.ship.thrust = player.ship.maxThrust = player.ship.maxSpeed / 35; // for now
+	player.ship.thrust = player.ship.maxThrust = player.ship.maxSpeed / 17.5; // for now
 }
 
 

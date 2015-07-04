@@ -39,6 +39,7 @@ this.aiStarted = function() {
 			/* Only check for salvage if not already boarding! */
 			falsebranch: [
 				{
+					label: "Check for cargo",
 					condition: ai.conditionScannerContainsSalvageForMe,
 					configuration: ai.configurationAcquireScannedTarget,
 					behaviour: ai.behaviourCollectSalvage,
@@ -48,6 +49,8 @@ this.aiStarted = function() {
 		},
 		// collect loose salvage before boarding ships
 		{
+			// TODO: not working for surrendered player?
+			label: "Check for disabled freighter",
 			condition: ai.sotl_conditionScannerContainsDisabledFreighter,
 			configuration: ai.configurationAcquireScannedTarget,
 			truebranch: ai.sotl_templateBoardDisabledShip()
@@ -55,9 +58,10 @@ this.aiStarted = function() {
 		{
 			condition: ai.sotl_conditionHasInterceptionTarget,
 			configuration: ai.sotl_configurationSetDestinationToInterceptionTarget,
-			truebranch: ai.sotl_templateTravelToDestination()
+			truebranch: ai.sotl_templateTravelToIntercept()
 		},
 		{
+			label: "Check for poorly escorted freighter",
 			condition: ai.sotl_conditionScannerContainsPoorlyEscortedFreighter,
 			configuration: ai.configurationAcquireScannedTarget,
 			/* TODO: announce attack */
@@ -71,7 +75,7 @@ this.aiStarted = function() {
 					preconfiguration: ai.sotl_configurationPirateScanForTorus,
 					condition: ai.sotl_conditionHasInterceptionTarget,
 					configuration: ai.sotl_configurationSetDestinationToInterceptionTarget,
-					truebranch: ai.sotl_templateTravelToDestination()
+					truebranch: ai.sotl_templateTravelToIntercept()
 				},
 				{	
 					// within 500k of lane, outside 750k of patrol bases
