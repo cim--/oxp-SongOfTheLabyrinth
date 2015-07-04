@@ -1,6 +1,6 @@
 {
 	"identifier" = "oolite.oxp.cim.sotl.exploration";
-	"required_oolite_version" = "1.82";
+	"required_oolite_version" = "1.83";
 	"title" = "Song of the Labyrinth: Exploration";
 	"version" = "0.1";
 	"category" = "Systems";

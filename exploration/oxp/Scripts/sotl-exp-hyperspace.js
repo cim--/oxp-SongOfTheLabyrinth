@@ -53,12 +53,20 @@ this.shipWillExitWitchspace = function() {
 			player.ship.orientation = [1,0,0,0];
 		}
 	}
+};
+
+
+this.shipExitedWitchspace = function() {
 	this._resetHyperspaceSequence();
 };
+
+
+
 
 this._resetHyperspaceSequence = function() {
 	// reset some more variables
 	player.ship.removeEquipment("EQ_SOTL_EXP_HYPERSPACEJUMP");
+	this.$hyperspaceState = 0;
 	this.$hyperspaceDestination = -1;
 	this.$hyperspaceDistance = 0;
 	this.$hyperspaceProgress = 0;
@@ -80,6 +88,7 @@ this._beginHyperspaceSequence = function() {
 		this.$hyperspaceKnownRoute = 0;
 	}
 	player.ship.position = [1E10,0,0];
+	player.ship.fuel -= Math.sqrt(this.$hyperspaceDistance);
 };
 
 
@@ -89,7 +98,6 @@ this._abortHyperspaceSequence = function() {
 };
 
 this._endHyperspaceSequence = function() {
-	this.$hyperspaceState = 0;
 	removeFrameCallback(this.$hyperspaceFCB);
 	this.$hyperspaceFCB = null;
 	this.$hyperspaceRoute = null;
@@ -138,14 +146,44 @@ this._endHyperspaceSequence = function() {
 
 this._updateRouteDrawing = function(a,b) {
 	if (this.$hyperspaceRouteQualities[a+":"+b]) {
-		SystemInfo.setInterstellarProperty(galaxyNumber,a,b,2,"link_color","0.2 "+(0.2+(this.$hyperspaceRouteQualities[a+":"+b]/40))+" 0.2 1.0");
+		SystemInfo.setInterstellarProperty(galaxyNumber,a,b,2,"link_color",this._linkColour(this.$hyperspaceRouteQualities[a+":"+b]));
+	} else {
+		SystemInfo.setInterstellarProperty(galaxyNumber,a,b,2,"link_color",this._linkColour(0));
+	}
+	if (this.$hyperspaceRouteQualities[b+":"+a]) {
+		SystemInfo.setInterstellarProperty(galaxyNumber,b,a,2,"link_color",this._linkColour(this.$hyperspaceRouteQualities[b+":"+a]));
+
+	} else {
+		SystemInfo.setInterstellarProperty(galaxyNumber,b,a,2,"link_color",this._linkColour(0));
+	}
+};
+
+
+this._linkColour = function(depth) {
+	if (depth == 0) {
+		return "0.2 0.2 0.2 0.5"; // matches chart_connection_color in gui-settings
+	} else if (depth >= 20) {
+		return "0.1 1.0 0.1 0.5";
+	} else if (depth > 10) {
+		return ((20-depth)/20).toFixed(1)+" "+(depth/20).toFixed(1)+" 0.1 0.5";
+	} else if (depth == 10) {
+		return "0.5 0.5 0.1 0.5";
+	} else {
+		return "0.5 "+(depth/20).toFixed(1)+" 0.1 0.5";
 	}
 };
 
 
 this._getDestination = function() {
-	// TODO: manage ANA modes
-	return player.ship.targetSystem;
+	if (player.ship.routeMode == "OPTIMIZED_BY_NONE") {
+		return player.ship.targetSystem;
+	}
+	var route = system.info.routeToSystem(System.infoForSystem(galaxyNumber,player.ship.targetSystem),player.ship.routeMode);
+	if (route) {
+		return route.route[1];
+	} else {
+		return -1; // shouldn't be possible to get this
+	}
 };
 
 
@@ -280,10 +318,10 @@ this._hyperspaceSequence = function(delta) {
 	var progresstext = "";
 	if (this.$hyperspaceProgress < 10) {
 		progress = this.$hyperspaceProgress/40;
-		progresstext = "Exiting";
+		progresstext = "Leaving system";
 	} else if (remainingtime < 10) {
 		progress = 0.75+((10-remainingtime)/40);
-		progresstext = "Entering";
+		progresstext = "Entering system";
 	} else {
 		progress = 0.25+(((this.$hyperspaceProgress-10)/(this.$hyperspaceDistance*10))*0.5);
 		progresstext = "Travelling";

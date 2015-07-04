@@ -1,4 +1,5 @@
 (
 	"sotl-exp-hyperspace.js",
+	"sotl-exp-hud.js",
 	"sotl-exp-uint32.js"
 )

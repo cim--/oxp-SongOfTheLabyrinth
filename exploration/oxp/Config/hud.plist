@@ -93,7 +93,31 @@
 			height = 16;
 			width = 16;
 			x = -48;
-			y = 60;
+			y = 62;
+		},
+		{	// fuel bar
+			height		= 8;
+			selector	= "drawCustomBar:";
+			data_source = "sotl_exp_hyp_fuelcarried";
+			color_low       = "yellowColor";
+			color_medium    = "yellowColor";
+			color_high      = "yellowColor";
+			width		= 80;
+			x		= -200;
+			y		= 61;
+			y_origin	= -1;
+		},
+		{	// fuel requirement bar
+			height		= 6;
+			selector	= "drawCustomBar:";
+			data_source = "sotl_exp_hyp_fuelrequired";
+			color_low       = "blueColor";
+			color_medium    = "blueColor";
+			color_high      = "blueColor";
+			width		= 80;
+			x		= -200;
+			y		= 61;
+			y_origin	= -1;
 		},
 
 
@@ -226,14 +250,6 @@
 			width		= 80;
 			x		= -200;
 			y		= 46;
-			y_origin	= -1;
-		},
-		{	// fuel bar
-			height		= 8;
-			selector	= "drawFuelBar:";
-			width		= 80;
-			x		= -200;
-			y		= 61;
 			y_origin	= -1;
 		},
 // not enabled in default HUD - uncomment to use
