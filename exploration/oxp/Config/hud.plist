@@ -1,0 +1,505 @@
+{
+	crosshair_scale		= 32.0;
+	crosshair_width		= 1.5;
+	crosshair_color		= "greenColor";
+	dials			= //these are drawn, in order, after the legends
+	(
+		{
+			equipment_required = "EQ_SOTL_EXP_HYPERSPACEJUMP";
+			selector = "drawCustomIndicator:";
+			data_source = "sotl_exp_hyp_roll_prediction";
+			color = "cyanColor";
+			draw_surround = 0;
+			height = 16;
+			width = 112;
+			x = 0;
+			y = -72;
+			alpha = 0.5;
+		},
+		{
+			equipment_required = "EQ_SOTL_EXP_HYPERSPACEJUMP";
+			selector = "drawCustomIndicator:";
+			data_source = "sotl_exp_hyp_roll_required";
+			color = "greenColor";
+			color_surround = "yellowColor";
+			draw_surround = 1;
+			height = 16;
+			width = 112;
+			x = 0;
+			y = -72;
+		},
+		{
+			equipment_required = "EQ_SOTL_EXP_HYPERSPACEJUMP";
+			selector = "drawRollBar:";
+			color = "yellowColor";
+			draw_surround = 0;
+			height = 16;
+			width = 112;
+			x = 0;
+			y = -72;
+		},
+		{
+			equipment_required = "EQ_SOTL_EXP_HYPERSPACEJUMP";
+			selector = "drawCustomIndicator:";
+			data_source = "sotl_exp_hyp_pitch_prediction";
+			color = "cyanColor";
+			draw_surround = 0;
+			height = 112;
+			width = 16;
+			x = -72;
+			y = 0;
+			alpha = 0.5;
+		},
+		{
+			equipment_required = "EQ_SOTL_EXP_HYPERSPACEJUMP";
+			selector = "drawCustomIndicator:";
+			data_source = "sotl_exp_hyp_pitch_required";
+			color = "greenColor";
+			color_surround = "yellowColor";
+			draw_surround = 1;
+			height = 112;
+			width = 16;
+			x = -72;
+			y = 0;
+		},
+		{
+			equipment_required = "EQ_SOTL_EXP_HYPERSPACEJUMP";
+			selector = "drawPitchBar:";
+			color = "yellowColor";
+			draw_surround = 0;
+			height = 112;
+			width = 16;
+			x = -72;
+			y = 0;
+		},
+		{
+			equipment_required = "EQ_SOTL_EXP_HYPERSPACEJUMP";
+			selector = "drawCustomLight:";
+			data_source = "sotl_exp_hyp_status";
+			height = 64;
+			width = 64;
+			x = 0;
+			y = 0;
+		},
+		{
+			equipment_required = "EQ_SOTL_EXP_HYPERSPACEJUMP";
+			selector = "drawEnergyGauge:";
+			color = "yellowColor";
+			color_surround = "yellowColor";
+			color_low = "redColor";
+			color_medium = "orangeColor";
+			draw_surround = 1;
+			height = 112;
+			width = 16;
+			x = 72;
+			y = 0;
+			n_bars = 1;
+		},
+		{
+			equipment_required = "EQ_SOTL_EXP_HYPERSPACEJUMP";
+			selector = "drawCustomBar:";
+			data_source = "sotl_exp_hyp_progress";
+			color_surround = "yellowColor";
+			color_low = "0.75 0 0";
+			color_medium = "0.5 0.5 0";
+			color_high = "0 0.75 0";
+			draw_surround = 1;
+			height = 16;
+			width = 112;
+			x = 0;
+			y = 72;
+		},
+		{
+			equipment_required = "EQ_SOTL_EXP_HYPERSPACEJUMP";
+			selector = "drawCustomText:";
+			data_source = "sotl_exp_hyp_progresstext";
+			color = "whiteColor";
+			height = 16;
+			width = 16;
+			x = -48;
+			y = 60;
+		},
+
+
+		/* Standard dials follow, TODO: adjustments */
+		{	// Targeting enhancement
+			equipment_required 	= "EQ_SCANNER_SHOW_MISSILE_TARGET";
+			selector		= "drawTargetReticle:";
+			// reticle_scale = 0.015625 /* 1/64 is default */
+		},
+		{	// Waypoint display
+			equipment_required 	= "EQ_ADVANCED_COMPASS";
+			selector		= "drawWaypoints:";
+		},
+		{	// scanner
+			alpha		= 1.0;
+			selector	= "drawScanner:";
+			x		= 0;
+			y		= 68;
+			y_origin	= -1;
+			height		= 64.0;
+			width		= 288.0;
+			rgb_color	= (1.0, 0.0, 0.0);
+		},
+		{	// scanner zoom indicator
+			alpha		= 1.0;
+			selector	= "drawScannerZoomIndicator:";
+			x		= 100;
+			y		= 36;
+			y_origin	= -1;
+		},
+		{	// stick sensitivity indicator
+			alpha		= 1.0;
+			selector	= "drawStickSensitivityIndicator:";
+			x		= 150;
+			y		= 75;
+			y_origin = -1;
+			height		= 12;
+			width		= 12;
+		},
+		{	// compass
+			alpha		= 1.0;
+			selector	= "drawCompass:";
+			x		= 132;
+			y		= 32;
+			y_origin	= -1;
+			rgb_color	= (0.0, 0.0, 1.0);
+		},
+		{	// station aegis
+			alpha		= 1.0;
+			selector	= "drawAegis:";
+			x		= -132;
+			y		= 32;
+			y_origin	= -1;
+		},
+		{	// fuel scoop status
+			alpha		= 0.75;
+			selector	= "drawScoopStatus:";
+			x		= -132;
+			y		= 92;
+			y_origin	= -1;
+		},
+		{	// speed bar, can draw a surround 2 units out from the dial size specified
+			draw_surround	= yes;
+			height		= 8;
+			selector	= "drawSpeedBar:";
+			width		= 80;
+			x		= 200;
+			y		= 95;
+			y_origin	= -1;
+		},
+		{	// roll bar, can draw a surround 2 units out from the dial size specified
+			draw_surround	= yes;
+			height		= 6;
+			selector	= "drawRollBar:";
+			width		= 80;
+			x		= 200;
+			y		= 80;
+			y_origin	= -1;
+		},
+		{	// pitch bar, can draw a surround 2 units out from the dial size specified
+			draw_surround	= yes;
+			height		= 6;
+			selector	= "drawPitchBar:";
+			width		= 80;
+			x		= 200;
+			y		= 70;
+			y_origin	= -1;
+		},
+		//{	// yaw bar, can draw a surround 2 units out from the dial size specified
+		//	// this is disabled by default, uncomment as required to enable
+		//	draw_surround	= yes;
+		//	height		= 8;
+		//	selector	= "drawYawBar:";
+		//	width		= 80;
+		//	x		= 200;
+		//	y		= -130;
+		//},
+		{	// energy gauge, can draw a surround 2 units out from the dial size specified
+			draw_surround	= yes;
+			height		= 48;
+			selector	= "drawEnergyGauge:";
+			width		= 80;
+			x		= 200;
+			y		= 35;
+			y_origin	= -1;
+			labelled	= yes;
+		},
+		{	// forward shield bar, can draw a surround 2 units out from the dial size specified
+			draw_surround	= yes;
+			height		= 8;
+			selector	= "drawForwardShieldBar:";
+			width		= 80;
+			x		= -200;
+			y		= 94;
+			y_origin	= -1;
+		},
+		{	// aft shield bar, can draw a surround 2 units out from the dial size specified
+			draw_surround	= yes;
+			height		= 8;
+			selector	= "drawAftShieldBar:";
+			width		= 80;
+			x		= -200;
+			y		= 78;
+			y_origin	= -1;
+		},
+		{	// just draws a surround 2 units around the selected size
+			height		= 40;
+			color		= "yellowColor";
+			selector	= "drawSurround:";
+			width		= 80;
+			x		= -200;
+			y		= 46;
+			y_origin	= -1;
+		},
+		{	// fuel bar
+			height		= 8;
+			selector	= "drawFuelBar:";
+			width		= 80;
+			x		= -200;
+			y		= 61;
+			y_origin	= -1;
+		},
+// not enabled in default HUD - uncomment to use
+//		{   // witchspace destination label
+//			selector = "drawWitchspaceDestination:";
+//			height = 10;
+//			width = 10;
+//			y = 55;
+//			x = -240;
+//			y_origin	= -1;
+//			color = (0.25,0.25,1.0,1.0);
+//		},
+		{	// cabin temperature bar
+			height		= 8;
+			selector	= "drawCabinTempBar:";
+			width		= 80;
+			x		= -200;
+			y		= 51;
+			y_origin	= -1;
+		},
+		{	// weapon temperature bar
+			height		= 8;
+			selector	= "drawWeaponTempBar:";
+			width		= 80;
+			x		= -200;
+			y		= 41;
+			y_origin	= -1;
+		},
+		{	// altitude bar
+			height		= 8;
+			selector	= "drawAltitudeBar:";
+			width		= 80;
+			x		= -200;
+			y		= 31;
+			y_origin	= -1;
+		},
+		{	// missile display, x and y give the location, the x-spacing is given by spacing, the size defines the icon size
+			height		= 12;
+			selector	= "drawMissileDisplay:";
+			spacing		= 16;
+			width		= 12;
+			x		= -228;
+			y		= 16;
+			y_origin	= -1;
+		},
+		{	// status indicator light, x and y give the location, the size defines the icon size
+			height		= 8;
+			selector	= "drawStatusLight:";
+			width		= 8;
+			x		= -108;
+			y		= 32;
+			y_origin	= -1;
+		},
+		{	// ship's clock, x and y give the location, the size defines the character size
+			height		= 12;
+			selector	= "drawClock:";
+			width		= 12;
+			x		= -41;
+			y		= 18;
+			y_origin	= -1;
+		},
+		{	// primed equipment, x and y give the location, the size defines the character size, n_bars is the number of items to show (default 1)
+			selector	= "drawPrimedEquipment:";
+			y_origin = -1;
+			x = 156;
+			y = -2;
+			width		= 10;
+			height		= 10;
+		},
+		{	// compass beacon/waypoint ID, x and y give the location, the size defines the character size
+			equipment_required 	= "EQ_ADVANCED_COMPASS";
+			selector		= "drawASCTarget:";
+			height		= 12;
+			width		= 12;
+			x		= 144;
+			y		= 4;
+			y_origin	= -1;
+			align = 1;
+		},
+		{	// weapons systems offline text, x and y give the location, the size defines the character size
+			height		= 10;
+			selector	= "drawWeaponsOfflineText:";
+			width		= 10;
+			x		= -51;
+			y		= -51;
+		},
+		{	// fps counter, x and y give the location, the size defines the character size
+			height		= 18;
+			selector	= "drawFPSInfoCounter:";
+			width		= 18;
+			x		= -300;
+			y		= -20;
+			y_origin	= 1;
+		}
+	);
+	
+	legends		= // these are drawn, in order, before the dials, add any other images you want here
+	(
+		{	// LHS
+			text		= "FWD";
+			align		= 1;
+			x		= -245;
+			y		= 86;
+			y_origin	= -1;
+			height		= 12;
+			width		= 12;
+			with_dial	= "drawForwardShieldBar:";
+		},
+		{	text		= "AFT";
+			align		= 1;
+			x		= -245;
+			y		= 70;
+			y_origin	= -1;
+			height		= 12;
+			width		= 12;
+			with_dial	= "drawAftShieldBar:";
+		},
+		{
+			text		= "FUEL";
+			align		= 1;
+			x		= -245;
+			y		= 55;
+			y_origin	= -1;
+			height		= 10;
+			width		= 10;
+			with_dial	= "drawFuelBar:";
+		},
+		{
+			text		= "CT";
+			align		= 1;
+			x		= -245;
+			y		= 45;
+			y_origin	= -1;
+			height		= 10;
+			width		= 10;
+			with_dial	= "drawCabinTempBar:";
+		},
+		{
+			text		= "LT";
+			align		= 1;
+			x		= -245;
+			y		= 34;
+			y_origin	= -1;
+			height		= 10;
+			width		= 10;
+			with_dial	= "drawWeaponTempBar:";
+		},
+		{
+			text		= "ALT";
+			align		= 1;
+			x		= -245;
+			y		= 24;
+			y_origin	= -1;
+			height		= 10;
+			width		= 10;
+			with_dial	= "drawAltitudeBar:";
+		},
+		{
+			text		= "MISS";
+			align		= 1;
+			x		= -245;
+			y		= 3;
+			y_origin	= -1;
+			height		= 14;
+			width		= 14;
+			with_dial	= "drawMissileDisplay:";
+		},
+		{	// RHS
+			text		= "SPD";
+			x		= 242;
+			y		= 86;
+			y_origin	= -1;
+			height		= 14;
+			width		= 14;
+			with_dial	= "drawSpeedBar:";
+		},
+		{
+			text		= "ROLL";
+			x		= 242;
+			y		= 72;
+			y_origin	= -1;
+			height		= 12;
+			width		= 12;
+			with_dial	= "drawRollBar:";
+		},
+		//{	// yaw bar legend, disabled by default
+		//	// uncomment as required to enable
+		//	text		= "YAW";
+		//	x		= 242;
+		//	y		= -138;
+		//	height		= 12;
+		//	width		= 12;
+		//	with_dial	= "drawYawBar:";
+		//},
+		{
+			text		= "PITCH";
+			x		= 242;
+			y		= 62;
+			y_origin	= -1;
+			height		= 12;
+			width		= 12;
+			with_dial	= "drawPitchBar:";
+		}
+	);
+	multi_function_displays = (
+		{
+			width = 198;
+			height = 132;
+			x = -156;
+			y = -72;
+			y_origin = 1;
+		},
+		{
+			width = 198;
+			height = 132;
+			x = 156;
+			y = -72;
+			y_origin = 1;
+		}
+	);
+	message_gui = {
+		width = 252;
+		height = 140;
+		x = 128;
+		y = -60;
+		row_height = 14;
+		permanent = no;
+	};
+	comm_log_gui = {
+		alpha = "0.75";
+		width = 216;
+		height = 132;
+		x = -156;
+		y = -68;
+		row_height = 12;
+		permanent = no;
+		automatic = yes;
+		background_rgba = "0.0 0.05 0.45 0.5";		
+	};
+	overall_alpha	= 0.75;
+	reticle_target_sensitive = no;
+	cloak_indicator_on_status_light = yes;
+	scanner_non_linear = no;
+	scanner_ultra_zoom = no;
+}

@@ -1,0 +1,21 @@
+{
+	"identifier" = "oolite.oxp.cim.sotl.exploration";
+	"required_oolite_version" = "1.82";
+	"title" = "Song of the Labyrinth: Exploration";
+	"version" = "0.1";
+	"category" = "Systems";
+	"description" = "Song of the Labyrinth is an experimental set of OXPs. This one focuses on exploration.
+
+Features include:
+ - manual hyperspace control
+ - [more to come...]";
+	"author" = "cim";
+	"license" = "CC-BY-SA 4.0";
+//	"tags" = ("oolite-scenario-only");
+	"requires_oxps" = (
+		{
+			"identifier" = "oolite.oxp.cim.sotl.scenario";
+			"description" = "Requires scenario OXP to start new games";
+		}
+	);
+}

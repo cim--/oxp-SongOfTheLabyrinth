@@ -1,0 +1,13 @@
+(
+	(
+		100, 2, "Hyperspace flight indicators",
+		"EQ_SOTL_EXP_HYPERSPACEJUMP",
+		"Hyperspace jump flight indicators.",
+		{
+			available_to_all = true;
+			visible = false;
+			damage_probability = 0;
+		}
+	)
+
+)

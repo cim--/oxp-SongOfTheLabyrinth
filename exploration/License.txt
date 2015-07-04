@@ -1,0 +1,4 @@
+This OXP is licensed CC-BY-SA 3.0
+
+Uint32 implementation taken from Franz X Antesberger's implementation
+at https://github.com/fxa/uint32.js under "do what you want" license.
