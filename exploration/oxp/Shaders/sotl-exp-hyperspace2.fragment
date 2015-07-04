@@ -1,0 +1,16 @@
+uniform float uTime;
+
+varying vec2 vTexCoord;
+
+void main() {
+
+	float x = vTexCoord.x - 0.5;
+	float y = vTexCoord.y - 0.5;
+	float dist2 = (x*x)+(y*y); // 0 at centre, 0.5 at corner
+	
+	gl_FragColor.rgba = vec4(1.0, 1.0, 1.0, 1.0);
+
+	if (uTime - dist2 > 1.8) {
+		discard;
+	}
+}

@@ -4,6 +4,7 @@ this.name = "SOTL Hyperspace";
 
 this.$hyperspaceState = 0;
 this.$hyperspaceFCB = null;
+this.$hyperspaceEffect = null;
 this.$hyperspaceRoute = null;
 this.$hyperspaceDestination = -1;
 this.$hyperspaceDistance = 0;
@@ -53,14 +54,24 @@ this.shipWillExitWitchspace = function() {
 			player.ship.orientation = [1,0,0,0];
 		}
 	}
+	this.$hyperspaceEffect = system.addVisualEffect("sotl-exp-hyperspace2",player.ship.position);
+	system.breakPattern = false;
+	this.$hyperspaceFCB = addFrameCallback(this._hyperspaceSequence2.bind(this));
+
 };
 
 
 this.shipExitedWitchspace = function() {
 	this._resetHyperspaceSequence();
+	removeFrameCallback(this.$hyperspaceFCB);
+	this.$hyperspaceEffect.remove();
 };
 
 
+this._hyperspaceSequence2 = function(delta) {
+	this.$hyperspaceEffect.position = player.ship.position;
+	this.$hyperspaceEffect.orientation = player.ship.orientation;
+};
 
 
 this._resetHyperspaceSequence = function() {
@@ -72,6 +83,9 @@ this._resetHyperspaceSequence = function() {
 	this.$hyperspaceProgress = 0;
 	this.$hyperspaceKnownRoute = 0;
 	this.$hyperspaceExitPrecision = 0;
+	if (this.$hyperspaceEffect.isValid) {
+		this.$hyperspaceEffect.remove();
+	}
 };
 
 
@@ -88,6 +102,8 @@ this._beginHyperspaceSequence = function() {
 		this.$hyperspaceKnownRoute = 0;
 	}
 	player.ship.position = [1E10,0,0];
+	this.$hyperspaceEffect = system.addVisualEffect("sotl-exp-hyperspace",[1E10,0,0]);
+	this.$hyperspaceEffect.shaderFloat1 = 20+(this.$hyperspaceDistance*10);
 	player.ship.fuel -= Math.sqrt(this.$hyperspaceDistance);
 };
 
@@ -138,9 +154,8 @@ this._endHyperspaceSequence = function() {
 		jumper.fuel = 7;
 		jumper.exitSystem(this.$hyperspaceDestination);
 		jumper.remove();
-		player.ship.position = [2E10,0,0];
+		this.$hyperspaceEffect.position = player.ship.position = [2E10,0,0];
 	}
-	
 };
 
 
@@ -298,7 +313,8 @@ this._hyperspaceSequence = function(delta) {
 	var remainingtime = ((this.$hyperspaceDistance*10)+20)-this.$hyperspaceProgress;
 	var colspec;
 	if (energydrain < player.ship.energyRechargeRate) {
-		colspec = "greenColor"; // working well
+		var margin = Math.min(0.0,energydrain+1-player.ship.energyRechargeRate)
+		colspec = [margin,1.0,0.0,1.0]; // working well
 	} else {
 		var survivaltime = player.ship.energy/(energydrain-player.ship.energyRechargeRate);
 		if (survivaltime < remainingtime) {
@@ -327,7 +343,8 @@ this._hyperspaceSequence = function(delta) {
 		progresstext = "Travelling";
 	}
 
-
+	this.$hyperspaceEffect.position = player.ship.position;
+	this.$hyperspaceEffect.orientation = player.ship.orientation;
 
 	// set HUD indicators
 	player.ship.setCustomHUDDial("sotl_exp_hyp_roll_required",dx);

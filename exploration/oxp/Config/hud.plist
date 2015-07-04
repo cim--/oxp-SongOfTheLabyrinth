@@ -56,6 +56,7 @@
 			width = 64;
 			x = 0;
 			y = 0;
+			alpha = 0.65;
 		},
 		{
 			equipment_required = "EQ_SOTL_EXP_HYPERSPACEJUMP";
@@ -489,7 +490,7 @@
 		automatic = yes;
 		background_rgba = "0.0 0.05 0.45 0.5";		
 	};
-	overall_alpha	= 0.75;
+	overall_alpha	= 1.0;
 	reticle_target_sensitive = no;
 	cloak_indicator_on_status_light = yes;
 	scanner_non_linear = no;

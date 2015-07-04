@@ -25,7 +25,6 @@ this._updateHUD = function(delta) {
 		if (dest !== undefined) {
 			if (dest != this.$dest) {
 				this.$dest = dest;
-				log(this.name,"Saved destination: "+dest);
 				if (dest == -1 || dest == system.ID) {
 					player.ship.setCustomHUDDial("sotl_exp_hyp_fuelrequired",0);
 				} else {

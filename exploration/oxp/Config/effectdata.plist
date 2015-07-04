@@ -1,0 +1,52 @@
+{
+	/* Travel effect */
+	"sotl-exp-hyperspace" = {
+		model = "sotl-exp-hyperspace.dat";		
+		subentities = (
+			{
+				type = "flasher";
+				position = "0 0 400";
+			}
+		);
+		
+		materials = {
+			"sotl-exp-hyperspace.png" = {
+				fragment_shader = "sotl-exp-hyperspace.fragment";
+				vertex_shader = "sotl-exp-hyperspace.vertex";
+				textures = (
+					"sotl-exp-hyperspace.png"
+				);
+				uniforms = {
+					uDiffuse = {
+						type = texture;
+						value = 0;
+					};
+					uTime = timeElapsedSinceSpawn;
+					uDuration = shaderFloat1;
+				};
+			};
+		};
+
+	};
+	/* Exit effect in new system */
+	"sotl-exp-hyperspace2" = {
+		model = "sotl-exp-hyperspace.dat";		
+		subentities = (
+			{
+				type = "flasher";
+				position = "0 0 -400";
+			}
+		);
+		is_break_pattern = 1;
+		materials = {
+			"sotl-exp-hyperspace.png" = {
+				fragment_shader = "sotl-exp-hyperspace2.fragment";
+				vertex_shader = "sotl-exp-hyperspace.vertex";
+				uniforms = {
+					uTime = timeElapsedSinceSpawn;
+				};
+			};
+		};
+
+	};
+}
