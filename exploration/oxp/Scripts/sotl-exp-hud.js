@@ -13,10 +13,10 @@ this.shipDied = function() {
 
 
 this._updateHUD = function(delta) {
-	var max = 7;
-	player.ship.setCustomHUDDial("sotl_exp_hyp_fuelcarried",player.ship.fuel/max);
+	var max = worldScripts["SOTL Hyperspace"].$hyperspaceMaxFuel;
+	player.ship.setCustomHUDDial("sotl_exp_hyp_fuelcarried",worldScripts["SOTL Hyperspace"].$hyperspaceFuel/max);
 	
-	if (worldScripts["SOTL Hyperspace"].$hyperspaceState == 1) {
+	if (worldScripts["SOTL Hyperspace"].$hyperspaceState == 2) {
 		// fuel has been used but shouldn't be shown as required
 		player.ship.setCustomHUDDial("sotl_exp_hyp_fuelrequired",0);
 		this.$dest = -2; // force reset on exit of hyperspace

@@ -93,8 +93,17 @@
 			color = "whiteColor";
 			height = 16;
 			width = 16;
-			x = -48;
+			x = -56;
 			y = 62;
+		},
+		{   
+			equipment_required = "EQ_SOTL_EXP_HYPERSPACEJUMP";
+			selector = "drawWitchspaceDestination:";
+			height = 16;
+			width = 16;
+			y = 84;
+			x = -56;
+			color = "whiteColor";
 		},
 		{	// fuel bar
 			height		= 8;
@@ -253,16 +262,6 @@
 			y		= 46;
 			y_origin	= -1;
 		},
-// not enabled in default HUD - uncomment to use
-//		{   // witchspace destination label
-//			selector = "drawWitchspaceDestination:";
-//			height = 10;
-//			width = 10;
-//			y = 55;
-//			x = -240;
-//			y_origin	= -1;
-//			color = (0.25,0.25,1.0,1.0);
-//		},
 		{	// cabin temperature bar
 			height		= 8;
 			selector	= "drawCabinTempBar:";

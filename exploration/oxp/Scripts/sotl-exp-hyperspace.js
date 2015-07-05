@@ -2,6 +2,12 @@
 
 this.name = "SOTL Hyperspace";
 
+/********************************* State **************************/
+
+this.$hyperspaceFuel = 0;
+this.$hyperspaceMaxFuel = 7; // TODO: variable fuel capacity
+
+
 this.$hyperspaceState = 0;
 this.$hyperspaceFCB = null;
 this.$hyperspaceEffect = null;
@@ -13,9 +19,13 @@ this.$hyperspaceExitPrecision = 0;
 this.$hyperspaceRouteQualities = {};
 this.$hyperspaceKnownRoute = 0;
 
+/********************************* Event handlers **************************/
+
 this.startUp = function() {
 	this.$hyperspaceRouteQualities = missionVariables.sotl_exp_routequalities ? JSON.parse(missionVariables.sotl_exp_routequalities) : {};
-
+	var fuel = missionVariables.sotl_exp_fuelcarried ? missionVariables.sotl_exp_fuelcarried : this.$hyperspaceMaxFuel;
+	this._setFuel(fuel);
+	
 	for (var route in this.$hyperspaceRouteQualities) {
 		var systems = route.split(":");
 		this._updateRouteDrawing(systems[0],systems[1]);
@@ -24,6 +34,7 @@ this.startUp = function() {
 
 this.playerWillSaveGame = function() {
 	missionVariables.sotl_exp_routequalities = JSON.stringify(this.$hyperspaceRouteQualities);
+	missionVariables.sotl_exp_fuelcarried = this.$hyperspaceFuel;
 };
 
 
@@ -31,7 +42,11 @@ this.playerStartedJumpCountdown = function(type, seconds) {
 	if (type == "standard") {
 		player.ship.cancelHyperspaceCountdown();
 		if (this.$hyperspaceState == 0) {
-			this._beginHyperspaceSequence();
+			if (player.ship.alertCondition == 1) {
+				this._beginHyperspaceSequence();
+			} else {
+				player.consoleMessage("Local mass density too high to initiate hyperspace");
+			}
 		} else {
 			this._abortHyperspaceSequence();
 		}
@@ -68,6 +83,16 @@ this.shipExitedWitchspace = function() {
 };
 
 
+this.playerBoughtEquipment = function(eq) {
+	if (eq == "EQ_FUEL") {
+		this._setFuel(this.$hyperspaceMaxFuel);
+	}
+}
+
+
+
+/********************************* Internals **************************/
+
 this._hyperspaceSequence2 = function(delta) {
 	this.$hyperspaceEffect.position = player.ship.position;
 	this.$hyperspaceEffect.orientation = player.ship.orientation;
@@ -101,16 +126,22 @@ this._beginHyperspaceSequence = function() {
 	} else {
 		this.$hyperspaceKnownRoute = 0;
 	}
-	player.ship.position = [1E10,0,0];
-	this.$hyperspaceEffect = system.addVisualEffect("sotl-exp-hyperspace",[1E10,0,0]);
-	this.$hyperspaceEffect.shaderFloat1 = 20+(this.$hyperspaceDistance*10);
-	player.ship.fuel -= Math.sqrt(this.$hyperspaceDistance);
+	this.$hyperspaceProgress = -5;
+
 };
 
 
 this._abortHyperspaceSequence = function() {
-	while(!player.ship.takeInternalDamage()) {}
-	this._endHyperspaceSequence();
+	if (this.$hyperspaceState == 2) {
+		while(!player.ship.takeInternalDamage()) {}
+		this._endHyperspaceSequence();
+	} else {
+		// end while charging
+		removeFrameCallback(this.$hyperspaceFCB);
+		this.$hyperspaceFCB = null;
+		this.$hyperspaceRoute = null;
+		this._resetHyperspaceSequence();
+	}
 };
 
 this._endHyperspaceSequence = function() {
@@ -263,9 +294,35 @@ this._makeHyperspaceRoute = function(s1,s2) {
 	return route;
 };
 
+this._setFuel = function(amount) {
+	this.$hyperspaceFuel = amount;
+	var range = amount*amount;
+	if (range > 7) {
+		player.ship.fuel = 7;
+	} else {
+		player.ship.fuel = range;
+	}
+}
+
 
 this._hyperspaceSequence = function(delta) {
 	this.$hyperspaceProgress += delta;
+	if (this.$hyperspaceProgress < 0) {
+		player.ship.setCustomHUDDial("sotl_exp_hyp_progresstext","Charging Drive");
+		player.ship.setCustomHUDDial("sotl_exp_hyp_progress",(5+this.$hyperspaceProgress)/5);
+		player.ship.setCustomHUDDial("sotl_exp_hyp_roll_required",0);
+		player.ship.setCustomHUDDial("sotl_exp_hyp_pitch_required",0);
+		player.ship.setCustomHUDDial("sotl_exp_hyp_status",[0,0,0,0]);
+		return;
+	}
+	if (this.$hyperspaceState == 1) {
+		player.ship.position = [1E10,0,0];
+		this.$hyperspaceEffect = system.addVisualEffect("sotl-exp-hyperspace",[1E10,0,0]);
+		this.$hyperspaceEffect.shaderFloat1 = 20+(this.$hyperspaceDistance*10);
+		this._setFuel(this.$hyperspaceFuel-Math.sqrt(this.$hyperspaceDistance));
+		this.$hyperspaceState = 2;
+	}
+
 	if (this.$hyperspaceProgress >= (this.$hyperspaceDistance*10)+20) {
 		player.ship.setCustomHUDDial("sotl_exp_hyp_progresstext","Complete");
 		this._endHyperspaceSequence();

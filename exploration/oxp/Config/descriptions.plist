@@ -1,0 +1,5 @@
+{
+	"witch-to-x-in-y-seconds" = "";
+	"witch-no-fuel" = "Insufficient fuel to initiate hyperspace jump";
+	"witch-too-far" = "Hyperspace destination out of range";
+}

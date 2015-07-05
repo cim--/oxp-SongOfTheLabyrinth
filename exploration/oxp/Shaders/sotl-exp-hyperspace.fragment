@@ -19,11 +19,28 @@ void main() {
 	float dist2 = (x*x)+(y*y); // 0 at centre, 0.5 at corner
 
 	if (uTime < 10.0) {
-		float darkening = (uTime/10.0)*(1-dist2);
+		float darkening = (uTime/10.0)*(1.0-dist2);
 		diffuseColor.r *= darkening*darkening;
 		diffuseColor.g *= darkening*darkening;
 		diffuseColor.b *= darkening;
 		intensity = darkening;
+		if (uTime < 2.0) {
+			float flash = 1.0+(2.0*dist2)-(uTime);
+			if (flash > 0.0) {
+				if (flash > 1.0) {
+					flash = 1.0;
+				}
+				if (diffuseColor.r < flash) {
+					diffuseColor.r = flash;
+				}
+				if (diffuseColor.g < flash) {
+					diffuseColor.g = flash;
+				}
+				if (diffuseColor.b < flash) {
+					diffuseColor.b = flash;
+				}
+			}
+		}
 	} else if (uTime > uDuration - 10.0) {
 		intensity = (uDuration - uTime)/10.0;
 		float lightening = (1.0-intensity)*1.5; // 0..1.5
@@ -35,7 +52,7 @@ void main() {
 		}
 	} 
 		
-	float dist = sqrt(1/(dist2+0.0001));
+	float dist = sqrt(1.0/(dist2+0.0001));
 	float pulse = sin((dist*3.0)+((5.0+(2.5*uTime/uDuration))*uTime));
 	if (pulse > 0.8) {
 		pulse = 1.0+((pulse - 0.8)*intensity*intensity*intensity);
