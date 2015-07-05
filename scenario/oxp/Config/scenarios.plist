@@ -1,8 +1,14 @@
 (
 	{
-		"file" = "sotl-normal.oolite-save";
-		"name" = "Song of the Labyrinth";
-		"description" = "Song of the Labyrinth is an alternative set of galaxies, ships and game mechanics using the Oolite engine.";
+		"file" = "sotl-explorer.oolite-save";
+		"name" = "Song of the Labyrinth: Exploration";
+		"description" = "Song of the Labyrinth: Exploration focuses on exploration and discovery.";
 		"model" = "asteroid";
 	},
+	{
+		"file" = "sotl-normal.oolite-save";
+		"name" = "Song of the Labyrinth: Alternative map";
+		"description" = "Song of the Labyrinth is an alternative experimental set of galaxies, ships and game mechanics using the Oolite engine.";
+		"model" = "asteroid";
+	}
 )

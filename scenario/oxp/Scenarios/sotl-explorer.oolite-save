@@ -4,17 +4,16 @@
 <dict>
     <key>aft_weapon</key>
     <string>EQ_WEAPON_NONE</string>
+    <key>chart_ana_mode</key>
+    <integer>1</integer>
+    <key>chart_colour_mode</key>
+    <integer>0</integer>
+    <key>chart_zoom</key>
+    <real>1</real>
     <key>checksum</key>
-    <integer>-15574</integer>
+    <integer>-9066</integer>
     <key>comm_log</key>
     <array>
-	<string>SW 0-45 2084005:06:38:21</string>
-	<string>Kuidsla Ellee 2084011:22:42:13</string>
-	<string>Outpost Station:</string>
-	<string> Docking clearance not required.</string>
-	<string>Oiga Bateng 2084013:11:04:25</string>
-	<string>Outpost Station:</string>
-	<string> Docking clearance not required.</string>
     </array>
     <key>contract_record</key>
     <dict>
@@ -23,48 +22,32 @@
     <array>
     </array>
     <key>credits</key>
-    <real>838963</real>
+    <real>1000</real>
     <key>current_system_name</key>
-    <string>Oiga Bateng</string>
+    <string>Astray</string>
     <key>custom_view_index</key>
     <integer>0</integer>
     <key>docked_station_position</key>
     <array>
-	<real>13233.0009765625</real>
-	<real>-37052.3984375</real>
-	<real>258427.1015625</real>
+	<real>-58985.19921875</real>
+	<real>8144.39990234375</real>
+	<real>353972.8994140625</real>
     </array>
     <key>docked_station_role</key>
-    <string>sotl-outpost-station</string>
+    <string>coriolis</string>
     <key>docking_clearance_protocol</key>
-    <false/>
+    <true/>
     <key>entity_personality</key>
-    <integer>0</integer>
+    <integer>27313</integer>
     <key>extra_equipment</key>
     <dict>
-	<key>EQ_SOTL_COMBAT_COMPUTER</key>
-	<integer>1</integer>
-	<key>EQ_SOTL_COMPONENT_CAPACITOR2</key>
-	<integer>4</integer>
-	<key>EQ_SOTL_COMPONENT_ENGINE2</key>
-	<integer>4</integer>
-	<key>EQ_SOTL_COMPONENT_GENERATOR2</key>
-	<integer>3</integer>
-	<key>EQ_SOTL_COMPONENT_SHIELD2</key>
-	<integer>4</integer>
-	<key>EQ_SOTL_COMPONENT_THRUSTER2</key>
-	<integer>5</integer>
-	<key>EQ_SOTL_COMPONENT_WITCHDRIVE1</key>
-	<integer>1</integer>
-	<key>EQ_SOTL_NAVIGATION_COMPUTER</key>
+	<key>EQ_ADVANCED_NAVIGATIONAL_ARRAY</key>
 	<integer>1</integer>
     </dict>
     <key>forward_weapon</key>
-    <string>EQ_WEAPON_SOTL_LIGHTPULSE</string>
-    <key>found_system_id</key>
-    <string>30</string>
+    <string>EQ_WEAPON_PULSE_LASER</string>
     <key>fuel</key>
-    <integer>10</integer>
+    <integer>70</integer>
     <key>galaxy_id</key>
     <string>0</string>
     <key>galaxy_number</key>
@@ -74,236 +57,111 @@
     <key>localMarket</key>
     <array>
 	<array>
-	    <string>sotl-narcotics</string>
-	    <integer>0</integer>
-	    <integer>1088</integer>
+	    <string>food</string>
+	    <integer>10</integer>
+	    <integer>61</integer>
 	</array>
 	<array>
-	    <string>sotl-fuel</string>
-	    <integer>198</integer>
-	    <integer>132</integer>
+	    <string>textiles</string>
+	    <integer>13</integer>
+	    <integer>74</integer>
 	</array>
 	<array>
-	    <string>sotl-shipparts</string>
-	    <integer>109</integer>
-	    <integer>3030</integer>
-	</array>
-	<array>
-	    <string>sotl-machinery</string>
-	    <integer>19</integer>
-	    <integer>3026</integer>
-	</array>
-	<array>
-	    <string>sotl-terraforming</string>
-	    <integer>0</integer>
-	    <integer>17125</integer>
-	</array>
-	<array>
-	    <string>sotl-spareparts</string>
-	    <integer>104</integer>
-	    <integer>243</integer>
-	</array>
-	<array>
-	    <string>sotl-plastics</string>
-	    <integer>46</integer>
-	    <integer>1669</integer>
-	</array>
-	<array>
-	    <string>sotl-corals</string>
-	    <integer>14</integer>
-	    <integer>9606</integer>
-	</array>
-	<array>
-	    <string>sotl-fertiliser</string>
-	    <integer>9</integer>
-	    <integer>427</integer>
-	</array>
-	<array>
-	    <string>sotl-sciequip</string>
-	    <integer>1</integer>
-	    <integer>32644</integer>
-	</array>
-	<array>
-	    <string>sotl-telepresence</string>
-	    <integer>4</integer>
-	    <integer>9037</integer>
+	    <string>radioactives</string>
+	    <integer>11</integer>
+	    <integer>247</integer>
 	</array>
 	<array>
 	    <string>slaves</string>
-	    <integer>0</integer>
-	    <integer>519</integer>
+	    <integer>1</integer>
+	    <integer>185</integer>
 	</array>
 	<array>
-	    <string>sotl-luxuries</string>
-	    <integer>21</integer>
-	    <integer>8787</integer>
+	    <string>liquor_wines</string>
+	    <integer>12</integer>
+	    <integer>322</integer>
 	</array>
 	<array>
-	    <string>sotl-ceramics-ind</string>
-	    <integer>42</integer>
-	    <integer>599</integer>
+	    <string>luxuries</string>
+	    <integer>39</integer>
+	    <integer>854</integer>
 	</array>
 	<array>
-	    <string>sotl-textiles</string>
-	    <integer>61</integer>
-	    <integer>294</integer>
+	    <string>narcotics</string>
+	    <integer>38</integer>
+	    <integer>697</integer>
 	</array>
 	<array>
-	    <string>sotl-food-basic</string>
-	    <integer>110</integer>
-	    <integer>328</integer>
+	    <string>computers</string>
+	    <integer>28</integer>
+	    <integer>732</integer>
 	</array>
 	<array>
-	    <string>sotl-computers-flight</string>
-	    <integer>0</integer>
-	    <integer>2162</integer>
-	</array>
-	<array>
-	    <string>sotl-tools</string>
-	    <integer>52</integer>
-	    <integer>425</integer>
-	</array>
-	<array>
-	    <string>sotl-artworks</string>
-	    <integer>8</integer>
-	    <integer>1740</integer>
-	</array>
-	<array>
-	    <string>sotl-entertainment</string>
-	    <integer>51</integer>
-	    <integer>347</integer>
-	</array>
-	<array>
-	    <string>sotl-preciousstones</string>
-	    <integer>19</integer>
-	    <integer>20899</integer>
-	</array>
-	<array>
-	    <string>sotl-furs</string>
-	    <integer>4</integer>
-	    <integer>1709</integer>
-	</array>
-	<array>
-	    <string>sotl-animals</string>
-	    <integer>14</integer>
-	    <integer>13930</integer>
-	</array>
-	<array>
-	    <string>sotl-handweapons</string>
-	    <integer>6</integer>
-	    <integer>3754</integer>
-	</array>
-	<array>
-	    <string>sotl-weapons</string>
-	    <integer>9</integer>
-	    <integer>10395</integer>
-	</array>
-	<array>
-	    <string>sotl-preciousmetals</string>
-	    <integer>16</integer>
-	    <integer>15915</integer>
-	</array>
-	<array>
-	    <string>sotl-computers-research</string>
-	    <integer>2</integer>
-	    <integer>26010</integer>
-	</array>
-	<array>
-	    <string>sotl-medicine</string>
-	    <integer>7</integer>
-	    <integer>1390</integer>
-	</array>
-	<array>
-	    <string>sotl-ceramics-art</string>
-	    <integer>2</integer>
-	    <integer>563</integer>
-	</array>
-	<array>
-	    <string>minerals</string>
-	    <integer>5</integer>
-	    <integer>75</integer>
+	    <string>machinery</string>
+	    <integer>32</integer>
+	    <integer>527</integer>
 	</array>
 	<array>
 	    <string>alloys</string>
-	    <integer>47</integer>
-	    <integer>290</integer>
+	    <integer>29</integer>
+	    <integer>403</integer>
 	</array>
 	<array>
-	    <string>sotl-computers-basic</string>
-	    <integer>22</integer>
-	    <integer>1769</integer>
+	    <string>firearms</string>
+	    <integer>14</integer>
+	    <integer>612</integer>
 	</array>
 	<array>
-	    <string>sotl-oil</string>
-	    <integer>104</integer>
-	    <integer>458</integer>
+	    <string>furs</string>
+	    <integer>3</integer>
+	    <integer>651</integer>
 	</array>
 	<array>
-	    <string>sotl-ores</string>
-	    <integer>96</integer>
-	    <integer>617</integer>
+	    <string>minerals</string>
+	    <integer>56</integer>
+	    <integer>127</integer>
 	</array>
 	<array>
-	    <string>sotl-clothes-basic</string>
-	    <integer>45</integer>
-	    <integer>298</integer>
+	    <string>gold</string>
+	    <integer>7</integer>
+	    <integer>400</integer>
 	</array>
 	<array>
-	    <string>sotl-food-luxury</string>
-	    <integer>20</integer>
-	    <integer>6390</integer>
+	    <string>platinum</string>
+	    <integer>7</integer>
+	    <integer>720</integer>
 	</array>
 	<array>
-	    <string>sotl-sensors</string>
-	    <integer>19</integer>
-	    <integer>5983</integer>
+	    <string>gem_stones</string>
+	    <integer>6</integer>
+	    <integer>215</integer>
 	</array>
 	<array>
-	    <string>sotl-mixed-alloys</string>
-	    <integer>12</integer>
-	    <integer>802</integer>
-	</array>
-	<array>
-	    <string>sotl-plants</string>
-	    <integer>16</integer>
-	    <integer>4765</integer>
-	</array>
-	<array>
-	    <string>sotl-radiationshield</string>
-	    <integer>5</integer>
-	    <integer>5202</integer>
+	    <string>alien_items</string>
+	    <integer>0</integer>
+	    <integer>342</integer>
 	</array>
     </array>
     <key>market_rnd</key>
-    <integer>172</integer>
+    <integer>62</integer>
     <key>max_cargo</key>
     <integer>20</integer>
     <key>max_passengers</key>
     <integer>0</integer>
     <key>missile_roles</key>
     <array>
-	<string>NONE</string>
+	<string>EQ_MISSILE</string>
+	<string>EQ_MISSILE</string>
+	<string>EQ_MISSILE</string>
 	<string>NONE</string>
     </array>
     <key>missiles</key>
-    <integer>0</integer>
+    <integer>3</integer>
     <key>mission_destinations</key>
     <dict>
     </dict>
     <key>mission_variables</key>
     <dict>
-	<key>mission_oolite_contract_clientnames</key>
-	<string>[&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;]</string>
-	<key>mission_oolite_contracts_cargo</key>
-	<string>[{&quot;commodity&quot;:&quot;liquor_wines&quot;,&quot;size&quot;:87,&quot;destination&quot;:53,&quot;route&quot;:{&quot;distance&quot;:28,&quot;time&quot;:135.36,&quot;route&quot;:[45,198,234,168,214,85,53]},&quot;payment&quot;:4600,&quot;deposit&quot;:3820,&quot;deadline&quot;:180059193649.40576},{&quot;commodity&quot;:&quot;textiles&quot;,&quot;size&quot;:70,&quot;destination&quot;:29,&quot;route&quot;:{&quot;distance&quot;:50.80000000000001,&quot;time&quot;:262.88000000000005,&quot;route&quot;:[45,198,234,168,214,9,91,121,253,215,29]},&quot;payment&quot;:920,&quot;deposit&quot;:760,&quot;deadline&quot;:180059388236.40576},{&quot;commodity&quot;:&quot;furs&quot;,&quot;size&quot;:156,&quot;destination&quot;:251,&quot;route&quot;:{&quot;distance&quot;:90.80000000000001,&quot;time&quot;:482.7200000000002,&quot;route&quot;:[45,198,102,176,203,232,160,17,70,222,68,147,242,130,86,98,175,60,251]},&quot;payment&quot;:18000,&quot;deposit&quot;:15560,&quot;deadline&quot;:180060412948.40576},{&quot;commodity&quot;:&quot;minerals&quot;,&quot;size&quot;:182,&quot;destination&quot;:6,&quot;route&quot;:{&quot;distance&quot;:18.400000000000002,&quot;time&quot;:95.68000000000004,&quot;route&quot;:[45,26,156,143,6]},&quot;payment&quot;:3660,&quot;deposit&quot;:3100,&quot;deadline&quot;:180058896253.40576},{&quot;commodity&quot;:&quot;alloys&quot;,&quot;size&quot;:60,&quot;destination&quot;:167,&quot;route&quot;:{&quot;distance&quot;:70.8,&quot;time&quot;:407.5200000000001,&quot;route&quot;:[45,198,102,176,203,232,151,252,36,250,114,226,208,167]},&quot;payment&quot;:4580,&quot;deposit&quot;:4080,&quot;deadline&quot;:180059922823.40576},{&quot;commodity&quot;:&quot;textiles&quot;,&quot;size&quot;:58,&quot;destination&quot;:198,&quot;route&quot;:{&quot;distance&quot;:6,&quot;time&quot;:36,&quot;route&quot;:[45,198]},&quot;payment&quot;:680,&quot;deposit&quot;:640,&quot;deadline&quot;:180058689626.40576},{&quot;commodity&quot;:&quot;luxuries&quot;,&quot;size&quot;:31,&quot;destination&quot;:36,&quot;route&quot;:{&quot;distance&quot;:39.2,&quot;time&quot;:204.80000000000007,&quot;route&quot;:[45,198,102,176,203,232,151,252,36]},&quot;payment&quot;:5600,&quot;deposit&quot;:5100,&quot;deadline&quot;:180058928051.40576},{&quot;commodity&quot;:&quot;slaves&quot;,&quot;size&quot;:99,&quot;destination&quot;:194,&quot;route&quot;:{&quot;distance&quot;:64.8,&quot;time&quot;:340.4800000000001,&quot;route&quot;:[45,198,102,176,203,232,160,17,70,222,68,147,242,194]},&quot;payment&quot;:2340,&quot;deposit&quot;:2260,&quot;deadline&quot;:180059584260.40576},{&quot;commodity&quot;:&quot;luxuries&quot;,&quot;size&quot;:60,&quot;destination&quot;:166,&quot;route&quot;:{&quot;distance&quot;:79.6,&quot;time&quot;:437.92000000000013,&quot;route&quot;:[45,198,102,176,203,232,160,17,241,235,90,184,178,97,145,55,166]},&quot;payment&quot;:10080,&quot;deposit&quot;:9560,&quot;deadline&quot;:180059922799.40576}]</string>
-	<key>mission_oolite_contracts_parcels</key>
-	<string>[{&quot;destination&quot;:190,&quot;route&quot;:{&quot;distance&quot;:83.20000000000002,&quot;time&quot;:461.44000000000017,&quot;route&quot;:[45,198,102,176,203,232,160,17,70,222,68,147,242,130,86,216,190]},&quot;sender&quot;:&quot;Beti Ataben&quot;,&quot;deadline&quot;:180061514094.40576,&quot;risk&quot;:0,&quot;description&quot;:&quot;Prototype technology&quot;,&quot;payment&quot;:159,&quot;skill&quot;:6.232226009538291},{&quot;destination&quot;:22,&quot;route&quot;:{&quot;distance&quot;:107.2,&quot;time&quot;:583.0400000000003,&quot;route&quot;:[45,198,102,176,203,232,160,17,70,222,68,147,242,130,86,98,175,60,251,206,87,22]},&quot;sender&quot;:&quot;Inquso Thatil&quot;,&quot;deadline&quot;:180060794470.40576,&quot;risk&quot;:2,&quot;description&quot;:&quot;Prototype technology&quot;,&quot;payment&quot;:1234,&quot;skill&quot;:54.2113471950015},{&quot;destination&quot;:117,&quot;route&quot;:{&quot;distance&quot;:46.800000000000004,&quot;time&quot;:228.64000000000004,&quot;route&quot;:[45,198,234,168,214,85,53,31,211,111,117]},&quot;sender&quot;:&quot;Se Nutiouor&quot;,&quot;deadline&quot;:180059542503.40576,&quot;risk&quot;:2,&quot;description&quot;:&quot;Prototype technology&quot;,&quot;payment&quot;:832,&quot;skill&quot;:43.96694356093243}]</string>
-	<key>mission_oolite_contracts_passengers</key>
-	<string>[{&quot;destination&quot;:148,&quot;route&quot;:{&quot;distance&quot;:66.80000000000001,&quot;time&quot;:365.9200000000001,&quot;route&quot;:[45,198,102,176,203,232,160,17,241,235,78,115,220,148]},&quot;species&quot;:&quot;furious Large Feline&quot;,&quot;name&quot;:&quot;Tiisra Ab&quot;,&quot;risk&quot;:2,&quot;deadline&quot;:180059801167.40576,&quot;payment&quot;:6369,&quot;skill&quot;:23.013816521930714,&quot;advance&quot;:2550},{&quot;destination&quot;:32,&quot;route&quot;:{&quot;distance&quot;:85.6,&quot;time&quot;:483.8400000000002,&quot;route&quot;:[45,198,102,176,203,232,160,17,241,235,90,184,178,97,84,146,103,32]},&quot;species&quot;:&quot;calm Human Colonial&quot;,&quot;name&quot;:&quot;Tiitveri Esloen&quot;,&quot;risk&quot;:1,&quot;deadline&quot;:180060072294.40576,&quot;payment&quot;:8689,&quot;skill&quot;:35.45104047086772,&quot;advance&quot;:1435},{&quot;destination&quot;:44,&quot;route&quot;:{&quot;distance&quot;:62.400000000000006,&quot;time&quot;:350.0800000000001,&quot;route&quot;:[45,198,102,176,203,232,160,17,241,235,90,136,44]},&quot;species&quot;:&quot;shy Human Colonial&quot;,&quot;name&quot;:&quot;Thse Garrebairn&quot;,&quot;risk&quot;:1,&quot;deadline&quot;:180059802632.40576,&quot;payment&quot;:1675,&quot;skill&quot;:16.60797125361409,&quot;advance&quot;:344},{&quot;destination&quot;:17,&quot;route&quot;:{&quot;distance&quot;:34.400000000000006,&quot;time&quot;:178.56000000000003,&quot;route&quot;:[45,198,102,176,203,232,160,17]},&quot;species&quot;:&quot;distressed Fierce Yellow Furry Rodent&quot;,&quot;name&quot;:&quot;Enil Ored&quot;,&quot;risk&quot;:0,&quot;deadline&quot;:180058832694.40576,&quot;payment&quot;:1201,&quot;skill&quot;:30.066401283669993,&quot;advance&quot;:83},{&quot;destination&quot;:243,&quot;route&quot;:{&quot;distance&quot;:87.6,&quot;time&quot;:502.2400000000001,&quot;route&quot;:[45,198,102,176,203,232,160,17,70,222,68,147,242,201,100,11,243]},&quot;species&quot;:&quot;worried Human Colonial&quot;,&quot;name&quot;:&quot;Soxeza Goodfire&quot;,&quot;risk&quot;:1,&quot;deadline&quot;:180059994710.40576,&quot;payment&quot;:3763,&quot;skill&quot;:19.379123735972357,&quot;advance&quot;:569},{&quot;destination&quot;:195,&quot;route&quot;:{&quot;distance&quot;:18.400000000000002,&quot;time&quot;:95.68000000000004,&quot;route&quot;:[45,26,156,165,195]},&quot;species&quot;:&quot;friendly Fierce Yellow Furry Rodent&quot;,&quot;name&quot;:&quot;Alxe Seceusse&quot;,&quot;risk&quot;:0,&quot;deadline&quot;:180058962721.40576,&quot;payment&quot;:578,&quot;skill&quot;:19.457562596501617,&quot;advance&quot;:43},{&quot;destination&quot;:191,&quot;route&quot;:{&quot;distance&quot;:95.60000000000002,&quot;time&quot;:538.4000000000002,&quot;route&quot;:[45,198,102,176,203,232,160,17,70,222,89,7,127,231,221,1,192,33,191]},&quot;species&quot;:&quot;hesitant Fierce Yellow Furry Rodent&quot;,&quot;name&quot;:&quot;Beisat Esonor&quot;,&quot;risk&quot;:2,&quot;deadline&quot;:180060359277.40576,&quot;payment&quot;:11084,&quot;skill&quot;:60,&quot;advance&quot;:1042}]</string>
-	<key>mission_sotl_refit_shieldbias</key>
-	<string>-1.3877787807814457e-16</string>
-	<key>mission_trumbles</key>
-	<string>BUY_ME</string>
     </dict>
     <key>parcel_record</key>
     <dict>
@@ -320,7 +178,7 @@
     <key>player_name</key>
     <string>Jameson</string>
     <key>player_save_name</key>
-    <string>SOTL</string>
+    <string>Test</string>
     <key>port_weapon</key>
     <string>EQ_WEAPON_NONE</string>
     <key>primed_equipment_a</key>
@@ -350,8 +208,6 @@
     </dict>
     <key>role_system_memory</key>
     <array>
-	<integer>45</integer>
-	<integer>25</integer>
     </array>
     <key>role_weight_flags</key>
     <dict>
@@ -368,54 +224,22 @@
 	<string>player-unknown</string>
     </array>
     <key>scenario_restriction</key>
-    <string>id:oolite.oxp.cim.sotl.altmap;exc:trade-goods.plist;exc:world-scripts.plist;exc:equipment.plist;exc:shipdata.plist;exc:shipyard.plist;exc:planetinfo.plist</string>
+    <string>id:oolite.oxp.cim.sotl.exploration;exc:world-scripts.plist</string>
     <key>scripted_planetinfo_overrides</key>
     <dict>
     </dict>
     <key>shipCommodityData</key>
     <array>
 	<array>
-	    <string>sotl-narcotics</string>
+	    <string>food</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotl-fuel</string>
+	    <string>textiles</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotl-shipparts</string>
-	    <integer>0</integer>
-	</array>
-	<array>
-	    <string>sotl-machinery</string>
-	    <integer>0</integer>
-	</array>
-	<array>
-	    <string>sotl-terraforming</string>
-	    <integer>0</integer>
-	</array>
-	<array>
-	    <string>sotl-spareparts</string>
-	    <integer>0</integer>
-	</array>
-	<array>
-	    <string>sotl-plastics</string>
-	    <integer>0</integer>
-	</array>
-	<array>
-	    <string>sotl-corals</string>
-	    <integer>0</integer>
-	</array>
-	<array>
-	    <string>sotl-fertiliser</string>
-	    <integer>0</integer>
-	</array>
-	<array>
-	    <string>sotl-sciequip</string>
-	    <integer>0</integer>
-	</array>
-	<array>
-	    <string>sotl-telepresence</string>
+	    <string>radioactives</string>
 	    <integer>0</integer>
 	</array>
 	<array>
@@ -423,75 +247,23 @@
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotl-luxuries</string>
+	    <string>liquor_wines</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotl-ceramics-ind</string>
+	    <string>luxuries</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotl-textiles</string>
+	    <string>narcotics</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotl-food-basic</string>
+	    <string>computers</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotl-computers-flight</string>
-	    <integer>0</integer>
-	</array>
-	<array>
-	    <string>sotl-tools</string>
-	    <integer>0</integer>
-	</array>
-	<array>
-	    <string>sotl-artworks</string>
-	    <integer>0</integer>
-	</array>
-	<array>
-	    <string>sotl-entertainment</string>
-	    <integer>0</integer>
-	</array>
-	<array>
-	    <string>sotl-preciousstones</string>
-	    <integer>0</integer>
-	</array>
-	<array>
-	    <string>sotl-furs</string>
-	    <integer>0</integer>
-	</array>
-	<array>
-	    <string>sotl-animals</string>
-	    <integer>0</integer>
-	</array>
-	<array>
-	    <string>sotl-handweapons</string>
-	    <integer>0</integer>
-	</array>
-	<array>
-	    <string>sotl-weapons</string>
-	    <integer>0</integer>
-	</array>
-	<array>
-	    <string>sotl-preciousmetals</string>
-	    <integer>0</integer>
-	</array>
-	<array>
-	    <string>sotl-computers-research</string>
-	    <integer>0</integer>
-	</array>
-	<array>
-	    <string>sotl-medicine</string>
-	    <integer>0</integer>
-	</array>
-	<array>
-	    <string>sotl-ceramics-art</string>
-	    <integer>0</integer>
-	</array>
-	<array>
-	    <string>minerals</string>
+	    <string>machinery</string>
 	    <integer>0</integer>
 	</array>
 	<array>
@@ -499,54 +271,46 @@
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotl-computers-basic</string>
+	    <string>firearms</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotl-oil</string>
+	    <string>furs</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotl-ores</string>
+	    <string>minerals</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotl-clothes-basic</string>
+	    <string>gold</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotl-food-luxury</string>
+	    <string>platinum</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotl-sensors</string>
+	    <string>gem_stones</string>
 	    <integer>0</integer>
 	</array>
 	<array>
-	    <string>sotl-mixed-alloys</string>
-	    <integer>0</integer>
-	</array>
-	<array>
-	    <string>sotl-plants</string>
-	    <integer>0</integer>
-	</array>
-	<array>
-	    <string>sotl-radiationshield</string>
+	    <string>alien_items</string>
 	    <integer>0</integer>
 	</array>
     </array>
     <key>ship_class_name</key>
-    <string>Kodiak</string>
+    <string>Cobra Mark III</string>
     <key>ship_clock</key>
-    <real>180058771900.1459</real>
+    <real>180058159942.1625</real>
     <key>ship_desc</key>
-    <string>sotl-kodiak-player</string>
+    <string>cobra3-player</string>
     <key>ship_kills</key>
     <integer>0</integer>
     <key>ship_name</key>
-    <string>Kodiak</string>
+    <string>Cobra Mark III</string>
     <key>ship_trade_in_factor</key>
-    <integer>93</integer>
+    <integer>100</integer>
     <key>ship_unique_name</key>
     <string></string>
     <key>shipyard_record</key>
@@ -562,17 +326,209 @@
     <string>EQ_WEAPON_NONE</string>
     <key>station_markets</key>
     <array>
+	<dict>
+	    <key>market</key>
+	    <array>
+		<array>
+		    <string>food</string>
+		    <integer>0</integer>
+		    <integer>63</integer>
+		</array>
+		<array>
+		    <string>textiles</string>
+		    <integer>0</integer>
+		    <integer>46</integer>
+		</array>
+		<array>
+		    <string>radioactives</string>
+		    <integer>4</integer>
+		    <integer>203</integer>
+		</array>
+		<array>
+		    <string>slaves</string>
+		    <integer>0</integer>
+		    <integer>128</integer>
+		</array>
+		<array>
+		    <string>liquor_wines</string>
+		    <integer>0</integer>
+		    <integer>334</integer>
+		</array>
+		<array>
+		    <string>luxuries</string>
+		    <integer>0</integer>
+		    <integer>359</integer>
+		</array>
+		<array>
+		    <string>narcotics</string>
+		    <integer>0</integer>
+		    <integer>377</integer>
+		</array>
+		<array>
+		    <string>computers</string>
+		    <integer>0</integer>
+		    <integer>381</integer>
+		</array>
+		<array>
+		    <string>machinery</string>
+		    <integer>0</integer>
+		    <integer>348</integer>
+		</array>
+		<array>
+		    <string>alloys</string>
+		    <integer>0</integer>
+		    <integer>185</integer>
+		</array>
+		<array>
+		    <string>firearms</string>
+		    <integer>0</integer>
+		    <integer>450</integer>
+		</array>
+		<array>
+		    <string>furs</string>
+		    <integer>0</integer>
+		    <integer>439</integer>
+		</array>
+		<array>
+		    <string>minerals</string>
+		    <integer>31</integer>
+		    <integer>104</integer>
+		</array>
+		<array>
+		    <string>gold</string>
+		    <integer>3</integer>
+		    <integer>309</integer>
+		</array>
+		<array>
+		    <string>platinum</string>
+		    <integer>3</integer>
+		    <integer>629</integer>
+		</array>
+		<array>
+		    <string>gem_stones</string>
+		    <integer>2</integer>
+		    <integer>177</integer>
+		</array>
+		<array>
+		    <string>alien_items</string>
+		    <integer>0</integer>
+		    <integer>231</integer>
+		</array>
+	    </array>
+	    <key>position</key>
+	    <array>
+		<real>-192744.703125</real>
+		<real>-8610.0439453125</real>
+		<real>497470.9375</real>
+	    </array>
+	</dict>
+	<dict>
+	    <key>market</key>
+	    <array>
+		<array>
+		    <string>food</string>
+		    <integer>0</integer>
+		    <integer>62</integer>
+		</array>
+		<array>
+		    <string>textiles</string>
+		    <integer>0</integer>
+		    <integer>68</integer>
+		</array>
+		<array>
+		    <string>radioactives</string>
+		    <integer>3</integer>
+		    <integer>184</integer>
+		</array>
+		<array>
+		    <string>slaves</string>
+		    <integer>0</integer>
+		    <integer>110</integer>
+		</array>
+		<array>
+		    <string>liquor_wines</string>
+		    <integer>0</integer>
+		    <integer>332</integer>
+		</array>
+		<array>
+		    <string>luxuries</string>
+		    <integer>0</integer>
+		    <integer>511</integer>
+		</array>
+		<array>
+		    <string>narcotics</string>
+		    <integer>0</integer>
+		    <integer>357</integer>
+		</array>
+		<array>
+		    <string>computers</string>
+		    <integer>0</integer>
+		    <integer>370</integer>
+		</array>
+		<array>
+		    <string>machinery</string>
+		    <integer>0</integer>
+		    <integer>461</integer>
+		</array>
+		<array>
+		    <string>alloys</string>
+		    <integer>0</integer>
+		    <integer>199</integer>
+		</array>
+		<array>
+		    <string>firearms</string>
+		    <integer>0</integer>
+		    <integer>302</integer>
+		</array>
+		<array>
+		    <string>furs</string>
+		    <integer>0</integer>
+		    <integer>739</integer>
+		</array>
+		<array>
+		    <string>minerals</string>
+		    <integer>31</integer>
+		    <integer>100</integer>
+		</array>
+		<array>
+		    <string>gold</string>
+		    <integer>2</integer>
+		    <integer>291</integer>
+		</array>
+		<array>
+		    <string>platinum</string>
+		    <integer>5</integer>
+		    <integer>585</integer>
+		</array>
+		<array>
+		    <string>gem_stones</string>
+		    <integer>3</integer>
+		    <integer>176</integer>
+		</array>
+		<array>
+		    <string>alien_items</string>
+		    <integer>0</integer>
+		    <integer>139</integer>
+		</array>
+	    </array>
+	    <key>position</key>
+	    <array>
+		<real>-170549.40625</real>
+		<real>-6060.7216796875</real>
+		<real>523664.5625</real>
+	    </array>
+	</dict>
     </array>
     <key>subentities_status</key>
     <string></string>
     <key>system_id</key>
-    <string>100</string>
+    <string>0</string>
     <key>target_id</key>
-    <string>100</string>
+    <string>0</string>
     <key>trumbles</key>
     <array>
 	<integer>0</integer>
-	<integer>-4408</integer>
+	<integer>-29624</integer>
 	<array>
 	    <dict>
 		<key>digram</key>
@@ -1062,6 +1018,6 @@
     <array>
     </array>
     <key>written_by_version</key>
-    <string>1.81</string>
+    <string>1.83</string>
 </dict>
 </plist>

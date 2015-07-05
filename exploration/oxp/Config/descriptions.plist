@@ -2,4 +2,15 @@
 	"witch-to-x-in-y-seconds" = "";
 	"witch-no-fuel" = "Insufficient fuel to initiate hyperspace jump";
 	"witch-too-far" = "Hyperspace destination out of range";
+
+	"sysdata-eco" = "Mineral wealth:";
+	"sysdata-govt" = "Habitability:";
+	"sysdata-tl" = "Known bodies:";
+	"sysdata-pop" = "Active Survey:";
+	"sysdata-pop-value" = "[inhabitants]\n";
+	"sysdata-prod" = "";
+	"sysdata-prod-value" = "";
+	"sysdata-radius" = "";
+	"sysdata-radius-value" = "";
+	
 }

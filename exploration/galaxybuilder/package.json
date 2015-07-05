@@ -1,0 +1,14 @@
+{
+  "name": "galaxybuilder",
+  "version": "1.0.0",
+  "description": "",
+  "main": "galaxybuilder.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "CC-BY-SA 3",
+  "dependencies": {
+    "uint32": "^0.2.1"
+  }
+}

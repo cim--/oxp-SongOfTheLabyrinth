@@ -6,3 +6,4 @@ npm-debug.log
 # generated files
 altmap/oxp/Config/descriptions.plist
 altmap/oxp/Config/planetinfo.plist
+exploration/oxp/Config/planetinfo.plist
