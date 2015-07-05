@@ -96,7 +96,10 @@
 
 	var $planetspec = function(planet) {
 		var result = "";
+		result += $plist("orientation","1 0 0 0");
+		result += $plist("position",$color(planet.coordinates));
 		result += $plist("planet_distance",1E6); 
+		result += $plist("planet_name",planet.name); 
 		result += $plist("radius",planet.radius);
 		result += $plist("percent_land",$fix(100*planet.percentLand,1));
 		result += $plist("percent_ice",$fix(100*planet.percentIce,1));
@@ -165,13 +168,18 @@
 		return theta;
 	}
 
-	var au = 2E7;
+	var au = 4E7;
 	planetinfo.addPlanet = function(i, j, star, orbitDistAU, forceNoAtmosphere, random, forceName) {
 		var planet = {};
 		
+		planet.name = forceName;
+
 		planet.habZoneRange = orbitDistAU / star.habitableZoneFactor;
 		planet.orbitalRadius = orbitDistAU * au;
+		planet.orbitalPosition = random.randf()*2*Math.PI;
 		planet.orbitalRadiusAU = orbitDistAU;
+
+		planet.coordinates = [Math.sin(planet.orbitalPosition)*planet.orbitalRadius,0,Math.cos(planet.orbitalPosition)*planet.orbitalRadius];
 
 		var mw1 = random.randf(); var mw2 = random.randf();
 		// pick the one closer to the minfactor
@@ -276,6 +284,7 @@
 		/* Physical properties set up - now determine appearance */
 
 		var h = $getHabitability(planet);
+		planet.habitability = h;
 
 		if (h > 90) {
 			// nice places
@@ -522,9 +531,18 @@
 		}
 	};
 
+	planetinfo.dumpPlanets = function(g,s) {
+		var info = planetdata[g][s];
+		var result = "";
+		for (var i=0;i<info.planets.length;i++) {
+			result += "\"planet_"+g+"_"+s+"_"+i+"\" = {\n";
+			result += $planetspec(info.planets[i]);
+			result += "};\n";
+		}
+		return result;
+	};
 
-
-	planetinfo.dump = function(g,s,sp) {
+	planetinfo.dump = function(g,s) {
 
 		var info = planetdata[g][s];
 		var result = "\""+g+" "+s+"\" = {\n";
@@ -570,6 +588,14 @@
 			result += $planetspec(info.planets[0]);
 		}			
 		result += $plist("planets_discovered",info.planets_discovered);
+		result += $plist("planets_available",info.planets.length);
+		for (var i=0;i<info.planets.length;i++) {
+			var planet = info.planets[i];
+			
+			result += $plist("planet_position_"+i,$color(planet.coordinates));
+			result += $plist("planet_value_"+i,$fix(planet.habitability));
+			result += $plist("planet_name_"+i,planet.name);
+		}
 
 		result += $plist("sky_n_stars",info.starCount);
 		result += $plist("sky_n_blurs",info.nebulaCount);

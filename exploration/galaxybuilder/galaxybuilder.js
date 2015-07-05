@@ -15,8 +15,8 @@ random.setStart(0); // for clarity
 
 /*
 Planet scale 1/100 (normal Oolite)
-Star scale 1/2000
-System scale 1/800 (makes the star scale look right from the planets)
+Star scale 1/1000
+System scale 1/400 (makes the star scale look right from the planets)
 */
 
 /* Set up system coordinates */
@@ -159,7 +159,7 @@ random.setStart(10000);
 				basecolour = [0.95,0.45,0.4];
 			}
 
-			star.radius = Math.floor(350000 * (0.9+(0.2*random.randf())) * sradfactor);
+			star.radius = Math.floor(7E5 * (0.9+(0.2*random.randf())) * sradfactor);
 			/* Mostly <0.3, a few in 0.4..0.6, extremely rare 0.6..0.9 */
 			star.instability = (random.randf() * random.randf() * random.randf());
 			if (star.sequence == "Class M dwarf") {
@@ -218,7 +218,7 @@ random.setStart(75000);
 		for (j=0;j<$.systems;j++) {
 			star = $.get(i,j,"star");
 			if (j==0) {
-				star.name = "Astray";
+				star.name = "Max's Drift";
 				star.constellation = "";
 			} else {
 				// calculate distance, brightness, direction from Astray
@@ -337,7 +337,8 @@ random.setStart(80000);
 (function() {
 	console.error(random.getPlace());
 	$.$debug = 1;
-	var planetinfoplist = '{\n'+
+	var planetinfoplist = '/* File is auto-generated - do not edit directly! */\n'+
+		'{\n'+
 		'	"interstellar space" =\n'+
 		'	{\n'+
 		'		sky_n_stars = 13000;\n'+
@@ -348,11 +349,17 @@ random.setStart(80000);
 		'	{\n'+
 		'		sky_color_1 = (0.85,0.9,1);\n'+
 		'		sky_color_2 = (1.0,0.9,0.8);\n'+
+		'		ambient_level = 0.25;\n'+
 		'	};\n';
 
 	for (i=0;i<$.galaxies;i++) {
 		for (j=0;j<$.systems;j++) {
 			planetinfoplist += $.dump(i,j);
+		}
+	}
+	for (i=0;i<$.galaxies;i++) {
+		for (j=0;j<$.systems;j++) {
+			planetinfoplist += $.dumpPlanets(i,j);
 		}
 	}
 	planetinfoplist += "}\n";

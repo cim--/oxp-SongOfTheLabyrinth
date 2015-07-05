@@ -43,6 +43,8 @@
     <dict>
 	<key>EQ_ADVANCED_NAVIGATIONAL_ARRAY</key>
 	<integer>1</integer>
+	<key>EQ_ADVANCED_COMPASS</key>
+	<integer>1</integer>
     </dict>
     <key>forward_weapon</key>
     <string>EQ_WEAPON_PULSE_LASER</string>
