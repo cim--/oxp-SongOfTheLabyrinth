@@ -13,6 +13,7 @@
 	/* Second stage: include SOTL Exploration scripts */
 	"sotl-exp-hyperspace.js",
 	"sotl-exp-populator.js",
+	"sotl-exp-discovery.js",
 	"sotl-exp-hud.js",
 	"sotl-exp-uint32.js"
 )

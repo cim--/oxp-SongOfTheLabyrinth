@@ -13,20 +13,17 @@
 
 	var highMineralPoint = 0.45;
 	var mediumMineralPoint = 0.25;
-	var highHabPoint
-
-	var invasioncasualties = 0;
 
 	var planetdata = [];
-	var tradeRoutes = [[],[],[],[],[],[],[],[]];
-
-	// region 0 should never be asked for
-	var regiondata = [{}];
 
 	var cused = [{},{},{},{},{},{},{},{}];
 
 	var $plist = function(k,v) {
-		return "\t\""+k+"\" = \""+v+"\";\n";
+		var val = v;
+		if (val.replace) {
+			val = val.replace(/"/g,'\\"');
+		}
+		return "\t\""+k+"\" = \""+val+"\";\n";
 	}
 
 	var $plistarray = function(k,v) {
@@ -57,32 +54,32 @@
 		// gravity
 		var diff = (Math.abs(spec.preferredGravity-planet.surfaceGravity) - spec.preferredGravity/4);
 		if (diff > 0) {
-			hab -= (diff * 125)
+			hab -= (diff * 100)
 		}
 		// temperature
 		diff = Math.abs(spec.preferredTemperature-planet.temperature)-spec.temperatureTolerance;
 		if (diff > 0) {
-			hab -= diff*1.75;
+			hab -= diff*2.25;
 		}
 		// radiation
 		diff = planet.surfaceRadiation-spec.radiationTolerance;
 		if (diff > 0) {
-			hab -= 200*diff;
+			hab -= 300*diff;
 		}
 		// seismic
 		diff = planet.seismicInstability-spec.seismicTolerance;
 		if (diff > 0) {
-			hab -= 150*diff;
+			hab -= 250*diff;
 		}
 		// land/water split
 		diff = Math.abs(spec.preferredLand - planet.percentLand)-spec.landTolerance;
 		if (diff > 0) {
-			hab -= 25*diff;
+			hab -= 50*diff;
 		}
 		// wind factor
 		diff = planet.windFactor - spec.windTolerance;
 		if (diff > 0) {
-			hab -= 150*diff;
+			hab -= 250*diff;
 		}
 
 		if (hab > 50 && planet.cloudAlpha == 0) {
@@ -94,16 +91,17 @@
 		return hab;
 	};
 
-	var $planetspec = function(planet) {
+	var $planetspec = function(planet,seed) {
 		var result = "";
 		result += $plist("orientation","1 0 0 0");
 		result += $plist("position",$color(planet.coordinates));
+		result += $plist("seed",seed);
 		result += $plist("planet_distance",1E6); 
 		result += $plist("planet_name",planet.name); 
 		result += $plist("radius",planet.radius);
-		result += $plist("percent_land",$fix(100*planet.percentLand,1));
-		result += $plist("percent_ice",$fix(100*planet.percentIce,1));
-		result += $plist("percent_cloud",$fix(100*planet.percentCloud,1));
+		result += $plist("percent_land",$fix(100*planet.percentLand,0));
+		result += $plist("percent_ice",$fix(100*planet.percentIce,0));
+		result += $plist("percent_cloud",$fix(100*planet.percentCloud,0));
 		result += $plist("has_atmosphere",planet.cloudAlpha>0?1:0);
 		result += $plist("cloud_alpha",$fix(planet.cloudAlpha,2));
 		
@@ -116,6 +114,9 @@
 		result += $plist("polar_sea_color",$color(planet.polarSeaColour));
 		result += $plist("cloud_color",$color(planet.cloudColour));
 		result += $plist("polar_cloud_color",$color(planet.polarCloudColour));
+
+		/* Debug */
+		result += $plist("sotl_exp_planet_temperature",planet.temperature);
 
 		return result;
 	}
@@ -168,7 +169,7 @@
 		return theta;
 	}
 
-	var au = 4E7;
+	var au = 3E7;
 	planetinfo.addPlanet = function(i, j, star, orbitDistAU, forceNoAtmosphere, random, forceName) {
 		var planet = {};
 		
@@ -189,20 +190,27 @@
 
 		planet.radius = 2750+random.rand(6000);
 
-		// (20-60) + (~5-15) + (0-39) => (~30-115) - 60 => (-30 - 55)
-		// though last 10 degrees are exceptionally rare on either edge
-		planet.temperature = ((1/planet.habZoneRange) * 40) + (planet.radius / 600) + random.rand(40) - 55;
-		
+		// -10..40
+		var pt = (planet.radius / 600) + random.rand(40)-15;
+		pt += 273;
+		pt *= 1/Math.sqrt(planet.habZoneRange)
+		pt -= 273;
+		while (pt > 2000) {
+			pt /= 2;
+		}
+
+		planet.temperature = pt;
+
 		var pland = random.randf();
 		var pcloud = 0.8 + (random.randf() * 0.2);
-		var calpha = 0.9 + (1.5*random.randf());
-		if (planet.temperature > 30) {
+		var calpha = 0.2 + (1.5*random.randf());
+		if (planet.temperature > 50) {
 			// too hot for much liquid water
-			pland += ((planet.temperature-30) / 100);
+			pland += ((planet.temperature-50) / 100);
 			// thick clouds from gas in atmosphere
 			// maybe even venusian
-			pcloud += ((planet.temperature-30) / 50);
-		} else if (planet.temperature < 0) {
+			pcloud += ((planet.temperature-50) / 50);
+		} else if (planet.temperature < -10) {
 			// much of liquid water locked up in ice caps
 			pland -= ((planet.temperature) / 100);
 			// and much less available as gas for cloud formation
@@ -219,12 +227,16 @@
 		// pland = 1, pcloud = 0, calpha = 0
 		var rockball = random.randf()/4;
 		var landarea = pland;
-		if (forceNoAtmosphere || pland+rockball > 1)
+		if (forceNoAtmosphere || (pland+rockball > 1))
 		{
 			pland = 1;
 			pcloud = 0;
 			calpha = 0;
-			icecap = 0;
+			if (planet.temperature < 0) {
+				icecap = 1; // iceball
+			} else {
+				icecap = 0;
+			}
 			landarea = 1;
 		} else {
 			// the planet texture generation doesn't
@@ -536,7 +548,7 @@
 		var result = "";
 		for (var i=0;i<info.planets.length;i++) {
 			result += "\"planet_"+g+"_"+s+"_"+i+"\" = {\n";
-			result += $planetspec(info.planets[i]);
+			result += $planetspec(info.planets[i],info.seed);
 			result += "};\n";
 		}
 		return result;
@@ -565,7 +577,7 @@
 		/* Main planets start out completely black. Removed if no
 		 * planets discovered; set to most interesting planet on
 		 * discovery and just moved */
-		if (false && s != 0) { // test - set everything to show first planet
+		if (s != 0) { 
 			// undiscovered systems
 			result += $plist("planet_distance",1E6); 
 			result += $plist("radius",3000);
@@ -585,7 +597,7 @@
 			result += $plist("cloud_color","blackColor");
 			result += $plist("polar_cloud_color","blackColor");
 		} else {
-			result += $planetspec(info.planets[0]);
+			result += $planetspec(info.planets[0],info.seed);
 		}			
 		result += $plist("planets_discovered",info.planets_discovered);
 		result += $plist("planets_available",info.planets.length);
@@ -596,6 +608,7 @@
 			result += $plist("planet_value_"+i,$fix(planet.habitability));
 			result += $plist("planet_name_"+i,planet.name);
 		}
+		result += $plist("planet_data",JSON.stringify(info.planets));
 
 		result += $plist("sky_n_stars",info.starCount);
 		result += $plist("sky_n_blurs",info.nebulaCount);

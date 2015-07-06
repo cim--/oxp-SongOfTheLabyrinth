@@ -153,7 +153,7 @@ random.setStart(10000);
 				// "dwarf";
 				star.sequence = "Class M dwarf";
 				star.brightness = 0.001 + random.randf()*0.009;
-				sradfactor = 0.2;
+				sradfactor = 0.4;
 				shabfactor = 0.4;
 				minfactor = 0.2;  
 				basecolour = [0.95,0.45,0.4];
@@ -309,11 +309,13 @@ random.setStart(80000);
 				}
 				var radius = (star.sequence != "Red giant") ? 0.05 : 1.5;
 				for (k=0;k<numplanets;k++) {
-					radius += random.randf();
-					if (radius > 0.5) {
-						radius *= 1.0+random.randf();
+					if (radius < 1) {
+						radius += random.randf()/3;
 					}
+					radius *= 1.0+random.randf();
 					$.addPlanet(i,j,star, radius, 0, random, "");
+					/* Autonaming is possible for testing! */
+					//					$.addPlanet(i,j,star, radius, 0, random, star.name.replace("/ .*/","")+" "+(k+1));
 				}
 				$.set(i,j,"planets_discovered",0); // bitmask
 			}
