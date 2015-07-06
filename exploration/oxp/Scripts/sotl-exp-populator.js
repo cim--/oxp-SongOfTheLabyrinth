@@ -129,8 +129,11 @@ this.shipWillEnterWitchspace = function() {
 		var pr = planet.radius;
 		var si = system.info;
 		this.shipWillExitWitchspace = function() {
-			si.radius = pr;
-			delete this.shipWillExitWitchspace;
+			// wait until in real system
+			if (system.ID != -1) {
+				si.radius = pr;
+				delete this.shipWillExitWitchspace;
+			}
 		}.bind(this);
 	}
 };

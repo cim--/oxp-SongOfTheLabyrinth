@@ -24,13 +24,19 @@ this.$hyperspaceKnownRoute = 0;
 this.startUp = function() {
 	this.$hyperspaceRouteQualities = missionVariables.sotl_exp_routequalities ? JSON.parse(missionVariables.sotl_exp_routequalities) : {};
 	var fuel = missionVariables.sotl_exp_fuelcarried ? missionVariables.sotl_exp_fuelcarried : this.$hyperspaceMaxFuel;
-	this._setFuel(fuel);
+	this._setFuel(fuel,true);
 	
 	for (var route in this.$hyperspaceRouteQualities) {
 		var systems = route.split(":");
 		this._updateRouteDrawing(systems[0],systems[1]);
 	}
 };
+
+this.shipDied = function() {
+	if (this.$hyperspaceFCB) {
+		removeFrameCallback(this.$hyperspaceFCB);
+	}
+}
 
 this.playerWillSaveGame = function() {
 	missionVariables.sotl_exp_routequalities = JSON.stringify(this.$hyperspaceRouteQualities);
@@ -79,13 +85,14 @@ this.shipWillExitWitchspace = function() {
 this.shipExitedWitchspace = function() {
 	this._resetHyperspaceSequence();
 	removeFrameCallback(this.$hyperspaceFCB);
+	this.$hyperspaceFCB = null;
 	this.$hyperspaceEffect.remove();
 };
 
 
 this.playerBoughtEquipment = function(eq) {
 	if (eq == "EQ_FUEL") {
-		this._setFuel(this.$hyperspaceMaxFuel);
+		this._setFuel(this.$hyperspaceMaxFuel,true);
 	}
 }
 
@@ -148,6 +155,8 @@ this._endHyperspaceSequence = function() {
 	removeFrameCallback(this.$hyperspaceFCB);
 	this.$hyperspaceFCB = null;
 	this.$hyperspaceRoute = null;
+	this._setFuel(this.$hyperspaceFuel,true);
+
 
 	// create wormhole to destination
 	if (this.$hyperspaceProgress < 10) {
@@ -294,13 +303,15 @@ this._makeHyperspaceRoute = function(s1,s2) {
 	return route;
 };
 
-this._setFuel = function(amount) {
+this._setFuel = function(amount,setpsf) {
 	this.$hyperspaceFuel = amount;
 	var range = amount*amount;
-	if (range > 7) {
-		player.ship.fuel = 7;
-	} else {
-		player.ship.fuel = range;
+	if (setpsf) {
+		if (range > 7) {
+			player.ship.fuel = 7;
+		} else {
+			player.ship.fuel = range;
+		}
 	}
 }
 
@@ -319,7 +330,7 @@ this._hyperspaceSequence = function(delta) {
 		player.ship.position = [1E10,0,0];
 		this.$hyperspaceEffect = system.addVisualEffect("sotl-exp-hyperspace",[1E10,0,0]);
 		this.$hyperspaceEffect.shaderFloat1 = 20+(this.$hyperspaceDistance*10);
-		this._setFuel(this.$hyperspaceFuel-Math.sqrt(this.$hyperspaceDistance));
+		this._setFuel(this.$hyperspaceFuel-Math.sqrt(this.$hyperspaceDistance),false);
 		this.$hyperspaceState = 2;
 	}
 
@@ -344,7 +355,7 @@ this._hyperspaceSequence = function(delta) {
 
 //	log(this.name, "X: d="+dx+",a="+ax+" ; Y: d="+dy+",a="+ay);
 
-	var energydrain = 3; // basic level
+	var energydrain = 3.5; // basic level
 	if (this.$hyperspaceKnownRoute) {
 		energydrain -= Math.pow(this.$hyperspaceKnownRoute,0.75)/5;
 	}
