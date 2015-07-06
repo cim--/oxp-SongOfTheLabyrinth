@@ -175,12 +175,14 @@
 		
 		planet.name = forceName;
 
+		planet.axialTilt = (Math.PI/2)*random.randf()*random.randf()*random.randf();
+
 		planet.habZoneRange = orbitDistAU / star.habitableZoneFactor;
 		planet.orbitalRadius = orbitDistAU * au;
 		planet.orbitalPosition = random.randf()*2*Math.PI;
 		planet.orbitalRadiusAU = orbitDistAU;
 
-		planet.coordinates = [Math.sin(planet.orbitalPosition)*planet.orbitalRadius,0,Math.cos(planet.orbitalPosition)*planet.orbitalRadius];
+		planet.coordinates = [Math.sin(planet.orbitalPosition)*planet.orbitalRadius,(planet.orbitalRadius/20)*(random.randf()-random.randf()),Math.cos(planet.orbitalPosition)*planet.orbitalRadius];
 
 		var mw1 = random.randf(); var mw2 = random.randf();
 		// pick the one closer to the minfactor
