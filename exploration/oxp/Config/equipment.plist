@@ -1,5 +1,108 @@
 (
 	(
+		0, 0, "Refuel all tanks",
+		"EQ_FUEL",
+		"Refill all fitted fuel tanks for hyperspace travel.",
+		{
+			available_to_all = true;
+			condition_script = "sotl-exp-conditions.js";
+		}
+	),
+	(
+		0, 0, "Flight Computer",
+		"EQ_SOTL_EXP_FLIGHTCOMPUTER",
+		"Manages normal and hyperspace navigation, and processing of scanner inputs.",
+		{
+			available_to_all = true;
+			provides = (
+				"EQ_ADVANCED_NAVIGATIONAL_ARRAY",
+				"EQ_ADVANCED_COMPASS",
+				"EQ_SCANNER_SHOW_MISSILE_TARGET",
+				"EQ_TARGET_MEMORY",
+				"EQ_INTEGRATED_TARGETING_SYSTEM"
+			);
+		}
+	),
+	(
+		0, 0, "Fusion Generator",
+		"EQ_SOTL_EXP_GENERATOR",
+		"Dual core fusion plant providing energy to all ship components.",
+		{
+			available_to_all = true;
+		}
+	),
+	(
+		0, 0, "Refit internal modules",
+		"EQ_SOTL_EXP_REFIT",
+		"The Shaula-class survey craft has a flexible interior with ten available compartments, to allow the equipment load to be adapted to the needs of an expedition.",
+		{
+			available_to_all = true;
+		}
+	),
+	(
+		100, 0, "Capacitor Bank",
+		"EQ_SOTL_EXP_CAPACITOR",
+		"Capacitor and battery bank to temporarily store generator output. Allows additional endurance for energy-intensive operations such as hyperspace transit.",
+		{
+			available_to_all = true;
+			can_carry_multiple = true;
+			condition_script = "sotl-exp-conditions.js";
+			script_info = {
+				"sotl_exp_ismodule" = 1;
+			};
+		}
+	),
+	(
+		100, 0, "Fuel Tank",
+		"EQ_SOTL_EXP_FUELTANK",
+		"Hyperspace fuel tank. Fuel usage is non-linear with jump range. A single tank provides sufficient fuel for two maximum range jumps.",
+		{
+			available_to_all = true;
+			can_carry_multiple = true;
+			condition_script = "sotl-exp-conditions.js";
+			script_info = {
+				"sotl_exp_ismodule" = 1;
+			};
+		}
+	),
+	(
+		100, 0, "Sample Collection Bay",
+		"EQ_SOTL_EXP_SAMPLECOLLECTION",
+		"Sample collection bay capable of holding 15 samples",
+		{
+			available_to_all = true;
+			can_carry_multiple = true;
+			condition_script = "sotl-exp-conditions.js";
+			provides = ("EQ_CARGO_SCOOP");
+			script_info = {
+				"sotl_exp_ismodule" = 1;
+			};
+		}
+	),
+
+
+	/* Laser fittings */
+	(
+		0, 0, "Remove Laser",
+		"EQ_WEAPON_NONE",
+		"Remove the currently fitted laser.",
+		{
+			condition_script = "sotl-exp-conditions.js";
+			available_to_all = true;
+			weapon_info = {
+				range = 32000;
+				energy = 0.0;
+				damage = 0.0;
+				recharge_rate = 100.0;
+				shot_temperature = 0.0;
+				threat_assessment = -1.0;
+			};
+		}
+	),
+
+
+	/* Virtual equipment for HUD */
+	(
 		100, 2, "Hyperspace flight indicators",
 		"EQ_SOTL_EXP_HYPERSPACEJUMP",
 		"Hyperspace jump flight indicators.",

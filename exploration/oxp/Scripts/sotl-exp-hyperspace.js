@@ -165,7 +165,7 @@ this._endHyperspaceSequence = function() {
 		var closeness = system.sun.radius*(10+(Math.pow(2,this.$hyperspaceProgress)));
 		player.ship.position = system.sun.position.add(Vector3D.randomDirection(closeness));
 	} else {
-		var jumper = system.addShips("alloy",1,[2E10,0,0],0)[0];
+		var jumper = system.addShips("sotl-exp-wormhole",1,[2E10,0,0],0)[0];
 		this.$hyperspaceExitPrecision = 10;
 		if (this.$hyperspaceProgress < 10+(10*this.$hyperspaceDistance)) {
 			// not far enough - misjump

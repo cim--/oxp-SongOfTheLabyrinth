@@ -1,0 +1,685 @@
+{
+	/* Ship */
+	
+	/* Uses Adder model for now */
+	"shaula-player" =
+	{
+		aft_eject_position = "0.0 -7.5 -23.68";
+		ai_type = "oolite-scavengerAI.js";
+		auto_ai = yes;
+		auto_weapons = yes;
+		cargo_type = "CARGO_NOT_CARGO";
+		custom_views =
+		(
+			{
+				view_description = "Rear View";
+				view_orientation = "1.0 0.0 0.0 0.0";
+				view_position = "0.0 15.0 -100";
+				weapon_facing = "FORWARD";
+			},
+			{
+				view_description = "Rear Right View";
+				view_orientation = "0.9239 0.0 0.3827 0.0";
+				view_position = "70.71 15.0 -70.71";
+				weapon_facing = "FORWARD";
+			},
+			{
+				view_description = "Right View";
+				view_orientation = "0.7071 0.0 0.7071 0.0";
+				view_position = "100.0 15.0 0.0";
+				weapon_facing = "FORWARD";
+			},
+			{
+				view_description = "Front Right View";
+				view_orientation = "0.3827 0.0 0.9239 0.0";
+				view_position = "70.71 15.0 70.71";
+				weapon_facing = "FORWARD";
+			},
+			{
+				view_description = "Front View";
+				view_orientation = "0.0 0.0 1.0 0.0";
+				view_position = "0.0 15.0 100.0";
+				weapon_facing = "FORWARD";
+			},
+			{
+				view_description = "Front Left View";
+				view_orientation = "0.3827 0.0 -0.9239 0.0";
+				view_position = "-70.71 15.0 70.71";
+				weapon_facing = "FORWARD";
+			},
+			{
+				view_description = "Left View";
+				view_orientation = "0.7071 0.0 -0.7071 0.0";
+				view_position = "-100.0 15.0 0.0";
+				weapon_facing = "FORWARD";
+			},
+			{
+				view_description = "Rear Left View";
+				view_orientation = "0.9239 0.0 -0.3827 0.0";
+				view_position = "-70.71 15.0 -70.71";
+				weapon_facing = "FORWARD";
+			},
+			{
+				view_description = "Top View";
+				view_orientation = "-0.7071 0.7071 0.0 0.0";
+				view_position = "0.0 100.0 -10.0";
+				weapon_facing = "FORWARD";
+			},
+			{
+				view_description = "Bottom View";
+				view_orientation = "0.0 0.0 0.7071 0.7071";
+				view_position = "0.0 -100.0 -10.0";
+				weapon_facing = "FORWARD";
+			}
+		);
+		energy_recharge_rate = 4;
+		exhaust = ("0.0 1.089 -20.6786 3.6 2.4 0.7");
+		forward_weapon_type = "WEAPON_NONE";
+		fuel = 70;
+		has_ecm = 0.01;
+		has_scoop = yes;
+		hud = "hud.plist";
+		materials =
+		{
+			"Hull" =
+			{
+				diffuse_map = "oolite_adder_diffuse.png"; 
+				specular_color = (0.2, 0.2, 0.2);
+				shininess = 5;
+				emission_map = 
+				{
+					name = "oolite_adder_diffuse.png"; extract_channel = "a";
+				};
+				emission_modulate_color = (0.9926, 0.9686, 0.7325, 1.0);
+			};
+		};
+		max_cargo = 10;
+		max_energy = 64;
+		max_flight_pitch = 1;
+		max_flight_roll = 2;
+		max_flight_speed = 350;
+		max_missiles = 0;
+		missile_launch_position = "0.0 -5.1 19.2374";
+		missiles = 0;
+		model = "oolite_adder.dat";
+		name = "Shaula";
+		roles = "player";
+		scoop_position = "0.0 -5.1 22.724";
+		thrust = 30;
+		view_position_aft = "0.0 5.0 -22.5";
+		view_position_forward = "0.0 3.5 17.4";
+		view_position_port = "-12.0 1.5 -1.0";
+		view_position_starboard = "12.0 1.5 -1.0";
+		weapon_facings = 1;
+		weapon_position_aft = "0.0 0.0 -22.5";
+		weapon_position_forward = "0.0 -1.6769 28.8523";
+		weapon_position_port = "-15.0 0.0 -14.5";
+		weapon_position_starboard = "15.0 0.0 -14.5";
+	};
+
+
+
+	/* Station */
+
+	/* Temporary model */
+	"sotl-exp-station" = {
+		ai_type = "sotl-main-stationAI.js"; //tmp
+		cargo_type = "CARGO_NOT_CARGO";
+		energy_recharge_rate = 100;
+		forward_weapon_type = "WEAPON_NONE";
+		frangible = 0;
+		has_ecm = yes;
+		has_escape_pod = no;
+		has_scoop = no;
+		market_definition = (
+			// empty array matches system prices
+			// leaving the key out entirely is a blank market
+		);
+		"market_monitored" = yes;
+		materials = 
+		{ 
+			"oolite_coriolis_diffuse.png" = 
+			{ 
+				specular_color = ( 0.2, 0.2, 0.2 );
+				shininess = 5; 
+				emission_map = 
+				{
+					name = "oolite_coriolis_diffuse.png";
+					extract_channel = "a";
+				}; 
+				emission_modulate_color = (0.9520, 0.9630, 0.8824);  
+			}; 
+		};
+		max_energy = 100000;
+		max_flight_pitch = 0;
+		max_flight_roll = 0;
+		max_flight_yaw = 0;
+		max_flight_speed = 0;
+		missiles = 0;
+		model = "oolite_coriolis.dat";
+		name = "Local Maximum Colony Ship";
+		"requires_docking_clearance" = yes;
+		roles = "sotl-exp-station station";
+		rotating = no;
+		scan_class = "CLASS_STATION";
+		subentities = 
+		( 
+			{ 
+				subentity_key = "sotl_outpost_faceplate"; 
+				orientation = (1, 0, 0, 0); 
+				position = (0, 0, 0);
+				is_dock = false;						
+			},
+			{ 
+				subentity_key = "sotl_outpost_tris"; 
+				orientation = (1, 0, 0, 0); 
+				position = (0, 0, 0); 
+				is_dock = false;
+			},
+			{ 
+				subentity_key = "sotl_outpost_dock"; 
+				orientation = (1, 0, 0, 0);
+				position = (0, 0, 500.2561);
+				is_dock = true; 
+			},
+			{
+				type = "flasher";
+				position = "0 110 475";
+				color = { hue = 60; };
+				frequency = 1;
+				phase = -0.5;
+				size = 10;
+			},
+			{
+				type = "flasher";
+				position = "0 110 425";
+				color = { hue = 75; };
+				frequency = 1;
+				phase = -0.6;
+				size = 10;
+			},
+			{
+				type = "flasher";
+				position = "0 110 375";
+				color = { hue = 90; };
+				frequency = 1;
+				phase = -0.7;
+				size = 10;
+			},
+			{
+				type = "flasher";
+				position = "0 110 325";
+				color = { hue = 105; };
+				frequency = 1;
+				phase = -0.8;
+				size = 10;
+			},
+			{
+				type = "flasher";
+				position = "0 110 275";
+				color = { hue = 120; };
+				frequency = 1;
+				phase = -0.9;
+				size = 10;
+			},
+			{
+				type = "flasher";
+				position = "0 -110 475";
+				color = { hue = 60; };
+				frequency = 1;
+				phase = -0.5;
+				size = 10;
+			},
+			{
+				type = "flasher";
+				position = "0 -110 425";
+				color = { hue = 75; };
+				frequency = 1;
+				phase = -0.6;
+				size = 10;
+			},
+			{
+				type = "flasher";
+				position = "0 -110 375";
+				color = { hue = 90; };
+				frequency = 1;
+				phase = -0.7;
+				size = 10;
+			},
+			{
+				type = "flasher";
+				position = "0 -110 325";
+				color = { hue = 105; };
+				frequency = 1;
+				phase = -0.8;
+				size = 10;
+			},
+			{
+				type = "flasher";
+				position = "0 -110 275";
+				color = { hue = 120; };
+				frequency = 1;
+				phase = -0.9;
+				size = 10;
+			},
+			{
+				type = "flasher";
+				position = "0 -16 252.0";
+				color = { hue = 60; };
+				frequency = 1;
+				phase = 0.5;
+				size = 10;
+			},
+			{
+				type = "flasher";
+				position = "0 16 252.0";
+				color = { hue = 60; };
+				frequency = 1;
+				phase = 0.5;
+				size = 10;
+			},
+			{
+				type = "flasher";
+				position = "-16 0 252.0";
+				color = { hue = 60; };
+				frequency = 1;
+				phase = 0;
+				size = 10;
+			},
+			{
+				type = "flasher";
+				position = "16 0 252.0";
+				color = { hue = 60; };
+				frequency = 1;
+				phase = 0;
+				size = 10;
+			}
+		);
+		thrust = 100;
+		weapon_energy = 0;
+	};
+
+	"sotl_outpost_faceplate" = 
+	{
+		materials = 
+		{ 
+			"oolite_coriolis_faceplate_diffuse.png" = 
+			{ 
+				specular_color = ( 0.2, 0.2, 0.2 );  // Applies when specular map is not used (no shaders) 
+				shininess = 5; 
+				emission_map = 
+				{
+					name = "oolite_coriolis_faceplate_diffuse.png";
+					extract_channel = "a";
+				}; 
+				emission_modulate_color = (0.9520, 0.9630, 0.8824);   
+			}; 
+		};
+		model = "oolite_coriolis_faceplate.dat";
+		name = "Coriolis Faceplate";
+		smooth = 0;
+	};
+	"sotl_outpost_tris" = 
+	{ 
+		materials = 
+		{ 
+			"oolite_coriolis_tris_diffuse.png" = 
+			{ 
+				specular_color = ( 0.2, 0.2, 0.2 );  // Applies when specular map is not used (no shaders) 
+				shininess = 5; 
+				emission_map = 
+				{
+					name = "oolite_coriolis_tris_diffuse.png";
+					extract_channel = "a";
+				}; 
+				emission_modulate_color = (0.9520, 0.9630, 0.8824);   
+			}; 
+		};
+		model = "oolite_coriolis_tris.dat"; 
+		name = "Coriolis Triangle faces";    
+		smooth = 0;
+	};	
+	"sotl_outpost_dock" = 
+	{
+		materials = 
+		{ 
+			"oolite_coriolis_dock_diffuse.png" = 
+			{ 
+				specular_color = ( 0.2, 0.2, 0.2 );  // Applies when specular map is not used (no shaders) 
+				shininess = 5; 
+				emission_map = 
+				{
+					name = "oolite_coriolis_dock_diffuse.png";
+					extract_channel = "a";
+				}; 
+				emission_modulate_color = (0.9520, 0.9630, 0.8824); 
+			}; 
+		};
+		model = "oolite_coriolis_dock.dat";
+		smooth = 0;
+		name = "Coriolis Dock";
+	};	
+
+	/* Wormhole generator */
+	"sotl-wormhole-generator" =
+	{
+		ai_type = "dumbAI.plist";
+		bounty = 1;
+		cargo_type = "CARGO_ALLOY";
+		density = 100000;
+		energy_recharge_rate = 0;
+		explosion_type = ("oolite-builtin-slowcloud","oolite-builtin-fastspark");
+		forward_weapon_type = "WEAPON_NONE";
+		heat_insulation = 0.2;
+		materials =
+		{
+			"oolite_alloy_diffuse.png" =
+			{
+				specular_color = (0.3, 0.4, 0.4);
+				shininess = 16;
+				emission_map = 
+				{
+					name = "oolite_alloy_diffuse.png"; extract_channel = "a";
+				};
+				emission_modulate_color = (0.9926, 0.2686, 0.0325, 1.0);
+			};
+		};
+		max_energy = 1;
+		max_flight_pitch = 0.5;
+		max_flight_roll = 0.5;
+		max_flight_speed = 50;
+		missiles = 0;
+		model = "alloy.dat";
+		name = "Wormhole Initiation";
+		roles = "sotl-exp-wormhole";
+		scan_class = "CLASS_CARGO";
+		thrust = 0;
+	};
+
+
+
+	/* For now copy asteroid and wreckage definitions */
+
+	"oolite_template_asteroid" =
+	{
+		ai_type = "dumbAI.plist";
+		bounty = 10;
+		cargo_type = "CARGO_NOT_CARGO";
+		debris_role = "boulder";
+		density = 5;
+		energy_recharge_rate = 0;
+		explosion_type = ("oolite-default-asteroid-explosion");
+		forward_weapon_type = "WEAPON_NONE";
+		has_ecm = no;
+		has_escape_pod = no;
+		has_scoop = no;
+		heat_insulation = 5;
+//		is_template = 1;
+		likely_cargo = 4;
+		materials =
+		{
+			"oolite_asteroid_diffuse.png" =
+			{
+				shininess = 7;
+				specular_color = (0.3, 0.3, 0.3, 1.0);
+			};
+		};
+		max_energy = 100;
+		max_flight_pitch = 0.1;
+		max_flight_roll = 0.1;
+		max_flight_speed = 0;
+		missiles = 0;
+		model = "oolite_asteroid.dat";
+		name = "Asteroid";
+		roles = "asteroid";
+		scan_class = "CLASS_ROCK";
+		smooth = yes;
+		thrust = 0;
+		unpiloted = yes;
+		weapon_energy = 0;
+	};
+	"oolite_template_asteroid_alt" = 
+	{
+		like_ship = "oolite_template_asteroid";
+//		is_template = 1;
+		materials =
+		{
+			"oolite_alt_asteroid_diffuse.png" =
+			{
+				shininess = 7;
+				specular_color = (0.3, 0.3, 0.3, 1.0);
+			};
+		};
+		model = "oolite_alt_asteroid.dat";
+	};
+	"oolite_template_boulder" =
+	{
+		ai_type = "dumbAI.plist";
+		bounty = 5;
+		cargo_type = "CARGO_NOT_CARGO";
+		debris_role = "splinter";
+		density = 5;
+		energy_recharge_rate = 0;
+		explosion_type = ("oolite-default-asteroid-explosion");
+		forward_weapon_type = "WEAPON_NONE";
+		has_ecm = no;
+		has_escape_pod = no;
+		has_scoop = no;
+		heat_insulation = 3;
+//		is_template = 1;
+		likely_cargo = 4;
+		materials =
+		{
+			"oolite_boulder_diffuse.png" =
+			{
+				shininess = 7;
+				specular_color = (0.3, 0.3, 0.3, 1.0);
+			};
+		};
+		max_energy = 25;
+		max_flight_pitch = 0.5;
+		max_flight_roll = 0.5;
+		max_flight_speed = 50;
+		missiles = 0;
+		model = "oolite_boulder.dat";
+		name = "Boulder";
+		roles = "boulder";
+		scan_class = "CLASS_ROCK";
+		smooth = yes;
+		thrust = 0;
+		unpiloted = yes;
+		weapon_energy = 0;
+	};
+	"oolite_template_boulder_alt" =
+	{
+		like_ship = "oolite_template_boulder";
+//		is_template = 1;
+		materials =
+		{
+			"oolite_alt_boulder_diffuse.png" =
+			{
+				shininess = 7;
+				specular_color = (0.3, 0.3, 0.3, 1.0);
+			};
+		};
+		model = "oolite_alt_boulder.dat";
+	};
+
+	"oolite_template_splinter" = 
+	{
+		ai_type = "dumbAI.plist";
+		bounty = 1;
+		cargo_type = "CARGO_MINERALS";
+		energy_recharge_rate = 0;
+		explosion_type = ("oolite-default-asteroid-explosion");
+		forward_weapon_type = "WEAPON_NONE";
+		has_ecm = no;
+		has_escape_pod = no;
+		has_scoop = no;
+//		is_template = 1;
+		materials =
+		{
+			"oolite_splinter_diffuse.png" =
+			{
+				shininess = 7;
+				specular_color = (0.3, 0.3, 0.3, 1.0);
+			};
+		};
+		max_energy = 5;
+		max_flight_pitch = 1;
+		max_flight_roll = 1;
+		max_flight_speed = 20;
+		missiles = 0;
+		model = "oolite_splinter.dat";
+		name = "Splinter";
+		roles = "splinter";
+		scan_class = "CLASS_CARGO";
+		smooth = yes;
+		thrust = 0;
+		unpiloted = yes;
+		weapon_energy = 0;
+	};
+	"oolite_template_splinter_alt" = 
+	{
+		like_ship = "oolite_template_splinter";
+//		is_template = 1;
+		model = "oolite_alt_splinter.dat";
+	};
+
+
+	// required until own cargo containers are defined
+	"oolite_template_barrel" =
+	{
+		ai_type = "dumbAI.plist";
+		bounty = 1;
+		cargo_type = "CARGO_RANDOM";
+		energy_recharge_rate = 0;
+		explosion_type = ("oolite-builtin-slowcloud","oolite-builtin-fastspark");
+		forward_weapon_type = "WEAPON_NONE";
+		heat_insulation = 0.3;
+//		is_template = 1;
+		materials =
+		{
+			"Hull" =
+			{
+				diffuse_map = "oolite_barrel_diffuse.png"; 
+				specular_color = ( 0.2, 0.2, 0.2 );
+				shininess = 20;
+			};
+		};
+		max_energy = 1;
+		max_flight_pitch = 0.5;
+		max_flight_roll = 0.5;
+		max_flight_speed = 50;
+		missiles = 0;
+		model = "oolite_barrel.dat";
+		name = "Cargo container";
+		roles = "cargopod 1t-cargopod";
+		scan_class = "CLASS_CARGO";
+		thrust = 0;
+		unpiloted = yes;
+		weapon_energy = 0;
+	};
+
+
+	"oolite-cargopod-virtual" =
+	{
+		/* Used to pack holds without requiring massive allocation of
+		 * cargo data. */
+		like_ship = "oolite_template_barrel"; // tmp
+		roles = "oolite-template-cargopod";
+	};
+	"oolite-unknown-ship" =
+	{
+		/* Pseudo-ship shown when selecting a saved game using an unknown
+		 * ship type, or a broken demo ship model. */
+		materials =
+		{
+			"qmrk" =
+			{
+				diffuse_color = "42 40 40";
+				diffuse_map = "";
+				emission_color = "200 175 25";
+				shininess = 16;
+				specular_color = "20 40 115";
+			};
+		};
+		model = "oolite-unknown-ship.dat";
+		name = "Question Mark";
+		roles = "oolite-unknown-ship";
+		smooth = yes;
+	};
+
+	// wreckage - tmp until have proper wreckage+explosions
+	"oolite_template_wreckage-component" = 
+	{
+		ai_type = "nullAI.plist";
+		cargo_type = "CARGO_NOT_CARGO";
+		energy_recharge_rate = 0;
+		explosion_type = ("oolite-default-ship-explosion","oolite-fragment-explosion"); // no flash
+		forward_weapon_type = "WEAPON_NONE";
+		fragment_chance = 0.0;
+		is_template = 1;
+		max_energy = 2000;
+		max_flight_pitch = 0.2;
+		max_flight_roll = 0.2;
+		max_flight_speed = 500;
+		model = "wreck1.dat";
+		name = "Wreckage";
+		roles = "wreckage";
+		scan_class = "CLASS_NO_DRAW";
+		thrust = 0;
+		counts_as_kill = false;
+	};
+	"oolite_template_wreckage-chunk" = 
+	{
+		like_ship = "oolite_template_wreckage-component";
+		explosion_type = ("oolite-wreckage-chunk-explosion");
+		roles = "oolite-wreckage-chunk";
+	};
+
+	"wreckage-component" =
+	{
+		like_ship = "oolite_template_wreckage-component";
+	};
+	"more-wreckage2" =
+	{
+		like_ship = "oolite_template_wreckage-component";
+		explosion_type = ("oolite-default-ship-explosion","oolite-fragment-explosion-b");
+		model = "wreck2.dat";
+	};
+	"more-wreckage3" =
+	{
+		like_ship = "oolite_template_wreckage-component";
+		explosion_type = ("oolite-default-ship-explosion");
+		model = "wreck3.dat";
+	};
+	"more-wreckage4" =
+	{
+		like_ship = "oolite_template_wreckage-component";
+		explosion_type = ("oolite-fragment-explosion");
+		model = "wreck4.dat";
+	};
+	"more-wreckage5" =
+	{
+		like_ship = "oolite_template_wreckage-component";
+		explosion_type = ("oolite-fragment-explosion-b");
+		model = "wreck5.dat";
+	};
+
+	"wreckage-chunk" = 
+	{
+		like_ship = "oolite_template_wreckage-chunk";
+	};
+	"wreckage-chunk2" = 
+	{
+		like_ship = "oolite_template_wreckage-chunk";
+		explosion_type = ("oolite-wreckage-chunk-fragment");
+	};
+	"wreckage-chunk3" = 
+	{
+		like_ship = "oolite_template_wreckage-chunk";
+		explosion_type = ("oolite-wreckage-chunk-fragment-b");
+	};
+
+}

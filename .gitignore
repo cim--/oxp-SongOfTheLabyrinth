@@ -1,6 +1,6 @@
 node_modules
 *~
-altmap/galaxybuilder/build/*
+*/galaxybuilder/build/*
 npm-debug.log
 
 # generated files

@@ -1,0 +1,17 @@
+{
+	"shaula-player" =
+	{
+		chance = 0.25;
+		"optional_equipment" =
+		(
+		);
+		price = 65000;
+		"standard_equipment" =
+		{
+			"forward_weapon_type" = "EQ_WEAPON_NONE";
+			missiles = 0;
+		};
+		techlevel = 4;
+		"weapon_facings" = 1;
+	};
+}

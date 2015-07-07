@@ -41,13 +41,17 @@
     <integer>27313</integer>
     <key>extra_equipment</key>
     <dict>
-	<key>EQ_ADVANCED_NAVIGATIONAL_ARRAY</key>
+	<key>EQ_SOTL_EXP_FLIGHTCOMPUTER</key>
 	<integer>1</integer>
-	<key>EQ_ADVANCED_COMPASS</key>
+	<key>EQ_SOTL_EXP_GENERATOR</key>
 	<integer>1</integer>
+	<key>EQ_SOTL_EXP_CAPACITOR</key>
+	<integer>3</integer>
+	<key>EQ_SOTL_EXP_FUELTANK</key>
+	<integer>3</integer>
     </dict>
     <key>forward_weapon</key>
-    <string>EQ_WEAPON_PULSE_LASER</string>
+    <string>EQ_WEAPON_NONE</string>
     <key>fuel</key>
     <integer>70</integer>
     <key>galaxy_id</key>
@@ -152,13 +156,13 @@
     <integer>0</integer>
     <key>missile_roles</key>
     <array>
-	<string>EQ_MISSILE</string>
-	<string>EQ_MISSILE</string>
-	<string>EQ_MISSILE</string>
+	<string>NONE</string>
+	<string>NONE</string>
+	<string>NONE</string>
 	<string>NONE</string>
     </array>
     <key>missiles</key>
-    <integer>3</integer>
+    <integer>0</integer>
     <key>mission_destinations</key>
     <dict>
     </dict>
@@ -226,7 +230,7 @@
 	<string>player-unknown</string>
     </array>
     <key>scenario_restriction</key>
-    <string>id:oolite.oxp.cim.sotl.exploration;exc:world-scripts.plist</string>
+    <string>id:oolite.oxp.cim.sotl.exploration;exc:world-scripts.plist;exc:crosshairs.plist;exc:equipment.plist;exc:shipdata.plist;exc:shipyard.plist</string>
     <key>scripted_planetinfo_overrides</key>
     <dict>
     </dict>
@@ -302,15 +306,15 @@
 	</array>
     </array>
     <key>ship_class_name</key>
-    <string>Cobra Mark III</string>
+    <string>Shaula</string>
     <key>ship_clock</key>
     <real>180058159942.1625</real>
     <key>ship_desc</key>
-    <string>cobra3-player</string>
+    <string>shaula-player</string>
     <key>ship_kills</key>
     <integer>0</integer>
     <key>ship_name</key>
-    <string>Cobra Mark III</string>
+    <string>Shaula</string>
     <key>ship_trade_in_factor</key>
     <integer>100</integer>
     <key>ship_unique_name</key>

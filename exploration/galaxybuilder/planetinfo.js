@@ -625,6 +625,7 @@
 		result += $plist("inhabitants",info.details.surveyEquipmentList);
 		result += $plist("productivity",info.details.bestPlanet);
 
+		result += $plist("station","sotl-exp-station");
 
 		result += "};\n";
 		return result;
