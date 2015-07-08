@@ -5,11 +5,197 @@ this.name = "SOTL discovery checks";
 this.$discoveryChecks = null;
 
 this.startUp = function() {
+	this.$discoveries = missionVariables.sotl_exp_discoveries ? JSON.parse(missionVariables.sotl_exp_discoveries) : this._initialDiscoveries();
+
 	this.$discoveryChecks = new Timer(this, this._checkForDiscovery.bind(this), 1, 1);
 };
 
+this.playerWillSaveGame = function() {
+	missionVariables.sotl_exp_discoveries = JSON.stringify(this.$discoveries);
+}
+
 this.shipDied = function() {
 	this.$discoveryChecks.stop();
+}
+
+this.shipWillExitWitchspace = function() {
+	this._discoverStarProperty("visited");
+}
+
+
+this._initialDiscoveries = function() {
+	return {
+		"0": {
+			"star": {
+				"visited": 1,
+				"brightness": 1,
+				"gravity": 1,
+				"stability": 1
+			},
+			"planets": {
+				"0": {
+					"size": 1,
+					"orbitalDistance": 1,
+					"temperature": 1,
+					"radiation": 1,
+					"atmosphere": 1,
+					"earthquakes": 1,
+					"weather": 1,
+					"minerals": 1,
+					"habitability": 1,
+					"gravity": 1
+				},
+				"1": {
+					"size": 1,
+					"orbitalDistance": 1,
+					"temperature": 1,
+					"radiation": 1,
+					"atmosphere": 1,
+					"earthquakes": 1,
+					"weather": 1,
+					"minerals": 1,
+					"habitability": 1,
+					"gravity": 1
+				}
+			}
+		}
+	};
+};
+
+
+this._describeStar = function() {
+	var star = JSON.parse(system.info.star_data);
+	var discovered = this.$discoveries[system.ID]["star"];
+//	var description = star.name+"\n";
+	var description = "";
+	description += "Class: "+star.sequence+"\n";
+	description += "Radius: "+(star.radius/7E5).toFixed(2)+" Sr\n";
+
+	if (discovered["brightness"]) {
+		description += "Brightness: "+star.brightness.toFixed(3)+" Sl\n";
+	} else {
+		description += "Brightness: no scan\n";
+	}
+	if (discovered["gravity"]) {
+		description += "Mass: "+star.mass.toFixed(3)+" Sm\n";
+	} else {
+		description += "Mass: no scan\n";
+	}
+	if (discovered["stability"]) {
+		description += "Stability: "+(100*(1-star.instability)).toFixed(1)+"%\n";
+	} else {
+		description += "Stability: no scan\n";
+	}
+	
+	return description;
+}
+
+this._describePlanet = function(index) {
+	var planet = JSON.parse(system.info.planet_data)[index];
+	var discovered = this.$discoveries[system.ID]["planets"][index];
+	if (!discovered) {
+		return "No target";
+	}
+	var description = "";
+//	var description = system.info["planet_names_"+index]+"\n";
+
+	if (discovered["size"]) {
+		description += "Radius: "+(planet.radius).toFixed(0)+" km\n";
+	} else {
+		description += "Radius: no scan\n";
+	}
+
+	if (discovered["orbitalDistance"]) {
+		description += "Orbit: "+planet.orbitalRadiusAU.toFixed(3)+" AU\n";
+	} else {
+		description += "Orbit: ~"+planet.orbitalRadiusAU.toFixed(1)+" AU\n";
+	}
+
+	if (discovered["gravity"]) {
+		description += "Surface gravity: "+planet.surfaceGravity.toFixed(2)+" G\n";
+	} else {
+		description += "Surface gravity: no scan\n";
+	}
+
+	if (discovered["temperature"]) {
+		description += "Surface temperature: "+(273+planet.temperature).toFixed(0)+" K\n";
+	} else {
+		description += "Surface temperature: no scan\n";
+	}
+
+	if (discovered["radiation"]) {
+		description += "Surface radiation: "+(100*planet.surfaceRadiation).toFixed(2)+" tR\n";
+	} else {
+		description += "Surface radiation: no scan\n";
+	}
+
+	if (discovered["atmosphere"]) {
+		if (planet.cloudAlpha < 0.01) {
+			description += "Atmosphere: none\n\n";
+		} else {
+			/* TODO: more atmosphere scanning */
+			description += "Atmosphere: no samples\n";
+			if (discovered["weather"]) {
+				/* TODO */
+				description += "Weather: ...\n";
+			} else {
+				description += "Weather: no scan\n";
+			}
+		}
+	} else {
+		description += "Atmosphere: no scan\n\n";
+	}
+
+	if (discovered["earthquakes"]) {
+		description += "Seismic Activity: ";
+		if (planet.seismicInstability < 0.01) {
+			description += "Insignificant";
+		} else if (planet.seismicInstability < 0.03) {
+			description += "Low";
+		} else if (planet.seismicInstability < 0.06) {
+			description += "Moderate";
+		} else if (planet.seismicInstability < 0.1) {
+			description += "High";
+		} else if (planet.seismicInstability < 0.2) {
+			description += "Very High";
+		} else {
+			description += "Extreme";
+		}
+
+		description += "\n";
+	} else {
+		description += "Seismic Activity: no scan\n";
+	}
+
+	if (discovered["minerals"]) {
+		/* TODO */
+		description += "Minerals: low\n";
+	} else {
+		description += "Minerals: no scan\n";
+	}
+
+	if (discovered["habitability"]) {
+		/* TODO */
+		description += "Habitability: ";
+		if (planet.habitability >= 90) {
+			description += "Ideal";
+		} else if (planet.habitability >= 80) {
+			description += "Self-sufficient open habitats";
+		} else if (planet.habitability >= 70) {
+			description += "Restricted open air habitats";
+		} else if (planet.habitability >= 50) {
+			description += "Lightweight colony domes";
+		} else if (planet.habitability >= 0) {
+			description += "Standard colony domes";
+		} else {
+			description += "Shielded colony domes";
+		}
+		description += "\n";
+	} else {
+		description += "Habitability: insufficient data\n";
+	}
+	
+	return description;
 }
 
 
@@ -51,6 +237,32 @@ this._discoverPlanet = function(planet, bitmask) {
 		beaconCode:"P",
 		beaconLabel:system.info["planet_name_"+index]
 	});
+	this._discoverPlanetProperty(index,"size");
+
 	player.consoleMessage("New planetary body confirmed.");
 	player.consoleMessage("Preliminary designation "+system.info["planet_name_"+index]);
 };
+
+
+this._discoverPlanetProperty = function(index,prop) {
+	if (!this.$discoveries[system.ID]) {
+		this.$discoveries[system.ID] = {};
+	}
+	if (!this.$discoveries[system.ID]["planets"]) {
+		this.$discoveries[system.ID]["planets"] = {};
+	}
+	if (!this.$discoveries[system.ID]["planets"][index]) {
+		this.$discoveries[system.ID]["planets"][index] = {};
+	}
+	this.$discoveries[system.ID]["planets"][index][prop] = 1;
+}
+
+this._discoverStarProperty = function(prop) {
+	if (!this.$discoveries[system.ID]) {
+		this.$discoveries[system.ID] = {};
+	}
+	if (!this.$discoveries[system.ID]["star"]) {
+		this.$discoveries[system.ID]["star"] = {};
+	}
+	this.$discoveries[system.ID]["star"][prop] = 1;
+}

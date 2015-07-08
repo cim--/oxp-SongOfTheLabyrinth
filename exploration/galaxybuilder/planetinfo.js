@@ -234,8 +234,9 @@
 			pland = 1;
 			pcloud = 0;
 			calpha = 0;
-			if (planet.temperature < 0) {
+			if (planet.temperature < 0 && random.randf() < 0.5) {
 				icecap = 1; // iceball
+				pland = 0;
 			} else {
 				icecap = 0;
 			}
@@ -611,6 +612,7 @@
 			result += $plist("planet_name_"+i,planet.name);
 		}
 		result += $plist("planet_data",JSON.stringify(info.planets));
+		result += $plist("star_data",JSON.stringify(info.star));
 
 		result += $plist("sky_n_stars",info.starCount);
 		result += $plist("sky_n_blurs",info.nebulaCount);

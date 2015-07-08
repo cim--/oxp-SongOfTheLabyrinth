@@ -124,6 +124,8 @@
 	/* Temporary model */
 	"sotl-exp-station" = {
 		ai_type = "sotl-main-stationAI.js"; //tmp
+		beacon = "L";
+		beacon_label = "Local Maximum";
 		cargo_type = "CARGO_NOT_CARGO";
 		energy_recharge_rate = 100;
 		forward_weapon_type = "WEAPON_NONE";

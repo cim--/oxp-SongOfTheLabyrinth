@@ -55,4 +55,6 @@ this._processEquipment = function() {
 	}
 	player.ship.cargoSpaceCapacity = cargo;
 
+	player.ship.maxForwardShield = 0;
+	player.ship.maxAftShield = 0;
 };

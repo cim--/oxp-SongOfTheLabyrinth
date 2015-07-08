@@ -96,24 +96,28 @@ random.setStart(10000);
 			
 			switch(startypeN) { 
 			case 0: 
-				// "blue"; 
-				sradfactor = 2;
-				shabfactor = 1.75;
-				minfactor = 0.8;
-				basecolour = [0.6,0.85,0.95];
-				star.sequence = "Class A";
-				star.brightness = 20 + random.rand(60);
-				break;
-			case 1:	case 2:
-				// "white";
-				sradfactor = 1.25;
-				shabfactor = 1.4;
-				minfactor = 0.6;
-				basecolour = [0.9,0.9,0.9];
-				star.sequence = "Class F";
-				star.brightness = 2.5 + random.randf()*3.5;
-				break;
-			case 3: case 4: 
+				if (random.randf() < 0.15) {
+					// "blue"; 
+					sradfactor = 2;
+					shabfactor = 1.75;
+					minfactor = 0.8;
+					basecolour = [0.6,0.85,0.95];
+					star.sequence = "Class A";
+					star.brightness = 20 + random.rand(60);
+					star.mass = 1.6 + random.randf() * 0.8;
+					break;
+				} else {
+					// "white";
+					sradfactor = 1.25;
+					shabfactor = 1.4;
+					minfactor = 0.6;
+					basecolour = [0.9,0.9,0.9];
+					star.sequence = "Class F";
+					star.brightness = 2.5 + random.randf()*3.5;
+					star.mass = 1.0 + random.randf() * 0.4;
+					break;
+				}
+			case 1: case 2: case 3:
 				// "yellow"; 
 				sradfactor = 1;
 				shabfactor = 1;
@@ -121,8 +125,9 @@ random.setStart(10000);
 				basecolour = [0.9,0.9,0.4];
 				star.sequence = "Class G";
 				star.brightness = 0.75 + random.randf()*0.5;
+				star.mass = 0.8 + random.randf() * 0.4;
 				break;
-			case 5: case 6: case 7:
+			case 4: case 5: case 6: case 7:
 				// "orange";
 				sradfactor = 0.8;
 				shabfactor = 0.7;
@@ -130,15 +135,17 @@ random.setStart(10000);
 				basecolour = [0.95,0.7,0.25];
 				star.sequence = "Class K";
 				star.brightness = 0.15 + random.randf()*0.25;
+				star.mass = 0.45 + random.randf() * 0.35;
 				break;
 			case 8: case 9: case 10:
-				// "red";
+				// "large red dwarf";
 				sradfactor = 0.6;
 				shabfactor = 0.5; 
 				minfactor = 0.3;
 				basecolour = [0.95,0.55,0.5];
 				star.sequence = "Class M";
 				star.brightness = 0.05 + random.randf()*0.1;
+				star.mass = 0.2 + random.randf() * 0.4;
 				break;
 			case 11:
 				// "giant"; 
@@ -150,10 +157,11 @@ random.setStart(10000);
 				star.brightness = 100 + random.rand(600);
 				break;
 			default: // 12-29
-				// "dwarf";
+				// "small red dwarf";
 				star.sequence = "Class M dwarf";
 				star.brightness = 0.001 + random.randf()*0.009;
-				sradfactor = 0.4;
+				star.mass = 0.075 + random.randf()*0.2;
+				sradfactor = 0.3;
 				shabfactor = 0.4;
 				minfactor = 0.2;  
 				basecolour = [0.95,0.45,0.4];

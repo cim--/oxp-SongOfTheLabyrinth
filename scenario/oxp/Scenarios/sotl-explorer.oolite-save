@@ -34,9 +34,9 @@
 	<real>353972.8994140625</real>
     </array>
     <key>docked_station_role</key>
-    <string>coriolis</string>
+    <string>sotl-exp-station</string>
     <key>docking_clearance_protocol</key>
-    <true/>
+    <false/>
     <key>entity_personality</key>
     <integer>27313</integer>
     <key>extra_equipment</key>
