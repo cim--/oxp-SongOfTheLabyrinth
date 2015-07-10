@@ -277,6 +277,8 @@ this._makeHyperspaceRoute = function(s1,s2) {
 		if (i < 5) {
 			// startup is slow
 			chg = 0;
+		} else if (i > 50) {
+			chg += (i-50)/50;
 		}
 		if (chg < 0.55) {
 			// small change
