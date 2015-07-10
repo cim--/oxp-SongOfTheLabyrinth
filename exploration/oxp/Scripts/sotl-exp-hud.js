@@ -27,7 +27,7 @@ this.shipWillEnterWitchspace = function() {
 	this._clearMFD();
 }
 
-this.shipExitedWitchspace = function() {
+this.shipLaunchedFromStation = this.shipExitedWitchspace = function() {
 	this._updateMFD();
 }
 

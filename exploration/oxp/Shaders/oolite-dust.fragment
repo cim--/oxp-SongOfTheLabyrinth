@@ -1,0 +1,16 @@
+varying vec4	vColor;
+
+uniform vec4	uWarp;
+
+/* Override of main warp effect to fade it out at higher speeds */
+
+void main(void)
+{
+	float umag = length(uWarp.rgb) / 32.0;
+	umag = (10.0 - log(umag))/10.0;
+	if (umag < 0.01) {
+		umag = 0.01;
+	}
+
+	gl_FragColor = vec4(vColor.rgb, vColor.a * umag);
+}
