@@ -15,8 +15,8 @@ random.setStart(0); // for clarity
 
 /*
 Planet scale 1/100 (normal Oolite)
-Star scale 1/1000
-System scale 1/400 (makes the star scale look right from the planets)
+Star scale 1/500
+System scale 1/200 (makes the star scale look right from the planets)
 */
 
 /* Set up system coordinates */
@@ -167,7 +167,7 @@ random.setStart(10000);
 				basecolour = [0.95,0.45,0.4];
 			}
 
-			star.radius = Math.floor(7E5 * (0.9+(0.2*random.randf())) * sradfactor);
+			star.radius = Math.floor(14E5 * (0.9+(0.2*random.randf())) * sradfactor);
 			/* Mostly <0.3, a few in 0.4..0.6, extremely rare 0.6..0.9 */
 			star.instability = (random.randf() * random.randf() * random.randf());
 			if (star.sequence == "Class M dwarf") {

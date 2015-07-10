@@ -69,7 +69,7 @@ this._describeStar = function() {
 //	var description = star.name+"\n";
 	var description = "";
 	description += "Class: "+star.sequence+"\n";
-	description += "Radius: "+(star.radius/7E5).toFixed(2)+" Sr\n";
+	description += "Radius: "+(star.radius/14E5).toFixed(2)+" Sr\n";
 
 	if (discovered["brightness"]) {
 		description += "Brightness: "+star.brightness.toFixed(3)+" Sl\n";

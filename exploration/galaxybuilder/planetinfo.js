@@ -169,7 +169,7 @@
 		return theta;
 	}
 
-	var au = 3E7;
+	var au = 6E7;
 	planetinfo.addPlanet = function(i, j, star, orbitDistAU, forceNoAtmosphere, random, forceName) {
 		var planet = {};
 		

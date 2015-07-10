@@ -27,24 +27,29 @@ this.shipWillEnterWitchspace = function() {
 	this._clearMFD();
 }
 
+this.shipExitedWitchspace = function() {
+	this._updateMFD();
+}
+
 this.shipWillDockWithStation = function() {
 	this._clearMFD();
 }
 
-
-
 this._clearMFD = function() {
-	player.ship.setMultiFunctionText("sotl_exp_surveyresults","");
+	player.ship.setMultiFunctionText("sotl_exp_surveyresults",null);
 }
 
 this._updateMFD = function() {
+	if (worldScripts["SOTL Hyperspace"].$hyperspaceState == 2) {
+		return this._clearMFD();	
+	}
 	var target = player.ship.compassTarget;
 	var description = "No target";
 	if (target) {
 		if (target == system.sun) {
 			description = worldScripts["SOTL discovery checks"]._describeStar();
 		} else if (target == system.mainPlanet) {
-			if (system.mainPlanet.position.z < 9E13) {
+			if (system.mainPlanet.position.z < 9E13 && system.mainPlanet.sotl_planetIndex) {
 				description = worldScripts["SOTL discovery checks"]._describePlanet(system.mainPlanet.sotl_planetIndex);
 			} // else not discovered yet
 		} else if (target.beaconCode && target.beaconCode == "P") {
@@ -62,6 +67,7 @@ this._updateMFD = function() {
 	}
 
 	player.ship.setMultiFunctionText("sotl_exp_surveyresults",description);
+	player.ship.setMultiFunctionDisplay(0,"sotl_exp_surveyresults");
 };
 
 

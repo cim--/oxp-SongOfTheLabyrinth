@@ -48,7 +48,9 @@ this.playerStartedJumpCountdown = function(type, seconds) {
 	if (type == "standard") {
 		player.ship.cancelHyperspaceCountdown();
 		if (this.$hyperspaceState == 0) {
-			if (player.ship.alertCondition == 1) {
+			if (player.ship.torusEngaged) {
+				player.consoleMessage("Travelling too fast to initiate hyperspace");
+			} else if (player.ship.alertCondition == 1) {
 				this._beginHyperspaceSequence();
 			} else {
 				player.consoleMessage("Local mass density too high to initiate hyperspace");
@@ -118,6 +120,11 @@ this._resetHyperspaceSequence = function() {
 	if (this.$hyperspaceEffect.isValid) {
 		this.$hyperspaceEffect.remove();
 	}
+	player.ship.showHUDSelector("drawWaypoints:");
+	player.ship.showHUDSelector("drawCompass:");
+	player.ship.showHUDSelector("drawASCTarget:");
+	worldScripts["SOTL HUD Dials management"]._updateMFD();
+
 };
 
 
@@ -317,6 +324,18 @@ this._setFuel = function(amount,setpsf) {
 	}
 }
 
+this._enterHyperspace = function() {
+	player.ship.position = [1E10,0,0];
+	this.$hyperspaceEffect = system.addVisualEffect("sotl-exp-hyperspace",[1E10,0,0]);
+	this.$hyperspaceEffect.shaderFloat1 = 20+(this.$hyperspaceDistance*10);
+	this._setFuel(this.$hyperspaceFuel-Math.sqrt(this.$hyperspaceDistance),false);
+	player.ship.hideHUDSelector("drawWaypoints:");
+	player.ship.hideHUDSelector("drawCompass:");
+	player.ship.hideHUDSelector("drawASCTarget:");
+	worldScripts["SOTL HUD Dials management"]._clearMFD();
+	this.$hyperspaceState = 2;
+}
+
 
 this._hyperspaceSequence = function(delta) {
 	this.$hyperspaceProgress += delta;
@@ -327,13 +346,10 @@ this._hyperspaceSequence = function(delta) {
 		player.ship.setCustomHUDDial("sotl_exp_hyp_pitch_required",0);
 		player.ship.setCustomHUDDial("sotl_exp_hyp_status",[0,0,0,0]);
 		return;
-	}
+	}	
+
 	if (this.$hyperspaceState == 1) {
-		player.ship.position = [1E10,0,0];
-		this.$hyperspaceEffect = system.addVisualEffect("sotl-exp-hyperspace",[1E10,0,0]);
-		this.$hyperspaceEffect.shaderFloat1 = 20+(this.$hyperspaceDistance*10);
-		this._setFuel(this.$hyperspaceFuel-Math.sqrt(this.$hyperspaceDistance),false);
-		this.$hyperspaceState = 2;
+		this._enterHyperspace();
 	}
 
 	if (this.$hyperspaceProgress >= (this.$hyperspaceDistance*10)+20) {
