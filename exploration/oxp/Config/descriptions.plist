@@ -12,6 +12,25 @@
 	"sysdata-prod-value" = "";
 	"sysdata-radius" = "";
 	"sysdata-radius-value" = "";
-
 	
+	"status-legal-status" = "Operational Status:";
+	"status-rating" = "Mission Status:";
+
+	legal_status = (
+		"Active",
+		"Probationary",
+		"Suspended"
+	);
+
+	rating = (
+		"Experimental", //0
+		"Prototype Studies", //8
+		"Preliminary Testing", //16
+		"Trials Approved", //32
+		"Trial Phase I", //64
+		"Trial Phase II", //128
+		"Mission Approved", //512
+		"Mission Phase I", //2880
+		"Mission Complete" //6400
+	);
 }

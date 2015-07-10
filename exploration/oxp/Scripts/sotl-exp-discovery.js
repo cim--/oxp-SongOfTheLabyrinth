@@ -208,12 +208,12 @@ this._checkForDiscovery = function() {
 		if (!(discovered & bitmask)) {
 			// not yet discovered - try to find it
 
-			/* passive discovery; takes place when within 75 radii of
+			/* passive discovery; takes place when within 150 radii of
 			 * a planet. Hopefully far enough back to avoid "it's
 			 * right there! pick it up!" frustration, but close enough
 			 * to avoid detecting ones the player had gone right
 			 * past. */
-			if (player.ship.position.distanceTo(pn) < pn.radius * 75) {
+			if (player.ship.position.distanceTo(pn) < pn.radius * 150) {
 				this._discoverPlanet(pn,bitmask);
 			}
 
@@ -241,6 +241,8 @@ this._discoverPlanet = function(planet, bitmask) {
 
 	player.consoleMessage("New planetary body confirmed.");
 	player.consoleMessage("Preliminary designation "+system.info["planet_name_"+index]);
+	player.score++;
+
 };
 
 

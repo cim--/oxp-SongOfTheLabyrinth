@@ -49,7 +49,7 @@ this._updateMFD = function() {
 		if (target == system.sun) {
 			description = worldScripts["SOTL discovery checks"]._describeStar();
 		} else if (target == system.mainPlanet) {
-			if (system.mainPlanet.position.z < 9E13 && system.mainPlanet.sotl_planetIndex) {
+			if (system.mainPlanet.position.z < 9E13 && system.mainPlanet.sotl_planetIndex !== undefined) {
 				description = worldScripts["SOTL discovery checks"]._describePlanet(system.mainPlanet.sotl_planetIndex);
 			} // else not discovered yet
 		} else if (target.beaconCode && target.beaconCode == "P") {

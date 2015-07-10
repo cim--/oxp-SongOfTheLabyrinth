@@ -189,6 +189,7 @@ this._endHyperspaceSequence = function() {
 				if (!this.$hyperspaceKnownRoute) {
 					// start storing data
 					this.$hyperspaceRouteQualities[system.ID+":"+this.$hyperspaceDestination] = 1;
+					player.score++;
 				} else if (this.$hyperspaceRouteQualities[system.ID+":"+this.$hyperspaceDestination] < 20) {
 					// improve route data
 					/* TODO: faster/slower scanners? */
