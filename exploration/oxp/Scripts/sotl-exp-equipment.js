@@ -2,6 +2,8 @@
 
 this.name = "SOTL Equipment Management";
 
+this.$weaponManagement = false;
+
 this.startUp = function() {
 	this._processEquipment();
 	this.equipmentAdded = function() {
@@ -88,6 +90,14 @@ this._processEquipment = function() {
 	player.ship.maxForwardShield = 0;
 	player.ship.maxAftShield = 0;
 
+	this.$weaponManagement = true;
+	if (player.ship.hasEquipmentProviding("EQ_SOTL_EXP_PROSPECTINGLASER")) {
+		player.ship.forwardWeapon = "EQ_WEAPON_SOTL_PROSPECTING";
+	} else {
+		player.ship.forwardWeapon = "EQ_WEAPON_NONE";
+	}
+	this.$weaponManagement = false;
+
 	// force recalculation of fuel requirement bar
 	delete worldScripts["SOTL HUD Dials management"].$dest;
 };
@@ -134,7 +144,7 @@ this._moduleList = function() {
 
 
 this._processModuleSelection = function(choice) {
-	if (choice == "99_EXIT") {
+	if (choice == null || choice == "99_EXIT") {
 		return;
 	} else {
 		var slot = parseInt(choice.substr(1,1));
@@ -181,7 +191,9 @@ this._availableModuleChoices = function() {
 }
 
 this._processRefitRequest = function(slot, choice) {
-	if (choice == "98_RETURN") {
+	if (choice == null) {
+		return;
+	} else if (choice == "98_RETURN") {
 		this._startRefit();
 		return;
 	} else if (choice == "90_EMPTY") {

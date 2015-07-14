@@ -1,0 +1,60 @@
+hyperspace:
+ - duration 10+10/LY+10 seconds
+ - fuel use proportional to dist^0.5 (so longer jumps use less fuel than two short ones but are more difficult to do)
+ - requires matching of pitch/roll to a particular pattern specific to the jump+direction
+ -- jumping out of interstellar gets a random pattern
+ - drains energy during jump, faster with poor matching, slower with good matching (particularly good matching can allow ERR to regenerate energy)
+ - running out of energy causes ship destruction as usual; can force a misjump at the current fraction to avoid this
+ -- (failure in first ten is unlikely, but causes jump initiation to fail)
+ -- (failure in last ten drops out in target system but badly placed)
+ - all misjumps cause damage to ship - more if energy was especially low when done
+ - once jump has been done successfully once, energy cost is reduced
+ - after a number of successful jumps, pattern confidence increases. Once above a threshold secondary exit points can be used for gravity-scanned bodies 
+ - primary exit point is near star.
+
+ship:
+ - generator, ANA, ASC, STE, TSME, ITS as standard
+ - ten modules can be fitted
+ -- fuel tank 
+ -- capacitor 
+ -- sample collection bay (20 samples per bay)
+ -- retrieval bay (remote module bays become this when launched)
+ -- remote modules:
+ --- gravitic satellite
+ --- stellar observation satellite
+ --- weather satellite
+ --- survey control satellite
+ --- astronomic survey satellite
+ --- atmospheric probe
+ --- asteroid miner
+ --- planetary rover
+ --- solar plane
+ --- planetary boat
+ --- surface sample retrieval lander
+ -- installation components (also become retrieval bay when used)
+ --- backbone
+ --- fuel tank
+ --- fuel transfer system
+ --- fuel refinery
+ --- raw material store
+ --- solar panel
+ -- sensor packages:
+ --- gravitic
+ --- spectroscopic
+ --- radar
+ --- infrared
+ --- parallax
+ - one weapon can be fitted (also handled as a module)
+ -- prospecting laser
+ -- sampling laser
+ - No shields - repair value is integrity, when gets to zero further damage hits systems
+
+Default equipment:
+ - fuel tank*3
+ - capacitor*3
+ - prospecting laser
+ - gravitic sensor
+ - spectroscopic sensor
+ - gravitic satellite
+
+

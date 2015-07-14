@@ -9,8 +9,10 @@ this.allowAwardEquipment = function(eqKey, ship, context) {
 	if (eqKey == "EQ_FUEL") {
 		return (worldScripts["SOTL Hyperspace"].$hyperspaceFuel < worldScripts["SOTL Hyperspace"].$hyperspaceMaxFuel);
 	}
-	if (eqKey.match(/EQ_WEAPON/)) {
-		return false;
+	if (!worldScripts["SOTL Equipment Management"].$weaponManagement) {
+		if (eqKey.match(/EQ_WEAPON/)) {
+			return false;
+		}
 	}
 	// TODO: more conditions
 	return true;

@@ -79,6 +79,18 @@
 			};
 		}
 	),
+	(
+		100, 0, "Prospecting Laser",
+		"EQ_SOTL_EXP_PROSPECTINGLASER",
+		"Fires a narrow low-energy coherent beam designed to vaporise small parts of the surface layer of an asteroid, surrounded by a wider multispectral 'torch' to illuminate the released gases for easier analysis by spectroscopic sensors.",
+		{
+			available_to_all = true;
+			condition_script = "sotl-exp-conditions.js";
+			script_info = {
+				"sotl_exp_ismodule" = 1;
+			};
+		}
+	),
 
 
 	/* Laser fittings */
@@ -96,6 +108,26 @@
 				recharge_rate = 100.0;
 				shot_temperature = 0.0;
 				threat_assessment = -1.0;
+			};
+		}
+	),
+	(
+		0, 0, "Prospecting Laser",
+		"EQ_WEAPON_SOTL_PROSPECTING",
+		"Fires a narrow low-energy coherent beam designed to vaporise small parts of the surface layer of an asteroid, surrounded by a wider multispectral 'torch' to illuminate the released gases for easier analysis by spectroscopic sensors.",
+		{
+			condition_script = "sotl-exp-conditions.js";
+			available_to_all = true;
+			visible = false; // not supported
+			weapon_info = {
+				range = 2000;
+				energy = 0.1;
+				damage = 0.00001;
+				recharge_rate = 0.1;
+				shot_temperature = 3.0;
+				threat_assessment = -1.0;
+				is_mining_laser = true;
+				color = "0.4 0.4 0.9 1.0";
 			};
 		}
 	),
