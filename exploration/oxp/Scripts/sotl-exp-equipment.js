@@ -291,6 +291,9 @@ this._gravSensorButton1 = function() {
 		case "assign":
 			this._gravSensorAssign();
 			break;
+		case "exclude":
+			this._gravSensorExclude();
+			break;
 		}
 	}
 }
@@ -327,7 +330,7 @@ this._gravSensorButton2 = function() {
 
 this._gravSensorResetValues = function() {
 	this.$sensorValues = [0,0,0,0,0,0,0,0.5,0.5,0.5];
-	this.$sensorLabels = ["kG","G","mG","μG","nG","pG","","X","Y","Z"];
+	this.$sensorLabels = [" G","mG","µG","nG","pG","fG","","X","Y","Z"];
 };
 
 this._gravSensorCount = function() {
@@ -395,6 +398,30 @@ this._gravSensorAssign = function() {
 };
 
 
+this._gravSensorExclude = function() {
+	var target = worldScripts["SOTL discovery checks"]._compassTarget();
+	if (!target.isSun && !target.isPlanet) {
+		player.consoleMessage("Invalid target to exclude from gravitational scan. Adjust compass.");
+	} else {
+		var grav = worldScripts["SOTL discovery checks"]._reportedGravity(target);
+		if (grav == -1) {
+			player.consoleMessage("No gravity estimate for this object - cannot filter from scan results");
+		} else {
+			var idx = this.$gravSensorExclusions.indexOf(target);
+			if (idx == -1) {
+				player.consoleMessage("Now filtering target from subsequent scans");
+				this.$gravSensorExclusions.push(target);
+			} else {
+				player.consoleMessage("Now not filtering target from subsequent scans");
+				this.$gravSensorExclusions.splice(idx,1);
+			}
+			this.$gravSensorResult = new Vector3D(0,0,0);
+			player.consoleMessage("Now filtering "+this.$gravSensorExclusions.length+" mass(es)");
+		}
+	}
+};
+
+
 this._gravSensorErrorMagnitude = function() {
 	var systematic = 1E-6;
 	var sensors = this._gravSensorCount();
@@ -403,8 +430,11 @@ this._gravSensorErrorMagnitude = function() {
 		if (sensors > 2) {
 			systematic = 1E-10;
 			if (sensors > 3) {
-				// more than 4 gives no additional benefit
 				systematic = 1E-12;
+				if (sensors > 4) {
+					// more than 5 gives no additional benefit
+					systematic = 1E-14;
+				}
 			}
 		}
 	}
@@ -427,6 +457,17 @@ this._gravSensorWorldVector = function() {
 			var idx = pn.sotl_planetIndex;
 			vect = this._gravSensorAddVector(vect,planetdata[idx].surfaceGravity,pn,false);
 			log(this.name,"Gravitational vector with planet "+idx+" = "+vect.x+", "+vect.y+", "+vect.z);
+		}
+	}
+
+	// exclusions
+	for (i=0;i<this.$gravSensorExclusions.length;i++) {
+		var exc = this.$gravSensorExclusions[i];
+		var exg = worldScripts["SOTL discovery checks"]._reportedGravity(exc);
+		if (exg != -1) {
+			/* Note: excludes what the player currently *thinks* the
+			 * object is, not what it actually is */
+			vect = this._gravSensorAddVector(vect,-exg,exc,exc.isSun);
 		}
 	}
 	
@@ -483,6 +524,9 @@ this._gravSensorRunScan = function(delta) {
 		} else {
 			// rapidly increase error levels
 			this.$gravSensorErrorLevel *= (1+(turn*delta));
+			if (this.$gravSensorErrorLevel < 1E-7) {
+				this.$gravSensorErrorLevel *= 2;
+			}
 		}
 		errormag = this.$gravSensorErrorLevel;
 	}
@@ -505,7 +549,7 @@ this._gravSensorRunScan = function(delta) {
 	this.$sensorValues[9] = normalised.z;
 
 	var strength = measurement.magnitude();
-	var scale = 1000;
+	var scale = 1;
 	for (var i=0;i<=5;i++) {
 		var result = ((strength/scale)/1000);
 		if (result < 0) {

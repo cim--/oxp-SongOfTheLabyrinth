@@ -51,7 +51,7 @@ this._initialDiscoveries = function() {
 			"star": {
 				"visited": 1,
 				"brightness": 1,
-//				"gravity": 1,
+				"gravity": 1,
 				"stability": 1
 			},
 			"planets": {
@@ -65,7 +65,7 @@ this._initialDiscoveries = function() {
 					"weather": 1,
 					"minerals": 1,
 					"habitability": 1,
-//					"gravity": 1
+					"gravity": 1
 				},
 				"1": {
 					"size": 1,
@@ -104,8 +104,8 @@ this._describeStar = function() {
 		description += "Mass: no scan\n";
 	} else {
 		var sg = discovered['gravity'].scan;
-		var sm = (sg/28.02)*((star.radius/14E5)*(star.radius/14E5));
-		description += "Mass: "+sm.toFixed(3)+"\n";
+		var sm = this._stellarGravityToMass(sg,star.radius);
+		description += "Mass: "+sm.toFixed(3)+" Sm\n";
 	}
 	if (discovered["stability"]) {
 		description += "Stability: "+(100*(1-star.instability)).toFixed(1)+"%\n";
@@ -115,6 +115,17 @@ this._describeStar = function() {
 	
 	return description;
 }
+
+
+this._stellarMassToGravity = function(m,r) {
+	return 28.02 * m / ((r/14E5)*(r/14E5));
+}
+
+this._stellarGravityToMass = function(g,r) {
+	return (g/28.02)*((r/14E5)*(r/14E5));
+}
+
+
 
 this._describePlanet = function(index) {
 	var planet = JSON.parse(system.info.planet_data)[index];
@@ -249,6 +260,32 @@ this._checkForDiscovery = function() {
 	}
 
 };
+
+
+this._reportedGravity = function(object) {
+	var discovered;
+	if (object.isSun) {
+		discovered = this.$discoveries[system.ID]["star"]["gravity"];
+	} else {
+		var idx = object.sotl_planetIndex;
+		discovered = this.$discoveries[system.ID]["planets"][idx]["gravity"];
+	}
+	if (discovered == 1) {
+		var data, grav;
+		if (object.isSun) {
+			data = JSON.parse(system.info.star_data);
+			grav = this._stellarMassToGravity(data.mass,data.radius)
+		} else {
+			data = JSON.parse(system.info.planet_data)[index];
+			grav = planet.surfaceGravity;
+		}
+		return grav;
+	} else if (!discovered) {
+		return -1;
+	} else {
+		return discovered.scan;
+	}
+}
 
 
 this._discoverPlanet = function(planet, bitmask) {
