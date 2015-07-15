@@ -15,8 +15,8 @@ random.setStart(0); // for clarity
 
 /*
 Planet scale 1/100 (normal Oolite)
-Star scale 1/500
-System scale 1/200 (makes the star scale look right from the planets)
+Star scale 1/500 (smallest they can be without being too close to planet scale)
+System scale 1/2500 (makes the star scale look right-ish from the planets)
 */
 
 /* Set up system coordinates */
@@ -328,7 +328,7 @@ random.setStart(80000);
 				$.set(i,j,"planets_discovered",0); // bitmask
 			}
 			
-
+			/* TODO: need to add asteroid fields */
 		}
 	}
 }());

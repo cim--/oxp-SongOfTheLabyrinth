@@ -106,6 +106,270 @@
 			color = "whiteColor";
 		},
 
+		/* Sensor readouts */
+		{	// primed equipment, x and y give the location, the size defines the character size, n_bars is the number of items to show (default 1)
+			selector	= "drawPrimedEquipment:";
+			y_origin = -1;
+			x_origin = 1;
+			x = -180;
+			y = 130;
+			width		= 10;
+			height		= 10;
+			n_bars = 3;
+		},
+
+		{
+			selector = "drawSurround:";
+			color = "greenColor";
+			height = 96;
+			width = 160;
+			x		= -100;
+			y		= 60;
+			y_origin	= -1;
+			x_origin	= 1;
+		},
+		{	
+			draw_surround = no;
+			height		= 80;
+			selector	= "drawCustomBar:";
+			data_source = "sotl_exp_sensor9";
+			color_low       = "yellowColor";
+			color_medium    = "yellowColor";
+			color_high      = "yellowColor";
+			width		= 8;
+			x		= -28;
+			y		= 64;
+			y_origin	= -1;
+			x_origin	= 1;
+		},
+		{	
+			draw_surround = no;
+			height		= 80;
+			selector	= "drawCustomBar:";
+			data_source = "sotl_exp_sensor8";
+			color_low       = "cyanColor";
+			color_medium    = "cyanColor";
+			color_high      = "cyanColor";
+			width		= 8;
+			x		= -44;
+			y		= 64;
+			y_origin	= -1;
+			x_origin	= 1;
+		},
+		{	
+			draw_surround = no;
+			height		= 80;
+			selector	= "drawCustomBar:";
+			data_source = "sotl_exp_sensor7";
+			color_low       = "magentaColor";
+			color_medium    = "magentaColor";
+			color_high      = "magentaColor";
+			width		= 8;
+			x		= -60;
+			y		= 64;
+			y_origin	= -1;
+			x_origin	= 1;
+		},
+		{	
+			draw_surround = no;
+			height		= 80;
+			selector	= "drawCustomBar:";
+			data_source = "sotl_exp_sensor6";
+			color_low       = "yellowColor";
+			color_medium    = "yellowColor";
+			color_high      = "yellowColor";
+			width		= 8;
+			x		= -76;
+			y		= 64;
+			y_origin	= -1;
+			x_origin	= 1;
+		},
+		{	
+			draw_surround = no;
+			height		= 80;
+			selector	= "drawCustomBar:";
+			data_source = "sotl_exp_sensor5";
+			color_low       = "cyanColor";
+			color_medium    = "cyanColor";
+			color_high      = "cyanColor";
+			width		= 8;
+			x		= -92;
+			y		= 64;
+			y_origin	= -1;
+			x_origin	= 1;
+		},
+		{	
+			draw_surround = no;
+			height		= 80;
+			selector	= "drawCustomBar:";
+			data_source = "sotl_exp_sensor4";
+			color_low       = "magentaColor";
+			color_medium    = "magentaColor";
+			color_high      = "magentaColor";
+			width		= 8;
+			x		= -108;
+			y		= 64;
+			y_origin	= -1;
+			x_origin	= 1;
+		},
+		{	
+			draw_surround = no;
+			height		= 80;
+			selector	= "drawCustomBar:";
+			data_source = "sotl_exp_sensor3";
+			color_low       = "yellowColor";
+			color_medium    = "yellowColor";
+			color_high      = "yellowColor";
+			width		= 8;
+			x		= -124;
+			y		= 64;
+			y_origin	= -1;
+			x_origin	= 1;
+		},
+		{	
+			draw_surround = no;
+			height		= 80;
+			selector	= "drawCustomBar:";
+			data_source = "sotl_exp_sensor2";
+			color_low       = "cyanColor";
+			color_medium    = "cyanColor";
+			color_high      = "cyanColor";
+			width		= 8;
+			x		= -140;
+			y		= 64;
+			y_origin	= -1;
+			x_origin	= 1;
+		},
+		{	
+			draw_surround = no;
+			height		= 80;
+			selector	= "drawCustomBar:";
+			data_source = "sotl_exp_sensor1";
+			color_low       = "magentaColor";
+			color_medium    = "magentaColor";
+			color_high      = "magentaColor";
+			width		= 8;
+			x		= -156;
+			y		= 64;
+			y_origin	= -1;
+			x_origin	= 1;
+		},
+		{	
+			draw_surround = no;
+			height		= 80;
+			selector	= "drawCustomBar:";
+			data_source = "sotl_exp_sensor0";
+			color_low       = "yellowColor";
+			color_medium    = "yellowColor";
+			color_high      = "yellowColor";
+			width		= 8;
+			x		= -172;
+			y		= 64;
+			y_origin	= -1;
+			x_origin	= 1;
+		},
+
+		{
+			selector	= "drawCustomText:";
+			data_source = "sotl_exp_sensorlabel0";
+			x		= -177;
+			y		= 12;
+			y_origin	= -1;
+			x_origin	= 1;
+			height		= 8;
+			width		= 8;
+		},
+		{
+			selector	= "drawCustomText:";
+			data_source = "sotl_exp_sensorlabel1";
+			x		= -161;
+			y		= 12;
+			y_origin	= -1;
+			x_origin	= 1;
+			height		= 8;
+			width		= 8;
+		},
+		{
+			selector	= "drawCustomText:";
+			data_source = "sotl_exp_sensorlabel2";
+			x		= -145;
+			y		= 12;
+			y_origin	= -1;
+			x_origin	= 1;
+			height		= 8;
+			width		= 8;
+		},
+		{
+			selector	= "drawCustomText:";
+			data_source = "sotl_exp_sensorlabel3";
+			x		= -129;
+			y		= 12;
+			y_origin	= -1;
+			x_origin	= 1;
+			height		= 8;
+			width		= 8;
+		},
+		{
+			selector	= "drawCustomText:";
+			data_source = "sotl_exp_sensorlabel4";
+			x		= -113;
+			y		= 12;
+			y_origin	= -1;
+			x_origin	= 1;
+			height		= 8;
+			width		= 8;
+		},
+		{
+			selector	= "drawCustomText:";
+			data_source = "sotl_exp_sensorlabel5";
+			x		= -97;
+			y		= 12;
+			y_origin	= -1;
+			x_origin	= 1;
+			height		= 8;
+			width		= 8;
+		},
+		{
+			selector	= "drawCustomText:";
+			data_source = "sotl_exp_sensorlabel6";
+			x		= -81;
+			y		= 12;
+			y_origin	= -1;
+			x_origin	= 1;
+			height		= 8;
+			width		= 8;
+		},
+		{
+			selector	= "drawCustomText:";
+			data_source = "sotl_exp_sensorlabel7";
+			x		= -65;
+			y		= 12;
+			y_origin	= -1;
+			x_origin	= 1;
+			height		= 8;
+			width		= 8;
+		},
+		{
+			selector	= "drawCustomText:";
+			data_source = "sotl_exp_sensorlabel8";
+			x		= -49;
+			y		= 12;
+			y_origin	= -1;
+			x_origin	= 1;
+			height		= 8;
+			width		= 8;
+		},
+		{
+			selector	= "drawCustomText:";
+			data_source = "sotl_exp_sensorlabel9";
+			x		= -33;
+			y		= 12;
+			y_origin	= -1;
+			x_origin	= 1;
+			height		= 8;
+			width		= 8;
+		},
+
 		/* Permanent(ish) gauges */
 		{
 			selector = "drawSurround:";
@@ -311,14 +575,6 @@
 
 
 		/* TODO: reposition, add more lines to it */
-		{	// primed equipment, x and y give the location, the size defines the character size, n_bars is the number of items to show (default 1)
-			selector	= "drawPrimedEquipment:";
-			y_origin = -1;
-			x = 156;
-			y = -2;
-			width		= 10;
-			height		= 10;
-		},
 
 		/* Debug dial */
 		{	// fps counter, x and y give the location, the size defines the character size

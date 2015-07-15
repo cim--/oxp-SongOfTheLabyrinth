@@ -111,10 +111,12 @@ this._describePlanet = function(index) {
 		description += "Orbit: ~"+planet.orbitalRadiusAU.toFixed(1)+" AU\n";
 	}
 
-	if (discovered["gravity"]) {
-		description += "Surface gravity: "+planet.surfaceGravity.toFixed(2)+" G\n";
-	} else {
+	if (discovered["gravity"] == 1) {
+		description += "Surface gravity: "+planet.surfaceGravity.toFixed(3)+" G\n";
+	} else if (!discovered['gravity']) {
 		description += "Surface gravity: no scan\n";
+	} else {
+		description += "Surface gravity: "+discovered['gravity'].scan.toFixed(3)+" G\n";
 	}
 
 	if (discovered["temperature"]) {

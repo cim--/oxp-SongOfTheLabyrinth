@@ -65,7 +65,7 @@
 			};
 		}
 	),
-	(
+/*	(
 		100, 0, "Sample Collection Bay",
 		"EQ_SOTL_EXP_SAMPLECOLLECTION",
 		"Sample collection bay capable of holding 15 samples",
@@ -74,6 +74,20 @@
 			can_carry_multiple = true;
 			condition_script = "sotl-exp-conditions.js";
 			provides = ("EQ_CARGO_SCOOP");
+			script_info = {
+				"sotl_exp_ismodule" = 1;
+			};
+		}
+	), */
+	(
+		100, 0, "Gravitational Sensor",
+		"EQ_SOTL_EXP_SENSORGRAVITATIONAL",
+		"A carefully-balanced set of accelerometers to measure local gravitational forces and allow the measurement of the masses of stars and planets. Once an accurate measure is taken for a particular object, it can be filtered out of the readings to allow the potential detection of other substantial masses. Due to the extreme sensitivity of the equipment it may only be used while the ship is stationary. Up to four units may be used in parallel for increased accuracy.",
+		{
+			available_to_all = true;
+			can_carry_multiple = true;
+			condition_script = "sotl-exp-conditions.js";
+			script = "sotl-exp-gravitysensor.js";
 			script_info = {
 				"sotl_exp_ismodule" = 1;
 			};

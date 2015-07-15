@@ -108,4 +108,12 @@ this._updateHUD = function(delta) {
 			}
 		}
 	}
+
+	/* Update sensor bars */
+	var values = worldScripts["SOTL Equipment Management"].$sensorValues;
+	var labels = worldScripts["SOTL Equipment Management"].$sensorLabels;
+	for (var i=0;i<=9;i++) {
+		player.ship.setCustomHUDDial("sotl_exp_sensor"+i,values[i]);
+		player.ship.setCustomHUDDial("sotl_exp_sensorlabel"+i,labels[i]);
+	}
 };

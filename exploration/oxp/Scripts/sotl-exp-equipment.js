@@ -4,6 +4,8 @@ this.name = "SOTL Equipment Management";
 
 this.$weaponManagement = false;
 
+/* Event handlers */
+
 this.startUp = function() {
 	this._processEquipment();
 	this.equipmentAdded = function() {
@@ -43,7 +45,7 @@ this.shipWillDockWithStation = function() {
 	}
 };
 
-
+/* General equipment management */
 
 this._processEquipment = function() {
 	var fuel = 0;
@@ -66,7 +68,7 @@ this._processEquipment = function() {
 		fuel = 1;
 	}
 	var sstatus = player.ship.equipmentStatus("EQ_SOTL_EXP_SAMPLECOLLECTION",true);
-	cargo += (sstatus["EQUIPMENT_OK"]*15)+(sstatus["EQUIPMENT_DAMAGED"]*15);
+	cargo += (sstatus["EQUIPMENT_OK"]?sstatus["EQUIPMENT_OK"]*15:0)+(sstatus["EQUIPMENT_DAMAGED"]?sstatus["EQUIPMENT_DAMAGED"]*15:0);
 	// damage stops it acting as a scoop, but doesn't directly affect
 	// anything already there: cargo already takes damage as it is.
 
@@ -213,3 +215,255 @@ this._processRefitRequest = function(slot, choice) {
 	}
 	this._startRefit();
 };
+
+
+/*** Equipment items ***/
+
+this.$sensorValues = [0,0,0,0,0,0,0,0,0,0];
+this.$sensorLabels = ["-","I","N","A","C","T","I","V","E","-"];
+
+/* Null sensor */
+
+this._nullSensorSetValues = function() {
+	this.$sensorValues = [0,0,0,0,0,0,0,0,0,0];
+	this.$sensorLabels = ["-","I","N","A","C","T","I","V","E","-"];
+}
+
+this._deactivateSensors = function() {
+	this._gravSensorDeactivate();
+	this._nullSensorSetValues();
+};
+
+/* Gravitational Sensor */
+
+this.$gravSensorOn = false;
+this.$gravSensorScanning = false;
+this.$gravSensorFCB = null;
+this.$gravSensorErrorLevel = 1;
+
+/* Modes: power, scan, assign reading to compass target, exclude
+ * scanned compass target from reading */
+this.$gravSensorControlMode = "power";
+
+this.$gravSensorVector = new Vector3D(0,0,0);
+this.$gravSensorResult = new Vector3D(0,0,0);
+
+this._gravSensorDeactivate = function() {
+	player.ship.thrust = player.ship.maxThrust;
+	this.$gravSensorOn = false;
+	if (this.$gravSensorFCB != null) {
+		removeFrameCallback(this.$gravSensorFCB);
+		this.$gravSensorFCB = null;
+	}
+}
+
+
+this._gravSensorButton1 = function() {
+	if (!this.$gravSensorOn) {
+		if (player.ship.speed > 0 || player.ship.velocity.magnitude() > 0) {
+			player.consoleMessage("Gravitational Sensor: unable to activate - must be stationary");
+		} else {
+			this._deactivateSensors(); // turn off any other sensors
+			this.$gravSensorOn = true;
+			this.$gravSensorScanning = false;
+			this.$gravSensorControlMode = "power";
+			this.$gravSensorErrorLevel = 1;
+
+			this._gravSensorResetValues();
+			player.ship.maxThrust = player.ship.thrust; // just in case
+			player.ship.thrust = 0;
+			this.$gravSensorVector = new Vector3D(0,0,0);
+			this.$gravSensorResult = new Vector3D(0,0,0);
+			player.consoleMessage("Gravitational Sensor: online");
+
+		}
+	} else {
+		switch (this.$gravSensorControlMode) {
+		case "power":
+			player.consoleMessage("Gravitational Sensor: offline");
+			this._deactivateSensors();
+			break;
+		case "scan":
+			this._gravSensorScan();
+			break;
+		}
+	}
+}
+
+this._gravSensorButton2 = function() {
+	if (!this.$gravSensorOn) {
+		player.consoleMessage("Gravitational Sensor Inactive");
+	} else {
+		switch (this.$gravSensorControlMode) {
+		case "power":
+			this.$gravSensorControlMode = "scan";
+			player.consoleMessage("Gravitational Sensor mode: scan control");
+			break;
+		case "scan":
+			if (this.$gravSensorScanning) {
+				player.consoleMessage("Gravitational Sensor: scan active - cannot change control mode");
+			} else {
+				this.$gravSensorControlMode = "assign";
+				player.consoleMessage("Gravitational Sensor mode: scan assignment");
+			}
+			break;
+		case "assign":
+			this.$gravSensorControlMode = "exclude";
+			player.consoleMessage("Gravitational Sensor mode: scan filtering");
+			break;
+		case "exclude":
+			this.$gravSensorControlMode = "power";
+			player.consoleMessage("Gravitational Sensor mode: power control");
+			break;
+		}
+	}
+}
+
+
+this._gravSensorResetValues = function() {
+	this.$sensorValues = [0,0,0,0,0,0,0,0.5,0.5,0.5];
+	this.$sensorLabels = ["kG","G","mG","μG","nG","pG","","X","Y","Z"];
+};
+
+this._gravSensorCount = function() {
+	var status = player.ship.equipmentStatus("EQ_SOTL_EXP_SENSORGRAVITATIONAL",true);
+	if (status['EQUIPMENT_OK']) {
+		return status['EQUIPMENT_OK'];
+	} else {
+		return 0;
+	}
+}
+
+
+this._gravSensorScan = function() {
+	if (this.$gravSensorScanning) {
+		this.$gravSensorScanning = false;
+		removeFrameCallback(this.$gravSensorFCB);
+		this.$gravSensorFCB = null;
+		player.consoleMessage("Gravitational scan ended");
+	} else {
+		player.consoleMessage("Gravitational scan begun");
+		this.$gravSensorScanning = true;
+		this.$gravSensorErrorLevel = 1;
+		this.$gravSensorVector = this._gravSensorWorldVector();
+		this.$gravSensorResult = new Vector3D(0,0,0);
+		this.$gravSensorFCB = addFrameCallback(this._gravSensorRunScan.bind(this));
+	}
+};
+
+this._gravSensorErrorMagnitude = function() {
+	var systematic = 1E-6;
+	var sensors = this._gravSensorCount();
+	if (sensors > 1) {
+		systematic = 1E-8;
+		if (sensors > 2) {
+			systematic = 1E-10;
+			if (sensors > 3) {
+				// more than 4 gives no additional benefit
+				systematic = 1E-12;
+			}
+		}
+	}
+	return systematic;
+}
+
+this._gravSensorWorldVector = function() {
+	var vect = new Vector3D(0,0,0);
+	var star = JSON.parse(system.info.star_data);
+	var sg = 28.02 * (star.mass / ((star.radius/14E5)*(star.radius/14E5)));
+
+	vect = this._gravSensorAddVector(vect,sg,system.sun,true);
+	log(this.name,"Gravitational vector with sun = "+vect.x+", "+vect.y+", "+vect.z);
+
+	var planetdata = JSON.parse(system.info.planet_data)
+	var planets = system.planets;
+	for (var i=0;i<planets.length;i++) {
+		var pn = planets[i];
+		if (pn.sotl_planetIndex !== undefined) {
+			var idx = pn.sotl_planetIndex;
+			vect = this._gravSensorAddVector(vect,planetdata[idx].surfaceGravity,pn,false);
+			log(this.name,"Gravitational vector with planet "+idx+" = "+vect.x+", "+vect.y+", "+vect.z);
+		}
+	}
+	
+	var systematic = Vector3D.randomDirectionAndLength(this._gravSensorErrorMagnitude());
+
+	return vect.add(systematic);
+};
+
+this._gravSensorAddVector = function(vect, grav, obj, sunAdjustment) {
+	var dist = player.ship.position.distanceTo(obj);
+	var rdist = dist / obj.radius;
+
+	if (sunAdjustment) {
+		/* due to differing scales, stars are 5 times the radius they
+		 * "should" be, so end up with 25 times the effective gravity
+		 * at distance. Scale the reported sun gravity smoothly from
+		 * 'real' to '0.04' at increasing distance from the
+		 * surface. */
+		if (rdist > 1) {
+			var adjdist = 0.5+(rdist/2);
+			if (adjdist > 25) {
+				adjdist = 25;
+			}
+			grav /= adjdist;
+		}
+		/* planets are small enough that being 25 times the radius
+		 * they "should" have doesn't cause the same sort of issues */
+	} 
+
+	var g = grav/(rdist*rdist);
+	log(this.name,"Object projecting "+g+"G");
+	var force = obj.position.subtract(player.ship.position).direction().multiply(g);
+	return vect.add(force);
+};
+
+
+this._gravSensorRunScan = function(delta) {
+	
+	var errormag = this._gravSensorErrorMagnitude();
+	if (this.$gravSensorErrorLevel < errormag) {
+		this.$gravSensorErrorLevel = errormag;
+	} else {
+		var turn = Math.abs(player.ship.roll)+Math.abs(player.ship.pitch)+Math.abs(player.ship.yaw);
+		if (turn == 0) {
+			// reduce error levels
+			this.$gravSensorErrorLevel = Math.pow(0.5,delta)*this.$gravSensorErrorLevel;
+		} else {
+			// rapidly increase error levels
+			this.$gravSensorErrorLevel *= (1+(turn*delta));
+		}
+		errormag = this.$gravSensorErrorLevel;
+	}
+
+	var measurement = this.$gravSensorVector.add(Vector3D.random(errormag));
+	this.$gravSensorResult = measurement;
+
+	// plot directional measurement
+	var direction = measurement.direction();
+
+	var transformed = new Vector3D(
+		direction.dot(player.ship.vectorRight),
+		direction.dot(player.ship.vectorUp),
+		direction.dot(player.ship.vectorForward)
+	);
+
+	var normalised = transformed.multiply(0.5).add([0.5,0.5,0.5]);
+	this.$sensorValues[7] = normalised.x;	
+	this.$sensorValues[8] = normalised.y;
+	this.$sensorValues[9] = normalised.z;
+
+	var strength = measurement.magnitude();
+	var scale = 1000;
+	for (var i=0;i<=5;i++) {
+		var result = ((strength/scale)/1000);
+		if (result < 0) {
+			result = 0;
+		} else if (result > 1) {
+			result = 1
+		}
+		this.$sensorValues[i] = result;
+		strength -= Math.floor(strength/scale)*scale;
+		scale /= 1000;
+	}
+}
