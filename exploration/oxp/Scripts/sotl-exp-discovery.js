@@ -23,13 +23,35 @@ this.shipWillExitWitchspace = function() {
 }
 
 
+this._compassTarget = function() {
+	var target = player.ship.compassTarget;
+	if (target == system.sun) {
+		return target;
+	} else if (target == system.mainStation) {
+		return target;
+	} else if (target == system.mainPlanet) {
+		if (system.mainPlanet.position.z < 9E13 && system.mainPlanet.sotl_planetIndex !== undefined) {
+			return target;
+		}
+	} else if (target.beaconCode && target.beaconCode == "P") {
+		var index = 0;
+		for (var i=0;i<system.planets.length;i++) {
+			if (system.planets[i].position.distanceTo(target) < 1000) {
+				return system.planets[i];
+			}
+		}
+	}
+	return null; // no target
+}
+
+
 this._initialDiscoveries = function() {
 	return {
 		"0": {
 			"star": {
 				"visited": 1,
 				"brightness": 1,
-				"gravity": 1,
+//				"gravity": 1,
 				"stability": 1
 			},
 			"planets": {
@@ -43,7 +65,7 @@ this._initialDiscoveries = function() {
 					"weather": 1,
 					"minerals": 1,
 					"habitability": 1,
-					"gravity": 1
+//					"gravity": 1
 				},
 				"1": {
 					"size": 1,
@@ -76,10 +98,14 @@ this._describeStar = function() {
 	} else {
 		description += "Brightness: no scan\n";
 	}
-	if (discovered["gravity"]) {
+	if (discovered["gravity"] == 1) {
 		description += "Mass: "+star.mass.toFixed(3)+" Sm\n";
-	} else {
+	} else if (!discovered['gravity']) {
 		description += "Mass: no scan\n";
+	} else {
+		var sg = discovered['gravity'].scan;
+		var sm = (sg/28.02)*((star.radius/14E5)*(star.radius/14E5));
+		description += "Mass: "+sm.toFixed(3)+"\n";
 	}
 	if (discovered["stability"]) {
 		description += "Stability: "+(100*(1-star.instability)).toFixed(1)+"%\n";
@@ -248,7 +274,7 @@ this._discoverPlanet = function(planet, bitmask) {
 };
 
 
-this._discoverPlanetProperty = function(index,prop) {
+this._discoverPlanetProperty = function(index,prop,value) {
 	if (!this.$discoveries[system.ID]) {
 		this.$discoveries[system.ID] = {};
 	}
@@ -258,15 +284,29 @@ this._discoverPlanetProperty = function(index,prop) {
 	if (!this.$discoveries[system.ID]["planets"][index]) {
 		this.$discoveries[system.ID]["planets"][index] = {};
 	}
-	this.$discoveries[system.ID]["planets"][index][prop] = 1;
+	if (value === undefined || this.$discoveries[system.ID]["planets"][index][prop] == 1) {
+		this.$discoveries[system.ID]["planets"][index][prop] = 1;
+	} else {
+		this.$discoveries[system.ID]["planets"][index][prop] = {
+			scan: value
+		};
+	}
+	worldScripts["SOTL HUD Dials management"]._updateMFD();
 }
 
-this._discoverStarProperty = function(prop) {
+this._discoverStarProperty = function(prop,value) {
 	if (!this.$discoveries[system.ID]) {
 		this.$discoveries[system.ID] = {};
 	}
 	if (!this.$discoveries[system.ID]["star"]) {
 		this.$discoveries[system.ID]["star"] = {};
 	}
-	this.$discoveries[system.ID]["star"][prop] = 1;
+	if (value === undefined || this.$discoveries[system.ID]["star"][prop] == 1) {
+		this.$discoveries[system.ID]["star"][prop] = 1;
+	} else {
+		this.$discoveries[system.ID]["star"][prop] = {
+			scan: value
+		};
+	}
+	worldScripts["SOTL HUD Dials management"]._updateMFD();
 }

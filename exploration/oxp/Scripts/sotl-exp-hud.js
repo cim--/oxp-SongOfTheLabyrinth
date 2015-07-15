@@ -43,26 +43,15 @@ this._updateMFD = function() {
 	if (worldScripts["SOTL Hyperspace"].$hyperspaceState == 2) {
 		return this._clearMFD();	
 	}
-	var target = player.ship.compassTarget;
+	var target = worldScripts["SOTL discovery checks"]._compassTarget();
 	var description = "No target";
-	if (target) {
+	if (target != null) {
 		if (target == system.sun) {
 			description = worldScripts["SOTL discovery checks"]._describeStar();
-		} else if (target == system.mainPlanet) {
-			if (system.mainPlanet.position.z < 9E13 && system.mainPlanet.sotl_planetIndex !== undefined) {
-				description = worldScripts["SOTL discovery checks"]._describePlanet(system.mainPlanet.sotl_planetIndex);
-			} // else not discovered yet
-		} else if (target.beaconCode && target.beaconCode == "P") {
-			var index = 0;
-			for (var i=0;i<system.planets.length;i++) {
-				if (system.planets[i].position.distanceTo(target) < 1000) {
-					index = system.planets[i].sotl_planetIndex;
-					break;
-				}
-			}
-			description = worldScripts["SOTL discovery checks"]._describePlanet(index);
 		} else if (target == system.mainStation) {
 			description = "Modified colonisation ship";
+		} else {
+			description = worldScripts["SOTL discovery checks"]._describePlanet(target.sotl_planetIndex);
 		}
 	}
 

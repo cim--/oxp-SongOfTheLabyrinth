@@ -242,11 +242,12 @@ this.$gravSensorFCB = null;
 this.$gravSensorErrorLevel = 1;
 
 /* Modes: power, scan, assign reading to compass target, exclude
- * scanned compass target from reading */
+ * scanned target from reading */
 this.$gravSensorControlMode = "power";
 
 this.$gravSensorVector = new Vector3D(0,0,0);
 this.$gravSensorResult = new Vector3D(0,0,0);
+this.$gravSensorExclusions = [];
 
 this._gravSensorDeactivate = function() {
 	player.ship.thrust = player.ship.maxThrust;
@@ -268,6 +269,7 @@ this._gravSensorButton1 = function() {
 			this.$gravSensorScanning = false;
 			this.$gravSensorControlMode = "power";
 			this.$gravSensorErrorLevel = 1;
+			this.$gravSensorExclusions = [];
 
 			this._gravSensorResetValues();
 			player.ship.maxThrust = player.ship.thrust; // just in case
@@ -285,6 +287,9 @@ this._gravSensorButton1 = function() {
 			break;
 		case "scan":
 			this._gravSensorScan();
+			break;
+		case "assign":
+			this._gravSensorAssign();
 			break;
 		}
 	}
@@ -351,6 +356,45 @@ this._gravSensorScan = function() {
 	}
 };
 
+
+this._gravSensorAssign = function() {
+	if (this.$gravSensorResult.magnitude() == 0) {
+		player.consoleMessage("No gravitational scan stored. Run scan first.");
+	} else {
+		var dws = worldScripts["SOTL discovery checks"];
+		var target = worldScripts["SOTL discovery checks"]._compassTarget();
+		if (target == null || target == system.mainStation) {
+			player.consoleMessage("Invalid target to assign gravitational scan. Adjust compass.");
+		} else {
+			var g = this.$gravSensorResult.magnitude();
+			log(this.name,"Estimated force: "+g+" G");
+			var relpos = target.position.subtract(player.ship.position);
+			var rdist = relpos.magnitude()/target.radius;
+
+			if (target == system.sun) {
+				assigner = dws._discoverStarProperty.bind(dws,"gravity");
+				// readjust for sun gravity distance faking curve
+				g *= this._gravSensorSunAdjustment(rdist);
+
+			} else { // is planet
+				assigner = dws._discoverPlanetProperty.bind(dws,target.sotl_planetIndex,"gravity");
+			}
+			log(this.name,"Distance: "+rdist+" radii");
+			// remove components not in direction of target
+			// (works better if other masses filtered out before the scan)
+			log(this.name,"Directional bias: "+relpos.direction().dot(this.$gravSensorResult.direction()));
+			g *= relpos.direction().dot(this.$gravSensorResult.direction());
+			log(this.name,"Contributed force: "+g+" G");
+			// surface gravity estimate
+			g *= (rdist*rdist);
+			log(this.name,"Estimated surface force: "+g+" G");
+			assigner(g);
+			player.consoleMessage("Estimated surface gravity: "+g.toFixed(3)+" G");
+		}
+	}
+};
+
+
 this._gravSensorErrorMagnitude = function() {
 	var systematic = 1E-6;
 	var sensors = this._gravSensorCount();
@@ -391,6 +435,17 @@ this._gravSensorWorldVector = function() {
 	return vect.add(systematic);
 };
 
+this._gravSensorSunAdjustment = function(rdist) {
+	if (rdist > 1) {
+		var adjdist = 0.5+(rdist/2);
+		if (adjdist > 25) {
+			adjdist = 25;
+		}
+		return adjdist;
+	}
+	return 1;
+}
+
 this._gravSensorAddVector = function(vect, grav, obj, sunAdjustment) {
 	var dist = player.ship.position.distanceTo(obj);
 	var rdist = dist / obj.radius;
@@ -401,13 +456,9 @@ this._gravSensorAddVector = function(vect, grav, obj, sunAdjustment) {
 		 * at distance. Scale the reported sun gravity smoothly from
 		 * 'real' to '0.04' at increasing distance from the
 		 * surface. */
-		if (rdist > 1) {
-			var adjdist = 0.5+(rdist/2);
-			if (adjdist > 25) {
-				adjdist = 25;
-			}
-			grav /= adjdist;
-		}
+		
+		grav /= this._gravSensorSunAdjustment(rdist);
+		
 		/* planets are small enough that being 25 times the radius
 		 * they "should" have doesn't cause the same sort of issues */
 	} 
