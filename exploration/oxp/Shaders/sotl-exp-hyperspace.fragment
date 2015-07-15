@@ -8,8 +8,14 @@ void main() {
 
 	float x = vTexCoord.x - 0.5;
 	float y = vTexCoord.y - 0.5;
+
+	float r = sqrt(x*x + y*y);
+	float tr = (r/200.0)-(uTime/400.0);
+	float tx = x*tr/r;
+	float ty = y*tr/r;
+
 	
-	vec4 diffuseColor = texture2D(uDiffuse,vTexCoord.xy);
+	vec4 diffuseColor = texture2D(uDiffuse,vec2(tx+0.5,ty+0.5));
 
 	diffuseColor.r *= 1.0+(sin(0.3*uTime-2.0)/2.5);
 	diffuseColor.g *= 1.0+(sin(uTime));
