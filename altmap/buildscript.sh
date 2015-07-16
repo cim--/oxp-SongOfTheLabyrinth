@@ -1,6 +1,6 @@
 #!/bin/bash -ex
 
-OXPNAME=Song_of_the_Labyrinth
+OXPNAME=Song_of_the_Labyrinth_Altmap
 VERSION=1.0
 
 # Build galaxy data

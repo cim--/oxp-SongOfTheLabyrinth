@@ -370,7 +370,7 @@ this._gravSensorAssign = function() {
 			player.consoleMessage("Invalid target to assign gravitational scan. Adjust compass.");
 		} else {
 			var g = this.$gravSensorResult.magnitude();
-			log(this.name,"Estimated force: "+g+" G");
+//			log(this.name,"Estimated force: "+g+" G");
 			var relpos = target.position.subtract(player.ship.position);
 			var rdist = relpos.magnitude()/target.radius;
 
@@ -382,15 +382,15 @@ this._gravSensorAssign = function() {
 			} else { // is planet
 				assigner = dws._discoverPlanetProperty.bind(dws,target.sotl_planetIndex,"gravity");
 			}
-			log(this.name,"Distance: "+rdist+" radii");
+//			log(this.name,"Distance: "+rdist+" radii");
 			// remove components not in direction of target
 			// (works better if other masses filtered out before the scan)
-			log(this.name,"Directional bias: "+relpos.direction().dot(this.$gravSensorResult.direction()));
+//			log(this.name,"Directional bias: "+relpos.direction().dot(this.$gravSensorResult.direction()));
 			g *= relpos.direction().dot(this.$gravSensorResult.direction());
-			log(this.name,"Contributed force: "+g+" G");
+//			log(this.name,"Contributed force: "+g+" G");
 			// surface gravity estimate
 			g *= (rdist*rdist);
-			log(this.name,"Estimated surface force: "+g+" G");
+//			log(this.name,"Estimated surface force: "+g+" G");
 			assigner(g);
 			player.consoleMessage("Estimated surface gravity: "+g.toFixed(3)+" G");
 		}
@@ -447,7 +447,7 @@ this._gravSensorWorldVector = function() {
 	var sg = 28.02 * (star.mass / ((star.radius/14E5)*(star.radius/14E5)));
 
 	vect = this._gravSensorAddVector(vect,sg,system.sun,true);
-	log(this.name,"Gravitational vector with sun = "+vect.x+", "+vect.y+", "+vect.z);
+//	log(this.name,"Gravitational vector with sun = "+vect.x+", "+vect.y+", "+vect.z);
 
 	var planetdata = JSON.parse(system.info.planet_data)
 	var planets = system.planets;
@@ -456,7 +456,7 @@ this._gravSensorWorldVector = function() {
 		if (pn.sotl_planetIndex !== undefined) {
 			var idx = pn.sotl_planetIndex;
 			vect = this._gravSensorAddVector(vect,planetdata[idx].surfaceGravity,pn,false);
-			log(this.name,"Gravitational vector with planet "+idx+" = "+vect.x+", "+vect.y+", "+vect.z);
+//			log(this.name,"Gravitational vector with planet "+idx+" = "+vect.x+", "+vect.y+", "+vect.z);
 		}
 	}
 
@@ -505,7 +505,7 @@ this._gravSensorAddVector = function(vect, grav, obj, sunAdjustment) {
 	} 
 
 	var g = grav/(rdist*rdist);
-	log(this.name,"Object projecting "+g+"G");
+//	log(this.name,"Object projecting "+g+"G");
 	var force = obj.position.subtract(player.ship.position).direction().multiply(g);
 	return vect.add(force);
 };
