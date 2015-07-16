@@ -2,7 +2,7 @@
 	"identifier" = "oolite.oxp.cim.sotl.exploration";
 	"required_oolite_version" = "1.83";
 	"title" = "Song of the Labyrinth: Exploration";
-	"version" = "0.2";
+	"version" = "0.3";
 	"category" = "Systems";
 	"description" = "Song of the Labyrinth is an experimental set of OXPs. This one focuses on exploration.
 

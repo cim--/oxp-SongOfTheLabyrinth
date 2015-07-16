@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 
 OXPNAME=SOTL_Exploration
-VERSION=0.2
+VERSION=0.3
 
 cd galaxybuilder
 mkdir -p build

@@ -231,6 +231,7 @@ this._nullSensorSetValues = function() {
 
 this._deactivateSensors = function() {
 	this._gravSensorDeactivate();
+	this._spectralSensorDeactivate();
 	this._nullSensorSetValues();
 };
 
@@ -560,5 +561,107 @@ this._gravSensorRunScan = function(delta) {
 		this.$sensorValues[i] = result;
 		strength -= Math.floor(strength/scale)*scale;
 		scale /= 1000;
+	}
+}
+
+
+
+/* Spectral Sensor */
+
+this.$spectralSensorOn = false;
+this.$spectralSensorScanning = false;
+this.$spectralSensorFCB = null;
+
+/* Modes: power, scan stellar, scan atmosphere, scan asteroid (2 modes) */
+this.$spectralSensorControlMode = "power";
+
+this.$spectralSensorTarget = [0,0,0,0,0,0,0,0,0,0];
+this.$spectralSensorResults = [0,0,0,0,0,0,0,0,0,0];
+
+this._spectralSensorResetValues = function(mode) {
+	this.$sensorValues = [0,0,0,0,0,0,0,0,0,0];
+	switch (mode) {
+	case "power":
+		this.$sensorLabels = ["S","T","A","N","D","B","Y",".",".","."];
+		break;
+	case "stellar":
+		this.$sensorLabels = ["H","He","O","Na","Mg","Ca","Fe","Ni","Pb",""];
+		break;
+	case "planetary":
+		this.$sensorLabels = ["H","N","O","Ar","CO2","CO","H2O","SO2","CH4","MV"];
+		break;
+	case "asteroid1":
+		this.$sensorLabels = ["Si","H2O","Fe","Cu","Al","Ti","U","Pt","Pd","Au"];
+		break;
+	case "asteroid2":
+		this.$sensorLabels = ["Si","H2O","Fe","Ir","Rh","Te","In","Rh","Ru","Os"];
+		break;
+	}
+};
+
+
+this._spectralSensorDeactivate = function() {
+	this.$spectralSensorOn = false;
+	this.$spectralSensorScanning = false;
+	if (this.$spectralSensorFCB != null) {
+		removeFrameCallback(this.$spectralSensorFCB);
+		this.$spectralSensorFCB = null;
+	}
+}
+
+
+this._spectralSensorButton1 = function() {
+	if (!this.$spectralSensorOn) {
+		this._deactivateSensors();
+		this.$spectralSensorOn = true;
+		this.$spectralSensorScanning = false;
+		this.$spectralSensorControlMode = "power";
+		this._spectralSensorResetValues();
+		player.consoleMessage("Spectral sensor: online");
+	} else {
+		if (this.$spectralSensorControlMode == "power") {
+			this._deactivateSensors();
+			player.consoleMessage("Spectral sensor: offline");
+		} else {
+			// start scan if not started
+			// and facing appropriate object
+
+			// stop scan if started
+			// and push results to status
+
+		}
+	}
+}
+
+
+this._spectralSensorButton2 = function() {
+	if (this.$spectralSensorScanning) {
+		player.consoleMessage("Spectral sensor: Cannot change mode while scan running");
+	} else if (!this.$spectralSensorOn) {
+		player.consoleMessage("Spectral sensor: Not active");
+	} else {
+		switch (this.$spectralSensorControlMode) {
+		case "power":
+			this.$spectralSensorControlMode = "stellar";
+			player.consoleMessage("Selected stellar scan mode");
+			break;
+		case "stellar":
+			this.$spectralSensorControlMode = "planetary";
+			player.consoleMessage("Selected atmospheric scan mode");
+			break;
+		case "planetary":
+			this.$spectralSensorControlMode = "asteroid1";
+			player.consoleMessage("Selected asteroid common scan mode");
+			break;
+		case "asteroid1":
+			this.$spectralSensorControlMode = "asteroid2";
+			player.consoleMessage("Selected asteroid rare scan mode");
+			break;
+		case "asteroid2":
+			this.$spectralSensorControlMode = "power";
+			player.consoleMessage("Selected sensor power mode");
+			break;
+		}
+		this._spectralSensorResetValues();
 	}
 }
