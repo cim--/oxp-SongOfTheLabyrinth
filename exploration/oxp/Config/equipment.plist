@@ -96,7 +96,7 @@
 	(
 		100, 0, "Spectroscopic Sensor",
 		"EQ_SOTL_EXP_SENSORSPECTROSCOPIC",
-		"A spectroscopic sensor for detection of emitted or reflected radiation. This can be used to analyse stellar properties, planetary atmospheres, and when combined with a prospecting laser the mineral contents of asteroids. A single unit is sufficient for stellar and planetary scans, but fitting a second unit will provide increased accuracy when scanning asteroids.",
+		"A spectroscopic sensor for detection of emitted or reflected radiation. This can be used to analyse stellar properties, planetary atmospheres, and when combined with a prospecting laser the mineral contents of asteroids. Fitting additional units will help to filter out random noise and increase the sensitivity of the results.",
 		{
 			available_to_all = true;
 			can_carry_multiple = true;

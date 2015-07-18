@@ -51,6 +51,7 @@ this._initialDiscoveries = function() {
 			"star": {
 				"visited": 1,
 				"brightness": 1,
+				"metallicity": 1,
 				"gravity": 1,
 				"stability": 1
 			},
@@ -93,10 +94,12 @@ this._describeStar = function() {
 	description += "Class: "+star.sequence+"\n";
 	description += "Radius: "+(star.radius/14E5).toFixed(2)+" Sr\n";
 
-	if (discovered["brightness"]) {
+	if (discovered["brightness"] == 1) {
 		description += "Brightness: "+star.brightness.toFixed(3)+" Sl\n";
+	} else if (!discovered["brightness"]) {
+		description += "Brightness: no scan\n";		
 	} else {
-		description += "Brightness: no scan\n";
+		description += "Brightness: "+discovered['brightness'].scan.toFixed(3)+" Sl\n";
 	}
 	if (discovered["gravity"] == 1) {
 		description += "Mass: "+star.mass.toFixed(3)+" Sm\n";
@@ -106,6 +109,13 @@ this._describeStar = function() {
 		var sg = discovered['gravity'].scan;
 		var sm = this._stellarGravityToMass(sg,star.radius);
 		description += "Mass: "+sm.toFixed(3)+" Sm\n";
+	}
+	if (discovered["metallicity"] == 1) {
+		description += "Metallicity: "+star.mineralFactor.toFixed(2)+" M\n";
+	} else if (!discovered['metallicity']) {
+		description += "Metallicity: no scan\n";
+	} else {
+		description += "Metallicity: "+discovered['metallicity'].scan.toFixed(2)+" M\n";
 	}
 	if (discovered["stability"]) {
 		description += "Stability: "+(100*(1-star.instability)).toFixed(1)+"%\n";

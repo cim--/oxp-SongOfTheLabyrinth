@@ -393,7 +393,7 @@ this._gravSensorAssign = function() {
 			g *= (rdist*rdist);
 //			log(this.name,"Estimated surface force: "+g+" G");
 			assigner(g);
-			player.consoleMessage("Estimated surface gravity: "+g.toFixed(3)+" G");
+			player.consoleMessage("Estimated surface gravity: "+g.toFixed(3)+" G",7);
 		}
 	}
 };
@@ -578,14 +578,15 @@ this.$spectralSensorControlMode = "power";
 this.$spectralSensorTarget = [0,0,0,0,0,0,0,0,0,0];
 this.$spectralSensorResults = [0,0,0,0,0,0,0,0,0,0];
 
-this._spectralSensorResetValues = function(mode) {
+this._spectralSensorResetValues = function() {
 	this.$sensorValues = [0,0,0,0,0,0,0,0,0,0];
-	switch (mode) {
+	this.$spectralSensorResults = [0,0,0,0,0,0,0,0,0,0];
+	switch (this.$spectralSensorControlMode) {
 	case "power":
 		this.$sensorLabels = ["S","T","A","N","D","B","Y",".",".","."];
 		break;
 	case "stellar":
-		this.$sensorLabels = ["H","He","O","Na","Mg","Ca","Fe","Ni","Pb",""];
+		this.$sensorLabels = ["H","He","C","O","Na","Mg","Ca","Fe","Ni","Pb"];
 		break;
 	case "planetary":
 		this.$sensorLabels = ["H","N","O","Ar","CO2","CO","H2O","SO2","CH4","MV"];
@@ -625,10 +626,26 @@ this._spectralSensorButton1 = function() {
 		} else {
 			// start scan if not started
 			// and facing appropriate object
+			if (!this.$spectralSensorScanning) {
+				if (this._spectralCheckScanAlignment()) {
+					this.$spectralSensorScanning = true;
+					this.$spectralSensorTarget = this._spectralSetTargets();
+					this.$spectralSensorResults = [0,0,0,0,0,0,0,0,0,0];
+					
+					this.$spectralSensorFCB = addFrameCallback(this._spectralSensorRunScan.bind(this));
 
-			// stop scan if started
-			// and push results to status
+				} else {
+					player.consoleMessage("Spectral sensor: Not aligned with suitable target - realign and retry");
+				}
+			} else {
+				// stop scan if started
+				this.$spectralSensorScanning = false;
+				removeFrameCallback(this.$spectralSensorFCB);
+				this.$spectralSensorFCB = null;
 
+				// and push results to status
+				this._spectralSaveResults();
+			}
 		}
 	}
 }
@@ -665,3 +682,174 @@ this._spectralSensorButton2 = function() {
 		this._spectralSensorResetValues();
 	}
 }
+
+this._spectralGetTargetObject = function() {
+	var target = null;
+	switch ($spectralSensorControlMode) {
+	case "stellar":
+		target = system.sun;
+		break;
+/*	case "planetary":
+		target = worldScripts["SOTL discovery checks"]._compassTarget();
+		if (!target.isPlanet) {
+			target = null;
+		}
+		break;
+	case "asteroid1":
+	case "asteroid2":
+		target = player.ship.target;
+		if (!target.hasRole("asteroid")) {
+			target = null;
+		}
+		break; */ // TODO: not yet implemented
+	}
+	return target;
+};
+
+this._spectralCheckScanAlignment = function() {
+	var target = this._spectralGetTargetObject();
+	if (target == null) {
+		return false;
+	}
+	var vect = target.position.subtract(player.ship.position);
+	var align = vect.direction().dot(player.ship.vectorForward);
+	var req = vect.magnitude() / Math.sqrt(Math.pow(vect.magnitude(),2)+Math.pow(target.collisionRadius,2));
+	return align >= req;
+};
+
+
+
+this._spectralSetTargets = function() {
+	var target = this._spectralGetTargetObject();
+	switch ($spectralSensorControlMode) {
+	case "stellar":
+		return this._spectralSetTargetsSun();
+		// TODO: others!
+	}
+};
+
+
+this._spectralSetTargetsSun = function() {
+	var star = JSON.parse(system.info.star_data);
+	var r = worldScripts["SOTL Ranrot"];
+	r._srand(star.mineralSeed);
+	
+	// "H","He","C","O","Na","Mg","Ca","Fe","Zn","Pb"
+	// log scale
+	var baseline = [105, 95, 70, 75, 45, 60, 50, 60, 30, 10];
+	var minerals = star.mineralFactor*100;
+	for (var i=0;i<minerals;i++) {
+		if (r._randf() * 2 < star.mineralFactor) {
+			baseline[2+(r._rnd()%8)] += 1;
+		} else {
+			baseline[r._rnd()%2] += 1;
+		}
+	}
+
+	return baseline;
+};
+
+
+this._spectralSaveResults = function() {
+	switch ($spectralSensorControlMode) {
+	case "stellar":
+		this._spectralSaveResultSun();
+		break;
+		// TODO: others!
+	}
+};
+
+
+this._spectralSaveResultSun = function() {
+
+	var star = JSON.parse(system.info.star_data);
+	var brightness = star.brightness;
+	var accuracy = this.$spectralSensorResults[0]/100;
+	if (accuracy < 0.95 || accuracy > 1.05) {
+		brightness *= accuracy*accuracy;
+	}
+	worldScripts["SOTL discovery checks"]._discoverStarProperty("brightness",brightness);
+	player.consoleMessage("Star Brightness: "+brightness.toFixed(3)+" Sl",7);
+
+	var metallicity = star.mineralFactor;
+	var accuracy = 1;
+	var expected = 0;
+	var actual = 0;
+	var max = 0;
+	for (var i=0;i<10;i++) {
+		expected += this.$spectralSensorTarget[i];
+		actual += this.$spectralSensorResults[i];
+		if (max < this.$spectralSensorResults[i]) {
+			max = this.$spectralSensorResults[i];
+		}
+	}
+	var conversion = (actual/expected);
+	for (var i=0;i<10;i++) {
+		accuracy += ((this.$spectralSensorResults[i]/this.$spectralSensorTarget[i])/conversion)-1;
+	}
+	accuracy *= max/100;
+	// accuracy = 1 for a perfect check
+	metallicity *= accuracy * accuracy;
+	if (metallicity > 2) {
+		player.consoleMessage("Star Metallicity: corrupted data - rescan",7);		
+	} else {
+		player.consoleMessage("Star Metallicity: "+metallicity.toFixed(2)+" M",7);
+
+		worldScripts["SOTL discovery checks"]._discoverStarProperty("metallicity",metallicity);
+	}
+};
+
+
+this._spectralSensorRunScan = function(delta) {
+	var status = player.ship.equipmentStatus("EQ_SOTL_EXP_SENSORSPECTROSCOPIC",true);
+	var scount = 0;
+	if (status['EQUIPMENT_OK']) {
+		scount = status['EQUIPMENT_OK'];
+	} else {
+		scount = 0;
+		return; // should never get here
+	}
+	// TODO: if scanning asteroid, return unless laser fired
+
+	var target = this._spectralGetTargetObject();
+
+	var ifactor = 50;
+	// TODO: ifactor varies between planets, asteroids, stars
+	// ifactor for planets best if at ~mid-crescent angle
+	var intensity = Math.pow((target.collisionRadius*ifactor / target.position.distanceTo(player.ship)),2);
+	var noiseIntensity = 0.2/(scount*scount);
+	if (!this._spectralCheckScanAlignment()) {
+		intensity = 0; // must stay on target
+	}
+
+	var total = 0;
+	for (var i=0;i<10;i++) {
+		total += this.$spectralSensorTarget[i];
+	}
+
+	for (i=0;i<10;i++) {
+		// add noise
+		this.$spectralSensorResults[i] += delta*noiseIntensity*Math.random();
+	}
+
+	for (var i=0;i<10;i++) {
+		var proportion = this.$spectralSensorTarget[i]/total;
+		this.$spectralSensorResults[i] += delta*intensity*proportion;
+		if (this.$spectralSensorResults[i] > 100) {
+			for (i=0;i<10;i++) {
+				// rapid oversaturation of sensors!
+				this.$spectralSensorResults[i] += delta*intensity;
+			}
+		}
+	}
+
+	for (i=0;i<10;i++) {
+		if (this.$spectralSensorResults[i] > 100) {
+			this.$sensorValues[i] = 1;
+		} else {
+			this.$sensorValues[i] = this.$spectralSensorResults[i]/100;
+		}
+	}	
+
+
+};

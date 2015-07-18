@@ -257,31 +257,15 @@ this._makeHyperspaceRoute = function(s1,s2) {
 	/* TODO: may want to separate ranrot implementation out, if it's
 	 * needed elsewhere */
 	var seed = (s2*4096)+s1;
-	var _ranrot = { high: 0, low: 0 }
-	var uint32 = worldScripts["SOTL Uint32 support"]._uint32;
+	var ranrot = worldScripts["SOTL Ranrot"];
 
-	_ranrot.high = seed;
-	_ranrot.low = uint32.xor(seed,0xFFFFFFFF);
-
-	var rnd = function () {
-		_ranrot.high = uint32.addMod32(
-			uint32.shiftLeft(_ranrot.high,16),
-			uint32.shiftRight(_ranrot.high,16)
-		);
-		_ranrot.high = uint32.addMod32(_ranrot.high,_ranrot.low);
-		_ranrot.low = uint32.addMod32(_ranrot.high,_ranrot.low);
-		return uint32.and(_ranrot.high,0x7FFFFFFF);
-	};
-	rnd();rnd();rnd(); // shuffle
-	var randf = function() {
-		return rnd()/0x7FFFFFFF;
-	}
+	ranrot._srand(seed);
 	
 	var route = [];
 	var cx = 0; var cy = 0;
 	for (var i=0;i<=90;i++) {
 		route.push([cx,cy]);
-		var chg = randf();
+		var chg = ranrot._randf();
 		if (i < 5) {
 			// startup is slow
 			chg = 0;
@@ -290,16 +274,16 @@ this._makeHyperspaceRoute = function(s1,s2) {
 		}
 		if (chg < 0.55) {
 			// small change
-			cx += (randf()*0.4)-0.2;
-			cy += (randf()*0.4)-0.2;
+			cx += (ranrot._randf()*0.4)-0.2;
+			cy += (ranrot._randf()*0.4)-0.2;
 		} else if (chg < 0.85) {
 			// medium change
-			cx += (randf()*0.7)-0.35;
-			cy += (randf()*0.7)-0.35;
+			cx += (ranrot._randf()*0.7)-0.35;
+			cy += (ranrot._randf()*0.7)-0.35;
 		} else {
 			// large change
-			cx = (randf()*2)-1;
-			cy = (randf()*2)-1;
+			cx = (ranrot._randf()*2)-1;
+			cy = (ranrot._randf()*2)-1;
 		}
 		if (cx > 1 || cx < -1) {
 			cx /= 2;

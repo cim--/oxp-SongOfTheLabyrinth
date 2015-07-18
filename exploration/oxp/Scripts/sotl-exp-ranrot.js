@@ -1,8 +1,35 @@
 "use strict";
 
-this.name = "SOTL Uint32 support";
+this.name = "SOTL Ranrot";
 
-/* This file is a (slightly) modified version of Franz X Antesberger's
+
+this.$ranrot = { high: 0, low: 0 };
+
+this._rnd = function() {
+	this.$ranrot.high = this._uint32.addMod32(
+		this._uint32.shiftLeft(this.$ranrot.high,16),
+		this._uint32.shiftRight(this.$ranrot.high,16)
+	);
+	this.$ranrot.high = this._uint32.addMod32(this.$ranrot.high,this.$ranrot.low);
+	this.$ranrot.low = this._uint32.addMod32(this.$ranrot.high,this.$ranrot.low);
+	return this._uint32.and(this.$ranrot.high,0x7FFFFFFF);
+};
+
+this._srand = function(seed) {
+	this.$ranrot.high = seed;
+	this.$ranrot.low = this._uint32.xor(seed,0xFFFFFFFF);
+	this._rnd();
+	this._rnd();
+	this._rnd();
+};
+
+this._randf = function() {
+	return this._rnd()/0x7FFFFFFF;
+};
+
+
+
+/* This code is a (slightly) modified version of Franz X Antesberger's
  * uint32 library - https://github.com/fxa/uint32.js/ - under the "do
  * what you want" license */
 

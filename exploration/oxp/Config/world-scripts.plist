@@ -16,5 +16,5 @@
 	"sotl-exp-equipment.js",
 	"sotl-exp-discovery.js",
 	"sotl-exp-hud.js",
-	"sotl-exp-uint32.js"
+	"sotl-exp-ranrot.js"
 )
