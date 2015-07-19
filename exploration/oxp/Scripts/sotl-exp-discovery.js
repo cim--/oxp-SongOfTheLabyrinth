@@ -166,10 +166,12 @@ this._describePlanet = function(index) {
 		description += "Surface gravity: "+discovered['gravity'].scan.toFixed(3)+" G\n";
 	}
 
-	if (discovered["temperature"]) {
+	if (discovered["temperature"] == 1) {
 		description += "Surface temperature: "+(273+planet.temperature).toFixed(0)+" K\n";
-	} else {
+	} else if (!discovered["temperature"]) {
 		description += "Surface temperature: no scan\n";
+	} else {
+		description += "Surface temperature: "+(273+discovered['temperature'].scan).toFixed(0)+" K\n";
 	}
 
 	if (discovered["radiation"]) {
@@ -179,16 +181,62 @@ this._describePlanet = function(index) {
 	}
 
 	if (discovered["atmosphere"]) {
-		if (planet.cloudAlpha < 0.01) {
+		if (discovered["atmosphere"] == 1) {
 			description += "Atmosphere: none\n\n";
 		} else {
-			/* TODO: more atmosphere scanning */
-			description += "Atmosphere: no samples\n";
-			if (discovered["weather"]) {
-				/* TODO */
-				description += "Weather: ...\n";
+			var scan = discovered["atmosphere"].scan;
+			description += "Atmosphere: ";
+			if (planet.atmosphereType.thickness == 0) {
+				description += "none";
 			} else {
-				description += "Weather: no scan\n";
+				if (planet.atmosphereType.thickness < 0.05) {
+					description += "tenuous ";
+				}
+				var elements = scan.elements;
+				var enames = ["Hydrogen","Nitrogen","Oxygen","Argon","Dioxide","Monoxide","Water","Sulphur","Methane","Metal"];
+				// "H","N","O","Ar","CO2","CO","H2O","SO2","CH4","MV"
+				var max = 0;
+				var sec = 0;
+				var maxidx = -1;
+				var secidx = -1;
+				var min = 1000;
+				for (var i=0;i<10;i++) {
+					if (elements[i] > max) {
+						sec = max;
+						secidx = maxidx;
+						maxidx = i;
+						max = elements[i];
+					} else if (elements[i] > sec) {
+						secidx = i;
+						sec = elements[i];
+					} else if (elements[i] < min) {
+						min = elements[i];
+					}
+				}
+				if (max - min < 20) {
+					description += "uncertain";
+				} else {
+					if (max - 15 < sec) {
+						description += enames[maxidx]+"-"+enames[secidx];
+					} else {
+						description += enames[maxidx];
+					}
+					if (description.match(/Nitrogen-Oxygen/) && planet.atmosphereType.composition == "breathable") {
+						/* TODO: more detailed atmosphere sampling */
+						description += " *";
+					}
+				}
+			}
+			description += "\n";
+			if (planet.atmosphereType.thickness > 0.05) {
+				if (discovered["weather"]) {
+					/* TODO */
+					description += "Weather: ...\n";
+				} else {
+					description += "Weather: no scan\n";
+				}
+			} else {
+				description += "\n"; // too thin for weather
 			}
 		}
 	} else {

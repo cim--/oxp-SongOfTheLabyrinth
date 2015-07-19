@@ -141,6 +141,14 @@ this._moduleList = function() {
 			modules.push(eq[i]);
 		}
 	};
+	modules.sort(function(a,b) {
+		if (a.name < b.name) {
+			return -1;
+		} else if (a.name > b.name) {
+			return 1;
+		}
+		return 0;
+	});
 	return modules;
 };
 
@@ -664,15 +672,15 @@ this._spectralSensorButton2 = function() {
 			break;
 		case "stellar":
 			this.$spectralSensorControlMode = "planetary";
-			player.consoleMessage("Selected atmospheric scan mode");
+			player.consoleMessage("Selected atmospheric scan mode - set target with compass");
 			break;
 		case "planetary":
 			this.$spectralSensorControlMode = "asteroid1";
-			player.consoleMessage("Selected asteroid common scan mode");
+			player.consoleMessage("Selected asteroid common scan mode - set target with ident");
 			break;
 		case "asteroid1":
 			this.$spectralSensorControlMode = "asteroid2";
-			player.consoleMessage("Selected asteroid rare scan mode");
+			player.consoleMessage("Selected asteroid rare scan mode - set target with ident");
 			break;
 		case "asteroid2":
 			this.$spectralSensorControlMode = "power";
@@ -689,13 +697,13 @@ this._spectralGetTargetObject = function() {
 	case "stellar":
 		target = system.sun;
 		break;
-/*	case "planetary":
+	case "planetary":
 		target = worldScripts["SOTL discovery checks"]._compassTarget();
 		if (!target.isPlanet) {
 			target = null;
 		}
 		break;
-	case "asteroid1":
+/*	case "asteroid1":
 	case "asteroid2":
 		target = player.ship.target;
 		if (!target.hasRole("asteroid")) {
@@ -724,6 +732,8 @@ this._spectralSetTargets = function() {
 	switch ($spectralSensorControlMode) {
 	case "stellar":
 		return this._spectralSetTargetsSun();
+	case "planetary":
+		return this._spectralSetTargetsPlanetary();
 		// TODO: others!
 	}
 };
@@ -750,28 +760,90 @@ this._spectralSetTargetsSun = function() {
 };
 
 
+
+this._spectralSetTargetsPlanetary = function() {
+	/* Various atmosphere types:
+	 * sparse: CO2, H2O, CH4, SO2, MV
+	 * dense: N/O(earth) N/O, Ar, Ar/O, CO + sparse
+	 */
+	var target = worldScripts["SOTL discovery checks"]._compassTarget();
+	var planetdata = JSON.parse(system.info.planet_data)[target.sotl_planetIndex];
+	var baseline = [1,1,1,1,1,1,1,1,1,1];
+	var randomisation = 10;
+
+	var r = worldScripts["SOTL Ranrot"];
+	r._srand(planetdata.atmosphereType.seed);
+	
+// "H","N","O","Ar","CO2","CO","H2O","SO2","CH4","MV"
+	switch (planetdata.atmosphereType.composition) {
+	case "none":
+		baseline = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+		randomisation = 0;
+	case "earthlike":
+		baseline = [1, 89, 83, 70, 55, 2, 73, 1, 33, 0];
+		randomisation = 10;
+		break;
+	case "nitrogenoxygen":
+		baseline = [1, 89, 83, 70, 55, 2, 73, 1, 33, 0];
+		randomisation = 50;
+		break;
+	case "carbondioxide":
+		baseline = [1, 10, 10, 30, 90, 30, 10, 10, 10, 0];
+		randomisation = 100;
+		break;
+	case "sulphurdioxide":
+		baseline = [1, 10, 10, 30, 60, 30, 30, 90, 60, 0];
+		randomisation = 100;
+		break;
+	case "metals":
+		baseline = [20, 10, 2, 4, 20, 4, 5, 20, 5, 90];
+		randomisation = 50;
+		break;
+	case "water":
+		baseline = [1, 10, 2, 50, 20, 4, 80, 20, 5, 0];
+		randomisation = 100;
+		break;
+// "H","N","O","Ar","CO2","CO","H2O","SO2","CH4","MV"
+	case "methane":
+		baseline = [4, 10, 2, 50, 20, 4, 30, 20, 80, 0];
+		randomisation = 100;
+		break;
+	case "nitrogen":
+		baseline = [1, 90, 10, 50, 20, 4, 20, 20, 20, 0];
+		randomisation = 100;
+		break;
+	case "argon":
+		baseline = [1, 40, 10, 90, 20, 4, 20, 20, 20, 0];
+		randomisation = 100;
+		break;
+	case "argonoxygen":
+		baseline = [1, 50, 83, 89, 55, 2, 63, 1, 33, 0]
+		randomisation = 50;
+		break;
+	}
+
+	for (var i=0;i<randomisation;i++) {
+		baseline[r._rnd()%10]++;
+	}
+	
+	return baseline;
+};
+
+
 this._spectralSaveResults = function() {
 	switch ($spectralSensorControlMode) {
 	case "stellar":
 		this._spectralSaveResultSun();
+		break;
+	case "planetary":
+		this._spectralSaveResultPlanet();
 		break;
 		// TODO: others!
 	}
 };
 
 
-this._spectralSaveResultSun = function() {
-
-	var star = JSON.parse(system.info.star_data);
-	var brightness = star.brightness;
-	var accuracy = this.$spectralSensorResults[0]/100;
-	if (accuracy < 0.95 || accuracy > 1.05) {
-		brightness *= accuracy*accuracy;
-	}
-	worldScripts["SOTL discovery checks"]._discoverStarProperty("brightness",brightness);
-	player.consoleMessage("Star Brightness: "+brightness.toFixed(3)+" Sl",7);
-
-	var metallicity = star.mineralFactor;
+this._spectralResultAccuracy = function() {
 	var accuracy = 1;
 	var expected = 0;
 	var actual = 0;
@@ -788,6 +860,23 @@ this._spectralSaveResultSun = function() {
 		accuracy += ((this.$spectralSensorResults[i]/this.$spectralSensorTarget[i])/conversion)-1;
 	}
 	accuracy *= max/100;
+	return accuracy;
+};
+
+
+this._spectralSaveResultSun = function() {
+
+	var star = JSON.parse(system.info.star_data);
+	var brightness = star.brightness;
+	var accuracy = this.$spectralSensorResults[0]/100;
+	if (accuracy < 0.95 || accuracy > 1.05) {
+		brightness *= accuracy*accuracy;
+	}
+	worldScripts["SOTL discovery checks"]._discoverStarProperty("brightness",brightness);
+	player.consoleMessage("Star Brightness: "+brightness.toFixed(3)+" Sl",7);
+
+	var metallicity = star.mineralFactor;
+	var accuracy = this._spectralResultAccuracy();
 	// accuracy = 1 for a perfect check
 	metallicity *= accuracy * accuracy;
 	if (metallicity > 2) {
@@ -798,6 +887,24 @@ this._spectralSaveResultSun = function() {
 		worldScripts["SOTL discovery checks"]._discoverStarProperty("metallicity",metallicity);
 	}
 };
+
+
+this._spectralSaveResultPlanet = function() {
+	var target = worldScripts["SOTL discovery checks"]._compassTarget();
+	var planetdata = JSON.parse(system.info.planet_data)[target.sotl_planetIndex];
+
+	var result = [];
+	for (var i=0;i<10;i++) {
+		// copy
+		result.push(this.$spectralSensorResults[i]);
+	}
+	worldScripts["SOTL discovery checks"]._discoverPlanetProperty(target.sotl_planetIndex,"atmosphere",{ elements: result });
+
+	var accuracy = this._spectralResultAccuracy();
+	
+	worldScripts["SOTL discovery checks"]._discoverPlanetProperty(target.sotl_planetIndex,"temperature",planetdata.temperature * accuracy);
+}
+
 
 
 this._spectralSensorRunScan = function(delta) {
@@ -814,8 +921,22 @@ this._spectralSensorRunScan = function(delta) {
 	var target = this._spectralGetTargetObject();
 
 	var ifactor = 50;
+	if (target.isPlanet) {
+		// ifactor much lower for atmosphere-less planets
+		var pdata = JSON.parse(system.info.planet_data)[target.sotl_planetIndex];
+		ifactor = (pdata.atmosphereType.thickness * 50)+20;
+		var angle = target.position.subtract(player.ship.position).direction().dot(target.position.subtract(system.sun.position).direction());
+		// ifactor for planets best if at ~mid-crescent angle
+		if (angle < -0.5) {
+			ifactor = ifactor / ((0.5-angle)*5);
+		} else if (angle > 0) {
+			ifactor = ifactor / ((1+angle)*2);
+		} else {
+			ifactor = ifactor * (1.25-Math.abs(angle+0.25));
+		}
+	}
 	// TODO: ifactor varies between planets, asteroids, stars
-	// ifactor for planets best if at ~mid-crescent angle
+
 	var intensity = Math.pow((target.collisionRadius*ifactor / target.position.distanceTo(player.ship)),2);
 	var noiseIntensity = 0.2/(scount*scount);
 	if (!this._spectralCheckScanAlignment()) {

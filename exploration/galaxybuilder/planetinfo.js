@@ -472,6 +472,34 @@
 
 		}
 
+		planet.atmosphereType = { composition: "none", thickness: "0", seed: random.rand(0xFFFFFF) };
+		if (planet.cloudAlpha > 0) {
+			planet.atmosphereType.thickness = planet.cloudAlpha;
+			var opts = [];
+			if (planet.habitability > 90) {
+				opts = ["earthlike"];
+			} else if (planet.habitability > 70) {
+				opts = ["earthlike","nitrogenoxygen"];
+			} else if (planet.temperature > 200) {
+				opts = ["carbondioxide","sulphurdioxide","metals"];
+			} else if (planet.temperature > 60) {
+				opts = ["carbondioxide","sulphurdioxide"];
+			} else if (planet.temperature < -20) {
+				opts = ["carbondioxide","water","methane","sulphurdioxide"];
+			} else {
+				opts = ["water","nitrogen","argon","argonoxygen","nitrogenoxygen"];
+			}
+			planet.atmosphereType.composition = opts[random.rand(opts.length)];
+		} else {
+			if (random.randf() < 0.5) {
+				planet.atmosphereType.thickness = random.randf()/100;
+				if (planet.temperature > 100 && planet.mineralWealth > 0.4) {
+					planet.atmosphereType.composition = "metals";
+				} else {
+					planet.atmosphereType.composition = ["carbondioxide","water","methane","sulphurdioxide"][random.rand(4)];
+				}
+			} // other half have none at all
+		}
 
 		planetdata[i][j].planets.push(planet);
 
