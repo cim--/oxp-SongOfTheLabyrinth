@@ -376,11 +376,12 @@ this._hyperspaceSequence = function(delta) {
 
 	if (player.ship.energy < energydrain*delta) {
 		player.ship.explode();
+		return;
 		// otherwise energy regen will apply before explosion check
 	} else {
 		player.ship.energy -= energydrain*delta;
 	}
-
+	
 	var remainingtime = ((this.$hyperspaceDistance*10)+20)-this.$hyperspaceProgress;
 	var colspec;
 	if (energydrain < player.ship.energyRechargeRate) {
