@@ -14,8 +14,41 @@ this.startUp = function() {
 	this.equipmentRemoved = function() {
 		this._processEquipment();
 	}
+
+	if (missionVariables.sotl_flightComputerMarkers) {
+		this.$flightComputerMarkers = JSON.parse(missionVariables.sotl_flightComputerMarkers);
+	} else {
+		this.$flightComputerMarkers = {};
+	}
+	
 };
 
+this.playerWillSaveGame = function() {
+	missionVariables.sotl_flightComputerMarkers = JSON.stringify(this.$flightComputerMarkers);
+	
+};
+
+
+this.systemWillPopulate = function() {
+	
+	var marker = this.$flightComputerMarkers[system.ID];
+	if (marker) {
+		system.setPopulator("sotl_exp_marker", {
+			priority: 110,
+			callback: function() {
+				system.setWaypoint("sotl_flightcomputer_marker",
+						   marker.position,
+						   marker.orientation,
+								   {
+									   size: 3E3,
+									   beaconCode: 'X',
+									   beaconLabel: 'Saved position'
+								   }
+								  );
+			}
+		});
+	}
+};
 
 this.playerBoughtEquipment = function(eq) {
 	
@@ -226,6 +259,71 @@ this._processRefitRequest = function(slot, choice) {
 
 
 /*** Equipment items ***/
+
+/* Flight computer */
+
+/* Various modes to come. So far: mark, lagrange  */
+this.$flightComputerMode = "mark";
+
+this.$flightComputerMarkers = {};
+
+this._flightComputerButton1 = function() {
+	switch (this.$flightComputerMode) {
+	case "mark":
+		this._flightComputerMarkLocation();
+		break;
+	case "lagrange":
+		player.consoleMessage("Not implemented yet");
+		//		this._flightComputerMarkLagrange();
+		break;
+	}
+}
+
+this._flightComputerButton2 = function() {
+	switch (this.$flightComputerMode) {
+	case "mark":
+		this.$flightComputerMode = "lagrange";
+		player.consoleMessage("Lagrange estimation mode - select planet with compass");
+		break;
+	case "lagrange":
+		this.$flightComputerMode = "mark";
+		player.consoleMessage("Coordinate marking mode");
+		break;
+	}
+}
+
+
+this._flightComputerMarkLocation = function() {
+	var wp;
+	if (wp = system.waypoints["sotl_flightcomputer_marker"]) {
+		if (wp.position.distanceTo(player.ship) < 5E3) {
+			// remove existing marker
+			system.setWaypoint("sotl_flightcomputer_marker");
+			delete this.$flightComputerMarkers[system.ID];
+			return;
+		} else {
+			wp.position = player.ship.position;
+			wp.orientation = player.ship.orientation;
+		}
+	} else {
+		system.setWaypoint("sotl_flightcomputer_marker",
+						   player.ship.position,
+						   player.ship.orientation,
+						   {
+							   size: 3E3,
+							   beaconCode: 'X',
+							   beaconLabel: 'Saved position'
+						   }
+						  );
+	}
+	this.$flightComputerMarkers[system.ID] = {
+		position: [player.ship.position.x, player.ship.position.y, player.ship.position.z],
+		orientation: [player.ship.orientation.w, player.ship.orientation.x, player.ship.orientation.y, player.ship.orientation.z]
+	};
+}
+
+
+/** Sensors **/
 
 this.$sensorValues = [0,0,0,0,0,0,0,0,0,0];
 this.$sensorLabels = ["-","I","N","A","C","T","I","V","E","-"];

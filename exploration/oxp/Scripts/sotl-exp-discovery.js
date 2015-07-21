@@ -25,6 +25,9 @@ this.shipWillExitWitchspace = function() {
 
 this._compassTarget = function() {
 	var target = player.ship.compassTarget;
+	if (!target) {
+		return null;
+	}
 	if (target == system.sun) {
 		return target;
 	} else if (target == system.mainStation) {

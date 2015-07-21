@@ -21,6 +21,8 @@
 				"EQ_TARGET_MEMORY",
 				"EQ_INTEGRATED_TARGETING_SYSTEM"
 			);
+			script = "sotl-exp-eq-flightcomputer.js";
+
 		}
 	),
 	(
@@ -87,7 +89,7 @@
 			available_to_all = true;
 			can_carry_multiple = true;
 			condition_script = "sotl-exp-conditions.js";
-			script = "sotl-exp-gravitysensor.js";
+			script = "sotl-exp-eq-gravitysensor.js";
 			script_info = {
 				"sotl_exp_ismodule" = 1;
 			};
@@ -101,7 +103,7 @@
 			available_to_all = true;
 			can_carry_multiple = true;
 			condition_script = "sotl-exp-conditions.js";
-			script = "sotl-exp-spectralsensor.js";
+			script = "sotl-exp-eq-spectralsensor.js";
 			script_info = {
 				"sotl_exp_ismodule" = 1;
 			};

@@ -7,68 +7,73 @@ this.interstellarSpaceWillPopulate = function() {
 };
 
 this.systemWillPopulate = function() {
-	system.sun.position = [0,0,0];
+	system.setPopulator("sotl_exp_main",{
+		priority: 10,
+		callback: function() {
+			system.sun.position = [0,0,0];
 
-	var numPlanets = parseInt(system.info.planets_available);
-	var discovered = parseInt(system.info.planets_discovered);
-	var knownPlanet = -1;
-	var threshold = -1;
-	var planetdata = JSON.parse(system.info.planet_data);
+			var numPlanets = parseInt(system.info.planets_available);
+			var discovered = parseInt(system.info.planets_discovered);
+			var knownPlanet = -1;
+			var threshold = -1;
+			var planetdata = JSON.parse(system.info.planet_data);
 
 
-	for (var i=0;i<numPlanets;i++) {
-		if (discovered & (1 << i)) {
-			if (parseInt(system.info["planet_value_"+i]) > threshold) {
-				threshold = parseInt(system.info["planet_value_"+i]);
-				knownPlanet = i;
+			for (var i=0;i<numPlanets;i++) {
+				if (discovered & (1 << i)) {
+					if (parseInt(system.info["planet_value_"+i]) > threshold) {
+						threshold = parseInt(system.info["planet_value_"+i]);
+						knownPlanet = i;
+					}
+				}
 			}
-		}
-	}
-	
-	if (knownPlanet == -1) {
-		// system.mainPlanet.remove(); // no discovered planets
-		system.mainPlanet.position = [1E14,0,0]; // can't remove it
-		system.mainPlanet.name = "No known planets";
-	} else {
-		system.mainPlanet.position = system.info["planet_position_"+knownPlanet].split(" ");
-		system.setWaypoint("planet_"+i,system.mainPlanet.position,[0,0,0,0],{
-			size:1,
-			beaconCode:"P",
-			beaconLabel:system.info["planet_name_"+knownPlanet]
-		});
-		system.mainPlanet.sotl_planetIndex = knownPlanet;
-		system.mainPlanet.name = system.info["planet_name_"+knownPlanet];
-		system.mainPlanet.orientation = system.mainPlanet.orientation.rotateZ(planetdata[knownPlanet].axialTilt);
-	}
-	for (i=0;i<numPlanets;i++) {
-		if (i != knownPlanet) { // system.mainPlanet covers this one
-			if (planetdata[i].cloudAlpha == 0) {
-				var planet = system.addMoon("planet_"+galaxyNumber+"_"+system.ID+"_"+i);
+			
+			if (knownPlanet == -1) {
+				// system.mainPlanet.remove(); // no discovered planets
+				system.mainPlanet.position = [1E14,0,0]; // can't remove it
+				system.mainPlanet.name = "No known planets";
 			} else {
-				var planet = system.addPlanet("planet_"+galaxyNumber+"_"+system.ID+"_"+i);
-			}
-			planet.position = system.info["planet_position_"+i].split(" ");
-			planet.orientation = planet.orientation.rotateZ(planetdata[i].axialTilt);
-			planet.sotl_planetIndex = i;
-			if (discovered & (1 << i)) {
-				system.setWaypoint("planet_"+i,planet.position,[0,0,0,0],{
+				system.mainPlanet.position = system.info["planet_position_"+knownPlanet].split(" ");
+				system.setWaypoint("planet_"+i,system.mainPlanet.position,[0,0,0,0],{
 					size:1,
 					beaconCode:"P",
-					beaconLabel:system.info["planet_name_"+i]
+					beaconLabel:system.info["planet_name_"+knownPlanet]
 				});
-				
+				system.mainPlanet.sotl_planetIndex = knownPlanet;
+				system.mainPlanet.name = system.info["planet_name_"+knownPlanet];
+				system.mainPlanet.orientation = system.mainPlanet.orientation.rotateZ(planetdata[knownPlanet].axialTilt);
 			}
+			for (i=0;i<numPlanets;i++) {
+				if (i != knownPlanet) { // system.mainPlanet covers this one
+					if (planetdata[i].cloudAlpha == 0) {
+						var planet = system.addMoon("planet_"+galaxyNumber+"_"+system.ID+"_"+i);
+					} else {
+						var planet = system.addPlanet("planet_"+galaxyNumber+"_"+system.ID+"_"+i);
+					}
+					planet.position = system.info["planet_position_"+i].split(" ");
+					planet.orientation = planet.orientation.rotateZ(planetdata[i].axialTilt);
+					planet.sotl_planetIndex = i;
+					if (discovered & (1 << i)) {
+						system.setWaypoint("planet_"+i,planet.position,[0,0,0,0],{
+							size:1,
+							beaconCode:"P",
+							beaconLabel:system.info["planet_name_"+i]
+						});
+						
+					}
+				}
+			};
+
+
+			if (system.ID == 0) {
+				system.mainStation.position = system.mainPlanet.position.add([0,system.mainPlanet.radius*2.5,0]);
+			} else {
+				/* TODO: some sort of save anywhere? */
+				system.mainStation.remove();
+			}
+
 		}
-	};
-
-
-	if (system.ID == 0) {
-		system.mainStation.position = system.mainPlanet.position.add([0,system.mainPlanet.radius*2.5,0]);
-	} else {
-		/* TODO: some sort of save anywhere? */
-		system.mainStation.remove();
-	}
-
+	});
 };
 
 
