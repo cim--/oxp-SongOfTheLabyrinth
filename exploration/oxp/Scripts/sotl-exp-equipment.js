@@ -273,8 +273,7 @@ this._flightComputerButton1 = function() {
 		this._flightComputerMarkLocation();
 		break;
 	case "lagrange":
-		player.consoleMessage("Not implemented yet");
-		//		this._flightComputerMarkLagrange();
+		this._flightComputerMarkLagrange();
 		break;
 	}
 }
@@ -320,6 +319,62 @@ this._flightComputerMarkLocation = function() {
 		position: [player.ship.position.x, player.ship.position.y, player.ship.position.z],
 		orientation: [player.ship.orientation.w, player.ship.orientation.x, player.ship.orientation.y, player.ship.orientation.z]
 	};
+}
+
+
+this._flightComputerMarkLagrange = function() {
+	var wp;
+	if (wp = system.waypoints["sotl_flightcomputer_lagrange1"]) {
+		// clean up previous ones
+		for (var i=1;i<=5;i++) {
+			system.setWaypoint("sotl_flightcomputer_lagrange"+i);
+		}
+	}
+	var dws = worldScripts["SOTL discovery checks"];
+	var target = dws._compassTarget();
+	if (target.isPlanet) {
+		var g1 = dws._reportedGravity(system.sun);
+		var g2 = dws._reportedGravity(target);
+		if (m1 == -1 || m2 == -1) {
+			player.consoleMessage("Lagrange estimation requires mass readings for sun and planet");
+		} else {
+			var m1 = dws._stellarGravityToMass(g1,system.sun.radius);
+			var m2 = dws._planetaryGravityToMass(g2,target.radius);
+			m1 = m1 * 3E5; // convert both to being in earth masses, ish
+
+			var l12f = Math.pow(m2/(3*m1),0.33);
+			var lpos = [];
+			var tp = target.position;
+			lpos[1] = tp.multiply(1-l12f);
+			lpos[2] = tp.multiply(1+l12f);
+
+			var l3f = (7*m2) / (12*m1);
+			lpos[3] = tp.multiply(l3f-1);
+
+			var axor = tp.direction().cross([0,0,1]);
+			var plane = tp.direction().cross(axor);
+			
+			lpos[4] = tp.multiply(0.5).add(plane.multiply(tp.magnitude()*0.866));
+			lpos[5] = tp.multiply(0.5).subtract(plane.multiply(tp.magnitude()*0.866));
+
+			for (var j=1;j<=5;j++) {
+				var wpo = tp.subtract(lpos[j]).direction().rotationTo([0,0,1]);
+
+				system.setWaypoint("sotl_flightcomputer_lagrange"+j,
+								   lpos[j],
+								   wpo,
+								   {
+									   size: 50E3,
+									   beaconCode: 'L',
+									   beaconLabel: 'Lagrange '+j+' for '+target.name
+								   }
+								  );
+			}
+		
+		}
+	} else {
+		player.consoleMessage("Removed Lagrange point estimates");
+	}
 }
 
 

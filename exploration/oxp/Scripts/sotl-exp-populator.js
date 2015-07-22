@@ -52,6 +52,7 @@ this.systemWillPopulate = function() {
 					}
 					planet.position = system.info["planet_position_"+i].split(" ");
 					planet.orientation = planet.orientation.rotateZ(planetdata[i].axialTilt);
+					planet.name = system.info["planet_name_"+i];
 					planet.sotl_planetIndex = i;
 					if (discovered & (1 << i)) {
 						system.setWaypoint("planet_"+i,planet.position,[0,0,0,0],{

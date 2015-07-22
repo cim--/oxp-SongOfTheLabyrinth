@@ -134,8 +134,14 @@ this._stellarMassToGravity = function(m,r) {
 	return 28.02 * m / ((r/14E5)*(r/14E5));
 }
 
+// returns mass in stellar masses
 this._stellarGravityToMass = function(g,r) {
 	return (g/28.02)*((r/14E5)*(r/14E5));
+}
+
+// returns mass in earth masses
+this._planetaryGravityToMass = function(g,r) {
+	return g * (r/6400) * (r/6400);
 }
 
 
@@ -337,8 +343,8 @@ this._reportedGravity = function(object) {
 			data = JSON.parse(system.info.star_data);
 			grav = this._stellarMassToGravity(data.mass,data.radius)
 		} else {
-			data = JSON.parse(system.info.planet_data)[index];
-			grav = planet.surfaceGravity;
+			data = JSON.parse(system.info.planet_data)[idx];
+			grav = data.surfaceGravity;
 		}
 		return grav;
 	} else if (!discovered) {
@@ -347,6 +353,8 @@ this._reportedGravity = function(object) {
 		return discovered.scan;
 	}
 }
+
+
 
 
 this._discoverPlanet = function(planet, bitmask) {
@@ -363,6 +371,8 @@ this._discoverPlanet = function(planet, bitmask) {
 		beaconCode:"P",
 		beaconLabel:system.info["planet_name_"+index]
 	});
+	planet.name = system.info["planet_name_"+index];
+
 	this._discoverPlanetProperty(index,"size");
 
 	player.consoleMessage("New planetary body confirmed.");
