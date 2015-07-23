@@ -335,30 +335,14 @@ this._flightComputerMarkLagrange = function() {
 	if (target.isPlanet) {
 		var g1 = dws._reportedGravity(system.sun);
 		var g2 = dws._reportedGravity(target);
-		if (m1 == -1 || m2 == -1) {
+		if (g1 == -1 || g2 == -1) {
 			player.consoleMessage("Lagrange estimation requires mass readings for sun and planet");
 		} else {
-			var m1 = dws._stellarGravityToMass(g1,system.sun.radius);
-			var m2 = dws._planetaryGravityToMass(g2,target.radius);
-			m1 = m1 * 3E5; // convert both to being in earth masses, ish
 
-			var l12f = Math.pow(m2/(3*m1),0.33);
-			var lpos = [];
-			var tp = target.position;
-			lpos[1] = tp.multiply(1-l12f);
-			lpos[2] = tp.multiply(1+l12f);
-
-			var l3f = (7*m2) / (12*m1);
-			lpos[3] = tp.multiply(l3f-1);
-
-			var axor = tp.direction().cross([0,0,1]);
-			var plane = tp.direction().cross(axor);
-			
-			lpos[4] = tp.multiply(0.5).add(plane.multiply(tp.magnitude()*0.866));
-			lpos[5] = tp.multiply(0.5).subtract(plane.multiply(tp.magnitude()*0.866));
+			var lpos = worldScripts["SOTL Exploration Populator"]._lagrangePoints(target,false);
 
 			for (var j=1;j<=5;j++) {
-				var wpo = tp.subtract(lpos[j]).direction().rotationTo([0,0,1]);
+				var wpo = target.position.subtract(lpos[j]).direction().rotationTo([0,0,1]);
 
 				system.setWaypoint("sotl_flightcomputer_lagrange"+j,
 								   lpos[j],
@@ -370,7 +354,7 @@ this._flightComputerMarkLagrange = function() {
 								   }
 								  );
 			}
-		
+			player.consoleMessage("Set Lagrange point estimates for "+target.name);
 		}
 	} else {
 		player.consoleMessage("Removed Lagrange point estimates");

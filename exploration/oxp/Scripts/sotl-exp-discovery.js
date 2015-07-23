@@ -355,6 +355,23 @@ this._reportedGravity = function(object) {
 }
 
 
+this._actualGravity = function(object) {
+	var data, grav;
+	if (object.isSun) {
+		data = JSON.parse(system.info.star_data);
+		grav = this._stellarMassToGravity(data.mass,data.radius);
+	} else if (object.isPlanet) {
+		var idx = object.sotl_planetIndex;
+		data = JSON.parse(system.info.planet_data)[idx];
+		grav = data.surfaceGravity;
+	} else {
+		log(this.name,"Invalid object "+object+" to _actualGravity");
+		grav = 0;
+	}
+	return grav;
+}
+
+
 
 
 this._discoverPlanet = function(planet, bitmask) {
