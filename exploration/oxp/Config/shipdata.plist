@@ -402,112 +402,123 @@
 
 	/* For now copy asteroid and wreckage definitions */
 
-	"oolite_template_asteroid" =
+	"sotl_asteroid_template" =
 	{
 		ai_type = "dumbAI.plist";
 		bounty = 10;
 		cargo_type = "CARGO_NOT_CARGO";
-		debris_role = "boulder";
-		density = 5;
-		energy_recharge_rate = 0;
+		density = 15;
+		energy_recharge_rate = 0.1;
 		explosion_type = ("oolite-default-asteroid-explosion");
 		forward_weapon_type = "WEAPON_NONE";
 		has_ecm = no;
 		has_escape_pod = no;
 		has_scoop = no;
 		heat_insulation = 5;
-//		is_template = 1;
+		is_template = 1;
 		likely_cargo = 4;
 		materials =
 		{
 			"oolite_asteroid_diffuse.png" =
 			{
-				shininess = 7;
+				shininess = 2;
 				specular_color = (0.3, 0.3, 0.3, 1.0);
 			};
 		};
-		max_energy = 100;
-		max_flight_pitch = 0.1;
-		max_flight_roll = 0.1;
+		max_energy = 100000;
+		max_flight_pitch = 0.01;
+		max_flight_roll = 0.01;
 		max_flight_speed = 0;
 		missiles = 0;
 		model = "oolite_asteroid.dat";
 		name = "Asteroid";
-		roles = "asteroid";
-		scan_class = "CLASS_ROCK";
 		smooth = yes;
 		thrust = 0;
 		unpiloted = yes;
 		weapon_energy = 0;
 	};
-	"oolite_template_asteroid_alt" = 
+	"sotl_asteroid_template2" = 
 	{
-		like_ship = "oolite_template_asteroid";
-//		is_template = 1;
+		like_ship = "sotl_asteroid_template";
+		is_template = 1;
 		materials =
 		{
 			"oolite_alt_asteroid_diffuse.png" =
 			{
-				shininess = 7;
+				shininess = 2;
 				specular_color = (0.3, 0.3, 0.3, 1.0);
 			};
 		};
 		model = "oolite_alt_asteroid.dat";
 	};
-	"oolite_template_boulder" =
-	{
-		ai_type = "dumbAI.plist";
-		bounty = 5;
-		cargo_type = "CARGO_NOT_CARGO";
-		debris_role = "splinter";
-		density = 5;
-		energy_recharge_rate = 0;
-		explosion_type = ("oolite-default-asteroid-explosion");
-		forward_weapon_type = "WEAPON_NONE";
-		has_ecm = no;
-		has_escape_pod = no;
-		has_scoop = no;
-		heat_insulation = 3;
-//		is_template = 1;
-		likely_cargo = 4;
-		materials =
-		{
-			"oolite_boulder_diffuse.png" =
-			{
-				shininess = 7;
-				specular_color = (0.3, 0.3, 0.3, 1.0);
-			};
-		};
-		max_energy = 25;
-		max_flight_pitch = 0.5;
-		max_flight_roll = 0.5;
-		max_flight_speed = 50;
-		missiles = 0;
-		model = "oolite_boulder.dat";
-		name = "Boulder";
-		roles = "boulder";
-		scan_class = "CLASS_ROCK";
-		smooth = yes;
-		thrust = 0;
-		unpiloted = yes;
-		weapon_energy = 0;
+
+
+	"sotl_asteroid_rock" = {
+		like_ship = "sotl_asteroid_template";
+		roles = "sotl-rocky-asteroid-large asteroid";
+		model_scale_factor = 2.5;
 	};
-	"oolite_template_boulder_alt" =
-	{
-		like_ship = "oolite_template_boulder";
-//		is_template = 1;
-		materials =
-		{
-			"oolite_alt_boulder_diffuse.png" =
-			{
-				shininess = 7;
-				specular_color = (0.3, 0.3, 0.3, 1.0);
-			};
-		};
-		model = "oolite_alt_boulder.dat";
+	"sotl_asteroid_rock2" = {
+		like_ship = "sotl_asteroid_template2";
+		roles = "sotl-rocky-asteroid-small asteroid";
 	};
 
-	"oolite_template_splinter" = 
+	"sotl_asteroid_ice" = {
+		like_ship = "sotl_asteroid_template";
+		roles = "sotl-icy-asteroid-small asteroid";
+		materials =
+		{
+			"oolite_asteroid_diffuse.png" =
+			{
+				shininess = 15;
+				specular_color = (0.3, 0.8, 1.0, 1.0);
+			};
+		};
+	};
+	"sotl_asteroid_ice2" = {
+		like_ship = "sotl_asteroid_template2";
+		roles = "sotl-icy-asteroid-large asteroid";
+		model_scale_factor = 2.5;
+		materials =
+		{
+			"oolite_alt_asteroid_diffuse.png" =
+			{
+				shininess = 15;
+				specular_color = (0.3, 0.8, 1.0, 1.0);
+			};
+		};
+	};
+
+	"sotl_asteroid_metal" = {
+		like_ship = "sotl_asteroid_template";
+		roles = "sotl-metal-asteroid-small asteroid";
+		materials =
+		{
+			"oolite_asteroid_diffuse.png" =
+			{
+				shininess = 3;
+				specular_color = (0.4, 0.2, 0.2, 1.0);
+			};
+		};
+		model_scale_factor = 2.5;
+	};
+	"sotl_asteroid_metal" = {
+		like_ship = "sotl_asteroid_template2";
+		roles = "sotl-metal-asteroid-large asteroid";
+		model_scale_factor = 2.5;
+		materials =
+		{
+			"oolite_alt_asteroid_diffuse.png" =
+			{
+				shininess = 3;
+				specular_color = (0.4, 0.2, 0.2, 1.0);
+			};
+		};
+	};
+
+
+
+	"sotl_splinter" = 
 	{
 		ai_type = "dumbAI.plist";
 		bounty = 1;
@@ -518,7 +529,6 @@
 		has_ecm = no;
 		has_escape_pod = no;
 		has_scoop = no;
-//		is_template = 1;
 		materials =
 		{
 			"oolite_splinter_diffuse.png" =
@@ -543,8 +553,7 @@
 	};
 	"oolite_template_splinter_alt" = 
 	{
-		like_ship = "oolite_template_splinter";
-//		is_template = 1;
+		like_ship = "sotl_splinter";
 		model = "oolite_alt_splinter.dat";
 	};
 

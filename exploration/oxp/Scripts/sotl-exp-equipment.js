@@ -3,6 +3,8 @@
 this.name = "SOTL Equipment Management";
 
 this.$weaponManagement = false;
+this.$lastLaserHit = null;
+this.$lastLaserTime = null;
 
 /* Event handlers */
 
@@ -332,7 +334,7 @@ this._flightComputerMarkLagrange = function() {
 	}
 	var dws = worldScripts["SOTL discovery checks"];
 	var target = dws._compassTarget();
-	if (target.isPlanet) {
+	if (target && target.isPlanet) {
 		var g1 = dws._reportedGravity(system.sun);
 		var g2 = dws._reportedGravity(target);
 		if (g1 == -1 || g2 == -1) {
@@ -571,18 +573,8 @@ this._gravSensorExclude = function() {
 this._gravSensorErrorMagnitude = function() {
 	var systematic = 1E-6;
 	var sensors = this._gravSensorCount();
-	if (sensors > 1) {
-		systematic = 1E-8;
-		if (sensors > 2) {
-			systematic = 1E-10;
-			if (sensors > 3) {
-				systematic = 1E-12;
-				if (sensors > 4) {
-					// more than 5 gives no additional benefit
-					systematic = 1E-14;
-				}
-			}
-		}
+	for (var i=2;i<=Math.min(sensors,5);i++) {
+		systematic /= 100; // extra sensors increase sensitivity
 	}
 	return systematic;
 }
@@ -740,7 +732,7 @@ this._spectralSensorResetValues = function() {
 		this.$sensorLabels = ["Si","H2O","Fe","Cu","Al","Ti","U","Pt","Pd","Au"];
 		break;
 	case "asteroid2":
-		this.$sensorLabels = ["Si","H2O","Fe","Ir","Rh","Te","In","Rh","Ru","Os"];
+		this.$sensorLabels = ["Si","H2O","Fe","Ir","Rh","Te","In","Re","Ru","Os"];
 		break;
 	}
 };
@@ -840,13 +832,13 @@ this._spectralGetTargetObject = function() {
 			target = null;
 		}
 		break;
-/*	case "asteroid1":
+	case "asteroid1":
 	case "asteroid2":
 		target = player.ship.target;
-		if (!target.hasRole("asteroid")) {
+		if (!target || !target.hasRole("asteroid")) {
 			target = null;
 		}
-		break; */ // TODO: not yet implemented
+		break; 
 	}
 	return target;
 };
@@ -871,6 +863,10 @@ this._spectralSetTargets = function() {
 		return this._spectralSetTargetsSun();
 	case "planetary":
 		return this._spectralSetTargetsPlanetary();
+	case "asteroid1":
+		return this._spectralSetTargetsAsteroid1();
+	case "asteroid2":
+		return this._spectralSetTargetsAsteroid2();
 		// TODO: others!
 	}
 };
@@ -967,6 +963,29 @@ this._spectralSetTargetsPlanetary = function() {
 };
 
 
+this._spectralSetTargetsAsteroid1 = function() {
+	var minerals = player.ship.target.script.$sotlMinerals;
+	var baseline = [];
+	for (var i=0;i<10;i++) {
+		baseline.push(minerals[i]);
+	}
+	return baseline;
+}
+
+
+this._spectralSetTargetsAsteroid2 = function() {
+	var minerals = player.ship.target.script.$sotlMinerals;
+	var baseline = [];
+	for (var i=0;i<=2;i++) {
+		baseline.push(minerals[i]);
+	}
+	for (var i=10;i<=16;i++) {
+		baseline.push(minerals[i]);
+	}
+	return baseline;
+}
+
+
 this._spectralSaveResults = function() {
 	switch ($spectralSensorControlMode) {
 	case "stellar":
@@ -975,7 +994,10 @@ this._spectralSaveResults = function() {
 	case "planetary":
 		this._spectralSaveResultPlanet();
 		break;
-		// TODO: others!
+	case "asteroid1":
+	case "asteroid2":
+		this._spectralSaveResultAsteroid();
+		break;
 	}
 };
 
@@ -1043,6 +1065,58 @@ this._spectralSaveResultPlanet = function() {
 }
 
 
+this._spectralSaveResultAsteroid = function() {
+	var target = player.ship.target;
+	var i;
+	var base;
+	if (this.$spectralSensorResults[0] > this.$spectralSensorResults[1] && this.$spectralSensorResults[0] > this.$spectralSensorResults[2]) {
+		base = "rocky";
+
+	} else if (this.$spectralSensorResults[1] > this.$spectralSensorResults[2]) {
+		base = "icy";
+	} else {
+		base = "metal";
+	}
+
+	var richness = [60,60,60,40,40,40,40, 40,40,40,40,25,25,15];
+	var useful = [];
+	if ($spectralSensorControlMode == "asteroid1") {
+		for (i=3;i<10;i++) {
+			if (this.$spectralSensorResults[i] > richness[i-3]) {
+				useful.push(this.$sensorLabels[i]);
+			}
+		}
+		target.script.$sotlScan1 = useful;
+	} else {
+		for (i=3;i<10;i++) {
+			if (this.$spectralSensorResults[i] > richness[i+5]) {
+				useful.push(this.$sensorLabels[i]);
+			}
+		}
+		target.script.$sotlScan2 = useful;
+	}
+
+	useful = target.script.$sotlScan1.concat(target.script.$sotlScan2);
+
+
+	worldScripts["SOTL discovery checks"]._registerAsteroidScan(
+		target.script.$sotlAsteroidIndex,
+		base,
+		target.script.$sotlScan1,
+		target.script.$sotlScan2
+	);
+
+	var scan = worldScripts["SOTL discovery checks"]._getAsteroidScan(target.script.$sotlAsteroidIndex);
+	worldScripts["SOTL discovery checks"]._showAsteroidScan(target,scan);
+}
+
+
+this._registerAsteroidHit = function(target) {
+	this.$lastLaserHit = target;
+	this.$lastLaserTime = clock.absoluteSeconds;
+}
+
+
 
 this._spectralSensorRunScan = function(delta) {
 	var status = player.ship.equipmentStatus("EQ_SOTL_EXP_SENSORSPECTROSCOPIC",true);
@@ -1056,7 +1130,15 @@ this._spectralSensorRunScan = function(delta) {
 	// TODO: if scanning asteroid, return unless laser fired
 
 	var target = this._spectralGetTargetObject();
-
+	if (target.isShip) {
+		var scanning = false;
+		if (player.ship.forwardWeapon.equipmentKey == "EQ_WEAPON_SOTL_PROSPECTING") {
+			if (this.$lastLaserHit == target && this.$lastLaserTime+0.1 > clock.absoluteSeconds ) {
+				scanning = true;
+			}
+		}
+	}
+	
 	var ifactor = 50;
 	if (target.isPlanet) {
 		// ifactor much lower for atmosphere-less planets
@@ -1071,11 +1153,13 @@ this._spectralSensorRunScan = function(delta) {
 		} else {
 			ifactor = ifactor * (1.25-Math.abs(angle+0.25));
 		}
+	} else if (target.isShip) {
+		ifactor = (scanning?50:0) / ((target.position.distanceTo(player.ship)-target.collisionRadius)/1E3);
 	}
-	// TODO: ifactor varies between planets, asteroids, stars
+
 
 	var intensity = Math.pow((target.collisionRadius*ifactor / target.position.distanceTo(player.ship)),2);
-	var noiseIntensity = 0.2/(scount*scount);
+	var noiseIntensity = 0.8/(scount*scount);
 	if (!this._spectralCheckScanAlignment()) {
 		intensity = 0; // must stay on target
 	}

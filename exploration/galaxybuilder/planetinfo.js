@@ -501,6 +501,13 @@
 			} // other half have none at all
 		}
 
+		if (random.randf() > planet.surfaceGravity * 0.2) {
+			planet.trojans = planet.mineralWealth * (1+random.randf()-random.randf());
+			planet.trojanSeed = random.rand(0xFFFFFF);
+		} else {
+			planet.trojans = 0;
+		}
+		
 		planetdata[i][j].planets.push(planet);
 
 	};

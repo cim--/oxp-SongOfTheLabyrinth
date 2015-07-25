@@ -53,6 +53,8 @@
 	<integer>1</integer>
 	<key>EQ_SOTL_EXP_SENSORSPECTROSCOPIC</key>
 	<integer>1</integer>
+	<key>EQ_SOTL_EXP_PROSPECTINGLASER</key>
+	<integer>1</integer>
     </dict>
     <key>forward_weapon</key>
     <string>EQ_WEAPON_NONE</string>

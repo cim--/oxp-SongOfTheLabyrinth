@@ -80,6 +80,8 @@ this.systemWillPopulate = function() {
 		callback: this._setUpPlanetsAndStar.bind(this)
 	});
 
+	this.$asteroidIndex = 0;
+	
 	system.setPopulator("sotl_exp_asteroids",{
 		priority: 20,
 		callback: this._setUpAsteroidFields.bind(this)
@@ -159,17 +161,139 @@ this._setUpPlanetsAndStar = function() {
 
 this._setUpAsteroidFields = function() {
 	var p = system.planets;
+	var planetdata = JSON.parse(system.info.planet_data);
 	for (var i=0;i<p.length;i++) {
 		if (p[i].sotl_planetIndex !== undefined) {
-/*			// asteroids
-			var ls = this._lagrangePoints(p[i],true);
-			for (j=1;j<=5;j++) {
-				// temporary for testing only
-				system.addShips("asteroid",1,ls[j],0);
-			} */
+			var trojans;
+			if (trojans = planetdata[p[i].sotl_planetIndex].trojans) {
+				var lps = this._lagrangePoints(p[i],true);
+				var seed = planetdata[p[i].sotl_planetIndex].trojanSeed;
+				var temp = planetdata[p[i].sotl_planetIndex].surfaceTemperature;
+				
+				this._setUpAsteroidField(lps[4],trojans,temp,seed);
+				this._setUpAsteroidField(lps[5],trojans,temp,seed*137);
+			}
 		}
 	}
 };
+
+
+this._setUpAsteroidField = function(position,minerals,temp,seed) {
+	var r = worldScripts["SOTL Ranrot"];
+	r._srand(seed);
+	var size = 5+Math.floor(r._randf()*10);
+	for (var i=1;i<=size;i++) {
+		r._srand((seed*i*1301)&0x7FFFFFFF); // make sure can safely add extra numbers to end
+
+		offset = [
+			(r._randf()*100E3)-50E3,
+			(r._randf()*100E3)-50E3,
+			(r._randf()*100E3)-50E3
+		];
+		
+		var pos = position.add(offset);
+
+		var base = "metal";
+		if (r._randf() > minerals) {
+			base = "rocky";
+			if (r._randf() > minerals && temp < 0) {
+				base = "ice";
+			}
+		}
+
+		var asize = "small";
+		if (r._randf() < 0.5) {
+			asize = "large";
+		}
+
+		var asteroid = system.addShips("sotl-"+base+"-asteroid-"+asize,1,pos,0)[0];
+
+		asteroid.script.$sotlMinerals = this._mineralConcentrations(base, minerals ,r);
+		asteroid.script.$sotlAsteroidIndex = this.$asteroidIndex++;
+
+		asteroid.script.$sotlScan1 = [];
+		asteroid.script.$sotlScan2 = [];
+
+		asteroid.script.shipTakingDamage = function(a,w,t) {
+			if (w == player.ship) {
+				worldScripts["SOTL Equipment Management"]._registerAsteroidHit(this.ship);
+			}
+		}.bind(asteroid.script);
+		
+		asteroid.scannerDisplayColor1 = "0.3 0.3 0.3";
+		asteroid.scanDescription = "unscanned";
+
+		var discovery = worldScripts["SOTL discovery checks"]._getAsteroidScan(asteroid.script.$sotlAsteroidIndex);
+		if (discovery) {
+			worldScripts["SOTL discovery checks"]._showAsteroidScan(asteroid,discovery);
+		}
+	}
+
+};
+
+
+this._mineralConcentrations = function (base, minerals, r) {
+	var i;
+	// ["Si","H2O","Fe","Cu","Al","Ti","U","Pt","Pd","Au"]
+	// ["Si","H2O","Fe","Ir","Rh","Te","In","Re","Ru","Os"];
+	var concentrations = [0,0,0, 0,0,0, 0,0,0,0, 0,0,0,0, 0,0, 0];
+	switch (base) {
+	case "ice":
+		concentrations[1] = 10;
+		concentrations[0] = 2+r._randf();
+		for (i=2;i<=16;i++) {
+			if (r._randf() < 0.1 && i < 10) {
+				concentrations[i] = r._randf()*minerals;
+			} else {
+				concentrations[i] = r._randf()*minerals/10;
+			}
+		}
+		break;
+	case "rocky":
+		concentrations[0] = 10;
+		concentrations[1] = r._randf()*3;
+		for (i=2;i<=5;i++) {
+			concentrations[i] = r._randf()*minerals*5;
+		}
+		for (i=6;i<=13;i++) {
+			concentrations[i] = r._randf()*minerals*2;
+		}
+		for (i=14;i<=16;i++) {
+			concentrations[i] = r._randf()*minerals/3;
+		}
+		break;
+	case "metal":
+		concentrations[0] = r._randf()*8;
+		concentrations[1] = r._randf()*3;
+		concentrations[2] = 10;
+		for (i=3;i<=5;i++) {
+			concentrations[i] = r._randf()*minerals*15;
+		}
+		
+		for (i=6;i<=13;i++) {
+			if (r._randf() < minerals) {
+				concentrations[i] = r._randf()*minerals*12;
+			} else {
+				concentrations[i] = r._randf()*minerals;
+			}
+		}
+		for (i=14;i<=15;i++) {
+			if (r._randf() < minerals) {
+				concentrations[i] = r._randf()*minerals*8;
+			} else {
+				concentrations[i] = r._randf()*minerals;
+			}
+		}
+		if (r._randf() < minerals) {
+			concentrations[16] = r._randf()*minerals*5;
+		} else {
+			concentrations[16] = r._randf()*minerals;
+		}
+		break;
+	}
+	return concentrations;
+};
+
 
 
 

@@ -435,3 +435,60 @@ this._discoverStarProperty = function(prop,value) {
 	}
 	worldScripts["SOTL HUD Dials management"]._updateMFD();
 }
+
+
+this._registerAsteroidScan = function(index,base,common,rare) {
+	if (!this.$discoveries[system.ID]) {
+		this.$discoveries[system.ID] = {};
+	}
+	if (!this.$discoveries[system.ID]["asteroids"]) {
+		this.$discoveries[system.ID]["asteroids"] = {};
+	}
+	this.$discoveries[system.ID]["asteroids"][index] = {
+		base: base,
+		common: common,
+		rare: rare
+	}
+};
+
+
+this._getAsteroidScan = function(index) {
+	if (!this.$discoveries[system.ID]) {
+		return null;
+	}
+	if (!this.$discoveries[system.ID]["asteroids"]) {
+		return null;
+	}
+	if (!this.$discoveries[system.ID]["asteroids"][index]) {
+		return null;
+	}
+	return this.$discoveries[system.ID]["asteroids"][index];
+};
+
+
+this._showAsteroidScan = function(target, scan) {
+	target.scanDescription = "scanned";
+	var description;
+	switch (scan.base) {
+	case "rocky":
+		description = "Rocky asteroid";
+		target.scannerDisplayColor1 = "0.6 0.6 0.6";
+		break;
+	case "icy":
+		description = "Icy asteroid";
+		target.scannerDisplayColor1 = "0.3 0.8 0.8";
+		break;
+	case "metal":
+		description = "Metallic asteroid";
+		target.scannerDisplayColor1 = "0.7 0.3 0.3";
+		break;
+	}
+	if (scan.common.length > 0 || scan.rare.length > 0) {
+		description += " ("+scan.common.concat(scan.rare).join(", ")+")";
+		target.scannerDisplayColor2 = "0.9 0.5 0.5";
+	} else {
+		target.scannerDisplayColor2 = target.scannerDisplayColor1;
+	}
+
+	target.displayName = description;
+};
