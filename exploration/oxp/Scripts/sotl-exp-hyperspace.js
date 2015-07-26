@@ -142,6 +142,7 @@ this._beginHyperspaceSequence = function() {
 	}
 	this.$hyperspaceProgress = -5;
 
+	worldScripts["SOTL Equipment Management"]._deactivateSensors();
 };
 
 

@@ -498,7 +498,9 @@
 				} else {
 					planet.atmosphereType.composition = ["carbondioxide","water","methane","sulphurdioxide"][random.rand(4)];
 				}
-			} // other half have none at all
+			} else { // other half have none at all
+				planet.atmosphereType.composition = "none";
+			}
 		}
 
 		if (random.randf() > planet.surfaceGravity * 0.2) {

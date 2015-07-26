@@ -18,9 +18,12 @@ this._rnd = function() {
 this._srand = function(seed) {
 	this.$ranrot.high = seed;
 	this.$ranrot.low = this._uint32.xor(seed,0xFFFFFFFF);
-	this._rnd();
-	this._rnd();
-	this._rnd();
+	/* Ranrot takes a little while to warm up with the way the seed is
+	 * set.  Since this generator gets reseeded quite a lot, force this to
+	 * avoid obvious patterning */
+	for (var i=0;i<20;i++) {
+		this._rnd();
+	}
 };
 
 this._randf = function() {

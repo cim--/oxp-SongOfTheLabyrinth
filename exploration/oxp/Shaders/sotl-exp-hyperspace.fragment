@@ -10,24 +10,39 @@ void main() {
 	float y = vTexCoord.y - 0.5;
 
 	float r = sqrt(x*x + y*y);
-	float tr = (r/200.0)-(uTime/400.0);
-	float tx = x*tr/r;
-	float ty = y*tr/r;
+	float trr = (0.012/(r+0.024))+((uTime+5.0)/200.0)-(1.0/2.0);
+	float txr = x*trr/r;
+	float tyr = y*trr/r;
 
+	float trg = (0.02/(r+0.04))+((uTime+5.0)/1000.0)-(1.0/4.0);
+	float txg = x*trg/r;
+	float tyg = y*trg/r;
+
+	float trb = (0.0007/(r+0.0014))+((uTime+5.0)/300.0)-(1.0/3.0);
+	float txb = x*trb/r;
+	float tyb = y*trb/r;
+
+	// different layers move at different rates
+	vec4 diffuseColor = texture2D(uDiffuse,vec2(txr+0.5,tyr+0.5));
+	vec4 tempColor = texture2D(uDiffuse,vec2(txg+0.5,tyg+0.5));
+	diffuseColor.g = tempColor.g;
+	tempColor = texture2D(uDiffuse,vec2(txb+0.5,tyb+0.5));
+	diffuseColor.b = tempColor.b;
 	
-	vec4 diffuseColor = texture2D(uDiffuse,vec2(tx+0.5,ty+0.5));
-
-	diffuseColor.r *= 1.0+(sin(0.3*uTime-2.0)/2.5);
-	diffuseColor.g *= 1.0+(sin(uTime));
-	diffuseColor.b *= 1.0+(sin(2.5*uTime+2.0)/3.5);
+	diffuseColor.r *= 0.8+(0.4*(sin(0.3*uTime-2.0)/2.5));
+	diffuseColor.g *= 1.0+(0.2*(sin(uTime)));
+	diffuseColor.b *= 0.9+(0.3*(sin(2.5*uTime+2.0)/3.5));
 	
 	float intensity = 1.0;
 	float dist2 = (x*x)+(y*y); // 0 at centre, 0.5 at corner
 
 	if (uTime < 10.0) {
-		float darkening = (uTime/10.0)*(1.0-dist2);
+		float darkening = (uTime/10.0);//*(1.0-dist2);
+//		if (darkening > 1.0) {
+//			darkening = 1.0;
+//		}
 		diffuseColor.r *= darkening*darkening;
-		diffuseColor.g *= darkening*darkening;
+		diffuseColor.g *= darkening*darkening*darkening;
 		diffuseColor.b *= darkening;
 		intensity = darkening;
 		if (uTime < 2.0) {
@@ -56,7 +71,37 @@ void main() {
 			diffuseColor.g += brighten;
 			diffuseColor.b += brighten;
 		}
-	} 
+	}
+	
+	float thresholdr = 0.5;
+	float thresholdb = 0.6;
+	float thresholdg = 0.3;
+	float terp = 0.0;
+	if (diffuseColor.b > thresholdb) {
+		terp = (diffuseColor.b-thresholdb)/(1.0-thresholdb);
+		if (diffuseColor.r < diffuseColor.b) {
+			diffuseColor.r = (diffuseColor.b*terp)+(diffuseColor.r*(1-terp));
+		}
+		if (diffuseColor.g < diffuseColor.b) {
+			diffuseColor.g = (diffuseColor.b*terp)+(diffuseColor.g*(1-terp));
+		}
+	} else if (diffuseColor.r > thresholdr) {
+		terp = (diffuseColor.r-thresholdr)/(1.0-thresholdr);
+		if (diffuseColor.g < diffuseColor.r) {
+			diffuseColor.g = (diffuseColor.r*terp)+(diffuseColor.g*(1-terp));
+		}
+		if (diffuseColor.b < diffuseColor.r) {
+			diffuseColor.b = (diffuseColor.r*terp)+(diffuseColor.b*(1-terp));
+		}
+	} else if (diffuseColor.g > thresholdg) {
+		terp = (diffuseColor.g-thresholdg)/(1.0-thresholdg);
+		if (diffuseColor.r < diffuseColor.g) {
+			diffuseColor.r = (diffuseColor.g*terp)+(diffuseColor.r*(1-terp));
+		}
+		if (diffuseColor.b < diffuseColor.g) {
+			diffuseColor.b = (diffuseColor.g*terp)+(diffuseColor.b*(1-terp));
+		}
+	}
 		
 	float dist = sqrt(1.0/(dist2+0.0001));
 	float pulse = sin((dist*3.0)+((5.0+(2.5*uTime/uDuration))*uTime));

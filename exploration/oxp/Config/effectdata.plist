@@ -14,7 +14,7 @@
 				fragment_shader = "sotl-exp-hyperspace.fragment";
 				vertex_shader = "sotl-exp-hyperspace.vertex";
 				textures = (
-					"sotl-exp-hyperspace.png"
+					"sotl-exp-hyperspace3.png"
 				);
 				uniforms = {
 					uDiffuse = {

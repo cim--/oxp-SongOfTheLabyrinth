@@ -89,7 +89,7 @@ random.setStart(10000);
 (function () {
 	for (i=0;i<$.galaxies;i++) {
 		for (j=0;j<$.systems;j++) {
-			var startypeN = random.rand(30);
+			var startypeN = random.rand(22);
 			var sradfactor, shabfactor, minfactor, basecolour;
 			var star = {};
 			var planet = {};
@@ -156,7 +156,10 @@ random.setStart(10000);
 				star.sequence = "Red giant";
 				star.brightness = 100 + random.rand(600);
 				break;
-			default: // 12-29
+				// this should probably be more like 12-29
+				// but that makes A-class too rare
+				// maybe if the map expands it can be adjusted
+			default: // 12-21 
 				// "small red dwarf";
 				star.sequence = "Class M dwarf";
 				star.brightness = 0.001 + random.randf()*0.009;

@@ -168,7 +168,7 @@ this._setUpAsteroidFields = function() {
 			if (trojans = planetdata[p[i].sotl_planetIndex].trojans) {
 				var lps = this._lagrangePoints(p[i],true);
 				var seed = planetdata[p[i].sotl_planetIndex].trojanSeed;
-				var temp = planetdata[p[i].sotl_planetIndex].surfaceTemperature;
+				var temp = planetdata[p[i].sotl_planetIndex].temperature;
 				
 				this._setUpAsteroidField(lps[4],trojans,temp,seed);
 				this._setUpAsteroidField(lps[5],trojans,temp,seed*137);
@@ -185,10 +185,13 @@ this._setUpAsteroidField = function(position,minerals,temp,seed) {
 	for (var i=1;i<=size;i++) {
 		r._srand((seed*i*1301)&0x7FFFFFFF); // make sure can safely add extra numbers to end
 
+		var x = r._randf();
+		var y = r._randf();
+		var z = r._randf();
 		offset = [
-			(r._randf()*100E3)-50E3,
-			(r._randf()*100E3)-50E3,
-			(r._randf()*100E3)-50E3
+			(x*100E3)-50E3,
+			(y*100E3)-50E3,
+			(z*100E3)-50E3
 		];
 		
 		var pos = position.add(offset);
@@ -197,7 +200,7 @@ this._setUpAsteroidField = function(position,minerals,temp,seed) {
 		if (r._randf() > minerals) {
 			base = "rocky";
 			if (r._randf() > minerals && temp < 0) {
-				base = "ice";
+				base = "icy";
 			}
 		}
 
@@ -238,14 +241,14 @@ this._mineralConcentrations = function (base, minerals, r) {
 	// ["Si","H2O","Fe","Ir","Rh","Te","In","Re","Ru","Os"];
 	var concentrations = [0,0,0, 0,0,0, 0,0,0,0, 0,0,0,0, 0,0, 0];
 	switch (base) {
-	case "ice":
+	case "icy":
 		concentrations[1] = 10;
 		concentrations[0] = 2+r._randf();
 		for (i=2;i<=16;i++) {
 			if (r._randf() < 0.1 && i < 10) {
-				concentrations[i] = r._randf()*minerals;
+				concentrations[i] = r._randf()*minerals*3;
 			} else {
-				concentrations[i] = r._randf()*minerals/10;
+				concentrations[i] = r._randf()*minerals;
 			}
 		}
 		break;
@@ -253,10 +256,10 @@ this._mineralConcentrations = function (base, minerals, r) {
 		concentrations[0] = 10;
 		concentrations[1] = r._randf()*3;
 		for (i=2;i<=5;i++) {
-			concentrations[i] = r._randf()*minerals*5;
+			concentrations[i] = r._randf()*minerals*8;
 		}
 		for (i=6;i<=13;i++) {
-			concentrations[i] = r._randf()*minerals*2;
+			concentrations[i] = r._randf()*minerals*4;
 		}
 		for (i=14;i<=16;i++) {
 			concentrations[i] = r._randf()*minerals/3;
@@ -267,30 +270,32 @@ this._mineralConcentrations = function (base, minerals, r) {
 		concentrations[1] = r._randf()*3;
 		concentrations[2] = 10;
 		for (i=3;i<=5;i++) {
-			concentrations[i] = r._randf()*minerals*15;
+			concentrations[i] = r._randf()*minerals*30;
 		}
 		
 		for (i=6;i<=13;i++) {
 			if (r._randf() < minerals) {
-				concentrations[i] = r._randf()*minerals*12;
+				concentrations[i] = r._randf()*minerals*20;
 			} else {
 				concentrations[i] = r._randf()*minerals;
 			}
 		}
 		for (i=14;i<=15;i++) {
 			if (r._randf() < minerals) {
-				concentrations[i] = r._randf()*minerals*8;
+				concentrations[i] = r._randf()*minerals*12;
 			} else {
 				concentrations[i] = r._randf()*minerals;
 			}
 		}
 		if (r._randf() < minerals) {
-			concentrations[16] = r._randf()*minerals*5;
+			concentrations[16] = r._randf()*minerals*8;
 		} else {
 			concentrations[16] = r._randf()*minerals;
 		}
 		break;
 	}
+
+	
 	return concentrations;
 };
 

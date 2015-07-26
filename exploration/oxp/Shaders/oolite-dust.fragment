@@ -10,6 +10,8 @@ void main(void)
 	umag = (10.0 - log(umag))/10.0;
 	if (umag < 0.01) {
 		umag = 0.01;
+	} else if (umag > 1.0) {
+		umag = 1.0;
 	}
 
 	gl_FragColor = vec4(vColor.rgb, vColor.a * umag);

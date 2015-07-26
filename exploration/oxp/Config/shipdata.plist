@@ -502,7 +502,7 @@
 		};
 		model_scale_factor = 2.5;
 	};
-	"sotl_asteroid_metal" = {
+	"sotl_asteroid_metal2" = {
 		like_ship = "sotl_asteroid_template2";
 		roles = "sotl-metal-asteroid-large asteroid";
 		model_scale_factor = 2.5;

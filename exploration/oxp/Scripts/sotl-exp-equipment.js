@@ -64,6 +64,8 @@ this.playerBoughtEquipment = function(eq) {
 // for now, just repair all damaged equipment
 // in future, remove it and add it to the production queues
 this.shipWillDockWithStation = function() {
+	this._deactivateSensors();
+	
 	var eq = player.ship.equipment;
 	var repairs = false;
 	for (var i=0;i<eq.length;i++) {
@@ -828,7 +830,7 @@ this._spectralGetTargetObject = function() {
 		break;
 	case "planetary":
 		target = worldScripts["SOTL discovery checks"]._compassTarget();
-		if (!target.isPlanet) {
+		if (!target || !target.isPlanet) {
 			target = null;
 		}
 		break;
@@ -912,6 +914,7 @@ this._spectralSetTargetsPlanetary = function() {
 	case "none":
 		baseline = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 		randomisation = 0;
+		break;
 	case "earthlike":
 		baseline = [1, 89, 83, 70, 55, 2, 73, 1, 33, 0];
 		randomisation = 10;
@@ -1016,7 +1019,9 @@ this._spectralResultAccuracy = function() {
 	}
 	var conversion = (actual/expected);
 	for (var i=0;i<10;i++) {
-		accuracy += ((this.$spectralSensorResults[i]/this.$spectralSensorTarget[i])/conversion)-1;
+		if (this.$spectralSensorTarget[i] > 0) {
+			accuracy += ((this.$spectralSensorResults[i]/this.$spectralSensorTarget[i])/conversion)-1;
+		}
 	}
 	accuracy *= max/100;
 	return accuracy;
@@ -1065,6 +1070,11 @@ this._spectralSaveResultPlanet = function() {
 }
 
 
+this._miningExpectations = function() {
+	return [50,50,50,40,40,40,30,30,30,30,30,30,30,30,20,20,12];
+}
+
+
 this._spectralSaveResultAsteroid = function() {
 	var target = player.ship.target;
 	var i;
@@ -1078,18 +1088,18 @@ this._spectralSaveResultAsteroid = function() {
 		base = "metal";
 	}
 
-	var richness = [60,60,60,40,40,40,40, 40,40,40,40,25,25,15];
+	var richness = this._miningExpectations();
 	var useful = [];
 	if ($spectralSensorControlMode == "asteroid1") {
 		for (i=3;i<10;i++) {
-			if (this.$spectralSensorResults[i] > richness[i-3]) {
+			if (this.$spectralSensorResults[i] > richness[i]) {
 				useful.push(this.$sensorLabels[i]);
 			}
 		}
 		target.script.$sotlScan1 = useful;
 	} else {
 		for (i=3;i<10;i++) {
-			if (this.$spectralSensorResults[i] > richness[i+5]) {
+			if (this.$spectralSensorResults[i] > richness[i+8]) {
 				useful.push(this.$sensorLabels[i]);
 			}
 		}
