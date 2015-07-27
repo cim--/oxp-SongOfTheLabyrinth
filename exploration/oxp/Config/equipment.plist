@@ -67,7 +67,7 @@
 			};
 		}
 	),
-/*	(
+	(
 		100, 0, "Sample Collection Bay",
 		"EQ_SOTL_EXP_SAMPLECOLLECTION",
 		"Sample collection bay capable of holding 15 samples",
@@ -80,7 +80,7 @@
 				"sotl_exp_ismodule" = 1;
 			};
 		}
-	), */
+	),
 	(
 		100, 0, "Gravitational Sensor",
 		"EQ_SOTL_EXP_SENSORGRAVITATIONAL",
@@ -122,7 +122,19 @@
 			};
 		}
 	), 
-
+	(
+		100, 0, "Sampling Laser",
+		"EQ_SOTL_EXP_SAMPLINGLASER",
+		"Uses brief high-energy pulses to break small fragments off asteroids using thermal cracking. Useful for retrieving samples for lab analysis, as well as for extraction of minerals only required in small quantities.\n\nOther than redundancy there is no benefit to fitting a second module.",
+		{
+			available_to_all = true;
+			can_carry_multiple = true;
+			condition_script = "sotl-exp-conditions.js";
+			script_info = {
+				"sotl_exp_ismodule" = 1;
+			};
+		}
+	),
 
 	/* Laser fittings */
 	(
@@ -159,6 +171,26 @@
 				threat_assessment = -1.0;
 				is_mining_laser = true;
 				color = "0.4 0.4 0.9 1.0";
+			};
+		}
+	),
+	(
+		0, 0, "Sampling Laser",
+		"EQ_WEAPON_SOTL_SAMPLING",
+		"Uses brief high-energy pulses to break small fragments off asteroids using thermal cracking. Useful for retrieving samples for lab analysis, as well as for extraction of minerals only required in small quantities.",
+		{
+			condition_script = "sotl-exp-conditions.js";
+			available_to_all = true;
+			visible = false; // not supported
+			weapon_info = {
+				range = 5000;
+				energy = 45.0;
+				damage = 10.0;
+				recharge_rate = 4.0;
+				shot_temperature = 50.0;
+				threat_assessment = -1.0;
+				is_mining_laser = true;
+				color = "0.7 0.7 0.2 1.0";
 			};
 		}
 	),

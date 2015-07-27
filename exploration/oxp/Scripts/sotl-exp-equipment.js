@@ -132,6 +132,8 @@ this._processEquipment = function() {
 	this.$weaponManagement = true;
 	if (player.ship.hasEquipmentProviding("EQ_SOTL_EXP_PROSPECTINGLASER")) {
 		player.ship.forwardWeapon = "EQ_WEAPON_SOTL_PROSPECTING";
+	} else if (player.ship.hasEquipmentProviding("EQ_SOTL_EXP_SAMPLINGLASER")) {
+		player.ship.forwardWeapon = "EQ_WEAPON_SOTL_SAMPLING";
 	} else {
 		player.ship.forwardWeapon = "EQ_WEAPON_NONE";
 	}
