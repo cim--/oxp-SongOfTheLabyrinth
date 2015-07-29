@@ -75,7 +75,7 @@
 			available_to_all = true;
 			can_carry_multiple = true;
 			condition_script = "sotl-exp-conditions.js";
-			provides = ("EQ_CARGO_SCOOP");
+			provides = ("EQ_CARGO_SCOOPS");
 			script_info = {
 				"sotl_exp_ismodule" = 1;
 			};
