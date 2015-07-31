@@ -14,6 +14,22 @@ this.allowAwardEquipment = function(eqKey, ship, context) {
 			return false;
 		}
 	}
+
+	var slots = worldScripts["SOTL Equipment Management"]._slotsUsed();
+
+	if (eqKey == "EQ_SOTL_EXP_REFIT") {
+		if (slots == 0) {
+			return false;
+		}
+	}
+
+	var eq = EquipmentInfo.infoForKey(eqKey);	
+	if (eq.scriptInfo && eq.scriptInfo.sotl_exp_ismodule) {
+		if (slots + parseInt(eq.scriptInfo.sotl_exp_ismodule) > 10) {
+			return false;
+		}
+	}
+
 	// TODO: more conditions
 	return true;
 };

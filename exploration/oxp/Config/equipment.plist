@@ -34,15 +34,15 @@
 		}
 	),
 	(
-		0, 0, "Refit internal modules",
+		0, 0, "Remove internal modules",
 		"EQ_SOTL_EXP_REFIT",
-		"The Shaula-class survey craft has a flexible interior with ten available compartments, to allow the equipment load to be adapted to the needs of an expedition.",
+		"The Shaula-class survey craft has a flexible interior with ten available compartments, to allow the equipment load to be adapted to the needs of an expedition. Fitted modules can be removed here to free up space.",
 		{
 			available_to_all = true;
 		}
-	),
+	), 
 	(
-		100, 0, "Capacitor Bank",
+		0, 0, "Capacitor Bank",
 		"EQ_SOTL_EXP_CAPACITOR",
 		"Capacitor and battery bank to temporarily store generator output. Allows additional endurance for energy-intensive operations such as hyperspace transit.",
 		{
@@ -55,7 +55,7 @@
 		}
 	),
 	(
-		100, 0, "Fuel Tank",
+		0, 0, "Fuel Tank",
 		"EQ_SOTL_EXP_FUELTANK",
 		"Hyperspace fuel tank. Fuel usage is non-linear with jump range. A single tank provides sufficient fuel for two maximum range jumps.",
 		{
@@ -68,7 +68,7 @@
 		}
 	),
 	(
-		100, 0, "Sample Collection Bay",
+		0, 0, "Sample Collection Bay",
 		"EQ_SOTL_EXP_SAMPLECOLLECTION",
 		"Sample collection bay capable of holding 15 samples",
 		{
@@ -82,7 +82,7 @@
 		}
 	),
 	(
-		100, 0, "Gravitational Sensor",
+		0, 0, "Gravitational Sensor",
 		"EQ_SOTL_EXP_SENSORGRAVITATIONAL",
 		"A carefully-balanced set of accelerometers to measure local gravitational forces and allow the measurement of the masses of stars and planets. Once an accurate measure is taken for a particular object, it can be filtered out of the readings to allow the potential detection of other substantial masses. Due to the extreme sensitivity of the equipment it may only be used while the ship is stationary. Up to five units may be used in parallel for increased accuracy.",
 		{
@@ -96,7 +96,7 @@
 		}
 	),
 	(
-		100, 0, "Spectroscopic Sensor",
+		0, 0, "Spectroscopic Sensor",
 		"EQ_SOTL_EXP_SENSORSPECTROSCOPIC",
 		"A spectroscopic sensor for detection of emitted or reflected radiation. This can be used to analyse stellar properties, planetary atmospheres, and when combined with a prospecting laser the mineral contents of asteroids. Fitting additional units will help to filter out random noise and increase the sensitivity of the results.",
 		{
@@ -110,7 +110,7 @@
 		}
 	),
 	(
-		100, 0, "Prospecting Laser",
+		0, 0, "Prospecting Laser",
 		"EQ_SOTL_EXP_PROSPECTINGLASER",
 		"Fires a narrow low-energy coherent beam designed to vaporise small parts of the surface layer of an asteroid, surrounded by a wider multispectral 'torch' to illuminate the released gases for easier analysis by spectroscopic sensors.\n\nOther than redundancy there is no benefit to fitting a second module.",
 		{
@@ -123,7 +123,7 @@
 		}
 	), 
 	(
-		100, 0, "Sampling Laser",
+		0, 0, "Sampling Laser",
 		"EQ_SOTL_EXP_SAMPLINGLASER",
 		"Uses brief high-energy pulses to break small fragments off asteroids using thermal cracking. Useful for retrieving samples for lab analysis, as well as for extraction of minerals only required in small quantities.\n\nOther than redundancy there is no benefit to fitting a second module.",
 		{

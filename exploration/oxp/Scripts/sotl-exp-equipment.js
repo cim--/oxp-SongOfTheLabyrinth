@@ -147,7 +147,8 @@ this._processEquipment = function() {
 
 this._startRefit = function() {
 	mission.runScreen({
-		title: "Refit internal modules",
+		title: "Remove internal modules",
+		message: "Select an internal module to remove it",
 		choices: this._moduleListChoices(),
 		allowInterrupt: true,
 		exitScreen: "GUI_SCREEN_EQUIPSHIP"
@@ -192,6 +193,18 @@ this._moduleList = function() {
 };
 
 
+this._slotsUsed = function() {
+	var eq = player.ship.equipment;
+	var slots = 0;
+	for (var i=0;i<eq.length;i++) {
+		if (eq[i].scriptInfo.sotl_exp_ismodule) {
+			slots += parseInt(eq[i].scriptInfo.sotl_exp_ismodule);
+		}
+	};
+	return slots;
+};
+
+
 this._processModuleSelection = function(choice) {
 	if (choice == null || choice == "99_EXIT") {
 		return;
@@ -203,63 +216,10 @@ this._processModuleSelection = function(choice) {
 
 this._refitSlot = function(slot) {
 	var modules = this._moduleList();
-	var desc;
-	if (slot >= modules.length) {
-		desc = "Empty compartment.\n\nLaunched exploration tools such as satellites and probes can be retrieved into this compartment for repair and reuse."
-	} else {
-		desc = modules[slot].name+"\n\n"+modules[slot].description;
+	if (slot < modules.length) {
+		player.ship.removeEquipment(modules[slot].equipmentKey);
 	}
-
-	mission.runScreen({
-		title: "Refit compartment "+(slot+1),
-		message: desc,
-		choices: this._availableModuleChoices(),
-		allowInterrupt: true,
-		exitScreen: "GUI_SCREEN_EQUIPSHIP"
-	}, this._processRefitRequest.bind(this,slot));
-
-}
-
-
-this._availableModuleChoices = function() {
-	var list = {};
-	var eqs = EquipmentInfo.allEquipment;
-	for (var i=0;i<eqs.length;i++) {
-		if (eqs[i].scriptInfo.sotl_exp_ismodule) {
-			var ln = i;
-			if (i < 10) {
-				ln = "0"+i;
-			}
-			list[ln+"_"+eqs[i].equipmentKey] = "Fit "+eqs[i].name;
-		}
-	}
-	list["90_EMPTY"] = "Empty compartment";
-	list["98_RETURN"] = "Return to compartment list";
-	return list;
-
-}
-
-this._processRefitRequest = function(slot, choice) {
-	if (choice == null) {
-		return;
-	} else if (choice == "98_RETURN") {
-		this._startRefit();
-		return;
-	} else if (choice == "90_EMPTY") {
-		var modules = this._moduleList();
-		if (slot < modules.length) {
-			player.ship.removeEquipment(modules[slot].equipmentKey);
-		}
 	
-	} else {
-		var item = choice.substr(3);
-		var modules = this._moduleList();
-		if (slot < modules.length) {
-			player.ship.removeEquipment(modules[slot].equipmentKey);
-		}
-		player.ship.awardEquipment(item);
-		
-	}
 	this._startRefit();
 };
 
