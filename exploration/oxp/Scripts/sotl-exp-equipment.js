@@ -327,6 +327,27 @@ this._flightComputerMarkLagrange = function() {
 	}
 }
 
+/* Sample collection bays */
+
+this.$mineralsCarried = {};
+
+this._updateMineralsCarried = function(minerals, amount) {
+	if (amount > 0) {
+		if (this.$mineralsCarried[minerals]) {
+			this.$mineralsCarried[minerals] += amount;
+		} else {
+			this.$mineralsCarried[minerals] = amount;
+		}
+	} else {
+		if (this.$mineralsCarried[minerals]) {
+			this.$mineralsCarried[minerals] += amount;
+			if (this.$mineralsCarried[minerals] <= 0) {
+				delete this.$mineralsCarried[minerals];
+			}
+		}
+	}
+}
+
 
 /** Sensors **/
 
@@ -1033,7 +1054,9 @@ this._spectralSaveResultPlanet = function() {
 
 
 this._miningExpectations = function() {
-	return [50,50,50,40,40,40,30,30,30,30,30,30,30,30,20,20,12];
+	// items 3-5 should be 40 but are more likely to be available
+	// in minable quantities
+	return [50,50,50,30,30,30,30,30,30,30,30,30,30,30,20,20,12];
 }
 
 

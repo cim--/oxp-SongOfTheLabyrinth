@@ -217,12 +217,6 @@ this._setUpAsteroidField = function(position,minerals,temp,seed) {
 		asteroid.script.$sotlScan1 = [];
 		asteroid.script.$sotlScan2 = [];
 
-		asteroid.script.shipTakingDamage = function(a,w,t) {
-			if (w == player.ship) {
-				worldScripts["SOTL Equipment Management"]._registerAsteroidHit(this.ship);
-			}
-		}.bind(asteroid.script);
-		
 		asteroid.scannerDisplayColor1 = "0.3 0.3 0.3";
 		asteroid.scanDescription = "unscanned";
 

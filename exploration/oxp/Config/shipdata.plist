@@ -405,7 +405,7 @@
 	"sotl_asteroid_template" =
 	{
 		ai_type = "dumbAI.plist";
-		bounty = 10;
+		bounty = 0;
 		cargo_type = "CARGO_NOT_CARGO";
 		density = 15;
 		energy_recharge_rate = 0.1;
@@ -433,6 +433,7 @@
 		model = "oolite_asteroid.dat";
 		name = "Asteroid";
 		smooth = yes;
+		script = "sotl-exp-asteroid.js";
 		thrust = 0;
 		unpiloted = yes;
 		weapon_energy = 0;
@@ -521,8 +522,8 @@
 	"sotl_splinter" = 
 	{
 		ai_type = "dumbAI.plist";
-		bounty = 1;
-		cargo_type = "CARGO_MINERALS";
+		bounty = 0;
+		cargo_type = "CARGO_SCRIPTED_ITEM";
 		energy_recharge_rate = 0;
 		explosion_type = ("oolite-default-asteroid-explosion");
 		forward_weapon_type = "WEAPON_NONE";
@@ -544,8 +545,9 @@
 		missiles = 0;
 		model = "oolite_splinter.dat";
 		name = "Splinter";
-		roles = "splinter";
+		roles = "splinter sotl-splinter";
 		scan_class = "CLASS_CARGO";
+		script = "sotl-exp-splinter.js";
 		smooth = yes;
 		thrust = 0;
 		unpiloted = yes;
