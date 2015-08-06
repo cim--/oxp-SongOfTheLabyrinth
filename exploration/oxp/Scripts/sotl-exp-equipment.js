@@ -63,8 +63,10 @@ this.playerBoughtEquipment = function(eq) {
 
 // for now, just repair all damaged equipment
 // in future, remove it and add it to the production queues
-this.shipWillDockWithStation = function() {
+this.shipWillDockWithStation = function(station) {
 	this._deactivateSensors();
+
+	this._transferMinerals(station);
 	
 	var eq = player.ship.equipment;
 	var repairs = false;
@@ -348,6 +350,24 @@ this._updateMineralsCarried = function(minerals, amount) {
 	}
 }
 
+this._transferMinerals = function(station) {
+	var minerals = Object.keys(this.$mineralsCarried);
+	var transfer = [];
+	for (var i=0;i<minerals.length;i++) {
+		var mineral = minerals[i];
+		var current = station.market[mineral].quantity;
+		station.setMarketQuantity(mineral, current + this.$mineralsCarried[mineral]);
+		transfer.push(this.$mineralsCarried[mineral]+" "+station.market[mineral].name);
+	}
+	if (transfer.length > 0) {
+		var message = "Mineral samples transferred. Usable materials extracted: "+transfer.join(", ");
+		player.addMessageToArrivalReport(message);
+	}
+	for (var i=0;i<minerals.length;i++) {
+		mineral = minerals[i];
+		manifest[mineral] = 0;
+	}
+};
 
 /** Sensors **/
 

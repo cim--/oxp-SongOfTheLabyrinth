@@ -18,7 +18,12 @@ this.shipTakingDamage = function(a,w,t) {
 		var fragpos = apos.add(ppos.subtract(apos).direction().multiply(this.ship.collisionRadius));
 
 		var splinter = system.addShips("sotl-splinter",1,fragpos,0)[0];
-		splinter.velocity = Vector3D.random(300);
+		var vel = Vector3D.random(100);
+		if (vel.dot(ppos.subtract(apos)) < 0) {
+			// head away from asteroid surface
+			vel = vel.multiply(-1);
+		}
+		splinter.velocity = vel;
 		if (this.$sotlMinerals[0] == 10) {
 			splinter.setCargo("minerals",1);
 		} else if (this.$sotlMinerals[1] == 10) {

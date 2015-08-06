@@ -6,6 +6,7 @@
 		comment = "Wreckage from severely damaged ships and structures.";
 		market_script = "sotl-exp-tradegoods.js";
 		sort_order = 100;
+		capacity = 4095;
 	};
 
 	"minerals" = {
@@ -14,6 +15,7 @@
 		comment = "Basic silicon/oxygen rocks. Useful for various manufacturing applications but readily available even in Max's Drift, so generally uninteresting for mineral surveys.";
 		market_script = "sotl-exp-tradegoods.js";
 		sort_order = 200;
+		capacity = 4095;
 	};
 
 	"slaves" = {
@@ -22,6 +24,7 @@
 		comment = "Escape pods from abandoned ships. With no hyperspace capability and their little power capacity reserved for basic life support, it is vital that these are rescued soon after launch.";
 		market_script = "sotl-exp-tradegoods.js";
 		sort_order = 10000;
+		capacity = 4095;
 	};
 
 	// local goods
@@ -31,6 +34,7 @@
 		comment = "Asteroid fragments largely consisting of water-ice. The main source of water for the Max's Drift colony and similarly likely to be required in other systems for ease of supply. Intensive water recycling means that only a few of these are required to support relatively large operations.";
 		market_script = "sotl-exp-tradegoods.js";
 		sort_order = 300;
+		capacity = 4095;
 	};
 
 	"sotl-exp-iron" = {
@@ -39,6 +43,7 @@
 		comment = "Rocks containing iron-rich ores, useful for many manufacturing purposes. Easily extracted from many asteroids, so there is no shortage in Max's Drift. Survey samples are still required to establish the feasibility of local refining operations.";
 		market_script = "sotl-exp-tradegoods.js";
 		sort_order = 310;
+		capacity = 4095;
 	};
 
 	"sotl-exp-copper" = {
@@ -47,6 +52,7 @@
 		comment = "Rocks containing copper-rich ores, useful for many manufacturing purposes. Easily extracted from many asteroids, so there is no shortage in Max's Drift. Survey samples are still required to establish the feasibility of local refining operations.";
 		market_script = "sotl-exp-tradegoods.js";
 		sort_order = 320;
+		capacity = 4095;
 	};
 
 	"sotl-exp-aluminium" = {
@@ -55,6 +61,7 @@
 		comment = "Rocks containing aluminium-rich ores, useful for many manufacturing purposes. Easily extracted from many asteroids, so there is no shortage in Max's Drift. Survey samples are still required to establish the feasibility of local refining operations.";
 		market_script = "sotl-exp-tradegoods.js";
 		sort_order = 330;
+		capacity = 4095;
 	};
 
 	"sotl-exp-titanium" = {
@@ -63,6 +70,7 @@
 		comment = "Rocks containing titanium-rich ores, useful for many manufacturing purposes. Easily extracted from many asteroids, so there is no shortage in Max's Drift. Survey samples are still required to establish the feasibility of local refining operations.";
 		market_script = "sotl-exp-tradegoods.js";
 		sort_order = 340;
+		capacity = 4095;
 	};
 
 	"sotl-exp-uranium" = {
@@ -71,6 +79,7 @@
 		comment = "Rocks containing uranium-rich ores, required for nuclear fission plants and the production of hyperspace fuel. While large installations, and even larger ships such as the Shaula, are able to run the more efficient fusion plants, where space is limited - on a satellite or uncrewed installation - the smaller fission plants provide a better trade-off.\n\nA small deposit is being mined on Anchor, but other sources are urgently needed.";
 		market_script = "sotl-exp-tradegoods.js";
 		sort_order = 1010;
+		capacity = 4095;
 	};
 
 	"sotl-exp-platinium" = {
@@ -79,6 +88,7 @@
 		comment = "Rocks containing platinum-rich ores, required for some chemical processes in life-support systems.\n\nThere are no known good sources of this in Max's Reach, but existing reserves are expected to be sufficient in the medium-term. Additional supplies would be required for the establishment of subsidiary settlements.";
 		market_script = "sotl-exp-tradegoods.js";
 		sort_order = 1020;
+		capacity = 4095;
 	};
 
 	"sotl-exp-palladium" = {
@@ -87,6 +97,7 @@
 		comment = "Rocks containing palladium-rich ores, required for many electronic and chemical processes. Required for the construction of capacitor modules and other modules depending on them.\n\nCurrent reserves are expected to be adequate in the medium term but would not support significant additional ship construction.";
 		market_script = "sotl-exp-tradegoods.js";
 		sort_order = 1030;
+		capacity = 4095;
 	};
 
 	"sotl-exp-gold" = {
@@ -95,6 +106,7 @@
 		comment = "Rocks containing gold-rich ores, required for many electronic and chemical processes. Required for the construction of satellites and atmospheric probes to shield sensitive components from the local star.\n\nDue to its utility a significant amount of this metal was brought on board the Local Maximum and is not expected to be used up soon.";
 		market_script = "sotl-exp-tradegoods.js";
 		sort_order = 1040;
+		capacity = 4095;
 	};
 
 	"sotl-exp-iridium" = {
@@ -103,6 +115,7 @@
 		comment = "Rocks containing iridium-rich ores, required for many chemical processes and for some manufacturing where strong thermal resistance is required. Many modules require some iridium in their construction.\n\nWhile rare on planetary surfaces it is relatively common in asteroids and there is currently sufficient supply in Max's Reach.";
 		market_script = "sotl-exp-tradegoods.js";
 		sort_order = 1050;
+		capacity = 4095;
 	};
 
 	"sotl-exp-rhodium" = {
@@ -111,6 +124,7 @@
 		comment = "Rocks containing rhodium-rich ores. Rhodium is required in the construction of fission power plants and many optical sensor units.\n\nSupplies of this element in Max's Reach are extremely low.";
 		market_script = "sotl-exp-tradegoods.js";
 		sort_order = 1060;
+		capacity = 4095;
 	};
 
 	"sotl-exp-tellurium" = {
@@ -119,6 +133,7 @@
 		comment = "Rocks containing tellurium-rich ores. Tellurium is used in many industrial alloys, and is also used in the production of solar cells for powering satellites and installations near a star.\n\nSignificant sources have been found on Stray and so local supplies are currently sufficient.";
 		market_script = "sotl-exp-tradegoods.js";
 		sort_order = 1070;
+		capacity = 4095;
 	};
 
 	"sotl-exp-indium" = {
@@ -127,6 +142,7 @@
 		comment = "Rocks containing indium-rich ores. Indium has a number of electronic and manufacturing uses, and is necessary for the construction of fission power plants.\n\nReserves of this element in Max's Reach are very low.";
 		market_script = "sotl-exp-tradegoods.js";
 		sort_order = 1080;
+		capacity = 4095;
 	};
 
 	"sotl-exp-rhenium" = {
@@ -135,6 +151,7 @@
 		comment = "Rocks containing rhenium-rich ores. Even small quantities of rhenium would allow the construction of more resilient alloys with a wide range of manufacturing uses.\n\nAll rhenium reserves in the Max's Reach colony have been used already and no known sources have been found in the system.";
 		market_script = "sotl-exp-tradegoods.js";
 		sort_order = 1200;
+		capacity = 4095;
 	};
 
 	"sotl-exp-ruthenium" = {
@@ -143,6 +160,7 @@
 		comment = "Rocks containing ruthenium-rich ores. Ruthenium has a wide range of electronic applications, most significantly in the production of solar cells for powering satellites and installations near a star.\n\nReserves of this are currently very low.";
 		market_script = "sotl-exp-tradegoods.js";
 		sort_order = 1210;
+		capacity = 4095;
 	};
 
 	"sotl-exp-osmium" = {
@@ -151,6 +169,7 @@
 		comment = "Rocks containing osmium-rich ores. Osmium is extremely rarely occuring and has relatively few industrial uses. However, it is - in trace amounts - an essential component of hyperspace fuel.\n\nThe Max's Reach colony currently has sufficient reserves of osmium to fuel several hundred jumps, but the discovery of additional deposits will be necessary for prolonged missions.";
 		market_script = "sotl-exp-tradegoods.js";
 		sort_order = 1220;
+		capacity = 4095;
 	};
 
 }
