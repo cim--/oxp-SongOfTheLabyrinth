@@ -367,6 +367,7 @@ this._transferMinerals = function(station) {
 		mineral = minerals[i];
 		manifest[mineral] = 0;
 	}
+	this.$mineralsCarried = {}; // reset
 };
 
 /** Sensors **/
