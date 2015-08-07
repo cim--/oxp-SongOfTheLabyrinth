@@ -232,6 +232,7 @@ this._refitSlot = function(slot) {
 
 /* Various modes to come. So far: mark, lagrange  */
 this.$flightComputerMode = "mark";
+this.$flightComputerFinetune = true;
 
 this.$flightComputerMarkers = {};
 
@@ -243,6 +244,9 @@ this._flightComputerButton1 = function() {
 	case "lagrange":
 		this._flightComputerMarkLagrange();
 		break;
+	case "finetune":
+		this._flightComputerFinetune();
+		break;
 	}
 }
 
@@ -253,10 +257,40 @@ this._flightComputerButton2 = function() {
 		player.consoleMessage("Lagrange estimation mode - select planet with compass");
 		break;
 	case "lagrange":
+		this.$flightComputerMode = "finetune";
+		player.consoleMessage("Engine adjustment mode");
+		break;
+	case "finetune":
 		this.$flightComputerMode = "mark";
 		player.consoleMessage("Coordinate marking mode");
 		break;
 	}
+}
+
+this._flightComputerFinetune = function() {
+	if (player.ship.speed > 0) {
+		player.consoleMessage("Cannot change engine mode while moving!");
+		return;
+	}
+	if (this.$flightComputerFinetune) {
+		player.consoleMessage("Engines set to cruise mode");
+		player.ship.maxSpeed = 3500;
+		player.ship.maxThrust = 600;
+		if (player.ship.thrust != 0) {
+			// skip if grav sensor running
+			player.ship.thrust = 600;
+		}
+
+	} else {
+		player.consoleMessage("Engines set to precision mode");
+		player.ship.maxSpeed = 250;
+		player.ship.maxThrust = 20;
+		if (player.ship.thrust != 0) {
+			// skip if grav sensor running
+			player.ship.thrust = 20;
+		}
+	}
+	this.$flightComputerFinetune = !this.$flightComputerFinetune;
 }
 
 

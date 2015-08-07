@@ -11,12 +11,11 @@ this.$sotlScan2 = null;
 
 this.shipTakingDamage = function(a,w,t) {
 	worldScripts["SOTL Equipment Management"]._registerAsteroidHit(this.ship);
-	if (w.isPlayer && player.ship.forwardWeapon.equipmentKey == "EQ_WEAPON_SOTL_SAMPLING") {
+	if (w.isPlayer && player.ship.forwardWeapon.equipmentKey == "EQ_WEAPON_SOTL_SAMPLING" && Math.random() < 0.6) {
 
 		var apos = this.ship.position;
 		var ppos = w.position;
-		var fragpos = apos.add(ppos.subtract(apos).direction().multiply(this.ship.collisionRadius));
-
+		var fragpos = this._intersectLineAndSphere(apos,this.ship.collisionRadius,ppos,w.vectorForward);
 		var splinter = system.addShips("sotl-splinter",1,fragpos,0)[0];
 		var vel = Vector3D.random(100);
 		if (vel.dot(ppos.subtract(apos)) < 0) {
@@ -53,4 +52,21 @@ this._pick = function() {
 		}
 	}
 	return contains;
+}
+
+
+/* Imperfect, but good enough for spherical-ish asteroids */
+this._intersectLineAndSphere = function(centre, radius, origin, direction) {
+
+	var c2 = Math.pow(centre.subtract(origin).magnitude(),2) - Math.pow(radius,2);
+	var b = (direction.dot(centre.subtract(origin)));
+	if (b*b >= c2) {
+		var distance = b - Math.sqrt((b*b) - c2); // take the smaller one
+
+		return origin.add(direction.multiply(distance));
+	} else {
+		// miss, so we should never get here.
+		// fallback
+		return centre.add(origin.subtract(centre).direction().multiply(radius));
+	}
 }

@@ -97,7 +97,7 @@
 		max_energy = 64;
 		max_flight_pitch = 1;
 		max_flight_roll = 2;
-		max_flight_speed = 350;
+		max_flight_speed = 250;
 		max_missiles = 0;
 		missile_launch_position = "0.0 -5.1 19.2374";
 		missiles = 0;
@@ -105,7 +105,7 @@
 		name = "Shaula";
 		roles = "player";
 		scoop_position = "0.0 -5.1 22.724";
-		thrust = 30;
+		thrust = 20;
 		view_position_aft = "0.0 5.0 -22.5";
 		view_position_forward = "0.0 3.5 17.4";
 		view_position_port = "-12.0 1.5 -1.0";

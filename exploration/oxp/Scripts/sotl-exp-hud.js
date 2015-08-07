@@ -3,10 +3,6 @@
 this.name = "SOTL HUD Dials management";
 
 this.startUp = function() {
-	player.ship.maxSpeed = 3500; // testing
-	player.ship.maxThrust *= 20;
-	player.ship.thrust *= 20;
-
 	this.$fcb = addFrameCallback(this._updateHUD.bind(this));
 	this.$dest = system.ID;
 };
@@ -96,6 +92,12 @@ this._updateHUD = function(delta) {
 				}
 			}
 		}
+	}
+
+	if (worldScripts["SOTL Equipment Management"].$flightComputerFinetune) {
+		player.ship.setCustomHUDDial("sotl_exp_enginemode","pn");
+	} else {
+		player.ship.setCustomHUDDial("sotl_exp_enginemode","CR");
 	}
 
 	/* Update sensor bars */
