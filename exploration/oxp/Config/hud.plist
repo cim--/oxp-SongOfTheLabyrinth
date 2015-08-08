@@ -427,19 +427,6 @@
 			y_origin	= -1;
 			x_origin	= -1;
 		},
-		{
-			draw_surround = no;
-			selector		= "drawCustomText:";
-			data_source = "sotl_exp_enginemode";
-			color = "0 0.5 1.0";
-			x		= 24;
-			y		= 96;
-			y_origin	= -1;
-			x_origin	= -1;
-			height		= 6;
-			width		= 6;
-			viewscreen_only = 1;
-		},
 		{	
 			draw_surround = no;
 			height		= 80;
@@ -455,7 +442,19 @@
 			y_origin	= -1;
 			x_origin	= -1;
 		},
-
+		{
+			draw_surround = no;
+			selector		= "drawCustomText:";
+			data_source = "sotl_exp_enginemode";
+			color = "0 0.5 1.0";
+			x		= 24;
+			y		= 96;
+			y_origin	= -1;
+			x_origin	= -1;
+			height		= 6;
+			width		= 6;
+			viewscreen_only = 1;
+		},
 		{	// fuel bar
 			height		= 80;
 			selector	= "drawCustomBar:";

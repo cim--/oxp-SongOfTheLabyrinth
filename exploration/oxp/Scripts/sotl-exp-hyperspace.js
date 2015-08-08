@@ -114,7 +114,6 @@ this._resetHyperspaceSequence = function() {
 	this.$hyperspaceState = 0;
 	this.$hyperspaceDestination = -1;
 	this.$hyperspaceDistance = 0;
-	this.$hyperspaceProgress = 0;
 	this.$hyperspaceKnownRoute = 0;
 	this.$hyperspaceExitPrecision = 0;
 	if (this.$hyperspaceEffect.isValid) {
@@ -171,6 +170,7 @@ this._endHyperspaceSequence = function() {
 		this._resetHyperspaceSequence();
 		// not left system
 		var closeness = system.sun.radius*(10+(Math.pow(2,this.$hyperspaceProgress)));
+
 		player.ship.position = system.sun.position.add(Vector3D.randomDirection(closeness));
 	} else {
 		var jumper = system.addShips("sotl-exp-wormhole",1,[2E10,0,0],0)[0];
@@ -182,7 +182,7 @@ this._endHyperspaceSequence = function() {
 		} else if (this.$hyperspaceProgress < 20+(10*this.$hyperspaceDistance)) {
 			// bad exit
 			var remaining = 20+(10*this.$hyperspaceDistance)-this.$hyperspaceProgress;
-			this.$hyperspaceExitPrecision += Math.pow(3,remaining);
+			this.$hyperspaceExitPrecision += Math.pow(2,remaining);
 
 		} else {
 			// good exit
@@ -205,6 +205,8 @@ this._endHyperspaceSequence = function() {
 		jumper.remove();
 		this.$hyperspaceEffect.position = player.ship.position = [2E10,0,0];
 	}
+	this.$hyperspaceProgress = 0;
+
 };
 
 
