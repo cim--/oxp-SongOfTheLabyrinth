@@ -182,7 +182,7 @@ this._endHyperspaceSequence = function() {
 		} else if (this.$hyperspaceProgress < 20+(10*this.$hyperspaceDistance)) {
 			// bad exit
 			var remaining = 20+(10*this.$hyperspaceDistance)-this.$hyperspaceProgress;
-			this.$hyperspaceExitPrecision += Math.pow(2,remaining);
+			this.$hyperspaceExitPrecision += Math.pow(3,remaining);
 
 		} else {
 			// good exit
